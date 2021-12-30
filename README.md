@@ -68,10 +68,10 @@ The executables are located on export/ folder in the root of the project after i
 
 ## Credits
 
-* CoreDEV-Engine
+CoreDEV-Engine
 - [CoreDev](https://twitter.com/itz_core5570r) - Programmer of this engine, additional assets, everything.
 
-* Friday Night Funkin'
+Friday Night Funkin'
 - [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programmer
 - [PhantomArcade3K](https://twitter.com/phantomarcade3k) - Art
 - [Evilsk8r](https://twitter.com/evilsk8r) - Art
