@@ -1,14 +1,6 @@
 # CoreDEV-Engine
 
 This is the repository for Friday Night Funkin': CoreDEV-Engine.
-- [CoreDev](https://twitter.com/itz_core5570r) - Programmer of this engine, additional assets, everything.
-
-## Original Game Team Credits
-
-- [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programmer
-- [PhantomArcade3K](https://twitter.com/phantomarcade3k) - Art
-- [Evilsk8r](https://twitter.com/evilsk8r) - Art
-- [Kawaisprite](https://twitter.com/kawaisprite) - Musician
 
 ## Build instructions
 
