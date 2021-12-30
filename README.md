@@ -65,6 +65,7 @@ While installing VSC, don't click on any of the options to install workloads. In
 It will took 7GB of your computer disk space, so make sure you have more than 7GB on your computer before installing those components.
 The executables are located on export/ folder in the root of the project after it was compiled.
 
+Once everything has done, have fun with the engine!
 
 ## Credits
 
