@@ -93,7 +93,7 @@ class FPS_Mem extends TextField
 
 		{	
 
-			text = "FPS: " + times.length + "\nMEM: " + mem + " MB\nMEM peak: " + memPeak + " MB" + "\nCDEV-FNF v1.0.0";	
+			text = "FPS: " + times.length + "\nMEM: " + mem + " MB\nMEM peak: " + memPeak + " MB" + "\nCDEV-FNF v0.1.0";	
 
 		}
 
