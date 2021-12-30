@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="NOTE_press.png">
+	<!-- Created with Adobe Animate version 21.0.6.41649 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="downclick0000" x="0" y="0" width="123" height="123" frameX="-70" frameY="-71" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0001" x="163" y="0" width="174" height="173" frameX="-45" frameY="-45" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0002" x="377" y="0" width="195" height="193" frameX="-34" frameY="-35" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0003" x="612" y="0" width="209" height="207" frameX="-27" frameY="-28" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0004" x="861" y="0" width="221" height="218" frameX="-21" frameY="-22" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0005" x="1122" y="0" width="230" height="227" frameX="-17" frameY="-17" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0006" x="1392" y="0" width="237" height="235" frameX="-13" frameY="-13" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0007" x="1669" y="0" width="244" height="241" frameX="-10" frameY="-10" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0008" x="1953" y="0" width="249" height="246" frameX="-7" frameY="-7" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0009" x="2242" y="0" width="253" height="250" frameX="-5" frameY="-5" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0010" x="2535" y="0" width="257" height="254" frameX="-3" frameY="-3" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0011" x="2832" y="0" width="259" height="256" frameX="-2" frameY="-2" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0012" x="3131" y="0" width="261" height="258" frameX="-1" frameY="-1" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="downclick0013" x="3432" y="0" width="263" height="259"/>
+	<SubTexture name="downclick0014" x="3735" y="0" width="263" height="259"/>
+	<SubTexture name="leftclick0000" x="0" y="299" width="123" height="123" frameX="-70" frameY="-71" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0001" x="163" y="299" width="174" height="173" frameX="-45" frameY="-45" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0002" x="377" y="299" width="195" height="193" frameX="-34" frameY="-35" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0003" x="612" y="299" width="209" height="207" frameX="-27" frameY="-28" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0004" x="861" y="299" width="221" height="218" frameX="-21" frameY="-22" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0005" x="1122" y="299" width="230" height="227" frameX="-17" frameY="-17" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0006" x="1392" y="299" width="237" height="235" frameX="-13" frameY="-13" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0007" x="1669" y="299" width="244" height="241" frameX="-10" frameY="-10" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0008" x="1953" y="299" width="249" height="246" frameX="-7" frameY="-7" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0009" x="2242" y="299" width="253" height="250" frameX="-5" frameY="-5" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0010" x="2535" y="299" width="257" height="254" frameX="-3" frameY="-3" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0011" x="2832" y="299" width="259" height="256" frameX="-2" frameY="-2" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0012" x="3131" y="299" width="261" height="258" frameX="-1" frameY="-1" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="leftclick0013" x="3432" y="299" width="263" height="259"/>
+	<SubTexture name="leftclick0014" x="3735" y="0" width="263" height="259"/>
+	<SubTexture name="rightclick0000" x="3735" y="299" width="123" height="123" frameX="-70" frameY="-71" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0001" x="3898" y="299" width="174" height="173" frameX="-45" frameY="-45" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0002" x="0" y="598" width="195" height="193" frameX="-34" frameY="-35" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0003" x="235" y="598" width="209" height="207" frameX="-27" frameY="-28" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0004" x="484" y="598" width="221" height="218" frameX="-21" frameY="-22" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0005" x="745" y="598" width="230" height="227" frameX="-17" frameY="-17" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0006" x="1015" y="598" width="237" height="235" frameX="-13" frameY="-13" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0007" x="1292" y="598" width="244" height="241" frameX="-10" frameY="-10" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0008" x="1576" y="598" width="249" height="246" frameX="-7" frameY="-7" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0009" x="1865" y="598" width="253" height="250" frameX="-5" frameY="-5" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0010" x="2158" y="598" width="257" height="254" frameX="-3" frameY="-3" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0011" x="2455" y="598" width="259" height="256" frameX="-2" frameY="-2" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0012" x="2754" y="598" width="261" height="258" frameX="-1" frameY="-1" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="rightclick0013" x="3055" y="598" width="263" height="259"/>
+	<SubTexture name="rightclick0014" x="3735" y="0" width="263" height="259"/>
+	<SubTexture name="upclick0000" x="3358" y="598" width="123" height="123" frameX="-70" frameY="-71" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0001" x="3521" y="598" width="174" height="173" frameX="-45" frameY="-45" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0002" x="3735" y="598" width="195" height="193" frameX="-34" frameY="-35" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0003" x="0" y="897" width="209" height="207" frameX="-27" frameY="-28" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0004" x="249" y="897" width="221" height="218" frameX="-21" frameY="-22" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0005" x="510" y="897" width="230" height="227" frameX="-17" frameY="-17" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0006" x="780" y="897" width="237" height="235" frameX="-13" frameY="-13" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0007" x="1057" y="897" width="244" height="241" frameX="-10" frameY="-10" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0008" x="1341" y="897" width="249" height="246" frameX="-7" frameY="-7" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0009" x="1630" y="897" width="253" height="250" frameX="-5" frameY="-5" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0010" x="1923" y="897" width="257" height="254" frameX="-3" frameY="-3" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0011" x="2220" y="897" width="259" height="256" frameX="-2" frameY="-2" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0012" x="2519" y="897" width="261" height="258" frameX="-1" frameY="-1" frameWidth="263" frameHeight="259"/>
+	<SubTexture name="upclick0013" x="2820" y="897" width="263" height="259"/>
+	<SubTexture name="upclick0014" x="3735" y="0" width="263" height="259"/>
+</TextureAtlas>

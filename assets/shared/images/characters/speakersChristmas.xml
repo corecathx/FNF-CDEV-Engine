@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="speakersChristmas.png">
+	<!-- Created with Adobe Animate version 21.0.6.41649 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="boombox0000" x="0" y="0" width="817" height="461"/>
+	<SubTexture name="boombox0001" x="857" y="0" width="817" height="461"/>
+	<SubTexture name="boombox0002" x="0" y="501" width="817" height="461"/>
+	<SubTexture name="boombox0003" x="857" y="501" width="817" height="461"/>
+	<SubTexture name="boombox0004" x="0" y="1002" width="817" height="461"/>
+	<SubTexture name="boombox0005" x="857" y="1002" width="817" height="461"/>
+	<SubTexture name="boombox0006" x="0" y="1503" width="817" height="461"/>
+	<SubTexture name="boombox0007" x="0" y="1503" width="817" height="461"/>
+	<SubTexture name="boombox0008" x="0" y="1503" width="817" height="461"/>
+</TextureAtlas>
