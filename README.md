@@ -75,7 +75,7 @@ CoreDEV-Engine
 Codes
 - Shadow Mario - Downscroll Codes, Custom songs and charts / mods folder, and health icon offsets
 - RozeBud - KeyBinds menu codes cuz idk how to make custom keybinds lmao.
-- KadeDev - Some of the note press calculations codes.
+- KadeDev - Some of the note press calculations codes, and Story Menu Characters codes
 
 Friday Night Funkin'
 - [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programmer
