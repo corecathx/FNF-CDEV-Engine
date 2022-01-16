@@ -69,13 +69,13 @@ Once everything has done, have fun with the engine!
 
 ## Credits
 
+CoreDEV-Engine
+- [CoreDev](https://twitter.com/itz_core5570r) - Programmer of this engine, additional assets.
+- 
 Codes
 - Shadow Mario - Downscroll Codes, Custom songs and charts / mods folder, and health icon offsets
 - RoseBud - KeyBinds menu codes cuz idk how to make custom keybinds lmao.
 - KadeDev - Some of the note press calculations codes.
-
-CoreDEV-Engine
-- [CoreDev](https://twitter.com/itz_core5570r) - Programmer of this engine, additional assets, everything.
 
 Friday Night Funkin'
 - [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programmer
