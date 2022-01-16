@@ -74,11 +74,11 @@ CoreDEV-Engine
 - 
 Codes
 - Shadow Mario - Downscroll Codes, Custom songs and charts / mods folder, and health icon offsets
-- RoseBud - KeyBinds menu codes cuz idk how to make custom keybinds lmao.
+- RozeBud - KeyBinds menu codes cuz idk how to make custom keybinds lmao.
 - KadeDev - Some of the note press calculations codes.
 
 Friday Night Funkin'
 - [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programmer
 - [PhantomArcade3K](https://twitter.com/phantomarcade3k) - Art
 - [Evilsk8r](https://twitter.com/evilsk8r) - Art
-- [Kawaisprite](https://twitter.com/kawaisprite) - Musician
+- [KawaiSprite](https://twitter.com/kawaisprite) - Musician
