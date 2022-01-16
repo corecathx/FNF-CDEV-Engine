@@ -71,7 +71,7 @@ Once everything has done, have fun with the engine!
 
 CoreDEV-Engine
 - [CoreDev](https://twitter.com/itz_core5570r) - Programmer of this engine, additional assets.
-- 
+
 Codes
 - Shadow Mario - Downscroll Codes, Custom songs and charts / mods folder, and health icon offsets
 - RozeBud - KeyBinds menu codes cuz idk how to make custom keybinds lmao.
