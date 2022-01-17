@@ -32,7 +32,7 @@ class MainMenuState extends MusicBeatState
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
 	#if !switch
-	var optionShit:Array<String> = ['story mode', 'freeplay', 'youtube', 'options', 'donate'];
+	var optionShit:Array<String> = ['story mode', 'freeplay', 'youtube', 'donate', 'options'];
 	#else
 	var optionShit:Array<String> = ['story mode', 'freeplay'];
 	#end
