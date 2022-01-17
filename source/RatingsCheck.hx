@@ -25,7 +25,7 @@ class RatingsCheck
 		else if (acc >= 60 && acc < 68.99)
 			returnShit = "Uhh";
 		else if (acc >= 69 && acc < 69.99)
-			returnShit = "Lol"; // funi number, 69
+			returnShit = "Lol"; // 69, funi number
 		else if (acc >= 70 && acc < 79.99)
 			returnShit = 'Good';
 		else if (acc >= 80 && acc < 89.99)

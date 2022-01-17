@@ -112,7 +112,7 @@ class PauseSubState extends MusicBeatSubstate
 						{
 							item.alpha = 0;
 						}
-					openSubState(new GameplaySettings(true));
+					openSubState(new OptionsSubState());
 				case "Exit to menu":
 					FlxG.switchState(new MainMenuState());
 			}

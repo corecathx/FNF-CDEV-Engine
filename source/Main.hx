@@ -1,5 +1,6 @@
 package;
 
+import FPS_Mem.CDevFPSMem;
 import flixel.FlxGame;
 import flixel.FlxState;
 import openfl.Assets;
@@ -21,8 +22,9 @@ class Main extends Sprite
 	var framerate:Int = 120; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
 	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
-	public static var fps_mem:FPS_Mem;
+	public static var fps_mem:CDevFPSMem;
 
+	public static var discordRPC:Bool = false;
 	var playState:Bool = false;
 	// You can pretty much ignore everything from here on - your code should go in your states.
 
@@ -69,22 +71,24 @@ class Main extends Sprite
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
 
+		
+
 		#if !debug
 		initialState = TitleState;
 		#end
 		#if desktop
-		DiscordClient.initialize();
-		
-		Application.current.onExit.add (function (exitCode) {
-			DiscordClient.shutdown();
-		 });
-		#end
+			DiscordClient.initialize();
+				
+				Application.current.onExit.add (function (exitCode) {
+						DiscordClient.shutdown();
+				});				
+		#end				
 
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		#if !mobile
 		//addChild(new FPS(10, 10, 0xFFFFFF));
-		fps_mem = new FPS_Mem(10, 10, 0xffffff);
+		fps_mem = new CDevFPSMem(10, 10, 0xffffff, true);
 		addChild(fps_mem);
 		fps_mem.visible = FlxG.save.data.performTxt;
 		#end

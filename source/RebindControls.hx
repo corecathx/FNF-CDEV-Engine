@@ -1,5 +1,7 @@
 package;
 
+//the codes are from RoseBud for FPS Plus
+//modified by me:)
 import flixel.FlxSprite;
 import flixel.util.FlxTimer;
 import flixel.util.FlxColor;

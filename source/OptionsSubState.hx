@@ -1,69 +1,131 @@
 package;
 
+import flixel.util.FlxTimer;
+import openfl.Lib;
+import Controls.Control;
+import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.display.FlxGridOverlay;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.input.keyboard.FlxKey;
+import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import lime.utils.Assets;
+#if desktop
+import Discord.DiscordClient;
+#end
 
 class OptionsSubState extends MusicBeatSubstate
 {
-	var textMenuItems:Array<String> = ['Master Volume', 'Sound Volume', 'Controls'];
-
-	var selector:FlxSprite;
 	var curSelected:Int = 0;
-
-	var grpOptionsTexts:FlxTypedGroup<FlxText>;
+	var options:Array<String> = ['Gameplay', 'Appearance'];
+	private var grpOption:FlxTypedGroup<Alphabet>;
+	var menuBG:FlxSprite;
+	private var allowToPress:Bool = false;
 
 	public function new()
 	{
 		super();
+		#if desktop
+		if (Main.discordRPC)
+			DiscordClient.changePresence("Setting the game options", null);
+		#end
 
-		grpOptionsTexts = new FlxTypedGroup<FlxText>();
-		add(grpOptionsTexts);
+		grpOption = new FlxTypedGroup<Alphabet>();
+		add(grpOption);
 
-		selector = new FlxSprite().makeGraphic(5, 5, FlxColor.RED);
-		add(selector);
-
-		for (i in 0...textMenuItems.length)
+		for (i in 0...options.length)
 		{
-			var optionText:FlxText = new FlxText(20, 20 + (i * 50), 0, textMenuItems[i], 32);
-			optionText.ID = i;
-			grpOptionsTexts.add(optionText);
+			var optionText:Alphabet = new Alphabet(0, (70 * i) + 30, options[i], true, false);
+			optionText.screenCenter();
+			optionText.isMenuItem = true;
+			optionText.isOptionItem = true;
+			optionText.targetY = i;
+			// optionText.y += (100 * (i - (options.length / 2))) + 50;
+			grpOption.add(optionText);
 		}
+		changeSelection();
+
+		new FlxTimer().start(0.2, function(bruh:FlxTimer)
+			{
+				allowToPress = true;
+			});
+
+		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+	}
+
+	override function closeSubState()
+	{
+		super.closeSubState();
+		changeSelection();
 	}
 
 	override function update(elapsed:Float)
 	{
-		super.update(elapsed);
-
 		if (controls.UP_P)
-			curSelected -= 1;
-
+		{
+			changeSelection(-1);
+		}
 		if (controls.DOWN_P)
-			curSelected += 1;
+		{
+			changeSelection(1);
+		}
+
+		if (controls.BACK)
+		{
+			FlxG.save.flush();
+			CDevConfig.reInitLerp();
+			Conductor.updateSettings();
+			FlxG.sound.play(Paths.sound('cancelMenu'));
+			close();
+		}
+
+		if (controls.ACCEPT && allowToPress)
+		{
+			for (item in grpOption.members)
+			{
+				item.alpha = 0;
+			}
+
+			switch (options[curSelected])
+			{
+				case 'Gameplay':
+					openSubState(new GameplaySettings(true));
+				//case 'Inputs':
+				//	openSubState(new InputsSettings());
+				// case 'Credits':
+				//    openSubState(new CreditState());
+				case 'Appearance':
+					openSubState(new AppearanceSettings(true));
+			}
+		}
+
+		super.update(elapsed);
+	}
+
+	function changeSelection(change:Int = 0)
+	{
+		var bullShit:Int = 0;
+
+		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		curSelected += change;
 
 		if (curSelected < 0)
-			curSelected = textMenuItems.length - 1;
-
-		if (curSelected >= textMenuItems.length)
+			curSelected = options.length - 1;
+		if (curSelected >= options.length)
 			curSelected = 0;
 
-		grpOptionsTexts.forEach(function(txt:FlxText)
+		for (item in grpOption.members)
 		{
-			txt.color = FlxColor.WHITE;
+			item.targetY = bullShit - curSelected;
+			bullShit++;
+			item.alpha = 0.6;
 
-			if (txt.ID == curSelected)
-				txt.color = FlxColor.YELLOW;
-		});
-
-		if (controls.ACCEPT)
-		{
-			switch (textMenuItems[curSelected])
+			if (item.targetY == 0)
 			{
-				case "Controls":
-					FlxG.state.closeSubState();
-					FlxG.state.openSubState(new ControlsSubState());
+				item.alpha = 1;
 			}
 		}
 	}

@@ -21,7 +21,7 @@ class SongPosition
 		return lastTextString;
 	}
 
-	public static function getCurrentDuration(musicTime:Float, musicLength:Float):String
+	public static function getCurrentDuration(musicTime:Float):String
 	{
 		// literally copied from getSongDuration bruh.
 		var theshit:Int = Math.floor(musicTime / 1000);

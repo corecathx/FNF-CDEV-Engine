@@ -35,13 +35,15 @@ class Highscore
 				if (songScores.get(daSong) < score) {
 					setScore(daSong, score);
 					if (rating >= 0)
-						setRating(daSong, rating);
+						if (rating > getRating(daSong, diff))
+							setRating(daSong, rating);
 				}
 			}
 			else {
 				setScore(daSong, score);
 				if (rating >= 0)
-					setRating(daSong, rating);
+					if (rating > getRating(daSong, diff))
+						setRating(daSong, rating);
 			}
 		}
 

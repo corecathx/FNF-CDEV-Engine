@@ -26,7 +26,8 @@ class OptionsState extends MusicBeatState
 	override function create()
 	{
 		#if desktop
-		DiscordClient.changePresence("Setting the game options", null);
+		if (Main.discordRPC)
+			DiscordClient.changePresence("Setting the game options", null);
 		#end
 
 		menuBG = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
@@ -77,7 +78,7 @@ class OptionsState extends MusicBeatState
 		if (controls.BACK)
 		{
 			FlxG.save.flush();
-			CoreDevSaves.reInitLerp();
+			CDevConfig.reInitLerp();
 			Conductor.updateSettings();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			FlxG.switchState(new MainMenuState());

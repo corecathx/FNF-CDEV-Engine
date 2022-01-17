@@ -49,6 +49,7 @@ class GameplaySettings extends MusicBeatSubstate
 		'Flashing Lights',
 		'Camera Zooming',
 		'Camera Movements',
+		'Note Offset',
 		'Detailed Score Info',
 		'Auto Pause'
 	];
@@ -123,24 +124,22 @@ class GameplaySettings extends MusicBeatSubstate
 						if (controls.ACCEPT && clickableOptions.contains(options[curSelected]))
 							pressSelection();
 					}
-			
-					if (!clickableOptions.contains(options[curSelected]))
+
+					leftRight(elapsed);
+					
+					if (controls.RESET)
 						{
-							leftRight(elapsed);
-							if (controls.RESET)
-								{
-									switch (options[curSelected])
-									{
-										case 'Note Offset':
-											FlxG.save.data.offset = 0;
-											changeText();
-										case 'FPS Cap':
-											FlxG.save.data.fpscap = 120;
-											CoreDevSaves.setFPS(FlxG.save.data.fpscap);
-											changeText();
-									}
-									FlxG.sound.play(Paths.sound('cancelMenu'));
-								}
+							switch (options[curSelected])
+							{
+								case 'Note Offset':
+									FlxG.save.data.offset = 0;
+									changeText();
+								case 'FPS Cap':
+									FlxG.save.data.fpscap = 120;
+									CDevConfig.setFPS(FlxG.save.data.fpscap);
+									changeText();
+							}
+							FlxG.sound.play(Paths.sound('cancelMenu'));
 						}
 
 			
@@ -196,6 +195,10 @@ class GameplaySettings extends MusicBeatSubstate
 				FlxG.save.data.camZoom = !FlxG.save.data.camZoom;
 			case 'Camera Movements' | 'No Camera Movements':
 				FlxG.save.data.camMovement = !FlxG.save.data.camMovement;
+			case 'Note Offset':
+				FlxG.switchState(new OffsetTest());
+			case 'FPS Cap':
+				return;
 			case 'Detailed Score Info' | 'Only Song Score':
 				FlxG.save.data.fullinfo = !FlxG.save.data.fullinfo;
 			case 'Auto Pause' | 'Do Not Auto Pause':
@@ -205,16 +208,13 @@ class GameplaySettings extends MusicBeatSubstate
 
 		updateOptions();
 
-		grpOptions.clear();
+		grpOptions.remove(grpOptions.members[curSelected]);
 
-		for (i in 0...options.length)
-		{
-			var optionText:Alphabet = new Alphabet(0, (70 * i) + 30, options[i], true, false);
-			optionText.isMenuItem = true;
-			optionText.isOptionItem = true;
-			optionText.targetY = i;
-			grpOptions.add(optionText);
-		}
+		var optionText:Alphabet = new Alphabet(0, (70 * curSelected) + 30, options[curSelected], true, false);
+		optionText.isMenuItem = true;
+		optionText.isOptionItem = true;
+		grpOptions.add(optionText);
+
 		changeSelection();
 		grpOptions.forEach(function(spr:FlxSprite)
 		{
@@ -270,10 +270,10 @@ class GameplaySettings extends MusicBeatSubstate
 							if (FlxG.save.data.fpscap <= 60) // you cant go below 60 fps, or else your gameplay would be really shit
 								FlxG.save.data.fpscap = 60;
 	
-							if (FlxG.save.data.fpscap > 200) // better fps :swag:
-								FlxG.save.data.fpscap = 200;
+							if (FlxG.save.data.fpscap > 300)
+								FlxG.save.data.fpscap = 300;
 	
-							CoreDevSaves.setFPS(FlxG.save.data.fpscap);
+							CDevConfig.setFPS(FlxG.save.data.fpscap);
 							changeText();
 					}
 				}
@@ -343,6 +343,7 @@ class GameplaySettings extends MusicBeatSubstate
 						FlxG.save.data.flashing ? 'Flashing Lights' : 'No Flashing Lights',
 						FlxG.save.data.camZoom ? 'Camera Zooming' : 'No Camera Zooming',
 						FlxG.save.data.camMovement ? 'Camera Movements' : 'No Camera Movements',
+						'Note Offset',
 						FlxG.save.data.fullinfo ? 'Detailed Score Info' : 'Only Song Score',
 						FlxG.save.data.autoPause ? 'Auto Pause' : 'Do Not Auto Pause'
 					];
@@ -406,7 +407,7 @@ class GameplaySettings extends MusicBeatSubstate
 				case 'Camera Movements' | 'No Camera Movements':
 					text = 'If disabled, the camera wont move based on\n the current character animation';
 				case 'Note Offset':
-					text = "Change your notes offset.\n(Current Value: " + FlxG.save.data.offset + ")";
+					text = "Change your notes offset. Press ENTER to start offset testing\n(Current Value: " + FlxG.save.data.offset + ")";
 				case 'Detailed Score Info' | 'Only Song Score':
 					text = 'If enabled, it will show your Score, Misses, and Accuracy\ninstead of just showing the Song Score only.';
 			    case 'Auto Pause' | 'Do Not Auto Pause':

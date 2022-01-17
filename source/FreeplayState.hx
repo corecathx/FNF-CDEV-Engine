@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxTimer;
 import flixel.graphics.FlxGraphic;
 #if sys
 import sys.FileSystem;
@@ -52,9 +53,16 @@ class FreeplayState extends MusicBeatState
 	var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 
 	private var iconArray:Array<HealthIcon> = [];
+	private var arrowArray:Array<ArrowSprite> = [];
 
 	var songInfo:FlxText;
 	var bgColorTween:FlxTween;
+	var arrow:FlxSprite;
+
+	var arrowPosLerpX:Float = 0;
+	var arrowPosLerpY:Float = 0;
+
+	var songTimer:FlxTimer;
 
 	override function create()
 	{
@@ -86,11 +94,6 @@ class FreeplayState extends MusicBeatState
 			}
 		 */
 
-		#if desktop
-		// Updating Discord Rich Presence
-		DiscordClient.changePresence("In the Menus", null);
-		#end
-
 		var isDebug:Bool = false;
 		Conductor.changeBPM(100);
 
@@ -99,7 +102,6 @@ class FreeplayState extends MusicBeatState
 		#end
 
 		// LOAD MUSIC
-
 		// LOAD CHARACTERS
 
 		bg.alpha = 0.8;
@@ -112,6 +114,7 @@ class FreeplayState extends MusicBeatState
 		{
 			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName, true, false);
 			songText.isMenuItem = true;
+			songText.isFreeplay = true;
 			songText.targetY = i;
 			grpSongs.add(songText);
 
@@ -122,6 +125,7 @@ class FreeplayState extends MusicBeatState
 			iconArray.push(icon);
 			add(icon);
 
+			// h e l l .
 			// Caching.doMusicCaching(songs[i].songName);
 
 			// songText.x += 40;
@@ -141,7 +145,7 @@ class FreeplayState extends MusicBeatState
 		// diffText.font = scoreText.font;
 		// add(diffText);
 		
-		scoreText = new FlxText(50, bottomPanel.y + 24, FlxG.width, "", 28);
+		scoreText = new FlxText(50, bottomPanel.y + 18, FlxG.width, "", 28);
 		// scoreText.autoSize = false;
 		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, LEFT,OUTLINE,FlxColor.BLACK);
 		// scoreText.screenCenter(X);
@@ -263,9 +267,9 @@ class FreeplayState extends MusicBeatState
 		bg.alpha = FlxMath.lerp(0.6, bg.alpha, 0.95);
 
 		//sorry for this line of codes :(
-		bg.color.red = Std.int(FlxMath.lerp(iconArray[curSelected].charColorArray[0], bg.color.red, CDevUtils.getLerp(1 - (elapsed * 3), 0, 1)));
-		bg.color.green = Std.int(FlxMath.lerp(iconArray[curSelected].charColorArray[1], bg.color.green, CDevUtils.getLerp(1 - (elapsed * 3), 0, 1)));
-		bg.color.blue = Std.int(FlxMath.lerp(iconArray[curSelected].charColorArray[2], bg.color.blue, CDevUtils.getLerp(1 - (elapsed * 3), 0, 1)));
+		bg.color.red = Std.int(FlxMath.lerp(iconArray[curSelected].charColorArray[0], bg.color.red, CDevConfig.utils.bound(1 - (elapsed * 4), 0, 1)));
+		bg.color.green = Std.int(FlxMath.lerp(iconArray[curSelected].charColorArray[1], bg.color.green, CDevConfig.utils.bound(1 - (elapsed * 4), 0, 1)));
+		bg.color.blue = Std.int(FlxMath.lerp(iconArray[curSelected].charColorArray[2], bg.color.blue, CDevConfig.utils.bound(1 - (elapsed * 4), 0, 1)));
 
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore,0.4));
 		lerpRating = FlxMath.lerp(lerpRating, intendedRating, 0.4);
@@ -338,6 +342,7 @@ class FreeplayState extends MusicBeatState
 
 				PlayState.storyWeek = songs[curSelected].week;
 				trace('CUR WEEK' + PlayState.storyWeek);
+				//FlxG.switchState(new LoadingState());
 				LoadingState.loadAndSwitchState(new PlayState());				
 				#if sys
 			}
@@ -421,11 +426,6 @@ class FreeplayState extends MusicBeatState
 
 	function changeSelection(change:Int = 0)
 	{
-		#if !switch
-		// NGio.logEvent('Fresh');
-		#end
-
-		// NGio.logEvent('Fresh');
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 
 		curSelected += change;
@@ -444,17 +444,18 @@ class FreeplayState extends MusicBeatState
 
 		songInfoUpdate();
 
-		
+		#if desktop
+		// Updating Discord Rich Presence
+		if (Main.discordRPC)
+			DiscordClient.changePresence("Freeplay Menu", songs[curSelected].songName, null);
+		#end
 
 		#if desktop
 		changeDaBPM();
 		#end
-		if (FlxG.save.data.fpplay)
-		{
-			#if PRELOAD_ALL
-			FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
-			#end
-		}
+		#if PRELOAD_ALL
+		FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
+		#end		
 
 		var bullShit:Int = 0;
 
@@ -469,12 +470,14 @@ class FreeplayState extends MusicBeatState
 		{
 			item.targetY = bullShit - curSelected;
 			bullShit++;
+			item.selected = false;
 
 			item.alpha = 0.6;
 			// item.setGraphicSize(Std.int(item.width * 0.8));
 
 			if (item.targetY == 0)
 			{
+				item.selected = true;
 				item.alpha = 1;
 				// item.setGraphicSize(Std.int(item.width));
 			}

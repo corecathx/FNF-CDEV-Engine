@@ -21,6 +21,8 @@ class Alphabet extends FlxSpriteGroup
 	public var targetY:Float = 0;
 	public var isMenuItem:Bool = false;
 	public var isOptionItem:Bool = false;
+	public var isFreeplay:Bool = false;
+	public var selected:Bool = false;
 
 	public var text:String = "";
 
@@ -225,11 +227,21 @@ class Alphabet extends FlxSpriteGroup
 		{
 			var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, 1.3);
 
-			y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48), 0.05);
-			if (!isOptionItem)
-				x = FlxMath.lerp(x, (targetY * 20) + 90, 0.05);
-				else
-				screenCenter(X);
+			if (!isFreeplay)
+				{
+					y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48), 0.05);
+					if (!isOptionItem)
+						x = FlxMath.lerp(x, (targetY * 20) + 120, 0.05);
+						else
+						screenCenter(X);					
+				} else {
+					y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48), 0.05);
+					if (!selected)
+						x = FlxMath.lerp(x, 120, 0.05);
+						else
+						x = FlxMath.lerp(x, 200, 0.05);
+				}
+
 		}
 
 		super.update(elapsed);

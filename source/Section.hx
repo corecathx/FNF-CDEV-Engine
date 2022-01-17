@@ -19,6 +19,7 @@ class Section
 	public var lengthInSteps:Int = 16;
 	public var typeOfSection:Int = 0;
 	public var mustHitSection:Bool = true;
+	public var banger:Bool = false;
 
 	/**
 	 *	Copies the first section into the second section!

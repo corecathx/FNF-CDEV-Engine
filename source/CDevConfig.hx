@@ -6,9 +6,10 @@ import Controls.KeyboardScheme;
 import openfl.Lib;
 using StringTools;
 
-class CoreDevSaves extends MusicBeatState
+class CDevConfig extends MusicBeatState
 {
-    public static function createSaves()
+    public static var utils(default, null):CDevUtils = new CDevUtils();
+    public static function initializeSaves()
         {
             if (FlxG.save.data.dfjk == null)
                 FlxG.save.data.dfjk = false;
@@ -80,9 +81,39 @@ class CoreDevSaves extends MusicBeatState
 
             if (FlxG.save.data.antialiasing == null)
                 FlxG.save.data.antialiasing = true;
+
+            if (FlxG.save.data.fnfNotes == null)
+                FlxG.save.data.fnfNotes = true;
+            
+            //Rating sprite position
+
+            if (FlxG.save.data.rX == null)
+                FlxG.save.data.rX = -1;
+
+            if (FlxG.save.data.rY == null)
+                FlxG.save.data.rY = -1;
+
+            if (FlxG.save.data.rChanged == null)
+                FlxG.save.data.rChanged = false;
+
+            #if desktop
+            if (FlxG.save.data.discordRpc == null)
+                FlxG.save.data.discordRpc = true;
+            #end
+
+            if (FlxG.save.data.bgNote == null)
+                FlxG.save.data.bgNote = false;
+
+            if (FlxG.save.data.bgLane == null)
+                FlxG.save.data.bgLane = false;
             
             FlxG.autoPause = FlxG.save.data.autoPause;
             setFPS(FlxG.save.data.fpscap);
+
+            Main.discordRPC = FlxG.save.data.discordRpc;
+
+            if (FlxG.save.data.testMode == null)
+                FlxG.save.data.testMode = false;
         }
 
     public static function setFPS(daSet:Int)

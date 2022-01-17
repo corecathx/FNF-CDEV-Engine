@@ -27,7 +27,7 @@ class LoadingState extends MusicBeatState
 	var gfDance:FlxSprite;
 	var danceLeft = false;
 	
-	function new(target:FlxState, stopMusic:Bool)
+	public function new (target:FlxState, stopMusic:Bool)
 	{
 		super();
 		this.target = target;

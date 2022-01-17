@@ -71,7 +71,7 @@ class TitleState extends MusicBeatState
 
 		Highscore.load();
 
-		CoreDevSaves.createSaves();
+		CDevConfig.initializeSaves();
 
 		if (FlxG.save.data.weekUnlocked != null)
 		{
@@ -96,6 +96,13 @@ class TitleState extends MusicBeatState
 		{
 			startIntro();
 		});
+		#end
+
+		#if desktop
+		if (!FlxG.save.data.discordRpc)
+			{
+				DiscordClient.shutdown();
+			}
 		#end
 	}
 
@@ -131,7 +138,7 @@ class TitleState extends MusicBeatState
 						// FlxG.sound.list.add(music);
 						// music.play();
 					}
-					persistentUpdate = true;
+					//persistentUpdate = true;
 			
 					var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 					// bg.antialiasing = FlxG.save.data.antialiasing;
@@ -372,6 +379,7 @@ class TitleState extends MusicBeatState
 					// credTextShit.text = 'In association \nwith';
 					// credTextShit.screenCenter();
 					case 5:
+						yOffset = 10;
 						createCoolText(['CoreDEV Engine', 'By']);
 					case 7:
 						addMoreText('CoreDev');
@@ -396,6 +404,7 @@ class TitleState extends MusicBeatState
 					// credTextShit.text = "Friday";
 					// credTextShit.screenCenter();
 					case 13:
+						yOffset = 10;
 						addMoreText('Friday');
 					// credTextShit.visible = true;
 					case 14:
@@ -417,8 +426,7 @@ class TitleState extends MusicBeatState
 		if (!skippedIntro)
 		{
 			remove(ngSpr);
-
-			FlxG.camera.flash(FlxColor.WHITE, 4);
+			FlxG.camera.flash(FlxColor.WHITE, 1);
 			remove(credGroup);
 			skippedIntro = true;
 		}

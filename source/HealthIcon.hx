@@ -15,58 +15,60 @@ class HealthIcon extends FlxSprite
 
 	var charList:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
 
-	/**
-	 * An array that contains ^RGB^ color array of an character icon.
-	 */
 	public var charColorArray:Array<FlxColor> = [];
-	var char:String;
+	private var char:String;
+	private var iconOffset:Array<Float> = [0, 0];
+	private var isPlayer:Bool = false;
 
 	public function new(char:String = 'bf', isPlayer:Bool = false)
 	{
 		this.char = char;
+		this.isPlayer = isPlayer;
 		super();
-		loadGraphic(Paths.image('iconGrid'), true, 150, 150);
 
-		getColorArray();
+		changeDaIcon(char);
+		scrollFactor.set();
+	}
+
+	public function changeDaIcon(char:String) {
+		var name:String = 'icons/' + char + '-icon';
+
+		if (!CDevConfig.utils.fileIsExist('images/' + name + '.png', IMAGE))
+			name = 'icons/face-icon'; //to prevent crashing while loading an not existed character icon
+				
+		var file:Dynamic = Paths.image(name, 'preload');
+		loadGraphic(file, true, 150, 150);
+		animation.add(char, [0, 1], 0, false, isPlayer);
+		animation.play(char);
+		this.char = char;
+
+		iconOffset[0] = (width - 150) / 2;
+		iconOffset[1] = (width - 150) / 2;	
 
 		antialiasing = FlxG.save.data.antialiasing;
-		animation.add('bf', [0, 1], 0, false, isPlayer);
-		animation.add('bf-cscared', [0, 1], 0, false, isPlayer);
-		animation.add('bf-car', [0, 1], 0, false, isPlayer);
-		animation.add('bf-christmas', [0, 1], 0, false, isPlayer);
-		animation.add('bf-pixel', [21, 21], 0, false, isPlayer);
-		animation.add('spooky', [2, 3], 0, false, isPlayer);
-		animation.add('pico', [4, 5], 0, false, isPlayer);
-		animation.add('mom', [6, 7], 0, false, isPlayer);
-		animation.add('mom-car', [6, 7], 0, false, isPlayer);
-		animation.add('tankman', [8, 9], 0, false, isPlayer);
-		animation.add('face', [10, 11], 0, false, isPlayer);
-		animation.add('dad', [12, 13], 0, false, isPlayer);
-		animation.add('senpai', [22, 22], 0, false, isPlayer);
-		animation.add('senpai-angry', [22, 22], 0, false, isPlayer);
-		animation.add('spirit', [23, 23], 0, false, isPlayer);
-		animation.add('bf-old', [14, 15], 0, false, isPlayer);
-		animation.add('gf', [16], 0, false, isPlayer);
-		animation.add('parents-christmas', [17], 0, false, isPlayer);
-		animation.add('monster', [19, 20], 0, false, isPlayer);
-		animation.add('monster-christmas', [19, 20], 0, false, isPlayer);
+		if (char.endsWith('-pixel'))
+		{
+			antialiasing = false;
+		}
 
-		// to prevent crashing while loading an not existed character icon
-		if (charList.contains(char))
-			animation.play(char);
-		else
-			animation.play('face');
-		scrollFactor.set();
+		getColorArray();			
+	}
+	override function updateHitbox()
+	{
+		super.updateHitbox();
+		offset.x = iconOffset[0];
+		offset.y = iconOffset[1];
 	}
 
 	function getColorArray()
 	{
+		// this is messed up bruh
 		var REDC:Int = 0;
 		var GREENC:Int = 0;
 		var BLUEC:Int = 0;
 		switch (char)
 		{
-			case 'bf', 'bf-car', 'bf-christmas', 'bf-cscared', 'bf-pixel':
+			case 'bf' | 'bf-pixel':
 				REDC = 30;
 				GREENC = 149;
 				BLUEC = 179;
@@ -78,7 +80,7 @@ class HealthIcon extends FlxSprite
 				REDC = 158;
 				GREENC = 190;
 				BLUEC = 45;
-			case 'mom', 'mom-car':
+			case 'mom':
 				REDC = 199;
 				GREENC = 60;
 				BLUEC = 120;
@@ -86,7 +88,7 @@ class HealthIcon extends FlxSprite
 				REDC = 159;
 				GREENC = 70;
 				BLUEC = 194;
-			case 'senpai', 'senpai-angry':
+			case 'senpai':
 				REDC = 244;
 				GREENC = 148;
 				BLUEC = 80;
@@ -98,11 +100,11 @@ class HealthIcon extends FlxSprite
 				REDC = 133;
 				GREENC = 0;
 				BLUEC = 60;
-			case 'parents-christmas':
+			case 'parents':
 				REDC = 192;
 				GREENC = 37;
 				BLUEC = 187;
-			case 'monster', 'monster-christmas':
+			case 'monster':
 				REDC = 224;
 				GREENC = 221;
 				BLUEC = 42;

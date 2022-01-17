@@ -237,7 +237,7 @@ class ChartingState extends MusicBeatState
 		check_mute_inst.checked = false;
 		check_mute_inst.callback = function()
 		{
-			var vol:Float = 1;
+			var vol:Float = 0.7;
 
 			if (check_mute_inst.checked)
 				vol = 0;
@@ -784,7 +784,7 @@ class ChartingState extends MusicBeatState
 		bpmTxt.text = '-=Song Info=-'
 			+ ""
 			+ "\nDuration: "
-			+ SongPosition.getCurrentDuration(FlxG.sound.music.time, FlxG.sound.music.length)
+			+ SongPosition.getCurrentDuration(FlxG.sound.music.time)
 			+ " / "
 			+ SongPosition.getMaxDuration(FlxG.sound.music.length)
 			+ "\nSection: "
@@ -956,13 +956,13 @@ class ChartingState extends MusicBeatState
 	{
 		if (check_mustHitSection.checked)
 		{
-			leftIcon.animation.play(_song.player1);
-			rightIcon.animation.play(_song.player2);
+			leftIcon.changeDaIcon(_song.player1);
+			rightIcon.changeDaIcon(_song.player2);
 		}
 		else
 		{
-			leftIcon.animation.play(_song.player2);
-			rightIcon.animation.play(_song.player1);
+			leftIcon.changeDaIcon(_song.player2);
+			rightIcon.changeDaIcon(_song.player1);
 		}
 	}
 
