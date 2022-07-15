@@ -1,0 +1,18 @@
+If you feel tired of playing this game--please take a break for a while!
+CDEV-Engine--With modding support!
+Friday Night Funkin'--The full ass game.
+Press F11 to enable fullscreen mode!
+If you found a bug in this engine, please report--the bug on my discord or my twitter dm!
+Funkin Forever.
+Try to change your note offset on the options menu!
+You're currently playing--FNF CDEV-Engine v.0.1.2
+HOPEFULLY easy to modding--this engine source code.
+Does someone actually reads this?
+You can Toggle / Disable this engine's watermark.
+Man--I love dark mode.
+The "Song Speed" mod is still on BETA Testing.--May cause some Songs looping.
+Softcoded Characters!
+DARK MODE.--YES.
+Rewritten Inputs!
+Pro tip:--Press the notes.
+

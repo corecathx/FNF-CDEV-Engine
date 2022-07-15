@@ -1,0 +1,40 @@
+{
+	"tracks": [
+		"bopeebo",
+		"fresh",
+		"dadbattle"
+	],
+	"weekTxtImgPath": "week1",
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				170.5,
+				-152
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				284.5,
+				-94
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				639.5,
+				125
+			]
+		}
+	],
+	"weekCharacters": [
+		"dad",
+		"gf",
+		"bf"
+	],
+	"weekName": "Daddy Dearest"
+}

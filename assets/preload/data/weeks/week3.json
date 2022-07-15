@@ -1,0 +1,40 @@
+{
+	"weekTxtImgPath": "week3",
+	"tracks": [
+		"Pico",
+		"Philly",
+		"Blammed"
+	],
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"position": [
+				119.5,
+				107.5
+			],
+			"flipX": true
+		},
+		{
+			"scale": 0.5,
+			"position": [
+				375.5,
+				-101
+			],
+			"flipX": false
+		},
+		{
+			"scale": 0.5,
+			"position": [
+				590.5,
+				120
+			],
+			"flipX": false
+		}
+	],
+	"weekCharacters": [
+		"pico",
+		"gf",
+		"bf"
+	],
+	"weekName": "Pico"
+}

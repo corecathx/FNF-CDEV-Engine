@@ -1,0 +1,40 @@
+{
+	"weekTxtImgPath": "week5",
+	"tracks": [
+		"Cocoa",
+		"Eggnog",
+		"Winter Horrorland"
+	],
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"position": [
+				-165,
+				-148
+			],
+			"flipX": false
+		},
+		{
+			"scale": 0.5,
+			"position": [
+				238.5,
+				-117.5
+			],
+			"flipX": false
+		},
+		{
+			"scale": 0.5,
+			"position": [
+				639.5,
+				125
+			],
+			"flipX": false
+		}
+	],
+	"weekCharacters": [
+		"parents-christmas",
+		"gf-christmas",
+		"bf-christmas"
+	],
+	"weekName": "Red Snow"
+}

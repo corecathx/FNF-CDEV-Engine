@@ -1,0 +1,40 @@
+{
+	"tracks": [
+		"Ugh",
+		"Guns",
+		"Stress"
+	],
+	"weekTxtImgPath": "week7",
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				381,
+				-210
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": true,
+			"position": [
+				192,
+				-15.5
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				580.5,
+				102
+			]
+		}
+	],
+	"weekCharacters": [
+		"pico-speaker",
+		"tankman",
+		"bf-holding-gf"
+	],
+	"weekName": "Tankman"
+}

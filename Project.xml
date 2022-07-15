@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin' CoreDEV-Engine" file="CDEV-Engine" packageName="com.ninjamuffin99.cdevfunkin" package="com.ninjamuffin99.cdevfunkin" main="Main" version="0.2.7.1" company="CoreDEV-Engine" />
+	<app title="Friday Night Funkin' CDEV Engine" file="CDEV Engine" packageName="com.core5570r.cdevengine" package="com.core5570r.cdevengine" main="Main" version="0.2.8" company="CoreCat-Developer" />
 
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
@@ -47,6 +47,9 @@
 	<!-- <define name="PRELOAD_ALL" /> -->
 	<define name="PRELOAD_ALL" unless="web" />
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
+
+	<!--CDEV Engine's define names-->
+	<define name="ALLOW_MODS" if="desktop"/>
 	
 	<section if="PRELOAD_ALL">
 		<library name="songs"    preload="true" />
@@ -58,6 +61,7 @@
 		<library name="week4"    preload="true" />
 		<library name="week5"    preload="true" />
 		<library name="week6"    preload="true" />
+		<library name="week7"    preload="true" />
 	</section>
 	
 	<section if="NO_PRELOAD_ALL">
@@ -70,6 +74,7 @@
 		<library name="week4"    preload="false" />
 		<library name="week5"    preload="false" />
 		<library name="week6"    preload="false" />
+		<library name="week7"    preload="false" />
 	</section>
 	
 	<assets path="assets/songs"    library="songs"    exclude="*.ogg" if="web"/>
@@ -90,9 +95,12 @@
 	<assets path="assets/week5"    library="week5"    exclude="*.mp3" unless="web"/>
 	<assets path="assets/week6"    library="week6"    exclude="*.ogg" if="web"/>
 	<assets path="assets/week6"    library="week6"    exclude="*.mp3" unless="web"/>
-	
+	<assets path="assets/week7"    library="week7"    exclude="*.ogg" if="web"/>
+	<assets path="assets/week7"    library="week7"    exclude="*.mp3" unless="web"/>
+
 	<assets path='example_mods' rename='cdev-mods' embed='false' if="desktop"/>
 	<assets path='art/readme.txt' rename='do NOT readme.txt'  />
+
 	<!-- <template path='mods' /> -->
 	
 	<assets path="CHANGELOG.md" rename='changelog.txt'/>
@@ -112,13 +120,17 @@
 	<haxelib name="flixel-addons" />
 	<haxelib name="hscript" />
 
+	
+
 	<!--In case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
 	<haxelib name="newgrounds"/>
 	<haxelib name="faxe" if='switch'/>
 	<haxelib name="polymod"/>
+	<!--<haxelib name="linc_luajit" if="ALLOW_LUA"/>-->
 	<haxelib name="discord_rpc" if="desktop"/>
-	<!-- <haxelib name="hxcpp-debug-server" if="desktop"/> -->
+	<!--<haxelib name="linc_luajit" if="windows"/>-->
+	<!--<haxelib name="hxcpp-debug-server" if="desktop"/>-->
 
 	<!-- <haxelib name="markdown" /> -->
 	<!-- <haxelib name="HtmlParser" /> -->

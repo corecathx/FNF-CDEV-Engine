@@ -1,6 +1,9 @@
 package;
 
-import FPS_Mem.CDevFPSMem;
+import openfl.display.Window;
+import states.TitleState;
+import flixel.system.scaleModes.StageSizeScaleMode;
+import engineutils.FPS_Mem.CDevFPSMem;
 import flixel.FlxGame;
 import flixel.FlxState;
 import openfl.Assets;
@@ -9,7 +12,7 @@ import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
 #if desktop
-import Discord.DiscordClient;
+import engineutils.Discord.DiscordClient;
 #end
 import lime.app.Application;
 import flixel.FlxG;
@@ -17,9 +20,9 @@ class Main extends Sprite
 {
 	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
-	var initialState:Class<FlxState> = TitleState; // The FlxState the game starts with.
+	var initialState:Class<FlxState> = states.TitleState; // The FlxState the game starts with.
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
-	var framerate:Int = 120; // How many frames per second the game should run at.
+	var framerate:Int = 60; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
 	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
 	public static var fps_mem:CDevFPSMem;
@@ -72,12 +75,11 @@ class Main extends Sprite
 		}
 
 		
-
-		#if !debug
-		initialState = TitleState;
+		#if cpp
+			initialState = TitleState;
 		#end
 		#if desktop
-			DiscordClient.initialize();
+			//DiscordClient.initialize();
 				
 				Application.current.onExit.add (function (exitCode) {
 						DiscordClient.shutdown();
@@ -92,6 +94,11 @@ class Main extends Sprite
 		addChild(fps_mem);
 		fps_mem.visible = FlxG.save.data.performTxt;
 		#end
+		FlxG.fixedTimestep = false;
+		FlxG.camera.antialiasing = FlxG.save.data.antialiasing;
+
+		//FlxG.mouse.load(Paths.image('cdev-cursor','preload'),0.5);
+		//Application.current.window.stage.color = null;
 	}
 
 	public function setFpsVisibility(fpsEnabled:Bool):Void {

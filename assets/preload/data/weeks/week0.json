@@ -1,0 +1,38 @@
+{
+	"tracks": [
+		"tutorial"
+	],
+	"weekTxtImgPath": "week0",
+	"charSetting": [
+		{
+			"scale": 0.4,
+			"flipX": false,
+			"position": [
+				-74.5,
+				107
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				246.5,
+				-95
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				596.5,
+				122
+			]
+		}
+	],
+	"weekCharacters": [
+		"",
+		"gf",
+		"bf"
+	],
+	"weekName": "Girlfriend Tutorial"
+}

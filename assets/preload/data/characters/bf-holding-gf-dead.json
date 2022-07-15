@@ -1,0 +1,56 @@
+{
+	"animations": [
+		{
+			"offset": [
+				37,
+				-3
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "deathLoop",
+			"looping": true,
+			"animName": "BF Dead with GF Loop"
+		},
+		{
+			"offset": [
+				37,
+				14
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "firstDeath",
+			"looping": false,
+			"animName": "BF Dies with GF"
+		},
+		{
+			"offset": [
+				37,
+				28
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "deathConfirm",
+			"looping": false,
+			"animName": "RETRY confirm holding gf"
+		}
+	],
+	"usingAntialiasing": true,
+	"spritePath": "characters/bfHoldingGF-DEAD",
+	"charXYPosition": [
+		0,
+		350
+	],
+	"iconName": "bf",
+	"flipX": true,
+	"healthBarColor": [
+		49,
+		176,
+		209
+	],
+	"camXYPos": [
+		0,
+		0
+	],
+	"singHoldTime": 4,
+	"charScale": 1.05
+}

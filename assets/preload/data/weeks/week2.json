@@ -1,0 +1,40 @@
+{
+	"weekTxtImgPath": "week2",
+	"tracks": [
+		"Spookeez",
+		"South",
+		"Monster"
+	],
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"position": [
+				73,
+				13.5
+			],
+			"flipX": false
+		},
+		{
+			"scale": 0.5,
+			"position": [
+				284.5,
+				-94
+			],
+			"flipX": false
+		},
+		{
+			"scale": 0.5,
+			"position": [
+				639.5,
+				125
+			],
+			"flipX": false
+		}
+	],
+	"weekCharacters": [
+		"spooky",
+		"gf",
+		"bf"
+	],
+	"weekName": "Spooky Month"
+}

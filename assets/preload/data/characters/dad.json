@@ -1,0 +1,142 @@
+{
+	"animations": [
+		{
+			"offset": [
+				-9,
+				10
+			],
+			"looping": false,
+			"animPrefix": "singLEFT",
+			"fpsValue": 24,
+			"animName": "Dad Sing Note LEFT",
+			"indices": []
+		},
+		{
+			"offset": [
+				0,
+				-30
+			],
+			"looping": false,
+			"animPrefix": "singDOWN",
+			"fpsValue": 24,
+			"animName": "Dad Sing Note DOWN",
+			"indices": []
+		},
+		{
+			"offset": [
+				-6,
+				50
+			],
+			"looping": false,
+			"animPrefix": "singUP",
+			"fpsValue": 24,
+			"animName": "Dad Sing Note UP",
+			"indices": []
+		},
+		{
+			"offset": [
+				0,
+				27
+			],
+			"looping": false,
+			"animPrefix": "singRIGHT",
+			"fpsValue": 24,
+			"animName": "Dad Sing Note RIGHT",
+			"indices": []
+		},
+		{
+			"offset": [
+				0,
+				0
+			],
+			"looping": false,
+			"animPrefix": "idle",
+			"fpsValue": 24,
+			"animName": "Dad idle dance",
+			"indices": []
+		},
+		{
+			"offset": [
+				0,
+				0
+			],
+			"looping": true,
+			"fpsValue": 24,
+			"animPrefix": "idle-looping",
+			"indices": [
+				10,
+				11,
+				12,
+				12
+			],
+			"animName": "Dad idle dance"
+		},
+		{
+			"offset": [
+				-9,
+				10
+			],
+			"looping": true,
+			"fpsValue": 24,
+			"animPrefix": "singLEFT-looping",
+			"indices": [
+				12,
+				13,
+				14,
+				15
+			],
+			"animName": "Dad Sing Note LEFT"
+		},
+		{
+			"offset": [
+				0,
+				27
+			],
+			"looping": true,
+			"fpsValue": 24,
+			"animPrefix": "singRIGHT-looping",
+			"indices": [
+				15,
+				16,
+				17,
+				18
+			],
+			"animName": "Dad Sing Note RIGHT"
+		},
+		{
+			"offset": [
+				-6,
+				50
+			],
+			"looping": true,
+			"fpsValue": 24,
+			"animPrefix": "singUP-looping",
+			"indices": [
+				56,
+				57,
+				58,
+				59
+			],
+			"animName": "Dad Sing Note UP"
+		}
+	],
+	"usingAntialiasing": true,
+	"spritePath": "characters/DADDY_DEAREST",
+	"charXYPosition": [
+		0,
+		0
+	],
+	"iconName": "dad",
+	"flipX": false,
+	"healthBarColor": [
+		175,
+		102,
+		206
+	],
+	"camXYPos": [
+		0,
+		0
+	],
+	"singHoldTime": 6.1,
+	"charScale": 1
+}

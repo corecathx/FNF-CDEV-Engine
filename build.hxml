@@ -1,0 +1,5 @@
+#-main source/MenuState
+#-neko bin/text.n 
+#lime test neko
+-main Main.hx 
+#-cmd neko Test.n

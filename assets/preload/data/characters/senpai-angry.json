@@ -1,0 +1,78 @@
+{
+	"animations": [
+		{
+			"fpsValue": 24,
+			"animName": "Angry Senpai Idle",
+			"looping": false,
+			"animPrefix": "idle",
+			"offset": [
+				2,
+				0
+			],
+			"indices": []
+		},
+		{
+			"fpsValue": 24,
+			"animName": "Angry Senpai UP NOTE",
+			"looping": false,
+			"animPrefix": "singUP",
+			"offset": [
+				5,
+				37
+			],
+			"indices": []
+		},
+		{
+			"fpsValue": 24,
+			"animName": "Angry Senpai LEFT NOTE",
+			"looping": false,
+			"animPrefix": "singLEFT",
+			"offset": [
+				40,
+				0
+			],
+			"indices": []
+		},
+		{
+			"fpsValue": 24,
+			"animName": "Angry Senpai RIGHT NOTE",
+			"looping": false,
+			"animPrefix": "singRIGHT",
+			"offset": [
+				0,
+				0
+			],
+			"indices": []
+		},
+		{
+			"fpsValue": 24,
+			"animName": "Angry Senpai DOWN NOTE",
+			"looping": false,
+			"animPrefix": "singDOWN",
+			"offset": [
+				14,
+				0
+			],
+			"indices": []
+		}
+	],
+	"healthBarColor": [
+		255,
+		170,
+		111
+	],
+	"spritePath": "characters/senpai",
+	"singHoldTime": 4,
+	"charXYPosition": [
+		150,
+		360
+	],
+	"flipX": false,
+	"charScale": 6,
+	"usingAntialiasing": false,
+	"camXYPos": [
+		0,
+		0
+	],
+	"iconName": "senpai"
+}

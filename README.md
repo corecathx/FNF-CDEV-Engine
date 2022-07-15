@@ -1,6 +1,6 @@
-# CoreDEV-Engine
+# CDEV Engine
 
-This is the repository for Friday Night Funkin': CoreDEV-Engine.
+This is the repository for Friday Night Funkin': CDEV Engine.
 
 ## Build instructions
 
@@ -31,23 +31,7 @@ At the moment, you can optionally fix the transition bug in songs with zoomed ou
 
 ### Ignored files
 
-ninjamuffin99 gitignored the API keys for the game, so that no one can nab them and post fake highscores on the leaderboards. But because of that the game
-doesn't compile without it.
-
-Just make a file in `/source` and call it `APIStuff.hx`, and copy paste this into it
-
-```haxe
-package;
-
-class APIStuff
-{
-	public static var API:String = "";
-	public static var EncKey:String = "";
-}
-
-```
-
-and you should be good to go there.
+nah, you dont need to create APIStuff.hx file anymore.
 
 ### Compiling game
 
@@ -55,27 +39,23 @@ Once you have all those installed, it's pretty easy to compile the engine. You j
 
 To compile the engine on your desktop (Windows, Mac, Linux), you need to install Visual Studio Community 2019.
 While installing VSC, don't click on any of the options to install workloads. Instead, go to the individual components tab and choose the following:
-* MSVC v141 - VS 2017 C++ x64/x86 build tools
 * MSVC v142 - VS 2019 C++ x64/x86 build tools
 * Windows SDK (10.0.17763.0)
-* C++ Profiling tools
-* C++ CMake tools for windows
-* C++ ATL for v142 build tools (x86 & x64)
 
-It will took 7GB of your computer disk space, so make sure you have more than 7GB on your computer before installing those components.
-The executables are located on export/ folder in the root of the project after it was compiled.
+The executables are located on export/ folder in the root of your project after it was compiled.
 
 Once everything has done, have fun with the engine!
 
 ## Credits
 
-CoreDEV-Engine
-- [CoreDev](https://twitter.com/itz_core5570r) - Programmer of this engine, additional assets.
+CDEV Engine
+- [CoreDev](https://twitter.com/core5570r) - Programmer of this engine, additional assets.
 
 Codes
-- Shadow Mario - Downscroll Codes, Custom songs and charts / mods folder, and health icon offsets
-- RozeBud - KeyBinds menu codes cuz idk how to make custom keybinds lmao.
-- KadeDev - Some of the note press calculations codes, and Story Menu Characters codes
+- [Shadow Mario](https://twitter.com/Shadow_Mario_) - Downscroll Code, Custom songs and charts / mods folder support, and some Week 7 Code.
+- [YoshiCrafter29](https://twitter.com/YoshiCrafter29) - Week 7 cutscene codes.
+- [RozeBud](https://twitter.com/helpme_thebigt) - KeyBinds menu codes.
+- [KadeDev](https://twitter.com/kade0912) - Song Speed Code, and Botplay code.
 
 Friday Night Funkin'
 - [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programmer

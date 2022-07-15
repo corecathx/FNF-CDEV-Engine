@@ -1,0 +1,158 @@
+{
+	"animations": [
+		{
+			"offset": [
+				0,
+				0
+			],
+			"looping": false,
+			"animPrefix": "idle",
+			"fpsValue": 24,
+			"animName": "Mom Idle",
+			"indices": []
+		},
+		{
+			"offset": [
+				250,
+				-23
+			],
+			"looping": false,
+			"animPrefix": "singLEFT",
+			"fpsValue": 24,
+			"animName": "Mom Left Pose",
+			"indices": []
+		},
+		{
+			"offset": [
+				10,
+				-60
+			],
+			"looping": false,
+			"animPrefix": "singRIGHT",
+			"fpsValue": 24,
+			"animName": "Mom Pose Left",
+			"indices": []
+		},
+		{
+			"offset": [
+				20,
+				-160
+			],
+			"looping": false,
+			"animPrefix": "singDOWN",
+			"fpsValue": 24,
+			"animName": "MOM DOWN POSE",
+			"indices": []
+		},
+		{
+			"offset": [
+				14,
+				71
+			],
+			"looping": false,
+			"animPrefix": "singUP",
+			"fpsValue": 24,
+			"animName": "Mom Up Pose",
+			"indices": []
+		},
+		{
+			"offset": [
+				0,
+				0
+			],
+			"indices": [
+				10,
+				11,
+				12,
+				13
+			],
+			"fpsValue": 24,
+			"animPrefix": "idle-looping",
+			"looping": true,
+			"animName": "Mom Idle"
+		},
+		{
+			"offset": [
+				250,
+				-23
+			],
+			"indices": [
+				6,
+				7,
+				8,
+				9
+			],
+			"fpsValue": 24,
+			"animPrefix": "singLEFT-looping",
+			"looping": true,
+			"animName": "Mom Left Pose"
+		},
+		{
+			"offset": [
+				14,
+				71
+			],
+			"indices": [
+				11,
+				12,
+				13,
+				14
+			],
+			"fpsValue": 24,
+			"animPrefix": "singUP-looping",
+			"looping": true,
+			"animName": "Mom Up Pose"
+		},
+		{
+			"offset": [
+				10,
+				-60
+			],
+			"indices": [
+				6,
+				7,
+				8,
+				9
+			],
+			"fpsValue": 24,
+			"animPrefix": "singRIGHT-looping",
+			"looping": true,
+			"animName": "Mom Pose Left"
+		},
+		{
+			"offset": [
+				20,
+				-160
+			],
+			"indices": [
+				11,
+				12,
+				13,
+				14
+			],
+			"fpsValue": 24,
+			"animPrefix": "singDOWN-looping",
+			"looping": true,
+			"animName": "MOM DOWN POSE"
+		}
+	],
+	"usingAntialiasing": true,
+	"spritePath": "characters/momCar",
+	"charXYPosition": [
+		0,
+		0
+	],
+	"iconName": "mom",
+	"flipX": false,
+	"healthBarColor": [
+		216,
+		85,
+		142
+	],
+	"camXYPos": [
+		0,
+		0
+	],
+	"singHoldTime": 4,
+	"charScale": 1
+}

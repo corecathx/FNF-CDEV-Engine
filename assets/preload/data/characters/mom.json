@@ -1,0 +1,78 @@
+{
+	"animations": [
+		{
+			"looping": false,
+			"offset": [
+				0,
+				0
+			],
+			"animPrefix": "idle",
+			"fpsValue": 24,
+			"animName": "Mom Idle",
+			"indices": []
+		},
+		{
+			"looping": false,
+			"offset": [
+				250,
+				-23
+			],
+			"animPrefix": "singLEFT",
+			"fpsValue": 24,
+			"animName": "Mom Left Pose",
+			"indices": []
+		},
+		{
+			"looping": false,
+			"offset": [
+				10,
+				-60
+			],
+			"animPrefix": "singRIGHT",
+			"fpsValue": 24,
+			"animName": "Mom Pose Left",
+			"indices": []
+		},
+		{
+			"looping": false,
+			"offset": [
+				20,
+				-160
+			],
+			"animPrefix": "singDOWN",
+			"fpsValue": 24,
+			"animName": "MOM DOWN POSE",
+			"indices": []
+		},
+		{
+			"looping": false,
+			"offset": [
+				14,
+				71
+			],
+			"animPrefix": "singUP",
+			"fpsValue": 24,
+			"animName": "Mom Up Pose",
+			"indices": []
+		}
+	],
+	"usingAntialiasing": true,
+	"spritePath": "characters/Mom_Assets",
+	"charXYPosition": [
+		0,
+		0
+	],
+	"iconName": "mom",
+	"flipX": false,
+	"healthBarColor": [
+		216,
+		85,
+		142
+	],
+	"camXYPos": [
+		0,
+		0
+	],
+	"singHoldTime": 4,
+	"charScale": 1
+}

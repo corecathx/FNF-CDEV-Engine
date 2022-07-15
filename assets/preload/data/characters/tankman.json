@@ -1,0 +1,144 @@
+{
+	"animations": [
+		{
+			"offset": [
+				0,
+				0
+			],
+			"looping": false,
+			"fpsValue": 24,
+			"animPrefix": "idle",
+			"indices": [],
+			"animName": "Tankman Idle Dance"
+		},
+		{
+			"offset": [
+				48,
+				54
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "singUP",
+			"looping": false,
+			"animName": "Tankman UP note 1"
+		},
+		{
+			"offset": [
+				76,
+				-101
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "singDOWN",
+			"looping": false,
+			"animName": "Tankman DOWN note 1"
+		},
+		{
+			"offset": [
+				84,
+				-14
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "singLEFT",
+			"looping": false,
+			"animName": "Tankman Right Note 1"
+		},
+		{
+			"offset": [
+				-21,
+				-31
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "singRIGHT",
+			"looping": false,
+			"animName": "Tankman Note Left 1"
+		},
+		{
+			"offset": [
+				-15,
+				-8
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "ugh",
+			"looping": false,
+			"animName": "TANKMAN UGH"
+		},
+		{
+			"offset": [
+				1,
+				16
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "singDOWN-alt",
+			"looping": false,
+			"animName": "PRETTY GOOD tankman"
+		},
+		{
+			"offset": [
+				48,
+				54
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "singUPmiss",
+			"looping": false,
+			"animName": "Tankman UP note MISS"
+		},
+		{
+			"offset": [
+				76,
+				-101
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "singDOWNmiss",
+			"looping": false,
+			"animName": "Tankman DOWN note MISS"
+		},
+		{
+			"offset": [
+				84,
+				-14
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "singLEFTmiss",
+			"looping": false,
+			"animName": "Tankman Right Note MISS"
+		},
+		{
+			"offset": [
+				-21,
+				-31
+			],
+			"indices": [],
+			"fpsValue": 24,
+			"animPrefix": "singRIGHTmiss",
+			"looping": false,
+			"animName": "Tankman Note Left MISS"
+		}
+	],
+	"usingAntialiasing": true,
+	"spritePath": "characters/tankmanCaptain",
+	"charXYPosition": [
+		0,
+		240
+	],
+	"iconName": "tankman",
+	"flipX": true,
+	"healthBarColor": [
+		225,
+		225,
+		225
+	],
+	"camXYPos": [
+		0,
+		0
+	],
+	"singHoldTime": 4,
+	"charScale": 1
+}
