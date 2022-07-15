@@ -789,7 +789,7 @@ class FreeplayState extends MusicBeatState
 
 		if (datePlayed == 'null')
 		{
-			datePlayed = "You have'nt played this song yet!";
+			datePlayed = "You haven't played this song yet!";
 		}
 		songInfo.text = "Song: " + songName.replace('-', ' ') + "\n" + "Last played time: " + datePlayed;
 		songInfo.x = (FlxG.width - songInfo.width) - 20;
