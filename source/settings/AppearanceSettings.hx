@@ -258,11 +258,11 @@ class AppearanceSettings extends substates.MusicBeatSubstate
 			case 'Smooth Motions' | 'Dont Smooth Motions':
 				text = "Makes this engine smooth while doing transitions!\n(Disable this if you're sensitive to motions)";
 			case 'Show Opponent Notes' | 'Hide Opponent Notes':
-				text = "Show / Hide the opponent's notes.\n(Requires 'Middlescroll')";
+				text = "Show / Hide the opponent's notes.\n(Requires 'Middlescroll'!)";
 			case 'Show Engine Watermark' | 'Hide Engine Watermark':
 				text = 'Whether to Show / Hide the watermark from this engine.';
 			case 'Show Strum Lane' | 'Hide Strum Lane':
-				text = "If enabled, it will show your strum lane.\n(Requires 'Middlescroll')";
+				text = "If enabled, it will show your strum lane.\n(Requires 'Middlescroll'!)";
 			case 'Antialiasing' | 'No Antialiasing':
 				text = "If disabled, the game graphics will not look as smooth,\nbut performance will increase.";
 			case 'Change Rating Position':
