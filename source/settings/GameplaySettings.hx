@@ -384,39 +384,39 @@ class GameplaySettings extends substates.MusicBeatSubstate
 			switch (options[curSelected])
 			{
 				case 'Downscroll' | 'Upscroll':
-					text = 'Downscroll = Notes spawning from top of the screen.\nUpscroll = Notes spawning from bottom of the screen.';
+					text = 'Downscroll = Notes spawn from the top of the screen.\nUpscroll = Notes spawn from the bottom of the screen.';
 				case 'Middlescroll' | 'No Middlescroll':
-					text = "Makes the opponent's notes disappear and centers your notes.";
+					text = "Centers your notes and hides the opponent's notes.";
 				case 'Show Note Delay' | 'Hide Note Delay':
 					text = 'Whether to Show or Hide the Note Delay counter above\nyour strum notes. (In Miliseconds)';
 				case 'Ghost Tapping' | 'No Ghost Tapping':
-					text = 'Allows you to press every direction\nwithout increasing your misses counter';
+					text = 'Allows you to press every direction\nwithout increasing your Misses.';
 				case 'Enable Hit Sound' | 'Disable Hit Sound':
-					text = 'If you pressed your note keybinds, it will\nplays a hit sound';
+					text = 'If you press your note keybinds, it will\nplay a hit sound.';
 				case 'Enable Reset Button' | 'Disable Reset Button':
 					text = 'Whether to enable or disable the reset button.\n Your current Reset Keybind: ' + FlxG.save.data.resetBind;
 				case 'Botplay Mode' | 'Not Botplay Mode':
-					text = 'If enabled, a bot will plays the song for you.';
+					text = 'If enabled, a bot will play the song for you.';
 				case 'Show Health Percent' | 'Hide Health Percent':
 					text = 'Whether to Show or Hide the Health Percent\nat the Score Text.';
 				case 'FPS Cap':
 					text = 'Choose how many frames per second that this engine should run at.\n(Current Value: ' + FlxG.save.data.fpscap + ")";
 				case 'Enable Note Impacts' | 'Disable Note Impacts':
-					text = 'If you hit "Sick!!" Rating, it will show impact effect at your\nNote strum line!';
+					text = 'If you hit a "Sick!!" Rating, it will show impact effect at your\nNote strum line!';
 				case 'Enable Song Time' | 'Disable Song Time':
 					text = 'Hide / Show the Song time (as a bar)';
 				case 'Flashing Lights' | 'No Flashing Lights':
 					text = 'Enable / Disable Flashing Lights.\n(Disable this if you sensitive to flashing lights!)';
 				case 'Camera Zooming' | 'No Camera Zooming':
-					text = 'Enable / Disable Camera zooming at every\n4th beats';
+					text = 'Enable / Disable Camera zooming every\n4th beat.';
 				case 'Camera Movements' | 'No Camera Movements':
 					text = 'If disabled, the camera wont move based on\n the current character animation';
 				case 'Note Offset':
 					text = "Change your notes offset. Press ENTER to start offset testing\n(Current Value: " + FlxG.save.data.offset + ")";
 				case 'Detailed Score Info' | 'Only Song Score':
-					text = 'If enabled, it will show your Score, Misses, and Accuracy\ninstead of just showing the Song Score only.';
+					text = 'If enabled, it will show the Score, Misses, and Accuracy\ninstead of just showing the Song Score.';
 			    case 'Auto Pause' | 'Do Not Auto Pause':
-					text = 'If enabled, the game will pauses by itself if the\ngame window become unfocused.';
+					text = 'If enabled, the game will pause by itself if the\ngame window becomes unfocused.';
 			}
 			versionSht.alpha = 1;
 			versionSht.text = text;
