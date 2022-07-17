@@ -154,12 +154,12 @@ class FreeplayState extends MusicBeatState
 		];
 
 		modDescs = [
-			'Randomizes your chart each time you loads a song.',
-			"If you missed a single note, it will triggers an instant gameover.",
+			'Randomizes your chart each time you load a song.',
+			"If you miss a single note, it will trigger an instant gameover.",
 			"Change your note scroll speed.\n(If it's at 1, it will be chart dependent.)",
 			"Change the speed of your song\n(BETA Testing! May cause some song looping below 1x speed.)",
-			"Set how much health that you'll get from hitting a note.",
-			"Set how much health that you'll losing from hitting a note.",
+			"Set how much health that you get from hitting a note.",
+			"Set how much health that you lose from missing a note.",
 			"Change the Multipiler of your combo."
 		];
 

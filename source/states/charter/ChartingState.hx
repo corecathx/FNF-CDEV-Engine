@@ -220,7 +220,7 @@ class ChartingState extends MusicBeatState
 		\n[Q] / [E] - Change the current note sustain length.
 		\n[A], [D] / Left, Right - Change section.
 		\nSHIFT + [W] / [S] - Scroll the strum line 2x faster.
-		\nSHIFT + Left Click - Put the arrow freely.
+		\nSHIFT + Left Click - Unlock cursor from grid.
 		\nCTRL + Left Click - Select an arrow.
 		\n[R] - Reset current section arrows.
 		\nALT + [R] - Clear all notes in this chart.";
