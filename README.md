@@ -1,7 +1,7 @@
 # CDEV Engine
 ![CDEV Engine Logo](art/CDEV-Engine-Logo.png)
 
-This is the repository for Friday Night Funkin': CDEV Engine.
+This is the repository of Friday Night Funkin': CDEV Engine.
 
 ## Build instructions
 
