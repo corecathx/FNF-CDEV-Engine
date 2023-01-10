@@ -1,5 +1,6 @@
 package engineutils;
 
+import cdev.CDevConfig;
 import flixel.util.FlxColor;
 import openfl.display.Stage;
 import flixel.system.scaleModes.BaseScaleMode;
@@ -56,12 +57,13 @@ class CDevFPSMem extends TextField
 			FlxG.save.flush();
 			game.Paths.destroyLoadedImages();
 		}
+
+		var engineText:String = (FlxG.save.data.engineWM ? "CDEV FNF v0.1.3": "");
+		var debugText:String = (CDevConfig.debug ? "[Debug version]" : "");
+		
 		if (visible)
 		{
-			if (FlxG.save.data.engineWM)
-				text = "FPS: " + times.length + "\nRAM: " + ramStr + "\nCDEV-FNF v0.1.2";
-			else
-				text = "FPS: " + times.length + "\nRAM: " + ramStr;
+			text = "FPS: " + times.length + "\nRAM: " + ramStr + '\n$engineText\n$debugText';
 		}
 
 		if (times.length < 30){

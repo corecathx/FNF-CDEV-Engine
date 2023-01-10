@@ -27,6 +27,7 @@ class GameplaySettings extends substates.MusicBeatSubstate
 		'Middlescroll',
 		'Ghost Tapping',
 		'Show Note Delay',
+		'Multiple Rating Sprite',
 		'Enable Hit Sound',
 		'Enable Reset Button',
 		'Botplay Mode',
@@ -48,6 +49,7 @@ class GameplaySettings extends substates.MusicBeatSubstate
 		'Show Note Delay',
 		'Ghost Tapping',
 		'Enable Hit Sound',
+		'Multiple Rating Sprite',
 		'Enable Reset Button',
 		'Botplay Mode',
 		'Show Health Percent',
@@ -193,6 +195,8 @@ class GameplaySettings extends substates.MusicBeatSubstate
 				FlxG.save.data.hitsound = !FlxG.save.data.hitsound;
 			case 'Middlescroll' | 'No Middlescroll':
 				FlxG.save.data.middlescroll = !FlxG.save.data.middlescroll;
+			case 'Multiple Rating Sprite' | 'Single Rating Sprite':
+				FlxG.save.data.multiRateSprite = !FlxG.save.data.multiRateSprite;
 			case 'Ghost Tapping' | 'No Ghost Tapping':
 				FlxG.save.data.ghost = !FlxG.save.data.ghost;
 			case 'Enable Reset Button' | 'Disable Reset Button':
@@ -325,6 +329,7 @@ class GameplaySettings extends substates.MusicBeatSubstate
 						FlxG.save.data.downscroll ? 'Downscroll' : 'Upscroll',
 						FlxG.save.data.middlescroll ? 'Middlescroll' : 'No Middlescroll',
 						FlxG.save.data.showDelay ? 'Show Note Delay' : 'Hide Note Delay',
+						FlxG.save.data.multiRateSprite ? 'Multiple Rating Sprite' : 'Single Rating Sprite',
 						FlxG.save.data.ghost ? 'Ghost Tapping' : 'No Ghost Tapping',
 						FlxG.save.data.hitsound ? 'Enable Hit Sound' : 'Disable Hit Sound',
 						FlxG.save.data.resetButton ? 'Enable Reset Button' : 'Disable Reset Button',
@@ -343,6 +348,7 @@ class GameplaySettings extends substates.MusicBeatSubstate
 				} else{
 					options = [
 						FlxG.save.data.showDelay ? 'Show Note Delay' : 'Hide Note Delay',
+						FlxG.save.data.multiRateSprite ? 'Multiple Rating Sprite' : 'Single Rating Sprite',
 						FlxG.save.data.ghost ? 'Ghost Tapping' : 'No Ghost Tapping',
 						FlxG.save.data.hitsound ? 'Enable Hit Sound' : 'Disable Hit Sound',
 						FlxG.save.data.resetButton ? 'Enable Reset Button' : 'Disable Reset Button',
@@ -362,6 +368,7 @@ class GameplaySettings extends substates.MusicBeatSubstate
 				FlxG.save.data.downscroll ? 'Downscroll' : 'Upscroll',
 				FlxG.save.data.showDelay ? 'Show Note Delay' : 'Hide Note Delay',
 				FlxG.save.data.middlescroll ? 'Middlescroll' : 'No Middlescroll',
+				FlxG.save.data.multiRateSprite ? 'Multiple Rating Sprite' : 'Single Rating Sprite',
 				FlxG.save.data.ghost ? 'Ghost Tapping' : 'No Ghost Tapping',
 				FlxG.save.data.hitsound ? 'Enable Hit Sound' : 'Disable Hit Sound',
 				FlxG.save.data.resetButton ? 'Enable Reset Button' : 'Disable Reset Button',
@@ -389,6 +396,8 @@ class GameplaySettings extends substates.MusicBeatSubstate
 					text = "Centers your notes and hides the opponent's notes.";
 				case 'Show Note Delay' | 'Hide Note Delay':
 					text = 'Whether to Show or Hide the Note Delay counter above\nyour strum notes. (In Miliseconds)';
+				case 'Multiple Rating Sprite' | 'Single Rating Sprite':
+					text = 'Whether to show multiple rating sprites when you press a note';
 				case 'Ghost Tapping' | 'No Ghost Tapping':
 					text = 'Allows you to press every direction\nwithout increasing your Misses.';
 				case 'Enable Hit Sound' | 'Disable Hit Sound':
@@ -402,7 +411,7 @@ class GameplaySettings extends substates.MusicBeatSubstate
 				case 'FPS Cap':
 					text = 'Choose how many frames per second that this engine should run at.\n(Current Value: ' + FlxG.save.data.fpscap + ")";
 				case 'Enable Note Impacts' | 'Disable Note Impacts':
-					text = 'If you hit a "Sick!!" Rating, it will show impact effect at your\nNote strum line!';
+					text = 'If you hit a "Sick!!" or "Perfect!!" Rating, it will show impact effect at your\nNote strum line!';
 				case 'Enable Song Time' | 'Disable Song Time':
 					text = 'Hide / Show the Song time (as a bar)';
 				case 'Flashing Lights' | 'No Flashing Lights':

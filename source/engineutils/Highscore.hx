@@ -1,5 +1,6 @@
 package engineutils;
 
+import game.CoolUtil;
 import flixel.FlxG;
 
 using StringTools;
@@ -49,12 +50,7 @@ class Highscore
 
 	public static function saveWeekScore(week:String, score:Int = 0, ?diff:Int = 0):Void
 	{
-
-		#if !switch
-		ng.NGio.postScore(score, week);
-		#end
-
-		var daWeek:String = formatSong( week, diff);
+		var daWeek:String = formatSong(week, diff);
 
 		if (songScores.exists(daWeek))
 		{
@@ -89,14 +85,14 @@ class Highscore
 			FlxG.save.flush();
 		}
 
-	public static function formatSong(song:String, diff:Int):String
+	public static function formatSong(song:String, diff:Int, ?dumbshit:Bool = false):String
 	{
 		var daSong:String = song.toLowerCase().replace(" ", "-");
 
-		if (diff == 0)
-			daSong += '-easy';
-		else if (diff == 2)
-			daSong += '-hard';
+		if (dumbshit)
+			return daSong;
+		daSong += "-"+CoolUtil.songDifficulties[diff];
+		trace(daSong);
 
 		return daSong;
 	}

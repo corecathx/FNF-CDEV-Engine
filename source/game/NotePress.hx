@@ -1,5 +1,6 @@
 package game;
 
+import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -23,7 +24,7 @@ class NotePress extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		if (animation.curAnim.finished)
+		if (animation.curAnim != null && animation.curAnim.finished)
 			kill();
 
 		super.update(elapsed);
@@ -32,7 +33,7 @@ class NotePress extends FlxSprite
 	var splashOffsets:Array<Float> = [-15,-10,-10,-10];
 	//y offsets
 	var splashOffset:Array<Float> = [5,10,-5,10];
-	public function prepareImage(x:Float, y:Float, note:Int = 0)
+	public function prepareImage(x:Float, y:Float, note:Int = 0, col:FlxColor = FlxColor.WHITE)
 	{
 		if (FlxG.save.data.noteRipples)
 			setPosition((x - Note.swagWidth * 0.95) + 30, (y - Note.swagWidth) + 30);
@@ -73,6 +74,10 @@ class NotePress extends FlxSprite
 		animation.play(daAnim, true);
 		if (!FlxG.save.data.noteRipples)
 			angle = FlxG.random.int(0,360);
+
+		if (FlxG.save.data.noteRipples){
+			color = col;
+		}
 
 		updateHitbox();
 		centerOffsets();

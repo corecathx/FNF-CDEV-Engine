@@ -6,6 +6,7 @@ using StringTools;
 
 class CoolUtil
 {
+	public static var songDifficulties:Array<String> = [];
 	public static var difficultyArray:Array<String> = ['EASY', "NORMAL", "HARD"];
 	public static var diffFormat:Array<String> = ['-easy', '', '-hard'];
 

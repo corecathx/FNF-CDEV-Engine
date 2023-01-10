@@ -1,5 +1,13 @@
 package cdev;
 
+import flixel.FlxObject;
+import flixel.FlxBasic;
+import flixel.math.FlxPoint;
+import haxe.io.Path;
+import flixel.util.FlxAxes;
+import game.Conductor;
+import game.Conductor.BPMChangeEvent;
+import flixel.ui.FlxButton;
 import lime.system.Clipboard;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
@@ -22,6 +30,47 @@ class CDevUtils
 	{
 	}
 
+	public function readChartJsons(songname:String, mod:Bool = false)
+	{
+		// difficulties are created based on the file's filename, ex: tutorial-hard.json , the difficulty is "hard";
+		var diffs:Array<String> = [];
+		var f:Array<String> = [];
+		var p:String = "";
+		if (!mod)
+		{
+			p = Paths.chartPath(songname);
+			f = FileSystem.readDirectory(Paths.chartPath(songname));
+		}
+		else
+		{
+			p = Paths.modChartPath(songname);
+			f = FileSystem.readDirectory(Paths.modChartPath(songname));
+		}
+
+		trace(p);
+		trace(f);
+
+		for (i in 0...f.length)
+		{
+			if (f[i].endsWith(".json"))
+			{
+				var a:String = f[i].replace(songname, "");
+				if (a.contains("-"))
+				{
+					var splittedName:Array<String> = a.replace(".json", "").split("-");
+
+					// taking the last array
+					diffs.push(splittedName[splittedName.length - 1]);
+				}
+				else
+				{
+					diffs.push("normal+");
+				}
+			}
+		}
+
+		return diffs;
+	}
 	public function bound(toConvert:Float, min:Float, max:Float):Float
 	{
 		return FlxMath.bound(toConvert, min, max); // ye
@@ -36,15 +85,59 @@ class CDevUtils
 		return txt;
 	}
 
+	/**
+	 * Moving the `obj1` to `obj2`'s center position
+	 * @param obj1 
+	 * @param obj2 
+	 * @param useFrameSize 
+	 */
+	public function moveToCenterOfSprite(obj1:FlxSprite, obj2:FlxSprite, ?useFrameSize:Bool)
+	{
+		if (useFrameSize)
+		{
+			obj1.setPosition((obj2.x + (obj2.frameWidth / 2) - (obj1.frameWidth / 2)), (obj2.y + (obj2.frameHeight / 2) - (obj1.frameHeight / 2)));
+		}
+		else
+		{
+			obj1.setPosition((obj2.x + (obj2.width / 2) - (obj1.width / 2)), (obj2.y + (obj2.height / 2) - (obj1.height / 2)));
+		}
+	}
+
+	/**
+	 * Centering `object` to screen
+	 * (This is different from FlxSprite.screenCenter())
+	 * @param object 			The object that you want to move
+	 * @param pos				X or Y (FlxAxes)
+	 */
+	public function objectScreenCenter(object:FlxSprite, ?pos:FlxAxes = null)
+	{
+		if (pos == null)
+		{
+			object.x = (FlxG.width / 2) - ((object.frameWidth * object.scale.x) / 2);
+			object.y = (FlxG.height / 2) - ((object.frameHeight * object.scale.y) / 2);
+		}
+
+		if (pos == X)
+			object.x = (FlxG.width / 2) - ((object.frameWidth * object.scale.x) / 2);
+
+		if (pos == Y)
+			object.y = (FlxG.height / 2) - ((object.frameHeight * object.scale.y) / 2);
+	}
+
+	public function setFlxButtonLabelOffset(object:FlxButton, x:Float, y:Float)
+	{
+		for (offset in object.labelOffsets)
+		{
+			offset.set(x, y);
+		}
+	}
+
 	// hi :) credit: Shadow Mario#9396
 	public function fileIsExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
 	{
 		#if ALLOW_MODS
-		for (i in 0...Paths.curModDir.length)
-		{
-			if (FileSystem.exists(Paths.mods(Paths.curModDir[i] + '/' + key)) || FileSystem.exists(Paths.mods(key)))
-				return true;
-		}
+		if (FileSystem.exists(Paths.mods(Paths.currentMod + '/' + key)) || FileSystem.exists(Paths.mods(key)))
+			return true;
 		#end
 
 		if (OpenFlAssets.exists(Paths.getPath(key, type)))
@@ -109,7 +202,8 @@ class CDevUtils
 		}
 	}
 
-	public function openURL(url:String){
+	public function openURL(url:String)
+	{
 		#if linux
 		Sys.command('/usr/bin/xdg-open', [url, "&"]);
 		#else

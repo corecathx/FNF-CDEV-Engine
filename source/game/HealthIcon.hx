@@ -23,6 +23,11 @@ class HealthIcon extends FlxSprite
 	private var isPlayer:Bool = false;
 	public var hasWinningIcon:Bool = false;
 
+	var first_x:Float = 0;
+	var first_y:Float = 0;
+	public var add_y:Float = 0;
+	public var add_x:Float = 0;
+
 	public function new(char:String = 'bf', isPlayer:Bool = false)
 	{
 		this.char = char;
@@ -46,7 +51,7 @@ class HealthIcon extends FlxSprite
 		//trace(file);
 
 		var testSprite:FlxSprite = new FlxSprite().loadGraphic(file);
-
+		
 		loadGraphic(file, true, 150, 150);
 
 		//winning icon
@@ -78,11 +83,19 @@ class HealthIcon extends FlxSprite
 		return char;
 	}
 
+	override public function setPosition(x:Float = 0.0, y:Float = 0.0):Void {
+		super.setPosition(x,y);
+		first_x = x;
+		first_y = y;
+	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
 		if (sprTracker != null)
-			setPosition(sprTracker.x + sprTracker.width + 10, sprTracker.y - 30);
+			setPosition(sprTracker.x + sprTracker.width + 10 + add_x, sprTracker.y - 30 + add_y);
+		else
+			setPosition(first_x+add_x,first_y+add_y);
 	}
 }

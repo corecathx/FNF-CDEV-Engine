@@ -1,5 +1,6 @@
 package game;
 
+import substates.GameOverSubstate;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -32,9 +33,9 @@ class Boyfriend extends Character
 				playAnim('idle', true, false, 10);
 			}
 
-			if (animation.curAnim.name == 'firstDeath' && animation.curAnim.finished)
+			if (animation.curAnim.name == "firstDeath" && animation.curAnim.finished)
 			{
-				playAnim('deathLoop');
+				playAnim("deathLoop");
 			}
 		}
 

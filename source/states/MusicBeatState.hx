@@ -37,6 +37,12 @@ class MusicBeatState extends FlxUIState
 		super.create();
 	}
 
+	override function onResize(width:Int, height:Int) 
+	{
+		super.onResize(width,height);
+		FlxG.resizeGame(Application.current.window.width, Application.current.window.height);
+	}
+
 	override function update(elapsed:Float)
 	{
 		//everyStep();
@@ -73,7 +79,7 @@ class MusicBeatState extends FlxUIState
 					lastChange = Conductor.bpmChangeMap[i];
 			}
 			
-			curStep = lastChange.stepTime + Math.floor((Conductor.rawTime - lastChange.songTime) / Conductor.stepCrochet);			
+			curStep = lastChange.stepTime + Math.floor((Conductor.rawTime - lastChange.songTime) / Conductor.stepCrochet);	
 		} else{
 			var lastChange:BPMChangeEvent = {
 				stepTime: 0,

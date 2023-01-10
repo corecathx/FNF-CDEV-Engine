@@ -64,7 +64,7 @@ class Conductor
 	}
 
 
-	public static function mapBPMChanges(song:SwagSong)
+	public static function mapBPMChanges(song:SwagSong)//, addToSongBPMTiming:Bool)
 	{
 		bpmChangeMap = [];
 
@@ -75,6 +75,7 @@ class Conductor
 		{
 			if(song.notes[i].changeBPM && song.notes[i].bpm != curBPM)
 			{
+				
 				curBPM = song.notes[i].bpm;
 				var event:BPMChangeEvent = {
 					stepTime: totalSteps,
@@ -82,6 +83,8 @@ class Conductor
 					bpm: curBPM
 				};
 				bpmChangeMap.push(event);
+
+				//SongBPMTiming.addTiming(songTime/(((60 / curBPM) * 1000)*(totalSteps%4)),curBPM,);
 			}
 
 			var deltaSteps:Int = song.notes[i].lengthInSteps;

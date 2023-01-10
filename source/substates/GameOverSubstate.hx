@@ -20,15 +20,18 @@ class GameOverSubstate extends MusicBeatSubstate
 
 	var week7GmOvSnd:FlxSound;
 
+	public static var deathCharacter:String = "bf";
+	public static var disableFlipX:Bool = false; //false= flipX, true= no flipX
+
+	public static var songBpm:Float = 100;
+
 	public function new(x:Float, y:Float)
 	{
 		var daStage = states.PlayState.curStage;
 		var daBf:String = '';
 		switch (daStage)
 		{
-			case 'school':
-				stageSuffix = '-pixel';
-			case 'schoolEvil':
+			case 'school', 'schoolEvil':
 				stageSuffix = '-pixel';
 		}
 		switch (PlayState.boyfriend.curCharacter){
@@ -37,27 +40,28 @@ class GameOverSubstate extends MusicBeatSubstate
 			case 'bf-holding-gf':
 				daBf = 'bf-holding-gf-dead';
 			default:
-				daBf = 'bf';
+				daBf = deathCharacter;
 		}
 		super();
 
 		game.Conductor.songPosition = 0;
 
 		bf = new game.Boyfriend(x, y, daBf);
+		if (disableFlipX) bf.flipX = false;
 		add(bf);
 
 		camFollow = new FlxObject(bf.getGraphicMidpoint().x, bf.getGraphicMidpoint().y, 1, 1);
 		add(camFollow);
 
-		FlxG.sound.play(game.Paths.sound('fnf_loss_sfx' + stageSuffix));
-		game.Conductor.changeBPM(100);
+		FlxG.sound.play(game.Paths.sound('fnf_loss_sfx' + stageSuffix, "shared"));
+		game.Conductor.changeBPM(songBpm);
 
 		// FlxG.camera.followLerp = 1;
 		// FlxG.camera.focusOn(FlxPoint.get(FlxG.width / 2, FlxG.height / 2));
 		FlxG.camera.scroll.set();
 		FlxG.camera.target = null;
 
-		bf.playAnim('firstDeath');
+		bf.playAnim("firstDeath");
 		if (PlayState.boyfriend.curCharacter == 'bf-holding-gf' && daStage == 'tank'){
 			week7GmOvSnd = FlxG.sound.play(Paths.sound('jeffGameover/jeffGameover-'+FlxG.random.int(1,25),'week7'));
 			week7GmOvSnd.pause();
@@ -87,11 +91,11 @@ class GameOverSubstate extends MusicBeatSubstate
 				FlxG.switchState(new states.FreeplayState());
 		}
 
-		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.curFrame == 12)
+		if (bf.animation.curAnim.name == "firstDeath" && bf.animation.curAnim.curFrame == 12)
 			FlxG.camera.follow(camFollow, LOCKON, 0.01);
 
-		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.finished){
-			FlxG.sound.playMusic(game.Paths.music('gameOver' + stageSuffix));
+		if (bf.animation.curAnim.name == "firstDeath" && bf.animation.curAnim.finished){
+			FlxG.sound.playMusic(game.Paths.music('gameOver' + stageSuffix, "shared"));
 		}
 			
 		if (FlxG.sound.music.playing && !changed && isWeek7)
@@ -102,10 +106,10 @@ class GameOverSubstate extends MusicBeatSubstate
 			}
 
 			if (week7GmOvSnd.playing){
-				FlxG.sound.music.fadeOut(1, 0.3);
+				FlxG.sound.music.fadeOut(0.5, 0.2);
 			}
 			if (!week7GmOvSnd.playing && played) {
-				FlxG.sound.music.fadeIn(1,0.3,1);
+				FlxG.sound.music.fadeIn(0.5,0.3,1);
 				changed = true;
 			}
 		}
@@ -117,7 +121,7 @@ class GameOverSubstate extends MusicBeatSubstate
 	override function beatHit()
 	{
 		super.beatHit();
-		bf.playAnim('deathLoop', true);
+		bf.playAnim("deathLoop", true);
 		FlxG.camera.zoom += 0.030;
 
 		FlxG.log.add('beat');
@@ -130,9 +134,10 @@ class GameOverSubstate extends MusicBeatSubstate
 		if (!isEnding)
 		{
 			isEnding = true;
-			bf.playAnim('deathConfirm', true);
+			bf.playAnim("deathConfirm", true);
+			GameOverSubstate.resetDeathStatus();
 			FlxG.sound.music.stop();
-			FlxG.sound.play(game.Paths.music('gameOverEnd' + stageSuffix));
+			FlxG.sound.play(game.Paths.music('gameOverEnd' + stageSuffix, "shared"));
 			new FlxTimer().start(0.7, function(tmr:FlxTimer)
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 2, false, function()
@@ -141,5 +146,13 @@ class GameOverSubstate extends MusicBeatSubstate
 				});
 			});
 		}
+	}
+
+	public static function resetDeathStatus()
+	{
+		deathCharacter = "bf";
+		disableFlipX = false; //false= flipX, true= no flipX
+		songBpm = 100;
+	
 	}
 }

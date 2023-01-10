@@ -1,40 +1,78 @@
 {
-	"tracks": [
-		"Satin Panties",
-		"High",
-		"Milf"
-	],
 	"weekTxtImgPath": "week4",
-	"charSetting": [
-		{
-			"scale": 0.5,
-			"flipX": false,
-			"position": [
-				214,
-				-126.5
-			]
-		},
-		{
-			"scale": 0.5,
-			"flipX": false,
-			"position": [
-				295.5,
-				-100
-			]
-		},
-		{
-			"scale": 0.5,
-			"flipX": false,
-			"position": [
-				634.5,
-				117
-			]
-		}
+	"disableFreeplay": false,
+	"tracks": [
+		"satin-panties",
+		"high",
+		"milf"
+	],
+	"weekDifficulties": [
+		"easy",
+		"normal",
+		"hard"
 	],
 	"weekCharacters": [
 		"mom",
-		"gf",
-		"bf"
+		"bf",
+		"gf"
 	],
-	"weekName": "Mommy must murder"
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"position": [
+				97,
+				-121.5
+			],
+			"flipX": false
+		},
+		{
+			"scale": 0.5,
+			"position": [
+				797.5,
+				106
+			],
+			"flipX": false
+		},
+		{
+			"scale": 0.5,
+			"position": [
+				298.5,
+				-112
+			],
+			"flipX": false
+		}
+	],
+	"freeplaySongs": [
+		{
+			"colors": [
+				220,
+				40,
+				120
+			],
+			"bpm": 120,
+			"character": "mom",
+			"song": "satin-panties"
+		},
+		{
+			"colors": [
+				220,
+				40,
+				120
+			],
+			"bpm": 120,
+			"character": "mom",
+			"song": "high"
+		},
+		{
+			"colors": [
+				220,
+				40,
+				120
+			],
+			"bpm": 120,
+			"character": "mom",
+			"song": "milf"
+		}
+	],
+	"weekName": "Mommy Must Murder"
 }

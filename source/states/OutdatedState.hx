@@ -8,6 +8,8 @@ import flixel.text.FlxText;
 import flixel.FlxG;
 class OutdatedState extends MusicBeatState{
     var selectionText:FlxText;
+    //i wanted to make a in game download for the updates so the player
+    //shouldn't have to download the engine from gamebanana
     override function create(){
         var bg:FlxSprite = new FlxSprite(0,0).loadGraphic(Paths.image('menuDesat', 'preload'));
         bg.scale.set(1.2,1.2);

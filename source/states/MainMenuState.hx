@@ -1,5 +1,6 @@
 package states;
 
+import modding.WeekData;
 import modding.ModPaths;
 import cdev.CDevConfig;
 import flixel.math.FlxMath;
@@ -21,7 +22,6 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import io.newgrounds.NG;
 import lime.app.Application;
 import game.Controls.KeyboardScheme;
 import openfl.Assets;
@@ -36,12 +36,12 @@ class MainMenuState extends MusicBeatState
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
 	#if !switch
-	var optionShit:Array<String> = ['story mode', 'freeplay', 'modding', 'youtube', 'donate', 'options'];
+	var optionShit:Array<String> = ['story mode', 'freeplay', 'modding', 'youtube', 'donate', 'options', 'about'];
 	#else
 	var optionShit:Array<String> = ['story mode', 'freeplay'];
 	#end
 
-	public static var coreEngineText:String = "CDEV Engine v0.1.2";
+	public static var coreEngineText:String = "CDEV Engine v"+CDevConfig.engineVersion;
 	public static var fnfVersionXD:String = "Friday Night Funkin' v0.2.8";
 
 	var lerpThing:Float = 0;
@@ -62,6 +62,7 @@ class MainMenuState extends MusicBeatState
 
 	override function create()
 	{
+		cdev.CDevConfig.setFPS(FlxG.save.data.fpscap);
 		Paths.destroyLoadedImages();
 		FlxG.save.flush();
 		FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
@@ -77,9 +78,11 @@ class MainMenuState extends MusicBeatState
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
 
-		if (!FlxG.sound.music.playing)
-		{
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+		if (FlxG.sound.music != null){
+			if (!FlxG.sound.music.playing)
+				{
+					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				}
 		}
 
 		persistentUpdate = persistentDraw = true;
@@ -129,7 +132,7 @@ class MainMenuState extends MusicBeatState
 			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
 			menuItem.animation.play('idle');
 			menuItem.ID = i;
-			menuItem.setGraphicSize(Std.int(menuItem.width * 0.8));
+			menuItem.setGraphicSize(Std.int(menuItem.width * 0.68));
 			//menuItem.screenCenter(X);
 			menuItems.add(menuItem);
 			menuItem.scrollFactor.set(0, 0.8);
@@ -200,6 +203,8 @@ class MainMenuState extends MusicBeatState
 		}
 
 		super.create();
+
+		WeekData.loadWeeks();
 	}
 
 	var selectedSomethin:Bool = false;
@@ -210,7 +215,7 @@ class MainMenuState extends MusicBeatState
 	var xPos:Float = 0;
 	var yPos:Float = 0;
 	var lerp:Float = 0;
-
+	
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music.playing)
@@ -237,7 +242,19 @@ class MainMenuState extends MusicBeatState
 				shitHold = 0;
 			}
 
-		lerp = cdev.CDevConfig.utils.bound(elapsed * 6, 0, 1);
+		if (FlxG.save.data.testMode){
+			if (FlxG.keys.pressed.CONTROL && FlxG.keys.pressed.ALT && FlxG.keys.justPressed.R){
+				@:privateAccess{
+					TitleState.initialized = false;
+					TitleState.closedState = false;
+				}
+				FlxG.sound.music.stop();
+				//FlxG.sound.music.destroy();
+				FlxG.resetGame();
+			}
+		}
+
+		lerp = cdev.CDevConfig.utils.bound(elapsed * 12, 0, 1);
 		//xPos = FlxMath.lerp(daCFPos.x, camFollow.x, lerp);
 		yPos = FlxMath.lerp(daCFPos.y, camFollow.y, lerp);
 		daCFPos.setPosition(xPos, yPos);
@@ -349,7 +366,7 @@ class MainMenuState extends MusicBeatState
 
 		var formattedTime:String = hours + ":" + minutes + '.';
 			
-		gameTimeElasped.text = "CDEV-Engine has been running for: "
+		gameTimeElasped.text = "CDEV Engine has been running for: "
 		+ cdev.SongPosition.getCurrentDuration(cdev.CDevConfig.elapsedGameTime) + '.'
 		+ '\nIt is currently '
 		+ formattedTime;
@@ -388,6 +405,8 @@ class MainMenuState extends MusicBeatState
 					FlxG.switchState(new OptionsState());
 				case 'modding':
 					FlxG.switchState(new modding.ModdingState());
+				case 'about':
+					FlxG.switchState(new AboutState());
 			}
 		}
 

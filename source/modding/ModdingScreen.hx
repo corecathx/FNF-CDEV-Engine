@@ -22,13 +22,14 @@ import game.*;
 
 class ModdingScreen extends states.MusicBeatState
 {
-	var options:Array<String> = ['Character Editor', 'Stage Editor', 'Week Editor'];
+	var options:Array<String> = ['Character Editor', 'Stage Editor', 'Week Editor'/*, 'Add Event Script' no*/];
 	var curSelected:Int = 0;
 	var grpMenu:FlxTypedGroup<Alphabet>;
 	var menuBG:FlxSprite;
 
 	override function create()
 	{
+		Paths.currentMod = Paths.curModDir[0];
 		FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
 		FlxG.sound.volumeDownKeys = [MINUS, NUMPADMINUS];
 		FlxG.sound.volumeUpKeys = [PLUS, NUMPADPLUS];
@@ -63,7 +64,7 @@ class ModdingScreen extends states.MusicBeatState
 		bottomPanel.alpha = 0.8;
 		add(bottomPanel);
 
-		var scoreText:FlxText = new FlxText(50, bottomPanel.y + 20, FlxG.width, 'Current Mod: ' + Paths.curModDir[0], 28);
+		var scoreText:FlxText = new FlxText(50, bottomPanel.y + 20, FlxG.width, 'Current Mod: ' + Paths.currentMod, 28);
 		scoreText.setFormat(Paths.font("vcr.ttf"), 30, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		scoreText.borderSize = 2;
 
@@ -95,10 +96,12 @@ class ModdingScreen extends states.MusicBeatState
 					theState.moddingMode = true;
 					FlxG.switchState(theState);
 				case 'Stage Editor':
-					FlxG.switchState(new StageEditor());
-				case 'Week Editor': // do nothing cuz idk\
+					FlxG.switchState(new modding.stage_editor.Better_StageEditor());
+				case 'Week Editor':
 					FlxG.sound.music.stop();
-					FlxG.switchState(new WeekEditor(''));		
+					FlxG.switchState(new WeekEditor(''));	
+				case 'Add Event Script':
+					FlxG.switchState(new EventScriptEditor());
 			}
 			FlxG.sound.play(Paths.sound('confirmMenu'), 0.4);
 		}

@@ -17,9 +17,9 @@ class ResetScoreSubstate extends MusicBeatSubstate
 
 	var theSong:String = "";
 	var theDiff:String = "";
-	var diffshit:Int = 0;
+	var diffshit:Int = 1;
 
-	public function new(theSong:String = "", theDiff:String = "", diffshit:Int = 0)
+	public function new(theSong:String = "", theDiff:String = "", diffshit:Int = 1)
 	{
 		super();
 

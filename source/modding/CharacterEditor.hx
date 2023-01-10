@@ -127,8 +127,8 @@ class CharacterEditor extends states.MusicBeatState
 		FlxG.camera.follow(camFollow);
 		FlxG.camera.focusOn(camFollow.getPosition());
 		cameraPosition = [FlxG.camera.scroll.x, FlxG.camera.scroll.y];
-		FlxCamera.defaultCameras = [camGame];
-
+		FlxCamera.defaultCameras = [camGame];//FlxG.cameras.setDefaultDrawTarget(camGame, true);
+		
 		FlxG.mouse.visible = true;
 
 		// var gridBG:FlxSprite = FlxGridOverlay.create(10, 10);
@@ -855,10 +855,10 @@ class CharacterEditor extends states.MusicBeatState
 		camFollow.x = char.getMidpoint().x;
 		camFollow.y = char.getMidpoint().y;
 
-		char.flipX = charJSON.flipX;
+		//char.flipX = charJSON.flipX;
 
 		// if (FlxG.save.data.antialiasing)
-		char.antialiasing = charJSON.usingAntialiasing;
+		//char.antialiasing = charJSON.usingAntialiasing;
 		updateCharPosition();
 
 		createCameraPointer();

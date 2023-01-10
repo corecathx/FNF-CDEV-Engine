@@ -1,0 +1,104 @@
+{
+    "staticAnim": [
+        {
+            "animID": 0,
+            "name": "arrowLEFT",
+            "offset": [
+                0,
+                0
+            ]
+        },
+        {
+            "animID": 1,
+            "name": "arrowDOWN",
+            "offset": [
+                0,
+                0
+            ]
+        },
+        {
+            "animID": 2,
+            "name": "arrowUP",
+            "offset": [
+                0,
+                0
+            ]
+        },
+        {
+            "animID": 3,
+            "name": "arrowRIGHT",
+            "offset": [
+                0,
+                0
+            ]
+        }
+    ],
+    "pressedAnim": [
+        {
+            "animID": 0,
+            "name": "left press",
+            "offset": [
+                0,
+                0
+            ]
+        },
+        {
+            "animID": 1,
+            "name": "down press",
+            "offset": [
+                0,
+                0
+            ]
+        },
+        {
+            "animID": 2,
+            "name": "up press",
+            "offset": [
+                0,
+                0
+            ]
+        },
+        {
+            "animID": 3,
+            "name": "right press",
+            "offset": [
+                0,
+                0
+            ]
+        }
+    ],
+    "confirmAnim": [
+        {
+            "animID": 0,
+            "name": "left confirm",
+            "offset": [
+                -13,
+                -13
+            ]
+        },
+        {
+            "animID": 1,
+            "name": "down confirm",
+            "offset": [
+                -13,
+                -13
+            ]
+        },
+        {
+            "animID": 2,
+            "name": "up confirm",
+            "offset": [
+                -13,
+                -13
+            ]
+        },
+        {
+            "animID": 3,
+            "name": "right confirm",
+            "offset": [
+                -13,
+                -13
+            ]
+        }
+    ]
+}

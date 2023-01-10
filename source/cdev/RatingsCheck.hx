@@ -6,7 +6,7 @@ import states.PlayState;
 class RatingsCheck
 {
 	//shit,bad,good,sick,perfect
-    public static var theTimingWindow = [176,145,100,65,30];
+    public static var theTimingWindow = [166,135,90,55,20];
 	public static function getRating(acc:Float):String
 	{
 		var returnShit:String = "";

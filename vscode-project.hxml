@@ -1,10 +1,9 @@
 #automatically generated do not edit
-#@date Fri Jul 15 2022 07:47:22 GMT-0700 (Pacific Daylight Time)
+#@date Tue Jan 10 2023 20:34:01 GMT+0800 (Central Indonesia Time)
 #-main source/MenuState
 #-neko bin/text.n
 #lime test neko
 -main Main.hx
 #-cmd neko Test.n
-
-
--cp c:\users\user\appdata\local\temp\06c2a0f8746a4287be89958349cdec9e6a3e257a
+--macro server.setModuleCheckPolicy(['package1', 'package2', ...], [NoCheckShadowing, NoCheckDependencies], true)
+-cp c:\users\user\appdata\local\temp\618f0a830025f9e1e95dd18a12ebd0ed6062cfcd

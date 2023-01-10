@@ -29,8 +29,8 @@ typedef AnimationArray =
 {
 	var animPrefix:String;
 	var animName:String;
-	var fpsValue:Int;
-	var looping:Bool;
+	var fpsValue:Null<Int>;
+	var looping:Null<Bool>;
 	var indices:Array<Int>;
 	var offset:Array<Int>;
 }

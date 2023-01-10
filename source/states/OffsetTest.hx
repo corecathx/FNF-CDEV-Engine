@@ -17,12 +17,14 @@ class OffsetTest extends MusicBeatState
 {
 	var bg:FlxSprite;
 	var offsetText:FlxText;
-	var noteGrp:FlxTypedGroup<Note>;
-	var strumLine:FlxSprite;
 
 	var offs:Float = 0;
 	var daOffset:String;
 	var infoTxt:FlxText;
+
+	var gfDance:FlxSprite;
+
+	var canTestNow:Bool = false;
 
 	override function create()
 	{
@@ -35,35 +37,20 @@ class OffsetTest extends MusicBeatState
 		bg = new FlxSprite(0, 0).loadGraphic(Paths.image('menuDesat'));
 		bg.setGraphicSize(FlxG.width, FlxG.height);
 		bg.screenCenter();
-		bg.alpha = 0.5;
+		bg.alpha = 0.2;
 		add(bg);
 
-		var tex = Paths.getSparrowAtlas('notes/NOTE_assets', 'shared');
-		strumLine = new FlxSprite(FlxG.width / 2, 100);
-		strumLine.frames = tex;
-		strumLine.animation.addByPrefix('static', 'arrowDOWN', 24, false);
-		strumLine.animation.addByPrefix('pressed', 'down press', 24, false);
-		strumLine.animation.addByPrefix('confirm', 'down confirm', 24, false);
-		strumLine.screenCenter(X);
-		strumLine.setGraphicSize(Std.int(strumLine.width * 0.7));
-		strumLine.antialiasing = FlxG.save.data.antialiasing;
-		strumLine.alpha = 0;
-		add(strumLine);
 
-		noteGrp = new FlxTypedGroup<Note>();
-		add(noteGrp);
-
-		for (i in 0...64)
-		{
-			var note:Note = new Note((Conductor.crochet * i), 1);
-			note.canBeHit = true;
-			note.mustPress = true;
-			note.wasGoodHit = false;
-			note.isTesting = true;
-
-			note.strumTime += Conductor.crochet * 16;
-			noteGrp.add(note);
-		}
+		gfDance = new FlxSprite(0, 0);
+		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
+		gfDance.animation.addByIndices('danceLeft', 'GF Dancing Beat blue', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
+		gfDance.animation.addByIndices('danceRight', 'GF Dancing Beat blue', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
+		gfDance.antialiasing = FlxG.save.data.antialiasing;
+		gfDance.scale.set(0.7,0.7);
+		gfDance.updateHitbox();
+		gfDance.alpha = 0;
+		CDevConfig.utils.objectScreenCenter(gfDance);
+		add(gfDance);
 
 		daOffset = 'Tap any keys to the beat!\nCurrent Offset: ' + offs + 'ms';
 
@@ -73,7 +60,7 @@ class OffsetTest extends MusicBeatState
 		add(offsetText);
 		offsetText.borderSize = 2;
 
-		var daInf:String = "Welcome to Offset Testing\n\nPress Any keys on your keyboard to the beat\nof the song to set your global song offset!\n\nYour current song offset: "
+		var daInf:String = "Welcome to Offset Testing\n\nPress Any keys on your keyboard to the beep sound\nto set your global song offset!\n\nYour current song offset: "
 			+ FlxG.save.data.offset
 			+ 'ms';
 		infoTxt = new FlxText(0, 0, FlxG.width, daInf, 28);
@@ -89,22 +76,16 @@ class OffsetTest extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		bg.alpha = FlxMath.lerp(0.4, bg.alpha, CDevConfig.utils.bound(1 - (elapsed * 3), 0, 1));
+		bg.alpha = FlxMath.lerp(0.2, bg.alpha, CDevConfig.utils.bound(1 - (elapsed * 3), 0, 1));
 		offsetText.scale.x = FlxMath.lerp(1, offsetText.scale.x, CDevConfig.utils.bound(1 - (elapsed * 10), 0, 1));
+		offsetText.scale.y = FlxMath.lerp(1, offsetText.scale.x, CDevConfig.utils.bound(1 - (elapsed * 10), 0, 1));
 		daOffset = 'Tap any keys to the beat!\nCurrent Offset: ' + offs + 'ms';
 		offsetText.text = daOffset;
 
 		FlxG.watch.addQuick('DABEATS', curBeat);
 		Conductor.songPosition = FlxG.sound.music.time;
 
-		noteGrp.forEachAlive(function(daNote:Note)
-		{
-			daNote.y = (strumLine.y - (Conductor.songPosition - daNote.strumTime) * 0.45);
-			daNote.x = strumLine.x + 30;
-		});
-
-		keyShit();
-		noteUpdate();
+		if (canTestNow) keyShit();
 
 		super.update(elapsed);
 	}
@@ -117,14 +98,18 @@ class OffsetTest extends MusicBeatState
 		FlxG.switchState(new OptionsState());
 	}
 
+	var danceLeft:Bool = false;
 	private function keyShit():Void
 	{
-		var possibleNotes:Array<Note> = [];
-		var directions:Array<Int> = [];
 		var press:Bool = FlxG.keys.checkStatus(ANY, FlxInputState.JUST_PRESSED);
 
 		if (press)
 		{
+			//better?
+			offs = Math.abs(FlxG.sound.music.time - (Conductor.crochet*curBeat));
+			dance();
+			offsetText.scale.x = 1.2;
+			/*
 			noteGrp.forEachAlive(function(daNote:Note)
 			{
 				if (daNote.canBeHit && !daNote.wasGoodHit)
@@ -172,23 +157,20 @@ class OffsetTest extends MusicBeatState
 					}
 				}
 			}
+			*/
 		}
-
-		if (press && strumLine.animation.curAnim.name != 'confirm')
-			strumLine.animation.play('pressed');
-		if (!FlxG.keys.checkStatus(ANY, FlxInputState.PRESSED))
-			strumLine.animation.play('static');
-
-		if (strumLine.animation.curAnim.name == 'confirm')
-		{
-			strumLine.centerOffsets();
-			strumLine.offset.x -= 13;
-			strumLine.offset.y -= 13;
-		}
-		else
-			strumLine.centerOffsets();
 	}
 
+	function dance()
+	{
+		danceLeft = !danceLeft;
+
+		if (danceLeft) 
+			gfDance.animation.play('danceLeft', true); 
+		else 
+			gfDance.animation.play('danceRight', true); 
+
+	}
 	var hitVal:Array<Float> = [];
 
 	function goodNoteHit(daNote:Note)
@@ -216,23 +198,25 @@ class OffsetTest extends MusicBeatState
 			offs = RatingsCheck.fixFloat(valTotal / hitVal.length, 2);
 		}
 
-		strumLine.animation.play('confirm', true);
 		offsetText.scale.x = 1.2;
 	}
 
 	override function beatHit()
 	{
 		super.beatHit();
-		noteGrp.sort(FlxSort.byY, FlxSort.DESCENDING);
 		if (FlxG.save.data.flashing)
-			bg.alpha = 0.7;
+			bg.alpha = 0.5;
 
 		switch (curBeat)
 		{
+			case 8:
+				infoTxt.text = "Let's begin the test.";
+				infoTxt.screenCenter();
 			case 10:
 				FlxTween.tween(infoTxt, {alpha: 0}, Conductor.crochet / 1000, {ease: FlxEase.linear});
 			case 13:
-				FlxTween.tween(strumLine, {alpha: 1}, Conductor.crochet / 1000, {ease: FlxEase.linear});
+				dance();
+				FlxTween.tween(gfDance, {alpha: 1}, Conductor.crochet / 1000, {ease: FlxEase.linear});
 				var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image('ready', 'shared'));
 				ready.scrollFactor.set();
 				ready.updateHitbox();
@@ -246,6 +230,7 @@ class OffsetTest extends MusicBeatState
 					}
 				});
 			case 14:
+				dance();
 				var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image('set', 'shared'));
 				set.scrollFactor.set();
 
@@ -259,6 +244,7 @@ class OffsetTest extends MusicBeatState
 					}
 				});
 			case 15:
+				dance();
 				var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image('go', 'shared'));
 				go.scrollFactor.set();
 				go.updateHitbox();
@@ -272,9 +258,11 @@ class OffsetTest extends MusicBeatState
 					}
 				});
 			case 16:
+				canTestNow = true;
 				FlxTween.tween(offsetText, {y: FlxG.height - 100}, Conductor.crochet / 1000, {ease: FlxEase.circOut});
 			case 80:
-				FlxTween.tween(strumLine, {alpha: 0}, Conductor.crochet / 1000, {ease: FlxEase.linear});
+				dance();
+				FlxTween.tween(gfDance, {alpha: 0}, Conductor.crochet / 1000, {ease: FlxEase.linear});
 				FlxTween.tween(offsetText, {y: 800}, Conductor.crochet / 1000, {ease: FlxEase.circOut});
 
 				FlxG.save.data.offset = offs;
@@ -282,28 +270,5 @@ class OffsetTest extends MusicBeatState
 				infoTxt.screenCenter();
 				FlxTween.tween(infoTxt, {alpha: 1}, Conductor.crochet / 1000, {ease: FlxEase.linear});
 		}
-	}
-
-	function noteUpdate()
-	{
-		noteGrp.forEachAlive(function(daNoet:Note)
-		{
-			if (daNoet.mustPress)
-			{
-				if (daNoet.strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
-					&& daNoet.strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.7))
-					daNoet.canBeHit = true;
-				else
-					daNoet.canBeHit = false;
-
-				if (daNoet.strumTime < (Conductor.songPosition - 176))
-					daNoet.tooLate = true;
-			}
-
-			if (daNoet.tooLate)
-			{
-				daNoet.kill();
-			}
-		});
 	}
 }

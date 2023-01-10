@@ -1,38 +1,56 @@
 {
+	"weekTxtImgPath": "week0",
+	"disableFreeplay": false,
+	"weekCharacters": [
+		"gf",
+		"",
+		""
+	],
+	"weekDifficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
+	"weekName": "Girlfriend Tutorial",
 	"tracks": [
 		"tutorial"
 	],
-	"weekTxtImgPath": "week0",
 	"charSetting": [
 		{
-			"scale": 0.4,
-			"flipX": false,
 			"position": [
-				-74.5,
-				107
-			]
+				292.5,
+				-83
+			],
+			"flipX": false,
+			"scale": 0.5
 		},
 		{
-			"scale": 0.5,
-			"flipX": false,
 			"position": [
-				246.5,
-				-95
-			]
+				450,
+				25
+			],
+			"flipX": false,
+			"scale": 0.9
 		},
 		{
-			"scale": 0.5,
-			"flipX": false,
 			"position": [
-				596.5,
-				122
-			]
+				850,
+				100
+			],
+			"flipX": false,
+			"scale": 0.5
 		}
 	],
-	"weekCharacters": [
-		"",
-		"gf",
-		"bf"
-	],
-	"weekName": "Girlfriend Tutorial"
+	"freeplaySongs": [
+		{
+			"colors": [
+				250,
+				20,
+				55
+			],
+			"bpm": 120,
+			"character": "gf",
+			"song": "tutorial"
+		}
+	]
 }

@@ -1,5 +1,12 @@
 package cdev.script;
 
+import cdev.CDevMods.CDEV_FlxAxes;
+import flixel.addons.display.FlxBackdrop;
+import cdev.CDevMods.CDEV_BlendMode;
+import openfl.display.BlendMode;
+import cdev.CDevMods.CDEV_FlxTextBorderStyle;
+import cdev.CDevMods.CDEV_FlxTextAlign;
+import cdev.CDevMods.CDEV_FlxColor;
 import modding.ModPaths;
 import lime.app.Application;
 import game.CoolUtil;
@@ -45,7 +52,7 @@ class ScriptSupport {
         scripts = songConf.scripts;
 		trace(songConf.scripts);
     }
-
+	
 	public static function setScriptDefaultVars(script:CDevScript, mod:String, settings:Dynamic)
 	{
 		var superVar = {};
@@ -126,6 +133,9 @@ class ScriptSupport {
 		script.setVariable("remove", function(obj){
 			playStated.remove(obj);
 		});
+		script.setVariable("insert", function(pos,obj){
+			playStated.insert(pos,obj);
+		});
 		script.setVariable("PlayState", PlayState);
 		script.setVariable("FlxSprite", FlxSprite);
 		script.setVariable("BitmapData", BitmapData);
@@ -136,6 +146,7 @@ class ScriptSupport {
 		script.setVariable("FlxMath", FlxMath);
 		script.setVariable("FlxAssets", FlxAssets);
 		script.setVariable("Assets", Assets);
+		script.setVariable("PlayState_Config", PlayStateConfig);
 		script.setVariable("ScriptSupport", ScriptSupport);
 		script.setVariable("Note", Note);
 		script.setVariable("Character", Character);
@@ -144,7 +155,9 @@ class ScriptSupport {
 		script.setVariable("FlxSound", FlxSound);
 		script.setVariable("FlxEase", FlxEase);
 		script.setVariable("FlxTween", FlxTween);
-		script.setVariable("FlxColor", FlxColor_Util);
+		script.setVariable("FlxColor", CDEV_FlxColor);
+		script.setVariable("BlendMode", CDEV_BlendMode);
+		script.setVariable("FlxBackdrop", FlxBackdrop);
 		script.setVariable("Boyfriend", Boyfriend);
 		script.setVariable("FlxTypedGroup", FlxTypedGroup);
 		script.setVariable("BackgroundDancer", BackgroundDancer);
@@ -154,7 +167,9 @@ class ScriptSupport {
 		script.setVariable("CoolUtil", CoolUtil);
 		script.setVariable("FlxTypeText", FlxTypeText);
 		script.setVariable("FlxText", FlxText);
-		script.setVariable("FlxAxes", FlxAxes);
+		script.setVariable("FlxTextAlign", CDEV_FlxTextAlign);
+		script.setVariable("FlxTextBorderStyle", CDEV_FlxTextBorderStyle);
+		script.setVariable("FlxAxes", CDEV_FlxAxes);
 		script.setVariable("Rectangle", Rectangle);
 		script.setVariable("Point", Point);
 		script.setVariable("Window", Application.current.window);

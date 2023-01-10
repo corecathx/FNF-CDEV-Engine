@@ -1,8 +1,8 @@
 package modding;
 
+import cdev.CDevMods.ModFile;
 import sys.io.File;
 import haxe.Json;
-import modding.NewModState.ModFile;
 import sys.FileSystem;
 import openfl.Lib;
 import game.Controls.Control;
@@ -67,7 +67,8 @@ class OpenExistingModState extends states.MusicBeatState
 			var sad:ModFile = {
 				modName: 'No Mods Found',
 				modDesc: 'Please check your cdev-mods folder.',
-				modVer: cdev.CDevConfig.engineVersion
+				modVer: cdev.CDevConfig.engineVersion,
+				mod_difficulties: []
 			};
 			modShits.push(sad);
 			noMods = true;

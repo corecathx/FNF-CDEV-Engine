@@ -1,5 +1,6 @@
 package song;
 
+import game.ChartEvent.SongEvent;
 import song.Section.SwagSection;
 import haxe.Json;
 import haxe.format.JsonParser;
@@ -10,11 +11,11 @@ import sys.FileSystem;
 #end
 
 using StringTools;
-
 typedef SwagSong =
 {
 	var song:String;
 	var notes:Array<SwagSection>;
+	var songEvents:Array<SongEvent>;
 	var bpm:Float;
 	var needsVoices:Bool;
 	var speed:Float;
@@ -31,6 +32,7 @@ class Song
 {
 	public var song:String;
 	public var notes:Array<SwagSection>;
+	public var songEvents:Array<SongEvent>;
 	public var bpm:Float;
 	public var needsVoices:Bool = true;
 	public var speed:Float = 1;

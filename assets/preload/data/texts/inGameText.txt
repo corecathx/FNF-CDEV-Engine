@@ -5,14 +5,21 @@ Press F11 to enable fullscreen mode!
 If you find a bug in this engine, please report--the bug on my discord or my twitter dm!
 Funkin Forever.
 Try to change your note offset on the options menu!
-You're currently playing--FNF CDEV-Engine v.0.1.2
+You're currently playing--CDEV-Engine v.1.1
 HOPEFULLY easy to mod--this engine's source code.
 Does anyone actually read this?
 You can Toggle this engine's watermark.
 Man--I love dark mode.
-The "Song Speed" mod is still in BETA Testing.--May cause some Songs to loop.
 Softcoded Characters!
 DARK MODE.--YES.
 Rewritten Inputs!
 Pro tip:--Press the notes.
-
+HaxeFlixel, my beloved.
+MR BEAAAST
+An engine powered--by cats
+pls don't crash again
+a
+Better Modcharting Compability!
+HAH u looked.
+Better Stage Editor!
+Sample Text

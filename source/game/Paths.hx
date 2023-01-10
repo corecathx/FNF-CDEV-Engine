@@ -1,10 +1,6 @@
 package game;
 
 import modding.ModPaths;
-import polymod.fs.PolymodFileSystem;
-import polymod.backends.PolymodAssetLibrary;
-import polymod.backends.PolymodAssets;
-import polymod.Polymod;
 import sys.io.File;
 import openfl.display.BitmapData;
 import flixel.graphics.FlxGraphic;
@@ -50,7 +46,7 @@ class Paths
 
 	public static function destroyLoadedImages(ignoreCheck:Bool = false)
 	{
-		//if (!ignoreCheck && FlxGraphic.defaultPersist)
+		// if (!ignoreCheck && FlxGraphic.defaultPersist)
 		//	return; // If there's 20+ images loaded, do a cleanup just for preventing a crash
 
 		for (key in customImagesLoaded.keys())
@@ -186,8 +182,18 @@ class Paths
 		return getPath('data/$CHARTS_PATH$key.json', TEXT, library);
 	}
 
-	static public function sound(key:String, ?library:String)
+	inline static public function chartPath(key:String)
 	{
+		return 'assets/data/$CHARTS_PATH$key';
+	}
+
+	static public function sound(key:String, ?library:String):Dynamic
+	{
+		#if ALLOW_MODS
+		var soundToReturn:Sound = returnSongFile(modSounds(key));
+		if (soundToReturn != null)
+			return soundToReturn;
+		#end
 		return getPath('sounds/$key.$SOUND_EXT', SOUND, library);
 	}
 
@@ -196,8 +202,13 @@ class Paths
 		return sound(key + FlxG.random.int(min, max), library);
 	}
 
-	inline static public function music(key:String, ?library:String)
+	inline static public function music(key:String, ?library:String):Dynamic
 	{
+		#if ALLOW_MODS
+		var musicToReturn:Sound = returnSongFile(modMusic(key));
+		if (musicToReturn != null)
+			return musicToReturn;
+		#end
 		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
 	}
 
@@ -211,6 +222,18 @@ class Paths
 		}
 		#end
 		return 'songs:assets/songs/${song.toLowerCase().replace(' ', '-')}/Voices.$SOUND_EXT';
+	}
+
+	inline static public function voice_opponent(song:String):Any
+	{
+		#if sys
+		var file:Sound = returnSongFile(modSongs(song.toLowerCase().replace(' ', '-') + '/Voices_opponent'));
+		if (file != null)
+		{
+			return file;
+		}
+		#end
+		return 'songs:assets/songs/${song.toLowerCase().replace(' ', '-')}/Voices_opponent.$SOUND_EXT';
 	}
 
 	inline static public function inst(song:String):Any
@@ -229,11 +252,8 @@ class Paths
 	inline static public function fileExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
 	{
 		#if ALLOW_MODS
-		for (i in 0...curModDir.length)
-		{
-			if (FileSystem.exists(mods(curModDir[i] + '/' + key)) || FileSystem.exists(mods(key)))
-				return true;
-		}
+		if (FileSystem.exists(mods(currentMod + '/' + key)) || FileSystem.exists(mods(key)))
+			return true;
 		#end
 
 		if (OpenFlAssets.exists(Paths.getPath(key, type)))
@@ -268,6 +288,25 @@ class Paths
 		return getPath('images/$key.png', IMAGE, library);
 	}
 
+	inline static public function strumConfig(key:String, ?library:String)
+	{
+		#if ALLOW_MODS
+		var modjsond:String = modStrumConf(key);
+		trace("conf exist: " + FileSystem.exists(modjsond));
+		if (FileSystem.exists(modjsond))
+			return modjsond;
+		#end
+		trace(getPath('images/notes/$key.json', TEXT, library));
+		return getPath('images/notes/$key.json', TEXT, library);
+	}
+
+	#if USE_VIDEOS
+	inline static public function video(key:String)
+	{
+		return "assets/videos/" + key + ".mp4";
+	}
+	#end
+
 	inline static public function font(key:String)
 	{
 		return 'assets/fonts/$key';
@@ -297,7 +336,7 @@ class Paths
 		}
 
 		return FlxAtlasFrames.fromSpriteSheetPacker((imageLoaded != null ? imageLoaded : image(key, library)),
-			(txtExists ? File.getContent(modText(key)) : file('images/$key.txt', TEXT,library)));
+			(txtExists ? File.getContent(modText(key)) : file('images/$key.txt', TEXT, library)));
 		// return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
 	}
 
@@ -336,25 +375,29 @@ class Paths
 		var path:String = 'cdev-mods/$modFolderName/';
 		var childrens:Array<String> = [];
 		var dumbFolders:Array<String> = [
-			'data', 
-			'data/charts', 
-			'data/characters', 
-			'data/stages', 
-			'data/weeks', 
-			'data/fonts',
-			'images', 
-			'images/characters', 
-			'images/icons/', 
-			'images/storymenu',
-			'sounds', 
-			'music', 
-			'songs'
+			            'data',    'data/charts', 'data/characters', 'data/stages', 'data/weeks', 'data/fonts', 'images', 'images/characters', 'images/icons/',
+			'images/storymenu', 'images/credits',    'images/notes',      'events',      'notes',     #if USE_VIDEOS 'videos', #end 'sounds',             'music',         'songs'
+		];
+
+		// path, filename, data
+		// might finish this later.
+		var txtFiles:Array<Dynamic> = [
+			[
+				'',
+				'credits.txt',
+				'--Put your custom credits here\n--Credits should be on this format: Name, Desc, Color, Link\n--Credits group should be on this format: Name\n--"Color" should be on hex format (ex: 0xFF000000)'
+			]
 		];
 		for (n in dumbFolders)
 			childrens.push(path + n);
 
 		for (child in childrens)
 			FileSystem.createDirectory(child);
+
+		for (content in txtFiles)
+		{
+			File.saveContent(path + content[0] + content[1], content[2]);
+		}
 
 		File.saveContent(path + 'songList.txt', ''); // prevents crash when installing a mod
 	}
@@ -367,6 +410,12 @@ class Paths
 	inline static public function modJson(key:String)
 	{
 		return modFolders('data/' + CHARTS_PATH + key + '.json');
+	}
+
+	inline static public function modChartPath(key:String)
+	{
+		// key is "folder"
+		return modFolders('data/' + CHARTS_PATH + key);
 	}
 
 	inline static public function modStage(key:String)
@@ -389,20 +438,38 @@ class Paths
 		return modFolders('images/' + key + '.png');
 	}
 
-	inline static public function modLogo(key:String, a:Bool):Dynamic
+	inline static public function modImage(key:String, exist:Bool):Dynamic
 	{
-		if (a){
+		if (exist)
+		{
 			if (!customImagesLoaded.exists(key))
-				{
-					var newBitmap:BitmapData = BitmapData.fromFile(key);
-					var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
-					newGraphic.persist = true;
-					FlxG.bitmap.addGraphic(newGraphic);
-					customImagesLoaded.set(key, true);
-				}
+			{
+				var newBitmap:BitmapData = BitmapData.fromFile(key);
+				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
+				newGraphic.persist = true;
+				FlxG.bitmap.addGraphic(newGraphic);
+				customImagesLoaded.set(key, true);
+			}
 			return FlxG.bitmap.get(key);
 		}
-		 
+		return getPath('images/$key.png', IMAGE, 'shared');
+	}
+
+	inline static public function modBackground(mod:String, key:String, a:Bool):Dynamic
+	{
+		if (a)
+		{
+			if (!customImagesLoaded.exists(key))
+			{
+				var newBitmap:BitmapData = BitmapData.fromFile(Paths.modFolders(key + ".png"));
+				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
+				newGraphic.persist = true;
+				FlxG.bitmap.addGraphic(newGraphic);
+				customImagesLoaded.set(key, true);
+			}
+			return FlxG.bitmap.get(key);
+		}
+
 		return getPath('images/$key.png', IMAGE, 'shared');
 	}
 
@@ -420,12 +487,28 @@ class Paths
 
 	inline static public function modChar(key:String)
 	{
+		// trace(modFolders('data/$CHARACTERS_PATH$key.json'));
 		return modFolders('data/$CHARACTERS_PATH$key.json');
 	}
 
 	inline static public function modXml(key:String)
 	{
 		return modFolders('images/' + key + '.xml');
+	}
+
+	inline static public function modStrumConf(key:String)
+	{
+		return modFolders('images/notes/$key.json');
+	}
+
+	inline static public function modMusic(key:String)
+	{
+		return modFolders("music/" + key + "." + SOUND_EXT);
+	}
+
+	inline static public function modSounds(key:String)
+	{
+		return modFolders("sounds/" + key + "." + SOUND_EXT);
 	}
 
 	inline static public function modSongs(key:String)
@@ -443,13 +526,14 @@ class Paths
 		//		return checkFile;
 		//	}
 		// }
-		for (i in 0...curModDir.length)
+		if (currentMod != null && currentMod != '')
 		{
-			var checkFile:String = mods(curModDir[i] + '/' + key);
+			var checkFile:String = mods(currentMod + '/' + key);
 			if (FileSystem.exists(checkFile))
 				return checkFile;
 		}
-		return 'cdev-mods/' + 'FNF Test Mod' + '/' + key; // ok yea, welp.
+
+		return 'cdev-mods/' + key; // ok yea, welp.
 	}
 	#end
 }

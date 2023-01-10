@@ -1,4 +1,5 @@
 package states;
+import cdev.CDevConfig;
 import openfl.Lib;
 import game.Controls.Control;
 import flash.text.TextField;
@@ -53,6 +54,10 @@ class OptionsState extends MusicBeatState
 		}
 		changeSelection();
 
+		var versionShit:FlxText = new FlxText(10, FlxG.height - 20, 1000, "CDEV Engine v"+CDevConfig.engineVersion, 16);
+		versionShit.scrollFactor.set();
+		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		if (FlxG.save.data.engineWM) add(versionShit);
 		super.create();
 	}
 

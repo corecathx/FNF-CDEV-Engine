@@ -27,6 +27,7 @@ class AppearanceSettings extends substates.MusicBeatSubstate
 		'Show Performance Text', 
 		'Smooth Motions', 
 		'Show Engine Watermark',
+		//'Note Quantization',
 		'Show Opponent Notes',
 		'Show Strum Lane',
 		'Antialiasing',
@@ -179,6 +180,8 @@ class AppearanceSettings extends substates.MusicBeatSubstate
 				FlxG.save.data.antialiasing = !FlxG.save.data.antialiasing;
 			case 'Note Ripples' | 'Note Splashes':
 				FlxG.save.data.noteRipples = !FlxG.save.data.noteRipples;
+			//case 'Note Quantization' | 'Note Column':
+			//	FlxG.save.data.quantizeNote = !FlxG.save.data.quantizeNote;
 			case 'Show Engine Watermark' | 'Hide Engine Watermark':
 				FlxG.save.data.engineWM = !FlxG.save.data.engineWM;
 			case 'Show Opponent Notes' | 'Hide Opponent Notes':
@@ -232,6 +235,7 @@ class AppearanceSettings extends substates.MusicBeatSubstate
 				options = [
 					FlxG.save.data.smoothAF ? 'Smooth Motions' : 'Dont Smooth Motions',
 					FlxG.save.data.engineWM ? 'Show Engine Watermark' : 'Hide Engine Watermark',
+					//FlxG.save.data.quantizeNote ? "Note Quantization" : "Note Column",
 					FlxG.save.data.bgLane ? 'Show Strum Lane' : 'Hide Strum Lane',
 					FlxG.save.data.bgNote ? 'Show Opponent Notes' : 'Hide Opponent Notes',
 					'Change Rating Position',

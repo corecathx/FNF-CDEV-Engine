@@ -1,5 +1,7 @@
 package game;
 
+import cdev.CDevConfig;
+import shaders.WiggleEffect;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
@@ -8,13 +10,14 @@ import flixel.FlxG;
 #if polymod
 import polymod.format.ParseRules.TargetSignatureElement;
 #end
-
 import states.PlayState;
 
 using StringTools;
 
 class Note extends FlxSprite
-{
+{	
+	public static var noteScale:Float = 0.65;
+
 	public var strumTime:Float = 0;
 
 	public var mustPress:Bool = false;
@@ -28,26 +31,52 @@ class Note extends FlxSprite
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
-	
+
 	public var isTesting:Bool = false;
 
 	public var noteScore:Float = 1;
 
-	public static var swagWidth:Float = 160 * 0.7;
+	public static var swagWidth:Float = 160 * noteScale;
 	public static var PURP_NOTE:Int = 0;
 	public static var GREEN_NOTE:Int = 2;
 	public static var BLUE_NOTE:Int = 1;
 	public static var RED_NOTE:Int = 3;
+
 	public var noteYOffset:Float = 0;
+
+	public var xAdd:Float = 0;
+	public var yAdd:Float = 0;
+
+	public var offsetX:Float = 0;
+	public var offsetY:Float = 0;
+	public var offsetAngle:Float = 0;
+	public var multAlpha:Float = 1;
+
+	// used for hscript
+	public var followX:Bool = true;
+	public var followY:Bool = true;
+
+	// follow the strum's arrow angle & alpha
+	public var followAngle:Bool = true;
+	public var followAlpha:Bool = true;
 
 	public var graphicHeightOrigin:Float = 0;
 	public var theYScale:Float = 0;
 
 	public var rating:String = "shit";
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false)
+	public var noteColor:FlxColor = FlxColor.WHITE;
+
+	var noteBeat:Float = 0;
+
+	// TESTING AND SHET
+	public var noteTrail:Array<Note> = []; // note trail yes
+	public var strumParent:StrumArrow;
+
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?MustCalcStepHeight:Bool = true, ?beatVal:Float = 0)
 	{
 		super();
+		noteBeat = beatVal;
 
 		if (prevNote == null)
 			prevNote = this;
@@ -64,7 +93,8 @@ class Note extends FlxSprite
 
 		var pixelStage:Bool = PlayState.isPixel;
 
-		if (pixelStage){
+		if (pixelStage)
+		{
 			loadGraphic(Paths.image('weeb/pixelUI/arrows-pixels', 'week6'), true, 17, 17);
 
 			animation.add('greenScroll', [6]);
@@ -87,55 +117,59 @@ class Note extends FlxSprite
 				animation.add('bluehold', [1]);
 			}
 
-			setGraphicSize(Std.int(width * (PlayState.daPixelZoom)));
+			setGraphicSize(Std.int(width * (PlayState.daPixelZoom-0.1)));
 			updateHitbox();
 			isPixelSkinNote = true;
 			graphicHeightOrigin = height;
-		} else{
-			if (FlxG.save.data.fnfNotes){
-				frames = Paths.getSparrowAtlas('notes/NOTE_assets','shared');
+		}
+		else
+		{
+			if (FlxG.save.data.fnfNotes)
+			{
+				frames = Paths.getSparrowAtlas('notes/NOTE_assets');
 
 				animation.addByPrefix('greenScroll', 'green0');
 				animation.addByPrefix('redScroll', 'red0');
 				animation.addByPrefix('blueScroll', 'blue0');
 				animation.addByPrefix('purpleScroll', 'purple0');
-	
+
 				animation.addByPrefix('purpleholdend', 'pruple end hold');
 				animation.addByPrefix('greenholdend', 'green hold end');
 				animation.addByPrefix('redholdend', 'red hold end');
 				animation.addByPrefix('blueholdend', 'blue hold end');
-	
+
 				animation.addByPrefix('purplehold', 'purple hold piece');
 				animation.addByPrefix('greenhold', 'green hold piece');
 				animation.addByPrefix('redhold', 'red hold piece');
 				animation.addByPrefix('bluehold', 'blue hold piece');
-	
-				setGraphicSize(Std.int(width * 0.7));
+
+				setGraphicSize(Std.int(width * noteScale));
 				updateHitbox();
 				antialiasing = FlxG.save.data.antialiasing;
-			} else{
-				frames = Paths.getSparrowAtlas('notes/CDEVNOTE_assets','shared');
-				var aa:Array<String> = ['arrowLEFT','arrowDOWN', 'arrowUP', 'arrowRIGHT'];
+			}
+			else
+			{
+				frames = Paths.getSparrowAtlas('notes/CDEVNOTE_assets', 'shared');
+				var aa:Array<String> = ['arrowLEFT', 'arrowDOWN', 'arrowUP', 'arrowRIGHT'];
 				animation.addByPrefix('greenScroll', '${aa[2]}0');
 				animation.addByPrefix('redScroll', '${aa[3]}0');
 				animation.addByPrefix('blueScroll', '${aa[1]}0');
 				animation.addByPrefix('purpleScroll', '${aa[0]}0');
-	
+
 				animation.addByPrefix('purpleholdend', '${aa[0]}-end');
 				animation.addByPrefix('greenholdend', '${aa[2]}-end');
 				animation.addByPrefix('redholdend', '${aa[3]}-end');
 				animation.addByPrefix('blueholdend', '${aa[1]}-end');
-	
+
 				animation.addByPrefix('purplehold', '${aa[0]}-hold');
 				animation.addByPrefix('greenhold', '${aa[2]}-hold');
 				animation.addByPrefix('redhold', '${aa[3]}-hold');
 				animation.addByPrefix('bluehold', '${aa[1]}-hold');
-	
-				setGraphicSize(Std.int(width * 0.7));
+
+				setGraphicSize(Std.int(width * noteScale));
 				updateHitbox();
 				antialiasing = FlxG.save.data.antialiasing;
 			}
-
 		}
 
 		switch (noteData)
@@ -158,11 +192,12 @@ class Note extends FlxSprite
 		prevNote.graphicHeightOrigin = prevNote.frameHeight;
 
 		// trace(prevNote);
-		if (FlxG.save.data.downscroll && sustainNote) 
+		if (FlxG.save.data.downscroll && sustainNote)
 			flipY = true;
 
-		calculateNoteStepHeight();
-		
+		if (MustCalcStepHeight)
+			calculateNoteStepHeight();
+
 		if (isSustainNote && prevNote != null)
 		{
 			noteScore * 0.2;
@@ -189,8 +224,6 @@ class Note extends FlxSprite
 			if (PlayState.curStage.startsWith('school'))
 				x += 30;
 
-			//scale.y *= Conductor.stepCrochet / 100 * 1.05 * PlayState.SONG.speed * FreeplayState.speed;
-
 			if (prevNote.isSustainNote)
 			{
 				switch (prevNote.noteData)
@@ -204,9 +237,8 @@ class Note extends FlxSprite
 					case 3:
 						prevNote.animation.play('redhold');
 				}
-
 				var shit:Float = (FlxG.save.data.scrollSpeed == 1 ? PlayState.SONG.speed : FlxG.save.data.scrollSpeed);
-				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * shit;
+				prevNote.scale.y *= (Conductor.stepCrochet+10) / 100 * 1.5 * shit;
 				prevNote.theYScale = prevNote.scale.y;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
@@ -216,63 +248,72 @@ class Note extends FlxSprite
 
 				noteYOffset = Math.round(offset.y);
 			}
+
+			noteColor = CDevConfig.utils.getColor(this);
 		}
 	}
-	
+
+	function changeNoteColor(newColor:Int)
+	{
+		color = newColor;
+		noteColor = newColor;
+	}
+
 	var noteStepHeight:Float = 0;
 
-	function calculateNoteStepHeight(){
+	function calculateNoteStepHeight()
+	{
 		if (!isTesting)
-			noteStepHeight = 0; //(((0.45 * Conductor.stepCrochet)) * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? PlayState.SONG.speed : FlxG.save.data.scrollSpeed, 2));
+			noteStepHeight = (((0.45 * Conductor.stepCrochet)) * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? PlayState.SONG.speed : FlxG.save.data.scrollSpeed,
+				2));
 	}
 
 	public static function getNoteInfo(ntDt:Int = 0):Note
-		{
-			var noteToReturn:Note;
-			if (ntDt == -1)
-				noteToReturn = new Note(0,0);
-			else 
-				noteToReturn = new Note(0,ntDt);
-		
-			return noteToReturn;
-			
-		}
+	{
+		var noteToReturn:Note;
+		if (ntDt == -1)
+			noteToReturn = new Note(0, 0);
+		else
+			noteToReturn = new Note(0, ntDt);
 
-	public function curAnim():String {
-		return animation.curAnim.name; //shut
+		return noteToReturn;
+	}
+
+	public function curAnim():String
+	{
+		return animation.curAnim.name; // shut
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 		if (!isTesting)
+		{
+			if (mustPress)
 			{
-				if (mustPress)
-					{
-						// The * 0.5 is so that it's easier to hit them too late, instead of too early
-						if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
-							&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
-							canBeHit = true;
-						else
-							canBeHit = false;
-			
-						if (strumTime < (Conductor.songPosition - 176)/* && !wasGoodHit*/)
-							tooLate = true;
-					}
-					else
-					{
-						canBeHit = false;
-			
-						if (strumTime <= Conductor.songPosition)
-							wasGoodHit = true;
-					}
-			
-					if (tooLate)
-					{
-						if (alpha > 0.3)
-							alpha = 0.3;
-					}				
+				// The * 0.5 is so that it's easier to hit them too late, instead of too early
+				if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
+					&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
+					canBeHit = true;
+				else
+					canBeHit = false;
+
+				if (strumTime < (Conductor.songPosition - 166) /* && !wasGoodHit*/)
+					tooLate = true;
+			}
+			else
+			{
+				canBeHit = false;
+
+				if (strumTime <= Conductor.songPosition)
+					wasGoodHit = true;
 			}
 
+			if (tooLate)
+			{
+				if (alpha > 0.3)
+					alpha = 0.3;
+			}
+		}
 	}
 }

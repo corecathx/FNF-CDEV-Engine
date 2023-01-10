@@ -27,14 +27,7 @@ import lime.utils.Assets;
 #if desktop
 import engineutils.Discord.DiscordClient;
 #end
-
-typedef ModFile =
-{
-	var modName:String;
-	var modDesc:String;
-
-	var modVer:String;
-}
+import cdev.CDevMods.ModFile;
 
 class NewModState extends states.MusicBeatState
 {
@@ -50,6 +43,7 @@ class NewModState extends states.MusicBeatState
 			modName: "",
 			modDesc: "",
 			modVer: "",
+			mod_difficulties: []
 		}
 		FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
 		FlxG.sound.volumeDownKeys = [MINUS, NUMPADMINUS];
@@ -176,7 +170,8 @@ class NewModState extends states.MusicBeatState
 						modName: input_modName.text,
 						modDesc: input_modDesc.text,
 
-						modVer: CDevConfig.engineVersion
+						modVer: CDevConfig.engineVersion,
+						mod_difficulties: []
 					}
                     FlxG.sound.play(game.Paths.sound('confirmMenu'));
 					game.Paths.createModFolder(input_modName.text);

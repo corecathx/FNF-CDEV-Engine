@@ -36,7 +36,7 @@ class ModIcon extends FlxSprite
         trace(name);
         trace(iconExist);
 
-		var file:Dynamic = Paths.modLogo(name,iconExist);
+		var file:Dynamic = Paths.modImage(name,iconExist);
 		//trace(file);
 
 		loadGraphic(file);

@@ -1,5 +1,6 @@
 package substates;
 
+import engineutils.TraceLog;
 import states.PlayState;
 import game.Controls.Control;
 import flixel.FlxG;
@@ -24,25 +25,26 @@ class PauseSubState extends MusicBeatSubstate
 	var curSelected:Int = 0;
 
 	var pauseMusic:FlxSound;
-
+	var traceWindow:TraceLog;
 	public function new(x:Float, y:Float)
 	{
 		super();
 
-		if (!PlayState.chartingMode){
-			if (!FlxG.save.data.testMode){
-				menuItems = ['Resume', 'Restart Song', 'Options', 'Exit to menu'];
-			} else{
-				menuItems = ['Resume', 'Restart Song', 'Reload Script', 'Options', 'Exit to menu'];
-			}
-		} else {
-			if (!FlxG.save.data.testMode){
+		if (PlayState.isStoryMode){
+			if (PlayState.chartingMode){
 				menuItems = ['Resume', 'Restart Song', 'End song', 'Exit Charting Mode', 'Options', 'Exit to menu'];
 			} else{
-				menuItems = ['Resume', 'Restart Song', 'Reload Script', 'End song' ,'Exit Charting Mode','Options', 'Exit to menu'];
+				menuItems = ['Resume', 'Restart Song', 'Options', 'Exit to menu'];
+			}
+		} else{
+			if (PlayState.chartingMode){
+				menuItems = ['Resume', 'Restart Song', 'End song', 'Exit Charting Mode', 'Options', 'Exit to freeplay'];
+			} else{
+				menuItems = ['Resume', 'Restart Song', 'Options', 'Exit to freeplay'];
 			}
 		}
 
+		
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
 		pauseMusic.volume = 0;
 		pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));
@@ -62,7 +64,7 @@ class PauseSubState extends MusicBeatSubstate
 		add(levelInfo);
 
 		var levelDifficulty:FlxText = new FlxText(20, 15 + 32, 0, "", 32);
-		levelDifficulty.text += CoolUtil.difficultyString();
+		levelDifficulty.text += PlayState.difficultyName;
 		levelDifficulty.scrollFactor.set();
 		levelDifficulty.setFormat(Paths.font('vcr.ttf'), 32);
 		levelDifficulty.updateHitbox();
@@ -138,7 +140,9 @@ class PauseSubState extends MusicBeatSubstate
 				case "Resume":
 					close();
 				case "Restart Song":
+					GameOverSubstate.resetDeathStatus();
 					FlxG.resetState();
+					if (FlxG.save.data.showTraceLogAt == 1) TraceLog.clearLogData();
 				case "Options":
 					for (item in grpMenuShit.members)
 						{
@@ -154,8 +158,10 @@ class PauseSubState extends MusicBeatSubstate
 				case 'Exit Charting Mode':
 					PlayState.chartingMode = false;
 					FlxG.resetState();
-				case "Exit to menu":
+				case "Exit to menu", "Exit to freeplay":
+					PlayState.chartingMode = false;
 					FlxG.switchState(new states.MainMenuState());
+					if (FlxG.save.data.showTraceLogAt == 1) TraceLog.clearLogData();
 			}
 		}
 

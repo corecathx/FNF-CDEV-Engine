@@ -1,5 +1,7 @@
 package cdev.script;
 
+import states.PlayState;
+import engineutils.TraceLog;
 import flixel.FlxG;
 import sys.FileSystem;
 import haxe.io.Path;
@@ -20,7 +22,6 @@ class HScript extends CDevScript
 
 	public override function executeFunc(funcName:String, ?args:Array<Any>):Dynamic
 	{
-		Paths.currentMod = 'cdev-mods/$mod';
 		if (hscript == null)
 		{
 			this.trace("HScript is null");
@@ -39,8 +40,8 @@ class HScript extends CDevScript
 				catch (e)
 				{
 					this.trace('$e');
+					TraceLog.addLogData('$e');
 				}
-				Paths.currentMod = null;
 				return result;
 			}
 			else
@@ -53,8 +54,8 @@ class HScript extends CDevScript
 				catch (e)
 				{
 					this.trace('$e');
+					TraceLog.addLogData('$e');
 				}
-				Paths.currentMod = null;
 				return result;
 			}
 			// f();
@@ -68,6 +69,7 @@ class HScript extends CDevScript
 			return;
 		fileName = Path.withoutDirectory(path);
 		var paath = path;
+		trace(paath);
 		if (Path.extension(paath) == "")
 		{
 			var haxeExts = ["hx", "hsc", "hscript"];
@@ -88,6 +90,7 @@ class HScript extends CDevScript
 		catch (e)
 		{
 			this.trace('${e.message}');
+			TraceLog.addLogData('${e.message}');
 		}
 	}
 
@@ -100,6 +103,7 @@ class HScript extends CDevScript
 		var methodName = posInfo.methodName;
 		var className = posInfo.className;
 		trace('$fileName:$methodName:$lineNumber: $text');
+		PlayState.addNewTraceKey('$fileName:$methodName:$lineNumber: $text');
 
 		if (!FlxG.save.data.testMode)
 			return;

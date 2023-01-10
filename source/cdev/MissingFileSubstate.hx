@@ -15,15 +15,9 @@ class MissingFileSubstate extends substates.MusicBeatSubstate
 	{
 		super();
 		var songName:String = "";
-
-		if (file.contains("-easy"))
-		{
-			songName = file.toLowerCase().replace("-easy", "");
-		}
-		else if (file.contains("-hard"))
-		{
-			songName = file.toLowerCase().replace("-hard", "");
-		}
+		var f:Array<String> = file.split("-");
+		trace(f);
+		songName = file.toLowerCase().replace(f[f.length], "");
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0.7;

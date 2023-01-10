@@ -1,5 +1,6 @@
 package cdev;
 
+import cpp.Function;
 import sys.FileSystem;
 import game.Paths;
 import flixel.math.FlxMath;
@@ -10,7 +11,9 @@ using StringTools;
 
 class CDevConfig
 {
-    public static var engineVersion:String = "0.1.2";
+    public static var debug:Bool = false;
+    public static var elapsedGameTime:Float;
+    public static var engineVersion:String = "1.1";
     public static var utils(default, null):CDevUtils = new CDevUtils();
 	/**
 	 * LEFT
@@ -18,13 +21,12 @@ class CDevConfig
      * UP
      * RIGHT
      * RESET
-	 */
+	 */ 
     public static var keyBinds:Array<String> = ['A','S','W','D','R']; //LEFT, DOWN, UP, RIGHT, RESET
+
     /**
 	 * Initialize Saves
 	 */
-
-    public static var elapsedGameTime:Float;
     public static function initializeSaves()
         {
             if (FlxG.save.data.dfjk == null)
@@ -121,6 +123,17 @@ class CDevConfig
             if (FlxG.save.data.rChanged == null)
                 FlxG.save.data.rChanged = false;
 
+            
+            if (FlxG.save.data.cX == null)
+                FlxG.save.data.cX = -1;
+
+            if (FlxG.save.data.cY == null)
+                FlxG.save.data.cY = -1;
+
+            if (FlxG.save.data.cChanged == null)
+                FlxG.save.data.cChanged = false;
+
+
             #if desktop
             if (FlxG.save.data.discordRpc == null)
                 FlxG.save.data.discordRpc = true;
@@ -143,6 +156,9 @@ class CDevConfig
 
             if (FlxG.save.data.showDelay == null)
                 FlxG.save.data.showDelay = false;       
+
+            if (FlxG.save.data.multiRateSprite == null)
+                FlxG.save.data.multiRateSprite = true;
 
             //Chart Modifiers
             if (FlxG.save.data.randomNote == null)
@@ -176,6 +192,17 @@ class CDevConfig
 
             if (FlxG.save.data.checkNewVersion == null)
                 FlxG.save.data.checkNewVersion = true;
+
+            //new ass settings
+            if (FlxG.save.data.cameraStartFocus == null)
+                FlxG.save.data.cameraStartFocus = 0; //0=dad, 1=gf, 2=bf
+
+            //0=hide, 1=show-g, 2=show-p
+            if (FlxG.save.data.showTraceLogAt == null)
+                FlxG.save.data.showTraceLogAt = 0; 
+
+            if (FlxG.save.data.quantizeNote == null)
+                FlxG.save.data.quantizeNote = false;
             
             checkLoadedMods();
             saveCurrentKeyBinds();
@@ -202,9 +229,25 @@ class CDevConfig
     }
 
     public static function setFPS(daSet:Int)
-        {
-            openfl.Lib.current.stage.frameRate = daSet;
-        }
+    {
+        openfl.Lib.current.stage.frameRate = daSet;
+    }
+
+    //what to do before application get closed?
+    public static function setExitHandler(func:openfl.utils.Function):Void 
+    {
+        trace("exit handler change: " + func);
+        #if openfl_legacy
+        openfl.Lib.current.stage.onQuit = function() {
+            func();
+            openfl.Lib.close();
+        };
+        #else
+        openfl.Lib.current.stage.application.onExit.add(function(code) {
+            func();
+        });
+        #end
+    }
     public static function resetSaves() {
         FlxG.save.data.dfjk = false;
         FlxG.save.data.downscroll = false;

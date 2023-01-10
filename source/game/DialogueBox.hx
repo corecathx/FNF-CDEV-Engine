@@ -1,4 +1,5 @@
 package game;
+import flixel.math.FlxMath;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
@@ -152,6 +153,10 @@ class DialogueBox extends FlxSpriteGroup
 	var face:FlxSprite;
 	var dialogueOpened:Bool = false;
 	var dialogueStarted:Bool = false;
+	var lerpAlpha:Bool = false;
+	var spriteAlpha:Float = 1;
+
+	var finished:Bool = false;
 
 	override function update(elapsed:Float)
 	{
@@ -163,6 +168,27 @@ class DialogueBox extends FlxSpriteGroup
 			portraitLeft.color = FlxColor.BLACK;
 			swagDialogue.color = FlxColor.WHITE;
 			dropText.color = FlxColor.BLACK;
+		}
+
+		if (dropText.text.length >= dialogueList[0].length-1)
+		{
+			finished = true;
+		} else{
+			finished = false;
+		}
+
+		if (finished){
+			lerpAlpha = true;
+		} else{
+			lerpAlpha = false;
+		}
+
+		if (lerpAlpha){
+			handSelect.alpha = FlxMath.lerp(1, handSelect.alpha, 0.9);
+			handSelect.y = FlxMath.lerp(FlxG.height * 0.9, handSelect.y, 0.9);
+		}else{
+			handSelect.alpha = 0;
+			handSelect.y = (FlxG.height * 0.9)-20;
 		}
 
 		dropText.text = swagDialogue.text;
@@ -184,43 +210,51 @@ class DialogueBox extends FlxSpriteGroup
 
 		if (FlxG.keys.justPressed.ANY  && dialogueStarted == true)
 		{
-			remove(dialogue);
+			if (!finished){
+				swagDialogue.skip();
+				finished = true;
+			} else{
+				remove(dialogue);
 				
-			FlxG.sound.play(Paths.sound('clickText'), 0.8);
-
-			if (dialogueList[1] == null && dialogueList[0] != null)
-			{
-				if (!isEnding)
+				FlxG.sound.play(Paths.sound('clickText'), 0.8);
+	
+				
+				if (dialogueList[1] == null && dialogueList[0] != null)
 				{
-					isEnding = true;
-
-					if (PlayState.SONG.song.toLowerCase() == 'senpai' || PlayState.SONG.song.toLowerCase() == 'thorns')
-						FlxG.sound.music.fadeOut(2.2, 0);
-
-					new FlxTimer().start(0.2, function(tmr:FlxTimer)
+					if (!isEnding)
 					{
-						box.alpha -= 1 / 5;
-						bgFade.alpha -= 1 / 5 * 0.7;
-						portraitLeft.visible = false;
-						portraitRight.visible = false;
-						swagDialogue.alpha -= 1 / 5;
-						dropText.alpha = swagDialogue.alpha;
-						if (PlayState.SONG.song.toLowerCase() == 'thorns')
-							face.alpha -= 1 / 5;
-					}, 5);
-
-					new FlxTimer().start(1.2, function(tmr:FlxTimer)
-					{
-						finishThing();
-						kill();
-					});
+						isEnding = true;
+	
+						if (PlayState.SONG.song.toLowerCase() == 'senpai' || PlayState.SONG.song.toLowerCase() == 'thorns')
+							FlxG.sound.music.fadeOut(2.2, 0);
+	
+						new FlxTimer().start(0.2, function(tmr:FlxTimer)
+						{
+							box.alpha -= 1 / 5;
+							bgFade.alpha -= 1 / 5 * 0.7;
+							portraitLeft.visible = false;
+							portraitRight.visible = false;
+							swagDialogue.alpha -= 1 / 5;
+							dropText.alpha = swagDialogue.alpha;
+							if (PlayState.SONG.song.toLowerCase() == 'thorns')
+								face.alpha -= 1 / 5;
+						}, 5);
+	
+						new FlxTimer().start(1.2, function(tmr:FlxTimer)
+						{
+							finishThing();
+							kill();
+						});
+					}
+				}
+				else
+				{
+					finished = false;
+					dialogueList.remove(dialogueList[0]);
+					startDialogue();
 				}
 			}
-			else
-			{
-				dialogueList.remove(dialogueList[0]);
-				startDialogue();
-			}
+
 		}
 		
 		super.update(elapsed);

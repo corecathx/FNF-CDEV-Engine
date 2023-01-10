@@ -25,6 +25,8 @@ class MiscSettings extends substates.MusicBeatSubstate
 	var options:Array<String> = [
 		'Show Performance Text',
 		'Antialiasing',
+		'Camera Start Focus',
+		'Trace Log',
 		#if desktop 
 		'Discord RPC',#end
 		'Note Ripples',
@@ -192,6 +194,12 @@ class MiscSettings extends substates.MusicBeatSubstate
 				Main.fps_mem.visible = FlxG.save.data.performTxt;
 			case 'Antialiasing' | 'No Antialiasing':
 				FlxG.save.data.antialiasing = !FlxG.save.data.antialiasing;
+			case 'Camera Start Focus':
+				FlxG.save.data.cameraStartFocus += 1;
+				doCheck();
+			case 'Trace Log':
+				FlxG.save.data.showTraceLogAt += 1;
+				doCheck();
 			case 'Note Ripples' | 'Note Splashes':
 				FlxG.save.data.noteRipples = !FlxG.save.data.noteRipples;
 			case 'Discord RPC' | 'No Discord RPC':
@@ -207,6 +215,20 @@ class MiscSettings extends substates.MusicBeatSubstate
 				openfl.utils.Assets.cache.clear();
 				Paths.destroyLoadedImages();
 		}
+	}
+
+	function doCheck(){
+		
+		if (FlxG.save.data.cameraStartFocus < 0)
+			FlxG.save.data.cameraStartFocus = 2;
+		if (FlxG.save.data.cameraStartFocus > 2)
+			FlxG.save.data.cameraStartFocus = 0;
+
+		if (FlxG.save.data.showTraceLogAt < 0)
+			FlxG.save.data.showTraceLogAt = 2;
+		if (FlxG.save.data.showTraceLogAt >= 2)
+			FlxG.save.data.showTraceLogAt = 0;
+		
 	}
 
 	override function closeSubState()
@@ -270,6 +292,8 @@ class MiscSettings extends substates.MusicBeatSubstate
 					FlxG.save.data.performTxt ? 'Show Performance Text' : 'Dont Show Performance Text',
 					#if desktop 
 					FlxG.save.data.discordRpc ? 'Discord RPC' : 'No Discord RPC',#end
+					'Camera Start Focus',
+					'Trace Log',
 					FlxG.save.data.noteRipples ? 'Note Ripples' : 'Note Splashes',
  					FlxG.save.data.fnfNotes ? 'FNF Note Style' : 'CDEV Note Style',
 					FlxG.save.data.checkNewVersion ? 'Check For Updates' : 'Don\'t check for updates',
@@ -293,6 +317,28 @@ class MiscSettings extends substates.MusicBeatSubstate
 				text = "If enabled, it will show this engine's performance\non top left corner as a text";
 			case 'Antialiasing' | 'No Antialiasing':
 				text = "If disabled, the game graphics will not looking as smooth\nand increases performance";
+			
+			case 'Camera Start Focus':
+				var t:String = '';
+				switch (FlxG.save.data.cameraStartFocus){
+					case 0:
+						t = 'Opponent';
+					case 1:
+						t = 'Girlfriend';
+					case 2:
+						t = 'Player';
+				}
+				text = 'Set your starting camera position when you playing a song.\nCurrently focusing at $t';
+			case 'Trace Log':
+				var t:String = '';
+				//I'M SORRY FOR THIS
+				switch (FlxG.save.data.showTraceLogAt){
+					case 0:
+						t = 'hiding the trace log';
+					case 1:
+						t = 'showing the trace log';
+				}
+				text = 'Whether to show / hide the Trace Log.\nCurrently $t';		
 			case 'Discord RPC' | 'No Discord RPC':
 				text = 'Enables / Disables Discord Rich Presence.\n(Select this option will restart your game.)';
 			case 'Note Ripples' | 'Note Splashes':

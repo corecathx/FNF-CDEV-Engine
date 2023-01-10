@@ -8,3 +8,8 @@ CHARACTERHX-CHARCODE
 source/backupcodeshit/
 source/modding/StageEdit.hx
 docs/hscript.md
+todo.txt
+cdev-changelog.txt
+build.hxml
+vscode-project.hxml
+crash_handler/src

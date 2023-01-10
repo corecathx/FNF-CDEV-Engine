@@ -4,30 +4,68 @@
 		"fresh",
 		"dadbattle"
 	],
+	"disableFreeplay": false,
 	"weekTxtImgPath": "week1",
+	"weekDifficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
+	"freeplaySongs": [
+		{
+			"colors": [
+				150,
+				120,
+				255
+			],
+			"song": "bopeebo",
+			"character": "dad",
+			"bpm": 120
+		},
+		{
+			"colors": [
+				150,
+				120,
+				255
+			],
+			"song": "fresh",
+			"character": "dad",
+			"bpm": 120
+		},
+		{
+			"colors": [
+				150,
+				120,
+				255
+			],
+			"song": "dadbattle",
+			"character": "dad",
+			"bpm": 120
+		}
+	],
 	"charSetting": [
 		{
 			"scale": 0.5,
 			"flipX": false,
 			"position": [
-				170.5,
-				-152
+				72.5,
+				-145
 			]
 		},
 		{
 			"scale": 0.5,
 			"flipX": false,
 			"position": [
-				284.5,
-				-94
+				296.5,
+				-100
 			]
 		},
 		{
 			"scale": 0.5,
 			"flipX": false,
 			"position": [
-				639.5,
-				125
+				750.5,
+				126
 			]
 		}
 	],
