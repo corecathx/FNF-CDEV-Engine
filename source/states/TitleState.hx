@@ -1,5 +1,6 @@
 package states;
 
+import flixel.util.FlxAxes;
 import openfl.display.BlendMode;
 import flixel.addons.display.FlxBackdrop;
 import haxe.Http;
@@ -173,13 +174,13 @@ class TitleState extends MusicBeatState
 			bg.alpha = 0.4;
 			add(bg);
 
-			checker = new FlxBackdrop(Paths.image('checker', 'preload'), 1, 1, true, true);
+			checker = new FlxBackdrop(Paths.image('checker', 'preload'), FlxAxes.XY);
 			checker.scale.set(1.5, 1.5);
 			checker.color = FlxColor.CYAN;
 			checker.blend = BlendMode.LIGHTEN;
 			add(checker);
 			checker.scrollFactor.set(0, 0.07);
-			checker.alpha = 0.1;
+			checker.alpha = 0.5;
 			checker.updateHitbox();
 
 			logoBl = new FlxSprite(-50, 10);
