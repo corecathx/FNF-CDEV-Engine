@@ -1,5 +1,5 @@
 # CDEV Engine
-![CDEV Engine Logo](art/CDEV-Engine-Logo.png)
+![logo](art/CDEV-Engine-Logo.png)
 
 This is the repository of Friday Night Funkin': CDEV Engine.
 
