@@ -1,5 +1,6 @@
 package states;
 
+import openfl.display.Stage;
 import flixel.util.FlxAxes;
 import openfl.display.BlendMode;
 import flixel.addons.display.FlxBackdrop;
@@ -88,16 +89,17 @@ class TitleState extends MusicBeatState
 
 		engineutils.Highscore.load();
 
-		CDevConfig.initializeSaves();
+		CDevConfig.initSaves();
+
 		#if debug
 		CDevConfig.debug = true;
 		#end
 
-		/*if (FlxG.save.data.weekUnlocked != null)
+		/*if (CDevConfig.saveData.weekUnlocked != null)
 			{
 				// FIX LATER!!!
 				// WEEK UNLOCK PROGRESSION!!
-				// StoryMenuState.weekUnlocked = FlxG.save.data.weekUnlocked;
+				// StoryMenuState.weekUnlocked = CDevConfig.saveData.weekUnlocked;
 
 				if (StoryMenuState.weekUnlocked.length < 4)
 					StoryMenuState.weekUnlocked.insert(0, true);
@@ -110,6 +112,7 @@ class TitleState extends MusicBeatState
 		#if debug
 		debugShit = true;
 		#end
+
 		#if FREEPLAY
 		FlxG.switchState(new FreeplayState());
 		#elseif CHARTING
@@ -122,7 +125,7 @@ class TitleState extends MusicBeatState
 		#end
 
 		#if desktop
-		if (!FlxG.save.data.discordRpc)
+		if (!CDevConfig.saveData.discordRpc)
 		{
 			DiscordClient.shutdown();
 		}
@@ -149,11 +152,20 @@ class TitleState extends MusicBeatState
 				diamond.persist = true;
 				diamond.destroyOnNoUse = false;
 
-				FlxTransitionableState.defaultTransIn = new TransitionData(FADE, FlxColor.BLACK, 1, new FlxPoint(0, -1),
-					{asset: diamond, width: 32, height: 32}, new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
-				FlxTransitionableState.defaultTransOut = new TransitionData(FADE, FlxColor.BLACK, 0.7, new FlxPoint(0, 1),
-					{asset: diamond, width: 32, height: 32}, new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
+				// FlxTransitionableState.defaultTransIn = new TransitionData(FADE, FlxColor.BLACK, 1, new FlxPoint(0, -1),
+				//	{asset: diamond, width: 32, height: 32}, new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
+				// FlxTransitionableState.defaultTransOut = new TransitionData(FADE, FlxColor.BLACK, 0.7, new FlxPoint(0, 1),
+				//	{asset: diamond, width: 32, height: 32}, new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
 
+				var transData:TransitionTileData = {
+					asset: diamond,
+					width: 32,
+					height: 32
+				}
+				FlxTransitionableState.defaultTransIn = new TransitionData(FADE, FlxColor.BLACK, 1, new FlxPoint(0, -1), transData,
+					new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
+				FlxTransitionableState.defaultTransOut = new TransitionData(FADE, FlxColor.BLACK, 1, new FlxPoint(0, -1), transData,
+					new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
 				transIn = FlxTransitionableState.defaultTransIn;
 				transOut = FlxTransitionableState.defaultTransOut;
 
@@ -167,25 +179,26 @@ class TitleState extends MusicBeatState
 				// music.play();
 			}
 			// persistentUpdate = true;
+			Main.fps_mem.visible = (CDevConfig.saveData.performTxt != "hide");
 
 			bg = FlxGradient.createGradientFlxSprite(FlxG.width, FlxG.height, [FlxColor.BLACK, FlxColor.BLUE], 1, 90, true);
-			bg.antialiasing = FlxG.save.data.antialiasing;
+			bg.antialiasing = CDevConfig.saveData.antialiasing;
 			bg.scale.set(1.2, 1.2);
 			bg.alpha = 0.4;
 			add(bg);
 
 			checker = new FlxBackdrop(Paths.image('checker', 'preload'), FlxAxes.XY);
 			checker.scale.set(1.5, 1.5);
-			checker.color = FlxColor.CYAN;
-			checker.blend = BlendMode.LIGHTEN;
+			checker.color = 0xFF006AFF;
+			checker.blend = BlendMode.LAYER;
 			add(checker);
 			checker.scrollFactor.set(0, 0.07);
-			checker.alpha = 0.5;
+			checker.alpha = 0.4;
 			checker.updateHitbox();
 
 			logoBl = new FlxSprite(-50, 10);
 			logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
-			logoBl.antialiasing = FlxG.save.data.antialiasing;
+			logoBl.antialiasing = CDevConfig.saveData.antialiasing;
 			logoBl.animation.addByPrefix('bump', 'logo bumpin', 24, false);
 			logoBl.animation.play('bump');
 			logoBl.updateHitbox();
@@ -196,7 +209,7 @@ class TitleState extends MusicBeatState
 			gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
 			gfDance.animation.addByIndices('danceLeft', 'GF Dancing Beat blue', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 			gfDance.animation.addByIndices('danceRight', 'GF Dancing Beat blue', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-			gfDance.antialiasing = FlxG.save.data.antialiasing;
+			gfDance.antialiasing = CDevConfig.saveData.antialiasing;
 			add(gfDance);
 			add(logoBl);
 
@@ -204,7 +217,7 @@ class TitleState extends MusicBeatState
 			titleText.frames = Paths.getSparrowAtlas('titleEnter');
 			titleText.animation.addByPrefix('idle', "Press Enter to Begin", 24);
 			titleText.animation.addByPrefix('press', "ENTER PRESSED", 24);
-			titleText.antialiasing = FlxG.save.data.antialiasing;
+			titleText.antialiasing = CDevConfig.saveData.antialiasing;
 			titleText.animation.play('idle');
 			titleText.updateHitbox();
 			// titleText.screenCenter(X);
@@ -217,7 +230,7 @@ class TitleState extends MusicBeatState
 
 			var logo:FlxSprite = new FlxSprite().loadGraphic(Paths.image('logo'));
 			logo.screenCenter();
-			logo.antialiasing = FlxG.save.data.antialiasing;
+			logo.antialiasing = CDevConfig.saveData.antialiasing;
 			// add(logo);
 
 			// FlxTween.tween(logoBl, {y: logoBl.y + 50}, 0.6, {ease: FlxEase.quadInOut, type: PINGPONG});
@@ -235,7 +248,7 @@ class TitleState extends MusicBeatState
 
 			credTextShit.visible = false;
 
-			if (!FlxG.save.data.engineWM)
+			if (!CDevConfig.saveData.engineWM)
 			{
 				ngSpr = new FlxSprite(0, FlxG.height * 0.52 + 30).loadGraphic(Paths.image('newgrounds_logo'));
 				add(ngSpr);
@@ -243,7 +256,7 @@ class TitleState extends MusicBeatState
 				ngSpr.setGraphicSize(Std.int(ngSpr.width * 0.8));
 				ngSpr.updateHitbox();
 				ngSpr.screenCenter(X);
-				ngSpr.antialiasing = FlxG.save.data.antialiasing;
+				ngSpr.antialiasing = CDevConfig.saveData.antialiasing;
 			}
 			else
 			{
@@ -253,7 +266,7 @@ class TitleState extends MusicBeatState
 				ngSpr.setGraphicSize(Std.int(ngSpr.width * 0.1));
 				ngSpr.updateHitbox();
 				ngSpr.screenCenter(X);
-				ngSpr.antialiasing = FlxG.save.data.antialiasing;
+				ngSpr.antialiasing = CDevConfig.saveData.antialiasing;
 			}
 
 			FlxTween.tween(credTextShit, {y: credTextShit.y + 20}, 2.9, {ease: FlxEase.quadInOut, type: PINGPONG});
@@ -310,8 +323,8 @@ class TitleState extends MusicBeatState
 				Conductor.songPosition = FlxG.sound.music.time;
 			// FlxG.watch.addQuick('amp', FlxG.sound.music.amplitude);
 			speed = FlxMath.lerp(intendedSpeed, speed, CDevConfig.utils.bound(1 - (elapsed * 2), 0, 1));
-			checker.x -= 0.45 / (FlxG.save.data.fpscap / 60);
-			checker.y -= (0.16 / (FlxG.save.data.fpscap / 60)) * speed;
+			checker.x -= 0.45 / (CDevConfig.saveData.fpscap / 60);
+			checker.y -= (0.16 / (CDevConfig.saveData.fpscap / 60)) * speed;
 
 			for (i in 0...credGroup.members.length)
 			{
@@ -371,7 +384,7 @@ class TitleState extends MusicBeatState
 							FlxG.switchState(new MainMenuState());
 						else
 						{
-							if (FlxG.save.data.checkNewVersion)
+							if (CDevConfig.saveData.checkNewVersion)
 								FlxG.switchState(new OutdatedState());
 							else
 								FlxG.switchState(new MainMenuState());
@@ -394,7 +407,7 @@ class TitleState extends MusicBeatState
 	{
 		for (i in 0...textArray.length)
 		{
-			var money:Alphabet = new Alphabet(0, 0, textArray[i], true, false);
+			var money:Alphabet = new Alphabet(0, 0, textArray[i], true);
 			money.screenCenter(X);
 			money.y += (i * 60) + 200 + yOffset;
 			money.effect = effect;
@@ -419,7 +432,8 @@ class TitleState extends MusicBeatState
 			http.onData = function(data:String)
 			{
 				onlineVer = data.split('\n')[0].trim();
-				var curVersion:String = CDevConfig.engineVersion.trim();
+				// var curVersion:String = CDevConfig.engineVersion.trim();
+				var curVersion:String = "0.01".trim();
 				trace('GitHub Version: ' + onlineVer + ', Your version: ' + curVersion);
 				if (onlineVer != curVersion)
 				{
@@ -439,7 +453,7 @@ class TitleState extends MusicBeatState
 
 	function addMoreText(text:String, ?effect:String = "default")
 	{
-		var coolText:Alphabet = new Alphabet(0, 0, text, true, false);
+		var coolText:Alphabet = new Alphabet(0, 0, text, true);
 		coolText.screenCenter(X);
 		coolText.effect = effect;
 		coolText.y += (textGroup.length * 60) + 200 + yOffset;
@@ -491,12 +505,12 @@ class TitleState extends MusicBeatState
 				// credTextShit.screenCenter();
 				case 5:
 					yOffset = 10;
-					if (FlxG.save.data.engineWM)
+					if (CDevConfig.saveData.engineWM)
 						createCoolText(['CDEV Engine', 'By']);
 					else
 						createCoolText(['Not Associated', 'With']);
 				case 7:
-					if (FlxG.save.data.engineWM)
+					if (CDevConfig.saveData.engineWM)
 						addMoreText('CoreDev');
 					else
 					{
@@ -599,7 +613,7 @@ class TitleState extends MusicBeatState
 			case "wavy":
 				for (alp in 0...alphab.members.length)
 				{
-					alphab.members[alp].y += (Math.sin(((Conductor.songPosition / 1000) * (Conductor.bpm / 60))+ alp*0.15) * Math.PI)/6;
+					alphab.members[alp].y += (Math.sin(((Conductor.songPosition / 1000) * (Conductor.bpm / 60)) + alp * 0.15) * Math.PI) / 6;
 				}
 			case "bouncy":
 				alphab.scale.x += 0.3;

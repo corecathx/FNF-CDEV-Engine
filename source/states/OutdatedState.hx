@@ -20,7 +20,7 @@ class OutdatedState extends MusicBeatState{
         + 'Hey! You\'re using the old version of CDEV Engine!\n'
         + 'Your current version are ${CDevConfig.engineVersion}\n'
         + 'While the new version of CDEV Engine are ${TitleState.onlineVer}!\n'
-        + '\nWould you like to download the new version of CDEV Engine?';
+        + '\nWould you like to update CDEV Engine to the new version?';
 
         var daText:FlxText = new FlxText(0,180, FlxG.width, textShit,30);
         daText.setFormat('VCR OSD Mono', 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
@@ -45,13 +45,14 @@ class OutdatedState extends MusicBeatState{
             FlxG.sound.play(Paths.sound('confirmMenu'));
             CDevConfig.utils.openURL('https://gamebanana.com/mods/346832');
             FlxG.switchState(new MainMenuState());
+            //FlxG.switchState(new UpdateState());wip
         }
         if (FlxG.keys.justPressed.X){
             FlxG.sound.play(Paths.sound('cancelMenu'));
             FlxG.switchState(new MainMenuState());
         }
         if (FlxG.keys.justPressed.C){
-            FlxG.save.data.checkNewVersion = false;
+            CDevConfig.saveData.checkNewVersion = false;
             FlxG.sound.play(Paths.sound('cancelMenu'));
             FlxG.switchState(new MainMenuState());
         }

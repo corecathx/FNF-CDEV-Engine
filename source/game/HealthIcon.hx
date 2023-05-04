@@ -68,7 +68,7 @@ class HealthIcon extends FlxSprite
 
 		iconOffset[0] = (width - 150) / 2;
 		iconOffset[1] = (height - 150) / 2;
-		antialiasing = FlxG.save.data.antialiasing;
+		antialiasing = CDevConfig.saveData.antialiasing;
 		if (char.endsWith('-pixel'))
 			antialiasing = false;	
 	}

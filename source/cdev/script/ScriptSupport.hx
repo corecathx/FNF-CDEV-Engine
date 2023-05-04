@@ -1,5 +1,6 @@
 package cdev.script;
 
+import sys.FileSystem;
 import cdev.CDevMods.CDEV_FlxAxes;
 import flixel.addons.display.FlxBackdrop;
 import cdev.CDevMods.CDEV_BlendMode;
@@ -41,19 +42,22 @@ import cdev.script.CDevScript.CDevModScript;
 
 using StringTools;
 
-class ScriptSupport {
-    public static var scripts:Array<CDevModScript> = [];
+class ScriptSupport
+{
+	public static var scripts:Array<CDevModScript> = [];
+	public static var typedScripts:Array<CDevScript> = [];
 	public static var currentMod:String = "FNF Test Mod";
 	public static var playStated:PlayState = null;
 
-    public static function parseSongConfig() {
-        var songConf = SongConfScript.parse(currentMod, PlayState.SONG.song.toLowerCase());
+	public static function parseSongConfig()
+	{
+		var songConf = SongConfScript.parse(currentMod, PlayState.SONG.song.toLowerCase());
 
-        scripts = songConf.scripts;
+		scripts = songConf.scripts;
 		trace(songConf.scripts);
-    }
-	
-	public static function setScriptDefaultVars(script:CDevScript, mod:String, settings:Dynamic)
+	}
+
+	public static function setScriptDefaultVars(script:CDevScript, mod:String, ?song:String)
 	{
 		var superVar = {};
 		if (Std.isOfType(script, HScript))
@@ -95,16 +99,6 @@ class ScriptSupport {
 				}
 			}
 		});
-		// script.setVariable("include", function(path:String) {
-		//     var splittedPath = path.split(":");
-		//     if (splittedPath.length < 2) splittedPath.insert(0, mod);
-		//     var joinedPath = splittedPath.join("/");
-		//     var mFolder = Paths.modsPath;
-		//     var expr = getExpressionFromPath('$mFolder/$joinedPath.hx');
-		//     if (expr != null) {
-		//         hscript.execute(expr);
-		//     }
-		// });
 
 		if (PlayState.current != null)
 		{
@@ -127,14 +121,17 @@ class ScriptSupport {
 		});
 		var curState:Dynamic = FlxG.state;
 		playStated = curState;
-		script.setVariable("add", function(obj){
+		script.setVariable("add", function(obj)
+		{
 			playStated.add(obj);
 		});
-		script.setVariable("remove", function(obj){
+		script.setVariable("remove", function(obj)
+		{
 			playStated.remove(obj);
 		});
-		script.setVariable("insert", function(pos,obj){
-			playStated.insert(pos,obj);
+		script.setVariable("insert", function(pos, obj)
+		{
+			playStated.insert(pos, obj);
 		});
 		script.setVariable("PlayState", PlayState);
 		script.setVariable("FlxSprite", FlxSprite);
@@ -173,7 +170,32 @@ class ScriptSupport {
 		script.setVariable("Rectangle", Rectangle);
 		script.setVariable("Point", Point);
 		script.setVariable("Window", Application.current.window);
-		// script.setVariable("FlxKey", FlxKey);
+		script.setVariable("CDevConfig", CDevConfig.saveData); //i can't let the players access the entire CDevConfig class.
+
+		// oh god
+		script.setVariable("importScript", function(scriptname)
+		{
+			var scriptfile:String = scriptname;
+			if (scriptfile.endsWith(".hx")) // no need to add .hx ext
+				scriptfile = scriptfile.substr(0, scriptfile.length-3);
+
+			trace("\n\n" + script.fileName + ".hx is trying to import " + scriptname);
+
+			var scriptPath = Paths.mods(mod + "/data/charts/" + PlayState.SONG.song + '/$scriptname.hx');
+			trace("script path: " + scriptPath);
+			if (FileSystem.exists(scriptPath))
+			{
+				trace("script exists, adding variable to " + script.fileName);
+				var cdev:CDevScript = CDevScript.create(scriptPath);
+				cdev.loadFile(scriptPath);
+				setScriptDefaultVars(cdev, mod, PlayState.SONG.song);
+				script.setVariable(scriptname, new CDevCustomScript(cdev));
+			}
+			else
+			{
+				script.trace("Script with name: \"" + scriptname + ".hx\" does not exist.");
+			}
+		});
 
 		script.mod = mod;
 		trace('initfinished');

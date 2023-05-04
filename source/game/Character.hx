@@ -78,7 +78,7 @@ class Character extends SpriteStage
 		this.isPlayer = isPlayer;
 
 		var tex:FlxAtlasFrames;
-		antialiasing = FlxG.save.data.antialiasing;
+		antialiasing = CDevConfig.saveData.antialiasing;
 
 		switch (curCharacter)
 		{
@@ -126,7 +126,7 @@ class Character extends SpriteStage
 				flipX = !!parsedJSON.flipX;
 
 				antialiasing = parsedJSON.usingAntialiasing;
-				if (!FlxG.save.data.antialiasing) // force disable antialiasing while FlxG.save.data.antialiasing was false.
+				if (!CDevConfig.saveData.antialiasing) // force disable antialiasing while CDevConfig.saveData.antialiasing was false.
 					antialiasing = false;
 
 				if (animArray != null && animArray.length > 0)

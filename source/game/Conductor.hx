@@ -53,7 +53,7 @@ class Conductor
 	}
 
 	public static function updateSettings() {
-		offset = FlxG.save.data.offset;
+		offset = CDevConfig.saveData.offset;
 		safeFrames = 20;
 
 		safeZoneOffset = (safeFrames / 60) * 1000;

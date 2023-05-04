@@ -12,14 +12,14 @@ class NotePress extends FlxSprite
 		super(x, y);
 		var fileName:String = '';
 
-		if (FlxG.save.data.noteRipples)
+		if (CDevConfig.saveData.noteRipples)
 			fileName = 'notes/NOTE_press';
 		else
 			fileName = 'notes/noteSplashes';
 		loadImage(fileName);
 
 		prepareImage(x, y, note);
-		antialiasing = FlxG.save.data.antialiasing;
+		antialiasing = CDevConfig.saveData.antialiasing;
 	}
 
 	override function update(elapsed:Float)
@@ -35,19 +35,19 @@ class NotePress extends FlxSprite
 	var splashOffset:Array<Float> = [5,10,-5,10];
 	public function prepareImage(x:Float, y:Float, note:Int = 0, col:FlxColor = FlxColor.WHITE)
 	{
-		if (FlxG.save.data.noteRipples)
+		if (CDevConfig.saveData.noteRipples)
 			setPosition((x - Note.swagWidth * 0.95) + 30, (y - Note.swagWidth) + 30);
 		else
 			setPosition((x - Note.swagWidth * 0.95) + -10 + splashOffsets[note], (y - Note.swagWidth) + -10+ splashOffset[note]);
 
-		if (FlxG.save.data.noteRipples)
+		if (CDevConfig.saveData.noteRipples)
 			alpha = 1;
 		else
 			alpha = 0.8;
 
 		var daAnim:String = '';
 
-		if (FlxG.save.data.noteRipples)
+		if (CDevConfig.saveData.noteRipples)
 			switch (note)
 			{
 				case 0:
@@ -72,10 +72,10 @@ class NotePress extends FlxSprite
 					daAnim = 'rightS';
 			}
 		animation.play(daAnim, true);
-		if (!FlxG.save.data.noteRipples)
+		if (!CDevConfig.saveData.noteRipples)
 			angle = FlxG.random.int(0,360);
 
-		if (FlxG.save.data.noteRipples){
+		if (CDevConfig.saveData.noteRipples){
 			color = col;
 		}
 
@@ -86,7 +86,7 @@ class NotePress extends FlxSprite
 	function loadImage(skin:String)
 	{
 		frames = Paths.getSparrowAtlas(skin);
-		if (FlxG.save.data.noteRipples)
+		if (CDevConfig.saveData.noteRipples)
 		{
 			animation.addByPrefix("left", 'leftclick', 30, false);
 			animation.addByPrefix("down", 'downclick', 30, false);

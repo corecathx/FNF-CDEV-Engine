@@ -4,6 +4,8 @@ import haxe.Exception;
 import sys.FileSystem;
 import haxe.io.Path;
 
+using StringTools;
+
 typedef CDevModScript =
 {
 	var daPath:String;

@@ -1,5 +1,6 @@
 package game;
 
+import haxe.io.Bytes;
 import modding.ModPaths;
 import sys.io.File;
 import openfl.display.BitmapData;
@@ -348,7 +349,8 @@ class Paths
 		{
 			if (!customImagesLoaded.exists(key))
 			{
-				var newBitmap:BitmapData = BitmapData.fromFile(modImages(key));
+				var data:Bytes = File.getBytes(modImages(key));
+				var newBitmap:BitmapData = BitmapData.fromBytes(data);
 				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
 				newGraphic.persist = true;
 				FlxG.bitmap.addGraphic(newGraphic);
@@ -376,7 +378,7 @@ class Paths
 		var childrens:Array<String> = [];
 		var dumbFolders:Array<String> = [
 			            'data',    'data/charts', 'data/characters', 'data/stages', 'data/weeks', 'data/fonts', 'images', 'images/characters', 'images/icons/',
-			'images/storymenu', 'images/credits',    'images/notes',      'events',      'notes',     #if USE_VIDEOS 'videos', #end 'sounds',             'music',         'songs'
+			'images/storymenu',		'images/storymenu/difficulty'  , 'images/credits',    'images/notes',      'events',      'notes',     #if USE_VIDEOS 'videos', #end 'sounds',             'music',         'songs'
 		];
 
 		// path, filename, data
@@ -516,7 +518,7 @@ class Paths
 		return modFolders('songs/' + key + '.' + SOUND_EXT);
 	}
 
-	static public function modFolders(key:String)
+	static public function modFolders(key:String, ?thisMod:Null<String>)
 	{
 		///if (curModDir != null && curModDir.length > 0)
 		// {
@@ -526,12 +528,20 @@ class Paths
 		//		return checkFile;
 		//	}
 		// }
-		if (currentMod != null && currentMod != '')
+		if (thisMod != null && thisMod != '')
 		{
-			var checkFile:String = mods(currentMod + '/' + key);
+			var checkFile:String = mods(thisMod + '/' + key);
 			if (FileSystem.exists(checkFile))
 				return checkFile;
+		} else {
+			if (currentMod != null && currentMod != '')
+			{
+				var checkFile:String = mods(currentMod + '/' + key);
+				if (FileSystem.exists(checkFile))
+					return checkFile;
+			}
 		}
+
 
 		return 'cdev-mods/' + key; // ok yea, welp.
 	}

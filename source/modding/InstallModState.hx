@@ -89,7 +89,7 @@ class InstallModState extends states.MusicBeatState
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
 		menuBG.alpha = 0.5;
-		menuBG.antialiasing = FlxG.save.data.antialiasing;
+		menuBG.antialiasing = CDevConfig.saveData.antialiasing;
 		add(menuBG);
 
 		modBG = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
@@ -97,7 +97,7 @@ class InstallModState extends states.MusicBeatState
 		modBG.updateHitbox();
 		modBG.screenCenter();
 		modBG.alpha = 0;
-		modBG.antialiasing = FlxG.save.data.antialiasing;
+		modBG.antialiasing = CDevConfig.saveData.antialiasing;
 		add(modBG);
 
 		grpOptions = new FlxTypedGroup<Alphabet>();
@@ -201,7 +201,7 @@ class InstallModState extends states.MusicBeatState
 					Paths.curModDir.remove(modShits[curSelected].modName);
 				}
 				trace(Paths.curModDir);
-				FlxG.save.data.loadedMods = Paths.curModDir;
+				CDevConfig.saveData.loadedMods = Paths.curModDir;
 			}
 		}
 	}

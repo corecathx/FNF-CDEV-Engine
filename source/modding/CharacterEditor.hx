@@ -386,7 +386,7 @@ class CharacterEditor extends states.MusicBeatState
 		stageFront = new FlxSprite(-650, 600).loadGraphic(Paths.image('stagefront', 'shared'));
 		stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
 		stageFront.updateHitbox();
-		stageFront.antialiasing = FlxG.save.data.antialiasing;
+		stageFront.antialiasing = CDevConfig.saveData.antialiasing;
 		stageFront.scrollFactor.set(1, 1);
 		stageFront.active = false;
 		stageFront.visible = false;
@@ -424,7 +424,7 @@ class CharacterEditor extends states.MusicBeatState
 	function createHealthBar()
 	{
 		healthBarBG = new FlxSprite(30, FlxG.height - 78).loadGraphic(Paths.image("healthBar", 'shared'));
-		healthBarBG.antialiasing = FlxG.save.data.antialiasing;
+		healthBarBG.antialiasing = CDevConfig.saveData.antialiasing;
 		add(healthBarBG);
 
 		healthIcon = new HealthIcon(charJSON.iconName, false);
@@ -671,7 +671,7 @@ class CharacterEditor extends states.MusicBeatState
 			{
 				case 'Antialiasing':
 					charJSON.usingAntialiasing = check.checked;
-					if (FlxG.save.data.antialiasing)
+					if (CDevConfig.saveData.antialiasing)
 						char.antialiasing = charJSON.usingAntialiasing;
 					else
 						char.antialiasing = false;
@@ -857,7 +857,7 @@ class CharacterEditor extends states.MusicBeatState
 
 		//char.flipX = charJSON.flipX;
 
-		// if (FlxG.save.data.antialiasing)
+		// if (CDevConfig.saveData.antialiasing)
 		//char.antialiasing = charJSON.usingAntialiasing;
 		updateCharPosition();
 

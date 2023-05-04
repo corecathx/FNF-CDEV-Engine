@@ -173,25 +173,22 @@ class AppearanceSettings extends substates.MusicBeatSubstate
 	{
 		switch (options[curSelected])
 		{
-			case 'Show Performance Text' | 'Dont Show Performance Text':
-				FlxG.save.data.performTxt = !FlxG.save.data.performTxt;
-				Main.fps_mem.visible = FlxG.save.data.performTxt;
 			case 'Antialiasing' | 'No Antialiasing':
-				FlxG.save.data.antialiasing = !FlxG.save.data.antialiasing;
+				CDevConfig.saveData.antialiasing = !CDevConfig.saveData.antialiasing;
 			case 'Note Ripples' | 'Note Splashes':
-				FlxG.save.data.noteRipples = !FlxG.save.data.noteRipples;
+				CDevConfig.saveData.noteRipples = !CDevConfig.saveData.noteRipples;
 			//case 'Note Quantization' | 'Note Column':
-			//	FlxG.save.data.quantizeNote = !FlxG.save.data.quantizeNote;
+			//	CDevConfig.saveData.quantizeNote = !CDevConfig.saveData.quantizeNote;
 			case 'Show Engine Watermark' | 'Hide Engine Watermark':
-				FlxG.save.data.engineWM = !FlxG.save.data.engineWM;
+				CDevConfig.saveData.engineWM = !CDevConfig.saveData.engineWM;
 			case 'Show Opponent Notes' | 'Hide Opponent Notes':
-				FlxG.save.data.bgNote = !FlxG.save.data.bgNote;
+				CDevConfig.saveData.bgNote = !CDevConfig.saveData.bgNote;
 			case 'Show Strum Lane' | 'Hide Strum Lane':
-				FlxG.save.data.bgLane = !FlxG.save.data.bgLane;
+				CDevConfig.saveData.bgLane = !CDevConfig.saveData.bgLane;
 			case 'Change Rating Position':
 				openSubState(new substates.RatingPosition(fromPause));
 			case 'Smooth Motions' | 'Dont Smooth Motions':
-				FlxG.save.data.smoothAF = !FlxG.save.data.smoothAF;
+				CDevConfig.saveData.smoothAF = !CDevConfig.saveData.smoothAF;
 		}
 	}
 
@@ -233,19 +230,19 @@ class AppearanceSettings extends substates.MusicBeatSubstate
 		if (!fromPause)
 			{
 				options = [
-					FlxG.save.data.smoothAF ? 'Smooth Motions' : 'Dont Smooth Motions',
-					FlxG.save.data.engineWM ? 'Show Engine Watermark' : 'Hide Engine Watermark',
-					//FlxG.save.data.quantizeNote ? "Note Quantization" : "Note Column",
-					FlxG.save.data.bgLane ? 'Show Strum Lane' : 'Hide Strum Lane',
-					FlxG.save.data.bgNote ? 'Show Opponent Notes' : 'Hide Opponent Notes',
+					CDevConfig.saveData.smoothAF ? 'Smooth Motions' : 'Dont Smooth Motions',
+					CDevConfig.saveData.engineWM ? 'Show Engine Watermark' : 'Hide Engine Watermark',
+					//CDevConfig.saveData.quantizeNote ? "Note Quantization" : "Note Column",
+					CDevConfig.saveData.bgLane ? 'Show Strum Lane' : 'Hide Strum Lane',
+					CDevConfig.saveData.bgNote ? 'Show Opponent Notes' : 'Hide Opponent Notes',
 					'Change Rating Position',
-					FlxG.save.data.antialiasing ? 'Antialiasing' : 'No Antialiasing',
+					CDevConfig.saveData.antialiasing ? 'Antialiasing' : 'No Antialiasing',
 				];
 			} else{
 				options = [
-					FlxG.save.data.smoothAF ? 'Smooth Motions' : 'Dont Smooth Motions',
-					FlxG.save.data.bgLane ? 'Show Strum Lane' : 'Hide Strum Lane',
-					FlxG.save.data.bgNote ? 'Show Opponent Notes' : 'Hide Opponent Notes',
+					CDevConfig.saveData.smoothAF ? 'Smooth Motions' : 'Dont Smooth Motions',
+					CDevConfig.saveData.bgLane ? 'Show Strum Lane' : 'Hide Strum Lane',
+					CDevConfig.saveData.bgNote ? 'Show Opponent Notes' : 'Hide Opponent Notes',
 					'Change Rating Position'
 				];
 			}

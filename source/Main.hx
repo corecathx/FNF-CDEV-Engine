@@ -1,5 +1,6 @@
 package;
 
+import openfl.display.StageScaleMode;
 #if CRASH_HANDLER
 import sys.FileSystem;
 import sys.io.File;
@@ -81,6 +82,7 @@ class Main extends Sprite
 	{
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
+		//CDevConfig.initSaves();
 
 		/*if (zoom == -1)
 		{
@@ -99,7 +101,9 @@ class Main extends Sprite
 
 		Application.current.onExit.add(function(exitCode)
 		{
+			CDevConfig.onExitFunction();
 			DiscordClient.shutdown();
+			CDevConfig.storeSaveData();
 		});
 		#end
 
@@ -108,8 +112,9 @@ class Main extends Sprite
 		#if !mobile
 		// addChild(new FPS(10, 10, 0xFFFFFF));
 		fps_mem = new CDevFPSMem(10, 10, 0xffffff, true);
+		Lib.current.stage.align = "tl";
+		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 		addChild(fps_mem);
-		fps_mem.visible = FlxG.save.data.performTxt;
 		#end
 		FlxG.fixedTimestep = false;
 		// FlxG.camera.antialiasing = FlxG.save.data.antialiasing;
@@ -142,6 +147,9 @@ class Main extends Sprite
 	{
 		if (FlxG.sound.music!=null&&FlxG.sound.music.playing)
 			FlxG.sound.music.stop();
+
+		CDevConfig.storeSaveData();
+		
 		var textStuff:String = "";
 		var filePath:String;
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);

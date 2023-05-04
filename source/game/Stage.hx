@@ -188,6 +188,10 @@ class Stage
 
 					daSprite.scale.set(stageJSON.sprites[i].imageScale, stageJSON.sprites[i].imageScale);
 					daSprite.antialiasing = stageJSON.sprites[i].imageAntialias;
+
+					if (!CDevConfig.saveData.antialiasing)
+						daSprite.antialiasing = false;
+
 					daSprite.setPosition(stageJSON.sprites[i].position[0], stageJSON.sprites[i].position[1]);
 					daSprite.scrollFactor.set(stageJSON.sprites[i].imageSF, stageJSON.sprites[i].imageSF);
 					daSprite.alpha = stageJSON.sprites[i].imageAlpha;
@@ -197,6 +201,10 @@ class Stage
 				case "sparrow":
 					var daSprite:SpriteStage = new SpriteStage();
 					daSprite.antialiasing = stageJSON.sprites[i].imageAntialias;
+
+					if (!CDevConfig.saveData.antialiasing)
+						daSprite.antialiasing = false;
+					
 					daSprite.objectName = stageJSON.sprites[i].imageVar;
 					daSprite.type = "sparrow";
 					daSprite.ID = i;

@@ -6,7 +6,7 @@ import states.PlayState;
 class RatingsCheck
 {
 	//shit,bad,good,sick,perfect
-    public static var theTimingWindow = [166,135,90,55,20];
+    public static var theTimingWindow = [166,135,90,55];
 	public static function getRating(acc:Float):String
 	{
 		var returnShit:String = "";
@@ -96,10 +96,10 @@ class RatingsCheck
 
     public static function noteJudge(note:game.Note):String
     {
-		if (!FlxG.save.data.botplay) //well...
+		if (!CDevConfig.saveData.botplay) //well...
 		{
 			if (note.isSustainNote)
-				return 'perfect';
+				return "sick"; //return 'perfect';
 
 			var theDiff = Math.abs((note.strumTime - game.Conductor.songPosition));
 			for (i in 0...theTimingWindow.length){
@@ -117,15 +117,15 @@ class RatingsCheck
 							return "good";
 						case 3:
 							return "sick";
-						case 4:
-							return "perfect";
+						//case 4:
+						//	return "perfect";
 					}
 				}
 			}
 				return "shit";
 			
 		} else{
-				return "perfect";
+				return "sick";
 		}
     }
 }

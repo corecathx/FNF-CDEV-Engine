@@ -43,7 +43,7 @@ class ModIcon extends FlxSprite
         setGraphicSize(80,80); //keep the image size to 80x80.
         updateHitbox();
 
-		antialiasing = FlxG.save.data.antialiasing;
+		antialiasing = CDevConfig.saveData.antialiasing;
 	}
 
 	override function update(elapsed:Float)

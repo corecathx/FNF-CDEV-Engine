@@ -45,14 +45,14 @@ class RatingPosition extends MusicBeatSubstate
 		// cuz' i'm lazy
 		rating = new FlxSprite().loadGraphic(Paths.image('perfect', 'shared'));
 		rating.setGraphicSize(Std.int(rating.width * 0.7));
-		rating.antialiasing = FlxG.save.data.antialiasing;
+		rating.antialiasing = CDevConfig.saveData.antialiasing;
 		add(rating);
 
 		rating.cameras = [camHUD];
 
 		var originalXPos:Float = 65;
 
-		if (FlxG.save.data.middlescroll)
+		if (CDevConfig.saveData.middlescroll)
 			originalXPos = -290;
 		// originalXPos = -278;
 
@@ -79,7 +79,7 @@ class RatingPosition extends MusicBeatSubstate
 			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image('num' + Std.int(i)));
 			numScore.x = 43 * daLoop;
 			numScore.ID = daLoop;
-			numScore.antialiasing = FlxG.save.data.antialiasing;
+			numScore.antialiasing = CDevConfig.saveData.antialiasing;
 			numScore.setGraphicSize(Std.int(numScore.width * 0.5));
 			numScore.updateHitbox();
 			numScore.cameras = [camHUD];
@@ -92,7 +92,7 @@ class RatingPosition extends MusicBeatSubstate
 		strumLine = new FlxSprite(strumXpos, 70).makeGraphic(FlxG.width, 10);
 		strumLine.scrollFactor.set();
 
-		if (FlxG.save.data.downscroll)
+		if (CDevConfig.saveData.downscroll)
 			strumLine.y = FlxG.height - 160;
 
 		FlxG.mouse.visible = true;
@@ -110,20 +110,20 @@ class RatingPosition extends MusicBeatSubstate
 		versionSht.borderSize = 2;
 		add(versionSht);
 
-		if (!FlxG.save.data.rChanged)
+		if (!CDevConfig.saveData.rChanged)
 		{
-			FlxG.save.data.rX = defXPos;
-			FlxG.save.data.rY = defXPos;
+			CDevConfig.saveData.rX = defXPos;
+			CDevConfig.saveData.rY = defXPos;
 		}
 
-		rating.x = FlxG.save.data.rX;
-		rating.y = FlxG.save.data.rY;
+		rating.x = CDevConfig.saveData.rX;
+		rating.y = CDevConfig.saveData.rY;
 		rating.scrollFactor.set();
 
-		if (FlxG.save.data.cChanged)
+		if (CDevConfig.saveData.cChanged)
 		{
-			grpCombo.x = FlxG.save.data.cX - 43 - (43/2);
-			grpCombo.y = FlxG.save.data.cY - 43;
+			grpCombo.x = CDevConfig.saveData.cX - 43 - (43/2);
+			grpCombo.y = CDevConfig.saveData.cY - 43;
 		}
 		else
 		{
@@ -133,7 +133,7 @@ class RatingPosition extends MusicBeatSubstate
 
 		grpCombo.scrollFactor.set();
 
-		if (!FlxG.save.data.middlescroll)
+		if (!CDevConfig.saveData.middlescroll)
 			generateStaticArrows(0);
 
 		generateStaticArrows(1);
@@ -204,14 +204,14 @@ class RatingPosition extends MusicBeatSubstate
 			switch (sel)
 			{
 				case "rating":
-					FlxG.save.data.rX = rating.x;
-					FlxG.save.data.rY = rating.y;
-					FlxG.save.data.rChanged = true;
+					CDevConfig.saveData.rX = rating.x;
+					CDevConfig.saveData.rY = rating.y;
+					CDevConfig.saveData.rChanged = true;
 				case "combo":
 					trace([grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).x, grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).y]);
-					FlxG.save.data.cX = grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).x + (43 *2);
-					FlxG.save.data.cY = grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).y + 43;
-					FlxG.save.data.cChanged = true;
+					CDevConfig.saveData.cX = grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).x + (43 *2);
+					CDevConfig.saveData.cY = grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).y + 43;
+					CDevConfig.saveData.cChanged = true;
 			}
 			sel = "";
 		}
@@ -219,10 +219,10 @@ class RatingPosition extends MusicBeatSubstate
 		if (controls.RESET)
 		{
 			FlxG.sound.play(Paths.sound('confirmMenu'));
-			FlxG.save.data.rX = defXPos;
-			FlxG.save.data.rY = defYPos;
+			CDevConfig.saveData.rX = defXPos;
+			CDevConfig.saveData.rY = defYPos;
 
-			FlxG.save.data.cChanged = false;
+			CDevConfig.saveData.cChanged = false;
 
 			rating.setPosition(defXPos, defYPos);
 			grpCombo.setPosition(defXPos - 90 - 43, rating.y + 100 - 43);
@@ -243,7 +243,7 @@ class RatingPosition extends MusicBeatSubstate
 			// FlxG.log.add(i);
 			var babyArrow:FlxSprite = new FlxSprite(strumXpos, strumLine.y);
 
-			if (FlxG.save.data.fnfNotes)
+			if (CDevConfig.saveData.fnfNotes)
 			{
 				babyArrow.frames = Paths.getSparrowAtlas('notes/NOTE_assets', "shared");
 				babyArrow.animation.addByPrefix('green', 'arrowUP');
@@ -251,7 +251,7 @@ class RatingPosition extends MusicBeatSubstate
 				babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
 				babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
 
-				babyArrow.antialiasing = FlxG.save.data.antialiasing;
+				babyArrow.antialiasing = CDevConfig.saveData.antialiasing;
 				babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
 
 				switch (Math.abs(i))
@@ -286,7 +286,7 @@ class RatingPosition extends MusicBeatSubstate
 				babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
 				babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
 
-				babyArrow.antialiasing = FlxG.save.data.antialiasing;
+				babyArrow.antialiasing = CDevConfig.saveData.antialiasing;
 				babyArrow.setGraphicSize(Std.int(babyArrow.width * Note.noteScale));
 
 				switch (Math.abs(i))
@@ -331,7 +331,7 @@ class RatingPosition extends MusicBeatSubstate
 			babyArrow.x += 50;
 			babyArrow.x += ((FlxG.width / 2) * player);
 
-			if (FlxG.save.data.botplay)
+			if (CDevConfig.saveData.botplay)
 				playerStrums.forEach(function(spr:FlxSprite)
 				{
 					spr.centerOffsets();

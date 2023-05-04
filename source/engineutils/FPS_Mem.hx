@@ -55,15 +55,28 @@ class CDevFPSMem extends TextField
 		if (mem >= 2048){
 			openfl.Assets.cache.clear();
 			FlxG.save.flush();
+			CDevConfig.storeSaveData();
 			game.Paths.destroyLoadedImages();
 		}
 
-		var engineText:String = (FlxG.save.data.engineWM ? "CDEV FNF v0.1.3": "");
+		var engineText:String = (CDevConfig.saveData.engineWM ? "CDEV FNF v"+CDevConfig.engineVersion: "");
 		var debugText:String = (CDevConfig.debug ? "[Debug version]" : "");
+
+		var s:String = "";
 		
 		if (visible)
 		{
-			text = "FPS: " + times.length + "\nRAM: " + ramStr + '\n$engineText\n$debugText';
+			switch (CDevConfig.saveData.performTxt){
+				case "fps":
+					s = "FPS: " + times.length;
+				case "fps-mem":
+					s = "FPS: " + times.length + "\nRAM: " + ramStr;
+				case "mem":
+					s = "RAM: " + ramStr;
+				default:
+					s = "";
+			}
+			text = s + '\n$engineText\n$debugText';
 		}
 
 		if (times.length < 30){

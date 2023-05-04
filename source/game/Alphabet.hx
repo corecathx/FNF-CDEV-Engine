@@ -31,7 +31,9 @@ class Alphabet extends FlxSpriteGroup
 	public var xAdd:Float = 0;
 	public var yAdd:Float = 0;
 
-	public var text:String = "";
+	public var size:Float = 42;
+
+	public var text:String='';
 
 	var _finalText:String = "";
 	var _curText:String = "";
@@ -50,17 +52,18 @@ class Alphabet extends FlxSpriteGroup
 
 	var isBold:Bool = false;
 
-	//used for TitleState.hx
+	// used for TitleState.hx
 	public var effect:String = "";
 
-	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, typed:Bool = false)
+	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, ?typed:Bool = false, ?size:Float = 42)
 	{
 		super(x, y);
+		this.size = size;
 		forceX = Math.NEGATIVE_INFINITY;
 
 		_finalText = text;
-		this.text = text;
 		isBold = bold;
+		this.text = text;
 
 		if (text != "")
 		{
@@ -96,36 +99,43 @@ class Alphabet extends FlxSpriteGroup
 			{
 				if (lastSprite != null)
 				{
-					if (isNumber){
+					if (isNumber)
+					{
 						xPos = lastSprite.x + lastSprite.width + 7;
-					} else if (isSymbol){
+					}
+					else if (isSymbol)
+					{
 						xPos = lastSprite.x + lastSprite.width + 5;
-					}else{
+					}
+					else
+					{
 						xPos = lastSprite.x + lastSprite.width;
 					}
-
 				}
 
 				if (lastWasSpace)
 				{
-					xPos += 40;
+					xPos += size;
 					lastWasSpace = false;
 				}
 
 				var yPos:Float = 0;
 
-				if (isNumber || isSymbol){
+				if (isNumber || isSymbol)
+				{
 					yPos += 5;
 				}
 
-				if (character == '-'){
+				if (character == '-')
+				{
 					yPos += 15;
 				}
 
 				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0);
-				var letter:AlphaCharacter = new AlphaCharacter(xPos, yPos);
+				var letter:AlphaCharacter = new AlphaCharacter(xPos, yPos, this);
 
-				if (isBold){
+				if (isBold)
+				{
 					if (isNumber)
 					{
 						letter.createNumber(character, true);
@@ -138,15 +148,11 @@ class Alphabet extends FlxSpriteGroup
 					{
 						letter.createBold(character);
 					}
-	
-					
-				}	
+				}
 				else
 				{
 					letter.createLetter(character);
 				}
-
-
 
 				add(letter);
 
@@ -224,7 +230,7 @@ class Alphabet extends FlxSpriteGroup
 				// trace(_finalText.fastCodeAt(loopNum) + " " + _finalText.charAt(loopNum));
 
 				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0);
-				var letter:AlphaCharacter = new AlphaCharacter(xPos, 55 * yMulti);
+				var letter:AlphaCharacter = new AlphaCharacter(xPos, 55 * yMulti, this);
 				letter.row = curRow;
 				if (isBold)
 				{
@@ -271,38 +277,42 @@ class Alphabet extends FlxSpriteGroup
 		{
 			var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, 1.3);
 
-			if (forceX == Math.NEGATIVE_INFINITY){
+			if (forceX == Math.NEGATIVE_INFINITY)
+			{
 				if (!isFreeplay)
-					{
-						if (!isOptionItem)
-								y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-							else
-								y = FlxMath.lerp(y, (scaledY * 100) + (FlxG.height * 0.48) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-						if (!isOptionItem)
-							x = FlxMath.lerp(x, (targetY * 20) + 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-							else
-							screenCenter(X);	
-					} else {
+				{
+					if (!isOptionItem)
 						y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-						if (!wasChoosed)
-							{
-								if (!selected)
-									x = FlxMath.lerp(x, 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-									else
-									x = FlxMath.lerp(x, 200 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));							
-							} else{	
-								x = FlxMath.lerp(x, (FlxG.width / 2) - (width / 2) + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-							}
-	
+					else
+						y = FlxMath.lerp(y, (scaledY * 100) + (FlxG.height * 0.48) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+					if (!isOptionItem)
+						x = FlxMath.lerp(x, (targetY * 20) + 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+					else
+						screenCenter(X);
+				}
+				else
+				{
+					y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+					if (!wasChoosed)
+					{
+						if (!selected)
+							x = FlxMath.lerp(x, 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+						else
+							x = FlxMath.lerp(x, 200 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
 					}
-			} else{
+					else
+					{
+						x = FlxMath.lerp(x, (FlxG.width / 2) - (width / 2) + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+					}
+				}
+			}
+			else
+			{
 				if (lerpOnForceX)
 					x = FlxMath.lerp(x, forceX, CDevConfig.utils.bound(elapsed * 6, 0, 1));
 				else
 					x = forceX;
 			}
-
-
 		}
 
 		super.update(elapsed);
@@ -319,19 +329,25 @@ class AlphaCharacter extends FlxSprite
 
 	public var row:Int = 0;
 
-	public function new(x:Float, y:Float)
+	var currentState:Alphabet;
+
+	public function new(x:Float, y:Float, current:Alphabet)
 	{
 		super(x, y);
+		this.currentState = current;
 		var tex = Paths.getSparrowAtlas('alphabet');
 		frames = tex;
 
-		antialiasing = FlxG.save.data.antialiasing;
+		setGraphicSize(-1, Std.int(currentState.size));
+
+		antialiasing = CDevConfig.saveData.antialiasing;
 	}
 
 	public function createBold(letter:String)
 	{
 		animation.addByPrefix(letter, letter.toUpperCase() + " bold", 24);
 		animation.play(letter);
+
 		updateHitbox();
 	}
 
@@ -345,13 +361,14 @@ class AlphaCharacter extends FlxSprite
 
 		animation.addByPrefix(letter, letter + " " + letterCase, 24);
 		animation.play(letter);
+
 		updateHitbox();
 
 		FlxG.log.add('the row' + row);
 
 		y = (110 - height);
 		y += row * 60;
-		//color = FlxColor.WHITE;
+		// color = FlxColor.WHITE;
 	}
 
 	public function createNumber(letter:String, ?white:Bool = false):Void
@@ -369,36 +386,43 @@ class AlphaCharacter extends FlxSprite
 	public function createSymbol(letter:String, ?white:Bool = false)
 	{
 		var wawaaa:Bool = false;
-		for (i in [".", "'", "?", "!"]){
+		for (i in [".", "'", "?", "!"])
+		{
 			var l:Array<String> = letter.split('');
-			if (l.contains(i)){
+			if (l.contains(i))
+			{
 				wawaaa = true;
 				break;
 			}
 		}
-		if (wawaaa){
+		if (wawaaa)
+		{
 			switch (letter)
 			{
 				case '.':
 					animation.addByPrefix(letter, 'period', 24);
 					animation.play(letter);
+
 					y += 50;
 				case "'":
 					animation.addByPrefix(letter, 'apostraphie', 24);
 					animation.play(letter);
+
 					y -= 0;
 				case "?":
 					animation.addByPrefix(letter, 'question mark', 24);
 					animation.play(letter);
+
 				case "!":
 					animation.addByPrefix(letter, 'exclamation point', 24);
 					animation.play(letter);
 			}
-		} else{
+		}
+		else
+		{
 			animation.addByPrefix(letter, letter, 24);
 			animation.play(letter);
 		}
-
 
 		updateHitbox();
 		if (white)

@@ -142,11 +142,11 @@ class GameplaySettings extends substates.MusicBeatSubstate
 							switch (options[curSelected])
 							{
 								case 'Note Offset':
-									FlxG.save.data.offset = 0;
+									CDevConfig.saveData.offset = 0;
 									changeText();
 								case 'FPS Cap':
-									FlxG.save.data.fpscap = 120;
-									cdev.CDevConfig.setFPS(FlxG.save.data.fpscap);
+									CDevConfig.saveData.fpscap = 120;
+									cdev.CDevConfig.setFPS(CDevConfig.saveData.fpscap);
 									changeText();
 							}
 							FlxG.sound.play(Paths.sound('cancelMenu'));
@@ -188,42 +188,42 @@ class GameplaySettings extends substates.MusicBeatSubstate
 		switch (options[curSelected])
 		{
 			case 'Downscroll' | 'Upscroll':
-				FlxG.save.data.downscroll = !FlxG.save.data.downscroll;
+				CDevConfig.saveData.downscroll = !CDevConfig.saveData.downscroll;
 			case 'Show Note Delay' | 'Hide Note Delay':
-				FlxG.save.data.showDelay = !FlxG.save.data.showDelay;
+				CDevConfig.saveData.showDelay = !CDevConfig.saveData.showDelay;
 			case 'Enable Hit Sound' | 'Disable Hit Sound':
-				FlxG.save.data.hitsound = !FlxG.save.data.hitsound;
+				CDevConfig.saveData.hitsound = !CDevConfig.saveData.hitsound;
 			case 'Middlescroll' | 'No Middlescroll':
-				FlxG.save.data.middlescroll = !FlxG.save.data.middlescroll;
+				CDevConfig.saveData.middlescroll = !CDevConfig.saveData.middlescroll;
 			case 'Multiple Rating Sprite' | 'Single Rating Sprite':
-				FlxG.save.data.multiRateSprite = !FlxG.save.data.multiRateSprite;
+				CDevConfig.saveData.multiRateSprite = !CDevConfig.saveData.multiRateSprite;
 			case 'Ghost Tapping' | 'No Ghost Tapping':
-				FlxG.save.data.ghost = !FlxG.save.data.ghost;
+				CDevConfig.saveData.ghost = !CDevConfig.saveData.ghost;
 			case 'Enable Reset Button' | 'Disable Reset Button':
-				FlxG.save.data.resetButton = !FlxG.save.data.resetButton;
+				CDevConfig.saveData.resetButton = !CDevConfig.saveData.resetButton;
 			case 'Botplay Mode' | 'Not Botplay Mode':
-				FlxG.save.data.botplay = !FlxG.save.data.botplay;
+				CDevConfig.saveData.botplay = !CDevConfig.saveData.botplay;
 			case 'Show Health Percent' | 'Hide Health Percent':
-				FlxG.save.data.healthCounter = !FlxG.save.data.healthCounter;
+				CDevConfig.saveData.healthCounter = !CDevConfig.saveData.healthCounter;
 			case 'Enable Note Impacts' | 'Disable Note Impacts':
-				FlxG.save.data.noteImpact = !FlxG.save.data.noteImpact;
+				CDevConfig.saveData.noteImpact = !CDevConfig.saveData.noteImpact;
 			case 'Enable Song Time' | 'Disable Song Time':
-				FlxG.save.data.songtime = !FlxG.save.data.songtime;
+				CDevConfig.saveData.songtime = !CDevConfig.saveData.songtime;
 			case 'Flashing Lights' | 'No Flashing Lights':
-				FlxG.save.data.flashing = !FlxG.save.data.flashing;
+				CDevConfig.saveData.flashing = !CDevConfig.saveData.flashing;
 			case 'Camera Zooming' | 'No Camera Zooming':
-				FlxG.save.data.camZoom = !FlxG.save.data.camZoom;
+				CDevConfig.saveData.camZoom = !CDevConfig.saveData.camZoom;
 			case 'Camera Movements' | 'No Camera Movements':
-				FlxG.save.data.camMovement = !FlxG.save.data.camMovement;
+				CDevConfig.saveData.camMovement = !CDevConfig.saveData.camMovement;
 			case 'Note Offset':
 				FlxG.switchState(new states.OffsetTest());
 			case 'FPS Cap':
 				return;
 			case 'Detailed Score Info' | 'Only Song Score':
-				FlxG.save.data.fullinfo = !FlxG.save.data.fullinfo;
+				CDevConfig.saveData.fullinfo = !CDevConfig.saveData.fullinfo;
 			case 'Auto Pause' | 'Do Not Auto Pause':
-				FlxG.save.data.autoPause = !FlxG.save.data.autoPause;
-				FlxG.autoPause = FlxG.save.data.autoPause;
+				CDevConfig.saveData.autoPause = !CDevConfig.saveData.autoPause;
+				FlxG.autoPause = CDevConfig.saveData.autoPause;
 		}
 
 		updateOptions();
@@ -265,25 +265,25 @@ class GameplaySettings extends substates.MusicBeatSubstate
 					switch (options[curSelected])
 					{
 						case 'Note Offset':
-							FlxG.save.data.offset += daValueToAdd;
+							CDevConfig.saveData.offset += daValueToAdd;
 	
-							if (FlxG.save.data.offset <= -90000) // like who tf does have a 90000 ms audio delay
-								FlxG.save.data.offset = -90000;
+							if (CDevConfig.saveData.offset <= -90000) // like who tf does have a 90000 ms audio delay
+								CDevConfig.saveData.offset = -90000;
 	
-							if (FlxG.save.data.offset > 90000) // pfft
-								FlxG.save.data.offset = 90000;
+							if (CDevConfig.saveData.offset > 90000) // pfft
+								CDevConfig.saveData.offset = 90000;
 
 							changeText();
 						case 'FPS Cap':
-							FlxG.save.data.fpscap += daValueToAdd;
+							CDevConfig.saveData.fpscap += daValueToAdd;
 	
-							if (FlxG.save.data.fpscap <= 60) // you cant go below 60 fps, or else your gameplay would be really shit
-								FlxG.save.data.fpscap = 60;
+							if (CDevConfig.saveData.fpscap <= 60) // you cant go below 60 fps, or else your gameplay would be really shit
+								CDevConfig.saveData.fpscap = 60;
 	
-							if (FlxG.save.data.fpscap > 300)
-								FlxG.save.data.fpscap = 300;
+							if (CDevConfig.saveData.fpscap > 300)
+								CDevConfig.saveData.fpscap = 300;
 	
-							cdev.CDevConfig.setFPS(FlxG.save.data.fpscap);
+							cdev.CDevConfig.setFPS(CDevConfig.saveData.fpscap);
 							changeText();
 					}
 				}
@@ -326,62 +326,62 @@ class GameplaySettings extends substates.MusicBeatSubstate
 			if (!fromPause)
 				{
 					options = [
-						FlxG.save.data.downscroll ? 'Downscroll' : 'Upscroll',
-						FlxG.save.data.middlescroll ? 'Middlescroll' : 'No Middlescroll',
-						FlxG.save.data.showDelay ? 'Show Note Delay' : 'Hide Note Delay',
-						FlxG.save.data.multiRateSprite ? 'Multiple Rating Sprite' : 'Single Rating Sprite',
-						FlxG.save.data.ghost ? 'Ghost Tapping' : 'No Ghost Tapping',
-						FlxG.save.data.hitsound ? 'Enable Hit Sound' : 'Disable Hit Sound',
-						FlxG.save.data.resetButton ? 'Enable Reset Button' : 'Disable Reset Button',
-						FlxG.save.data.botplay ? 'Botplay Mode' : 'Not Botplay Mode',
+						CDevConfig.saveData.downscroll ? 'Downscroll' : 'Upscroll',
+						CDevConfig.saveData.middlescroll ? 'Middlescroll' : 'No Middlescroll',
+						CDevConfig.saveData.showDelay ? 'Show Note Delay' : 'Hide Note Delay',
+						CDevConfig.saveData.multiRateSprite ? 'Multiple Rating Sprite' : 'Single Rating Sprite',
+						CDevConfig.saveData.ghost ? 'Ghost Tapping' : 'No Ghost Tapping',
+						CDevConfig.saveData.hitsound ? 'Enable Hit Sound' : 'Disable Hit Sound',
+						CDevConfig.saveData.resetButton ? 'Enable Reset Button' : 'Disable Reset Button',
+						CDevConfig.saveData.botplay ? 'Botplay Mode' : 'Not Botplay Mode',
 						'FPS Cap',
-						FlxG.save.data.healthCounter ? 'Show Health Percent' : 'Hide Health Percent',
-						FlxG.save.data.noteImpact ? 'Enable Note Impacts' : 'Disable Note Impacts',
-						FlxG.save.data.songtime ? 'Enable Song Time' : 'Disable Song Time',
-						FlxG.save.data.flashing ? 'Flashing Lights' : 'No Flashing Lights',
-						FlxG.save.data.camZoom ? 'Camera Zooming' : 'No Camera Zooming',
-						FlxG.save.data.camMovement ? 'Camera Movements' : 'No Camera Movements',
+						CDevConfig.saveData.healthCounter ? 'Show Health Percent' : 'Hide Health Percent',
+						CDevConfig.saveData.noteImpact ? 'Enable Note Impacts' : 'Disable Note Impacts',
+						CDevConfig.saveData.songtime ? 'Enable Song Time' : 'Disable Song Time',
+						CDevConfig.saveData.flashing ? 'Flashing Lights' : 'No Flashing Lights',
+						CDevConfig.saveData.camZoom ? 'Camera Zooming' : 'No Camera Zooming',
+						CDevConfig.saveData.camMovement ? 'Camera Movements' : 'No Camera Movements',
 						'Note Offset',
-						FlxG.save.data.fullinfo ? 'Detailed Score Info' : 'Only Song Score',
-						FlxG.save.data.autoPause ? 'Auto Pause' : 'Do Not Auto Pause'
+						CDevConfig.saveData.fullinfo ? 'Detailed Score Info' : 'Only Song Score',
+						CDevConfig.saveData.autoPause ? 'Auto Pause' : 'Do Not Auto Pause'
 					];
 				} else{
 					options = [
-						FlxG.save.data.showDelay ? 'Show Note Delay' : 'Hide Note Delay',
-						FlxG.save.data.multiRateSprite ? 'Multiple Rating Sprite' : 'Single Rating Sprite',
-						FlxG.save.data.ghost ? 'Ghost Tapping' : 'No Ghost Tapping',
-						FlxG.save.data.hitsound ? 'Enable Hit Sound' : 'Disable Hit Sound',
-						FlxG.save.data.resetButton ? 'Enable Reset Button' : 'Disable Reset Button',
-						FlxG.save.data.botplay ? 'Botplay Mode' : 'Not Botplay Mode',
+						CDevConfig.saveData.showDelay ? 'Show Note Delay' : 'Hide Note Delay',
+						CDevConfig.saveData.multiRateSprite ? 'Multiple Rating Sprite' : 'Single Rating Sprite',
+						CDevConfig.saveData.ghost ? 'Ghost Tapping' : 'No Ghost Tapping',
+						CDevConfig.saveData.hitsound ? 'Enable Hit Sound' : 'Disable Hit Sound',
+						CDevConfig.saveData.resetButton ? 'Enable Reset Button' : 'Disable Reset Button',
+						CDevConfig.saveData.botplay ? 'Botplay Mode' : 'Not Botplay Mode',
 						'FPS Cap',
-						FlxG.save.data.healthCounter ? 'Show Health Percent' : 'Hide Health Percent',
-						FlxG.save.data.noteImpact ? 'Enable Note Impacts' : 'Disable Note Impacts',
-						FlxG.save.data.songtime ? 'Enable Song Time' : 'Disable Song Time',
-						FlxG.save.data.flashing ? 'Flashing Lights' : 'No Flashing Lights',
-						FlxG.save.data.camZoom ? 'Camera Zooming' : 'No Camera Zooming',
-						FlxG.save.data.camMovement ? 'Camera Movements' : 'No Camera Movements',
-						FlxG.save.data.fullinfo ? 'Detailed Score Info' : 'Only Song Score',
-						FlxG.save.data.autoPause ? 'Auto Pause' : 'Do Not Auto Pause'
+						CDevConfig.saveData.healthCounter ? 'Show Health Percent' : 'Hide Health Percent',
+						CDevConfig.saveData.noteImpact ? 'Enable Note Impacts' : 'Disable Note Impacts',
+						CDevConfig.saveData.songtime ? 'Enable Song Time' : 'Disable Song Time',
+						CDevConfig.saveData.flashing ? 'Flashing Lights' : 'No Flashing Lights',
+						CDevConfig.saveData.camZoom ? 'Camera Zooming' : 'No Camera Zooming',
+						CDevConfig.saveData.camMovement ? 'Camera Movements' : 'No Camera Movements',
+						CDevConfig.saveData.fullinfo ? 'Detailed Score Info' : 'Only Song Score',
+						CDevConfig.saveData.autoPause ? 'Auto Pause' : 'Do Not Auto Pause'
 					];
 				}
 			clickableOptions = [
-				FlxG.save.data.downscroll ? 'Downscroll' : 'Upscroll',
-				FlxG.save.data.showDelay ? 'Show Note Delay' : 'Hide Note Delay',
-				FlxG.save.data.middlescroll ? 'Middlescroll' : 'No Middlescroll',
-				FlxG.save.data.multiRateSprite ? 'Multiple Rating Sprite' : 'Single Rating Sprite',
-				FlxG.save.data.ghost ? 'Ghost Tapping' : 'No Ghost Tapping',
-				FlxG.save.data.hitsound ? 'Enable Hit Sound' : 'Disable Hit Sound',
-				FlxG.save.data.resetButton ? 'Enable Reset Button' : 'Disable Reset Button',
-				FlxG.save.data.healthCounter ? 'Show Health Percent' : 'Hide Health Percent',
-				FlxG.save.data.botplay ? 'Botplay Mode' : 'Not Botplay Mode',
-				FlxG.save.data.noteImpact ? 'Enable Note Impacts' : 'Disable Note Impacts',
-				FlxG.save.data.songtime ? 'Enable Song Time' : 'Disable Song Time',
-				FlxG.save.data.flashing ? 'Flashing Lights' : 'No Flashing Lights',
-				FlxG.save.data.camZoom ? 'Camera Zooming' : 'No Camera Zooming',
-				FlxG.save.data.camMovement ? 'Camera Movements' : 'No Camera Movements',
+				CDevConfig.saveData.downscroll ? 'Downscroll' : 'Upscroll',
+				CDevConfig.saveData.showDelay ? 'Show Note Delay' : 'Hide Note Delay',
+				CDevConfig.saveData.middlescroll ? 'Middlescroll' : 'No Middlescroll',
+				CDevConfig.saveData.multiRateSprite ? 'Multiple Rating Sprite' : 'Single Rating Sprite',
+				CDevConfig.saveData.ghost ? 'Ghost Tapping' : 'No Ghost Tapping',
+				CDevConfig.saveData.hitsound ? 'Enable Hit Sound' : 'Disable Hit Sound',
+				CDevConfig.saveData.resetButton ? 'Enable Reset Button' : 'Disable Reset Button',
+				CDevConfig.saveData.healthCounter ? 'Show Health Percent' : 'Hide Health Percent',
+				CDevConfig.saveData.botplay ? 'Botplay Mode' : 'Not Botplay Mode',
+				CDevConfig.saveData.noteImpact ? 'Enable Note Impacts' : 'Disable Note Impacts',
+				CDevConfig.saveData.songtime ? 'Enable Song Time' : 'Disable Song Time',
+				CDevConfig.saveData.flashing ? 'Flashing Lights' : 'No Flashing Lights',
+				CDevConfig.saveData.camZoom ? 'Camera Zooming' : 'No Camera Zooming',
+				CDevConfig.saveData.camMovement ? 'Camera Movements' : 'No Camera Movements',
 				'Note Offset',
-				FlxG.save.data.fullinfo ? 'Detailed Score Info' : 'Only Song Score',
-				FlxG.save.data.autoPause ? 'Auto Pause' : 'Do Not Auto Pause'
+				CDevConfig.saveData.fullinfo ? 'Detailed Score Info' : 'Only Song Score',
+				CDevConfig.saveData.autoPause ? 'Auto Pause' : 'Do Not Auto Pause'
 			];
 		}
 
@@ -403,13 +403,13 @@ class GameplaySettings extends substates.MusicBeatSubstate
 				case 'Enable Hit Sound' | 'Disable Hit Sound':
 					text = 'If you press your note keybinds, it will\nplay a hit sound.';
 				case 'Enable Reset Button' | 'Disable Reset Button':
-					text = 'Whether to enable or disable the reset button.\n Your current Reset Keybind: ' + FlxG.save.data.resetBind;
+					text = 'Whether to enable or disable the reset button.\n Your current Reset Keybind: ' + CDevConfig.saveData.resetBind;
 				case 'Botplay Mode' | 'Not Botplay Mode':
 					text = 'If enabled, a bot will play the song for you.';
 				case 'Show Health Percent' | 'Hide Health Percent':
 					text = 'Whether to Show or Hide the Health Percent\nat the Score Text.';
 				case 'FPS Cap':
-					text = 'Choose how many frames per second that this engine should run at.\n(Current Value: ' + FlxG.save.data.fpscap + ")";
+					text = 'Choose how many frames per second that this engine should run at.\n(Current Value: ' + CDevConfig.saveData.fpscap + ")";
 				case 'Enable Note Impacts' | 'Disable Note Impacts':
 					text = 'If you hit a "Sick!!" or "Perfect!!" Rating, it will show impact effect at your\nNote strum line!';
 				case 'Enable Song Time' | 'Disable Song Time':
@@ -421,7 +421,7 @@ class GameplaySettings extends substates.MusicBeatSubstate
 				case 'Camera Movements' | 'No Camera Movements':
 					text = 'If disabled, the camera wont move based on\n the current character animation';
 				case 'Note Offset':
-					text = "Change your notes offset. Press ENTER to start offset testing\n(Current Value: " + FlxG.save.data.offset + ")";
+					text = "Change your notes offset. Press ENTER to start offset testing\n(Current Value: " + CDevConfig.saveData.offset + ")";
 				case 'Detailed Score Info' | 'Only Song Score':
 					text = 'If enabled, it will show the Score, Misses, and Accuracy\ninstead of just showing the Song Score.';
 			    case 'Auto Pause' | 'Do Not Auto Pause':

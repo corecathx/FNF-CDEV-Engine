@@ -36,19 +36,21 @@ class OptionsState extends MusicBeatState
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
 		menuBG.alpha = 0.5;
-		menuBG.antialiasing = FlxG.save.data.antialiasing;
+		menuBG.antialiasing = CDevConfig.saveData.antialiasing;
 		add(menuBG);
 
 		grpOptions = new FlxTypedGroup<game.Alphabet>();
 		add(grpOptions);
-
+		var lengthy:Float = (FlxG.height / 2) - ((options.length * 70) / 2);
 		for (i in 0...options.length)
 		{
-			var optionText:game.Alphabet = new game.Alphabet(0, (70 * i) + 30, options[i], true, false);
-			optionText.screenCenter();
-			optionText.isMenuItem = true;
-			optionText.isOptionItem = true;
+			var optionText:game.Alphabet = new game.Alphabet(0, 0, options[i], true, false);
+			optionText.y = lengthy + (70 * i);
+			//optionText.screenCenter();
+			//optionText.isMenuItem = true;
+			//optionText.isOptionItem = true;
 			optionText.targetY = i;
+			optionText.screenCenter(X);
 			// optionText.y += (100 * (i - (options.length / 2))) + 50;
 			grpOptions.add(optionText);
 		}
@@ -57,7 +59,7 @@ class OptionsState extends MusicBeatState
 		var versionShit:FlxText = new FlxText(10, FlxG.height - 20, 1000, "CDEV Engine v"+CDevConfig.engineVersion, 16);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		if (FlxG.save.data.engineWM) add(versionShit);
+		if (CDevConfig.saveData.engineWM) add(versionShit);
 		super.create();
 	}
 

@@ -142,7 +142,7 @@ class PauseSubState extends MusicBeatSubstate
 				case "Restart Song":
 					GameOverSubstate.resetDeathStatus();
 					FlxG.resetState();
-					if (FlxG.save.data.showTraceLogAt == 1) TraceLog.clearLogData();
+					if (CDevConfig.saveData.showTraceLogAt == 1) TraceLog.clearLogData();
 				case "Options":
 					for (item in grpMenuShit.members)
 						{
@@ -161,7 +161,7 @@ class PauseSubState extends MusicBeatSubstate
 				case "Exit to menu", "Exit to freeplay":
 					PlayState.chartingMode = false;
 					FlxG.switchState(new states.MainMenuState());
-					if (FlxG.save.data.showTraceLogAt == 1) TraceLog.clearLogData();
+					if (CDevConfig.saveData.showTraceLogAt == 1) TraceLog.clearLogData();
 			}
 		}
 

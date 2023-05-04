@@ -8,8 +8,10 @@ class ScriptData
 	public var scripts:Array<CDevScript> = [];
 	public var scriptModScripts:Array<CDevModScript> = [];
 
-	public function new(scripts:Array<CDevModScript>)
+	public function new(scripts:Array<CDevModScript>, song:String)
 	{
+		ScriptSupport.typedScripts = null;
+		var traced:Array<CDevScript> = [];
 		for (s in scripts)
 		{
 			var pth:String = s.daPath;
@@ -17,10 +19,12 @@ class ScriptData
 			var sc = CDevScript.create(pth);
 			if (sc == null)
 				continue;
-			ScriptSupport.setScriptDefaultVars(sc, s.daMod, {});
+			ScriptSupport.setScriptDefaultVars(sc, s.daMod, song);
 			this.scripts.push(sc);
 			scriptModScripts.push(s);
 		}
+
+		ScriptSupport.typedScripts = this.scripts;
 	}
 
 	public function loadFiles()

@@ -119,7 +119,7 @@ class WeekEditor extends states.MusicBeatState
 		grpWeekText.add(weekThing);
 
 		weekThing.screenCenter(X);
-		weekThing.antialiasing = FlxG.save.data.antialiasing;
+		weekThing.antialiasing = CDevConfig.saveData.antialiasing;
 
 		trace("Line 96");
 
@@ -356,7 +356,7 @@ class WeekEditor extends states.MusicBeatState
 		var butt0:FlxButton = new FlxButton(10, butt.y + butt.height + 10, 'Open Freeplay', function()
 		{
 			var jsonShit:WeekFile = weekJSON;
-			if (FlxG.save.data.smoothAF)
+			if (CDevConfig.saveData.smoothAF)
 			{
 				FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
 			}
@@ -1092,7 +1092,7 @@ class FreeplayEditor extends MusicBeatState
 
 		// changeSelection();
 
-		if (FlxG.save.data.smoothAF)
+		if (CDevConfig.saveData.smoothAF)
 		{
 			FlxG.camera.zoom = 1.5;
 			FlxTween.tween(FlxG.camera, {zoom: 1}, 1, {ease: FlxEase.cubeOut});
@@ -1259,7 +1259,7 @@ class FreeplayEditor extends MusicBeatState
 			FlxG.sound.volumeUpKeys = [PLUS, NUMPADPLUS];
 			if (FlxG.keys.justPressed.ESCAPE)
 			{
-				if (FlxG.save.data.smoothAF)
+				if (CDevConfig.saveData.smoothAF)
 				{
 					FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
 				}

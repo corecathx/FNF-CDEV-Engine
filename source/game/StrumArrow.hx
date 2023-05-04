@@ -25,7 +25,7 @@ class StrumArrow extends FlxSprite
 	{
 		super.update(elapsed);
 
-		if (FlxG.save.data.testMode){
+		if (CDevConfig.saveData.testMode){
 			if (FlxG.keys.pressed.THREE){
 				angle += 3;
 			}
@@ -40,7 +40,7 @@ class StrumArrow extends FlxSprite
 			{
 				centerOffsets();
 
-				if (FlxG.save.data.fnfNotes)
+				if (CDevConfig.saveData.fnfNotes)
 				{
 					offset.x -= 13;
 					offset.y -= 13;
@@ -63,7 +63,12 @@ class StrumArrow extends FlxSprite
 		updateHitbox();
 		offset.set(frameWidth / 2, frameHeight / 2);
 
-		offset.x -= 50;
-		offset.y -= 52;
+		if (CDevConfig.saveData.fnfNotes){
+			offset.x -= 50;
+			offset.y -= 52;
+		} else{
+			offset.x -= 44;
+			offset.y -= 46;
+		}
 	}
 }

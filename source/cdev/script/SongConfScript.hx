@@ -27,7 +27,47 @@ class SongConfScript
 	public static function parse(mod:String, song:String):SongConfResult
 	{
 		var scripts:Array<CDevModScript> = [];
-		scripts.push(getScriptShit(mod, song));
+		var folder:String = '';
+
+		if (mod == "BASEFNF"){
+			trace("it's assets");
+			folder = "assets/data/charts/"+song+"/";
+		} else{
+			trace("it's cdev-mods");
+			folder = 'cdev-mods/$mod/data/charts/$song/';
+		}
+		var insideTheThing:Array<String> = FileSystem.readDirectory(folder);
+
+		var notAllowed:Array<String> = ["unknown", "intro", "outro"];
+		if (insideTheThing != null)
+		{
+			for (object in insideTheThing)
+			{
+				trace(object);
+				if (!FileSystem.isDirectory(folder + object))
+				{
+					if (object.endsWith('.hx'))
+					{
+						var objName:String = object.substr(0, object.length - 3);
+						trace(objName);
+						if (notAllowed.contains(objName))
+						{
+							trace(object + " can't be used as song script. skipping...");
+							// insideTheThing.remove(object);
+							continue;
+						}
+						else
+						{
+							trace("found " + object);
+							scripts.push({
+								daMod: mod,
+								daPath: folder + object
+							});
+						}
+					}
+				}
+			}
+		}
 
 		if (scripts.length == 0)
 		{

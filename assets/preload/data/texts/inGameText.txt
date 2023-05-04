@@ -15,11 +15,14 @@ DARK MODE.--YES.
 Rewritten Inputs!
 Pro tip:--Press the notes.
 HaxeFlixel, my beloved.
-MR BEAAAST
-An engine powered--by cats
+An engine powered--by a cat
 pls don't crash again
-a
+a--aa
 Better Modcharting Compability!
-HAH u looked.
+HAH you looked.
 Better Stage Editor!
-Sample Text
+Trace Log is useful to--debug / test your mods!
+it's stable now--hehe
+i woke up in the new bugatti--:fire: :fire:
+Press F5 in any song to open Trace Log Window
+It is stable and less buggy :))

@@ -124,7 +124,7 @@ class Note extends FlxSprite
 		}
 		else
 		{
-			if (FlxG.save.data.fnfNotes)
+			if (CDevConfig.saveData.fnfNotes)
 			{
 				frames = Paths.getSparrowAtlas('notes/NOTE_assets');
 
@@ -145,7 +145,7 @@ class Note extends FlxSprite
 
 				setGraphicSize(Std.int(width * noteScale));
 				updateHitbox();
-				antialiasing = FlxG.save.data.antialiasing;
+				antialiasing = CDevConfig.saveData.antialiasing;
 			}
 			else
 			{
@@ -156,19 +156,19 @@ class Note extends FlxSprite
 				animation.addByPrefix('blueScroll', '${aa[1]}0');
 				animation.addByPrefix('purpleScroll', '${aa[0]}0');
 
-				animation.addByPrefix('purpleholdend', '${aa[0]}-end');
-				animation.addByPrefix('greenholdend', '${aa[2]}-end');
-				animation.addByPrefix('redholdend', '${aa[3]}-end');
-				animation.addByPrefix('blueholdend', '${aa[1]}-end');
+				animation.addByPrefix('purpleholdend', 'arrowEnd');
+				animation.addByPrefix('greenholdend', 'arrowEnd');
+				animation.addByPrefix('redholdend', 'arrowEnd');
+				animation.addByPrefix('blueholdend', 'arrowEnd');
 
-				animation.addByPrefix('purplehold', '${aa[0]}-hold');
-				animation.addByPrefix('greenhold', '${aa[2]}-hold');
-				animation.addByPrefix('redhold', '${aa[3]}-hold');
-				animation.addByPrefix('bluehold', '${aa[1]}-hold');
+				animation.addByPrefix('purplehold', 'arrowHold');
+				animation.addByPrefix('greenhold', 'arrowHold');
+				animation.addByPrefix('redhold', 'arrowHold');
+				animation.addByPrefix('bluehold', 'arrowHold');
 
 				setGraphicSize(Std.int(width * noteScale));
 				updateHitbox();
-				antialiasing = FlxG.save.data.antialiasing;
+				antialiasing = CDevConfig.saveData.antialiasing;
 			}
 		}
 
@@ -192,7 +192,7 @@ class Note extends FlxSprite
 		prevNote.graphicHeightOrigin = prevNote.frameHeight;
 
 		// trace(prevNote);
-		if (FlxG.save.data.downscroll && sustainNote)
+		if (CDevConfig.saveData.downscroll && sustainNote)
 			flipY = true;
 
 		if (MustCalcStepHeight)
@@ -237,7 +237,7 @@ class Note extends FlxSprite
 					case 3:
 						prevNote.animation.play('redhold');
 				}
-				var shit:Float = (FlxG.save.data.scrollSpeed == 1 ? PlayState.SONG.speed : FlxG.save.data.scrollSpeed);
+				var shit:Float = (CDevConfig.saveData.scrollSpeed == 1 ? PlayState.SONG.speed : CDevConfig.saveData.scrollSpeed);
 				prevNote.scale.y *= (Conductor.stepCrochet+10) / 100 * 1.5 * shit;
 				prevNote.theYScale = prevNote.scale.y;
 				prevNote.updateHitbox();
@@ -264,7 +264,7 @@ class Note extends FlxSprite
 	function calculateNoteStepHeight()
 	{
 		if (!isTesting)
-			noteStepHeight = (((0.45 * Conductor.stepCrochet)) * FlxMath.roundDecimal(FlxG.save.data.scrollSpeed == 1 ? PlayState.SONG.speed : FlxG.save.data.scrollSpeed,
+			noteStepHeight = (((0.45 * Conductor.stepCrochet)) * FlxMath.roundDecimal(CDevConfig.saveData.scrollSpeed == 1 ? PlayState.SONG.speed : CDevConfig.saveData.scrollSpeed,
 				2));
 	}
 

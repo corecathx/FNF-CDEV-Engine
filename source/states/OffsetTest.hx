@@ -45,7 +45,7 @@ class OffsetTest extends MusicBeatState
 		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
 		gfDance.animation.addByIndices('danceLeft', 'GF Dancing Beat blue', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 		gfDance.animation.addByIndices('danceRight', 'GF Dancing Beat blue', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-		gfDance.antialiasing = FlxG.save.data.antialiasing;
+		gfDance.antialiasing = CDevConfig.saveData.antialiasing;
 		gfDance.scale.set(0.7,0.7);
 		gfDance.updateHitbox();
 		gfDance.alpha = 0;
@@ -61,7 +61,7 @@ class OffsetTest extends MusicBeatState
 		offsetText.borderSize = 2;
 
 		var daInf:String = "Welcome to Offset Testing\n\nPress Any keys on your keyboard to the beep sound\nto set your global song offset!\n\nYour current song offset: "
-			+ FlxG.save.data.offset
+			+ CDevConfig.saveData.offset
 			+ 'ms';
 		infoTxt = new FlxText(0, 0, FlxG.width, daInf, 28);
 		infoTxt.setFormat("VCR OSD Mono", 28, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -69,7 +69,7 @@ class OffsetTest extends MusicBeatState
 		infoTxt.alpha = 0;
 		add(infoTxt);
 		infoTxt.borderSize = 3;
-		infoTxt.antialiasing = FlxG.save.data.antialiasing;
+		infoTxt.antialiasing = CDevConfig.saveData.antialiasing;
 		FlxTween.tween(infoTxt, {alpha: 1}, 2, {ease: FlxEase.linear});
 		super.create();
 	}
@@ -85,6 +85,7 @@ class OffsetTest extends MusicBeatState
 		FlxG.watch.addQuick('DABEATS', curBeat);
 		Conductor.songPosition = FlxG.sound.music.time;
 
+		if (FlxG.keys.justPressed.ENTER) endShit();
 		if (canTestNow) keyShit();
 
 		super.update(elapsed);
@@ -204,7 +205,7 @@ class OffsetTest extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
-		if (FlxG.save.data.flashing)
+		if (CDevConfig.saveData.flashing)
 			bg.alpha = 0.5;
 
 		switch (curBeat)
@@ -265,7 +266,7 @@ class OffsetTest extends MusicBeatState
 				FlxTween.tween(gfDance, {alpha: 0}, Conductor.crochet / 1000, {ease: FlxEase.linear});
 				FlxTween.tween(offsetText, {y: 800}, Conductor.crochet / 1000, {ease: FlxEase.circOut});
 
-				FlxG.save.data.offset = offs;
+				CDevConfig.saveData.offset = offs;
 				infoTxt.text = "Offset Testing has ended!\n\nYour Global Offset has set to:\n" + offs + "ms.";
 				infoTxt.screenCenter();
 				FlxTween.tween(infoTxt, {alpha: 1}, Conductor.crochet / 1000, {ease: FlxEase.linear});

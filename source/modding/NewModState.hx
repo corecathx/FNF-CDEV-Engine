@@ -61,7 +61,7 @@ class NewModState extends states.MusicBeatState
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
 		menuBG.alpha = 0.7;
-		menuBG.antialiasing = FlxG.save.data.antialiasing;
+		menuBG.antialiasing = CDevConfig.saveData.antialiasing;
 		add(menuBG);
 
 		box = new FlxSprite().makeGraphic(800, 400, FlxColor.BLACK);
@@ -181,7 +181,7 @@ class NewModState extends states.MusicBeatState
                     createModJSON();
 
                     FlxG.switchState(new modding.ModdingScreen());
-					FlxG.save.data.loadedMods = Paths.curModDir;
+					CDevConfig.saveData.loadedMods = Paths.curModDir;
 				}
 				else
 				{

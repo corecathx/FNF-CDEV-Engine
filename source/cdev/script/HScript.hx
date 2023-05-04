@@ -13,6 +13,7 @@ using StringTools;
 class HScript extends CDevScript
 {
 	public var hscript:Interp;
+	public var fileNameShit:String = "";
 
 	public function new()
 	{
@@ -68,6 +69,8 @@ class HScript extends CDevScript
 		if (path.trim() == "")
 			return;
 		fileName = Path.withoutDirectory(path);
+		fileName = fileName.substr(0, fileName.length-3);
+		fileNameShit = fileName;
 		var paath = path;
 		trace(paath);
 		if (Path.extension(paath) == "")
@@ -105,7 +108,7 @@ class HScript extends CDevScript
 		trace('$fileName:$methodName:$lineNumber: $text');
 		PlayState.addNewTraceKey('$fileName:$methodName:$lineNumber: $text');
 
-		if (!FlxG.save.data.testMode)
+		if (!CDevConfig.saveData.testMode)
 			return;
 	}
 

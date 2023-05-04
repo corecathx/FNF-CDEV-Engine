@@ -70,12 +70,14 @@ class Highscore
 		songScores.set(song, score);
 		FlxG.save.data.songScores = songScores;
 		FlxG.save.flush();
+		CDevConfig.storeSaveData();
 	}
 	static function setSongDate(song:String, date:Date):Void
 		{
 			songDate.set(song.toLowerCase(), date);
 			FlxG.save.data.songDate = songDate;
 			FlxG.save.flush();
+			CDevConfig.storeSaveData();
 		}
 
 	static function setRating(song:String, rating:Float):Void
@@ -83,6 +85,7 @@ class Highscore
 			songRating.set(song, rating);
 			FlxG.save.data.songRating = songRating;
 			FlxG.save.flush();
+			CDevConfig.storeSaveData();
 		}
 
 	public static function formatSong(song:String, diff:Int, ?dumbshit:Bool = false):String
@@ -92,7 +95,7 @@ class Highscore
 		if (dumbshit)
 			return daSong;
 		daSong += "-"+CoolUtil.songDifficulties[diff];
-		trace(daSong);
+		//trace(daSong);
 
 		return daSong;
 	}

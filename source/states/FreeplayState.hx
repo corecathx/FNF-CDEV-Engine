@@ -131,7 +131,7 @@ class FreeplayState extends MusicBeatState
 				{
 					customSongList.push(songListTxt[i]);
 					songModListIdk.push(crapz);
-					trace('\nSong: ' + songListTxt[i] + "\nMod: " + crapz);
+					//trace('\nSong: ' + songListTxt[i] + "\nMod: " + crapz);
 				}
 			}
 		}
@@ -174,7 +174,7 @@ class FreeplayState extends MusicBeatState
 						{
 							colors = [146, 113, 253];
 						}
-						songs.push(new SongMetadata(song.song, 1, song.character, WeekData.loadedWeeks[i][1],colors));
+						songs.push(new SongMetadata(song.song, 1, song.character, WeekData.loadedWeeks[i][1],colors, true, daWeek));
 						// addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
 					}
 				}
@@ -188,14 +188,14 @@ class FreeplayState extends MusicBeatState
 
 		// to do: simplify this.
 		modOptions = [
-			['Randomize Chart', true, FlxG.save.data.randomNote],
-			['Sudden Death', true, FlxG.save.data.suddenDeath],
+			['Randomize Chart', true, CDevConfig.saveData.randomNote],
+			['Sudden Death', true, CDevConfig.saveData.suddenDeath],
 			['Play as the opponent', true, playOnLeftSide],
-			['Scroll Speed: ', false, FlxG.save.data.scrollSpeed, 0.1, 10],
+			['Scroll Speed: ', false, CDevConfig.saveData.scrollSpeed, 0.1, 10],
 			#if cpp ['Song Speed (BETA): ', false, speed, 0.1, 10], #end
-			['Health Gain Multi: ', false, FlxG.save.data.healthGainMulti, 1, 10],
-			['Health Lose Multi: ', false, FlxG.save.data.healthLoseMulti, 1, 10],
-			['Combo Multipiler: ', false, FlxG.save.data.comboMultipiler, 1, 10]
+			['Health Gain Multi: ', false, CDevConfig.saveData.healthGainMulti, 1, 10],
+			['Health Lose Multi: ', false, CDevConfig.saveData.healthLoseMulti, 1, 10],
+			['Combo Multipiler: ', false, CDevConfig.saveData.comboMultipiler, 1, 10]
 		];
 
 		modDescs = [
@@ -227,7 +227,7 @@ class FreeplayState extends MusicBeatState
 
 		for (i in 0...songs.length)
 		{
-			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName, true, false);
+			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName, true);
 			songText.isMenuItem = true;
 			songText.isFreeplay = true;
 			songText.targetY = i;
@@ -309,7 +309,7 @@ class FreeplayState extends MusicBeatState
 		difficultySelectors.add(rightArrow);
 
 		for (i in 0...difficultySelectors.length)
-			difficultySelectors.members[i].antialiasing = FlxG.save.data.antialiasing;
+			difficultySelectors.members[i].antialiasing = CDevConfig.saveData.antialiasing;
 
 		songInfo = new FlxText(0, 15, 1000, '', 16);
 		songInfo.scrollFactor.set();
@@ -338,7 +338,7 @@ class FreeplayState extends MusicBeatState
 		changeDiff();
 		// changeModSelection();
 
-		if (FlxG.save.data.smoothAF)
+		if (CDevConfig.saveData.smoothAF)
 		{
 			FlxG.camera.zoom = 1.5;
 			FlxTween.tween(FlxG.camera, {zoom: 1}, 1, {ease: FlxEase.cubeOut});
@@ -374,7 +374,7 @@ class FreeplayState extends MusicBeatState
 			grpModMenu.add(um);
 		}
 
-		modTitle = new Alphabet(0, 50, 'Mods', true, false);
+		modTitle = new Alphabet(0, 50, 'Mods', true);
 		modTitle.x = modMenuBG.x + (modMenuBG.width / 2) - (modTitle.width / 2);
 		modTitle.scrollFactor.set();
 		modTitle.scale.set(0.9, 0.9);
@@ -581,7 +581,7 @@ class FreeplayState extends MusicBeatState
 
 				if (controls.BACK)
 				{
-					if (FlxG.save.data.smoothAF)
+					if (CDevConfig.saveData.smoothAF)
 					{
 						FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
 					}
@@ -735,33 +735,33 @@ class FreeplayState extends MusicBeatState
 		switch (modOptions[curModSelected][0])
 		{
 			case 'Randomize Chart':
-				FlxG.save.data.randomNote = false;
+				CDevConfig.saveData.randomNote = false;
 			case 'Sudden Death':
-				FlxG.save.data.suddenDeath = false;
+				CDevConfig.saveData.suddenDeath = false;
 			case 'Play as the opponent':
 				playOnLeftSide = false;
 			case 'Scroll Speed: ':
-				FlxG.save.data.scrollSpeed = 1;
+				CDevConfig.saveData.scrollSpeed = 1;
 			case 'Song Speed (BETA): ':
 				speed = 1;
 				changeDaBPM();
 			case 'Health Gain Multi: ':
-				FlxG.save.data.healthGainMulti = 1;
+				CDevConfig.saveData.healthGainMulti = 1;
 			case 'Health Lose Multi: ':
-				FlxG.save.data.healthLoseMulti = 1;
+				CDevConfig.saveData.healthLoseMulti = 1;
 			case 'Combo Multipiler: ':
-				FlxG.save.data.comboMultipiler = 1;
+				CDevConfig.saveData.comboMultipiler = 1;
 		}
 
 		modOptions = [
-			['Randomize Chart', true, FlxG.save.data.randomNote],
-			['Sudden Death', true, FlxG.save.data.suddenDeath],
+			['Randomize Chart', true, CDevConfig.saveData.randomNote],
+			['Sudden Death', true, CDevConfig.saveData.suddenDeath],
 			['Play as the opponent', true, playOnLeftSide],
-			['Scroll Speed: ', false, FlxG.save.data.scrollSpeed, 0.1, 10],
+			['Scroll Speed: ', false, CDevConfig.saveData.scrollSpeed, 0.1, 10],
 			#if cpp ['Song Speed (BETA): ', false, speed, 0.1, 10], #end
-			['Health Gain Multi: ', false, FlxG.save.data.healthGainMulti, 1, 10],
-			['Health Lose Multi: ', false, FlxG.save.data.healthLoseMulti, 1, 10],
-			['Combo Multipiler: ', false, FlxG.save.data.comboMultipiler, 1, 10]
+			['Health Gain Multi: ', false, CDevConfig.saveData.healthGainMulti, 1, 10],
+			['Health Lose Multi: ', false, CDevConfig.saveData.healthLoseMulti, 1, 10],
+			['Combo Multipiler: ', false, CDevConfig.saveData.comboMultipiler, 1, 10]
 		];
 
 		var theValuee:Float = FlxMath.roundDecimal(modOptions[curModSelected][2], 2);
@@ -777,32 +777,32 @@ class FreeplayState extends MusicBeatState
 		switch (modOptions[curModSelected][0])
 		{
 			case 'Randomize Chart':
-				FlxG.save.data.randomNote = !FlxG.save.data.randomNote;
+				CDevConfig.saveData.randomNote = !CDevConfig.saveData.randomNote;
 			case 'Sudden Death':
-				FlxG.save.data.suddenDeath = !FlxG.save.data.suddenDeath;
+				CDevConfig.saveData.suddenDeath = !CDevConfig.saveData.suddenDeath;
 			case 'Play as the opponent':
 				playOnLeftSide = !playOnLeftSide;
 			case 'Scroll Speed: ':
-				FlxG.save.data.scrollSpeed = modOptions[curModSelected][2];
+				CDevConfig.saveData.scrollSpeed = modOptions[curModSelected][2];
 			case 'Song Speed (BETA): ':
 				speed = modOptions[curModSelected][2];
 				changeDaBPM();
 			case 'Health Gain Multi: ':
-				FlxG.save.data.healthGainMulti = modOptions[curModSelected][2];
+				CDevConfig.saveData.healthGainMulti = modOptions[curModSelected][2];
 			case 'Health Lose Multi: ':
-				FlxG.save.data.healthLoseMulti = modOptions[curModSelected][2];
+				CDevConfig.saveData.healthLoseMulti = modOptions[curModSelected][2];
 			case 'Combo Multipiler: ':
-				FlxG.save.data.comboMultipiler = modOptions[curModSelected][2];
+				CDevConfig.saveData.comboMultipiler = modOptions[curModSelected][2];
 		}
 		modOptions = [
-			['Randomize Chart', true, FlxG.save.data.randomNote],
-			['Sudden Death', true, FlxG.save.data.suddenDeath],
+			['Randomize Chart', true, CDevConfig.saveData.randomNote],
+			['Sudden Death', true, CDevConfig.saveData.suddenDeath],
 			['Play as the opponent', true, playOnLeftSide],
-			['Scroll Speed: ', false, FlxG.save.data.scrollSpeed, 0.1, 10],
+			['Scroll Speed: ', false, CDevConfig.saveData.scrollSpeed, 0.1, 10],
 			#if cpp ['Song Speed (BETA): ', false, speed, 0.1, 10], #end
-			['Health Gain Multi: ', false, FlxG.save.data.healthGainMulti, 1, 10],
-			['Health Lose Multi: ', false, FlxG.save.data.healthLoseMulti, 1, 10],
-			['Combo Multipiler: ', false, FlxG.save.data.comboMultipiler, 1, 10]
+			['Health Gain Multi: ', false, CDevConfig.saveData.healthGainMulti, 1, 10],
+			['Health Lose Multi: ', false, CDevConfig.saveData.healthLoseMulti, 1, 10],
+			['Combo Multipiler: ', false, CDevConfig.saveData.comboMultipiler, 1, 10]
 		];
 	}
 
@@ -1028,12 +1028,12 @@ class FreeplayState extends MusicBeatState
 		{
 			sprDifficulty.text = "NORMAL";
 			yeahNormal = true;
-			trace("yes normal");
+			//trace("yes normal");
 		}
 		else
 		{
 			yeahNormal = false;
-			trace("no.");
+			//trace("no.");
 		}
 	}
 
@@ -1165,13 +1165,16 @@ class FreeplayState extends MusicBeatState
 		}
 
 		Paths.currentMod = songs[curSelected].fromMod;
-		readDiff();
+		if (!songs[curSelected].weekMode)
+			readDiff();
+		else
+			CoolUtil.songDifficulties = songs[curSelected].weekFile.weekDifficulties;
 		curDifficulty = 0;
 	}
 
 	override function beatHit()
 	{
-		if (FlxG.save.data.flashing)
+		if (CDevConfig.saveData.flashing)
 			bg.alpha = 1;
 
 		if (iconArray[selectedBPMSONG] != null)
@@ -1219,13 +1222,16 @@ class SongMetadata
 	public var songCharacter:String = "";
 	public var fromMod:String = "";
 	public var color:Array<Int> = [0,0,0];
-
-	public function new(song:String, week:Int, songCharacter:String, fromMod:String, ?color:Array<Int>)
+	public var weekMode:Bool = false;
+	public var weekFile:WeekFile = null;
+	public function new(song:String, week:Int, songCharacter:String, fromMod:String, ?color:Array<Int>, ?weekMode:Bool =false, ?weekFile:WeekFile = null)
 	{
 		this.songName = song;
 		this.week = week;
 		this.songCharacter = songCharacter;
 		this.fromMod = fromMod;
 		this.color = color;
+		this.weekMode = weekMode;
+		this.weekFile = weekFile;
 	}
 }

@@ -50,7 +50,7 @@ class StrumNote extends FlxSprite {
         }
         addOffset('static',55+4,55+2);
         addOffset('confirm',65+4,65+2);
-        antialiasing = FlxG.save.data.antialiasing;
+        antialiasing = CDevConfig.saveData.antialiasing;
         setGraphicSize(imgWidth,imgHeight);
         updateHitbox();
         //scrollFactor.set();

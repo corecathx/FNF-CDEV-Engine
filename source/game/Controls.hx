@@ -568,7 +568,7 @@ class Controls extends FlxActionSet
 		public function loadKeyBinds()
 		{
 	
-			//trace(FlxKey.fromString(FlxG.save.data.upBind));
+			//trace(FlxKey.fromString(CDevConfig.saveData.upBind));
 	
 			removeKeyboard();
 			inline bindKeys(Control.UP, [FlxKey.fromString(cdev.CDevConfig.keyBinds[2]), FlxKey.UP]);

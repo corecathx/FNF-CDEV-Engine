@@ -50,27 +50,31 @@ class CDevUtils
 		trace(p);
 		trace(f);
 
-		for (i in 0...f.length)
+		if (f.length >= 0)
 		{
-			if (f[i].endsWith(".json"))
+			for (i in 0...f.length)
 			{
-				var a:String = f[i].replace(songname, "");
-				if (a.contains("-"))
+				if (f[i].endsWith(".json"))
 				{
-					var splittedName:Array<String> = a.replace(".json", "").split("-");
+					var a:String = f[i].replace(songname, "");
+					if (a.contains("-"))
+					{
+						var splittedName:Array<String> = a.replace(".json", "").split("-");
 
-					// taking the last array
-					diffs.push(splittedName[splittedName.length - 1]);
-				}
-				else
-				{
-					diffs.push("normal+");
+						// taking the last array
+						diffs.push(splittedName[splittedName.length - 1]);
+					}
+					else
+					{
+						diffs.push("normal+");
+					}
 				}
 			}
 		}
 
 		return diffs;
 	}
+
 	public function bound(toConvert:Float, min:Float, max:Float):Float
 	{
 		return FlxMath.bound(toConvert, min, max); // ye

@@ -78,15 +78,7 @@ class StoryMenuFunctions
 		storr.selectedWeek = true;
 		PlayState.difficultyName = CoolUtil.songDifficulties[storr.curDifficulty];
 
-		var diffic = "";
-
-		switch (storr.curDifficulty)
-		{
-			case 0:
-				diffic = '-easy';
-			case 2:
-				diffic = '-hard';
-		}
+		var diffic = '-'+CoolUtil.songDifficulties[storr.curDifficulty];
 
 		PlayState.storyDifficulty = storr.curDifficulty;
 

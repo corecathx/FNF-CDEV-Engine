@@ -22,7 +22,7 @@ class AttachedSprite extends FlxSprite
 		super();
 
 		loadGraphic(Paths.image(file));
-		antialiasing = FlxG.save.data.antialiasing;
+		antialiasing = CDevConfig.saveData.antialiasing;
 		scrollFactor.set();
 	}
 

@@ -14,11 +14,11 @@ class RebindControls extends substates.MusicBeatSubstate
 {
 	private var curSelected:Int = 0;
 	var keyBinds:Array<String> = [
-		FlxG.save.data.leftBind,
-		FlxG.save.data.downBind,
-		FlxG.save.data.upBind,
-		FlxG.save.data.rightBind,
-		FlxG.save.data.resetBind
+		CDevConfig.saveData.leftBind,
+		CDevConfig.saveData.downBind,
+		CDevConfig.saveData.upBind,
+		CDevConfig.saveData.rightBind,
+		CDevConfig.saveData.resetBind
 	];
 
 	var keyText:Array<String> = ["LEFT", "DOWN", "UP", "RIGHT", "RESET"];
@@ -116,11 +116,11 @@ class RebindControls extends substates.MusicBeatSubstate
 
 	function save(){
 
-        FlxG.save.data.upBind = keyBinds[2];
-        FlxG.save.data.downBind = keyBinds[1];
-        FlxG.save.data.leftBind = keyBinds[0];
-        FlxG.save.data.rightBind = keyBinds[3];
-		FlxG.save.data.resetBind = keyBinds[4];
+        CDevConfig.saveData.upBind = keyBinds[2];
+        CDevConfig.saveData.downBind = keyBinds[1];
+        CDevConfig.saveData.leftBind = keyBinds[0];
+        CDevConfig.saveData.rightBind = keyBinds[3];
+		CDevConfig.saveData.resetBind = keyBinds[4];
         FlxG.save.flush();
 
 		cdev.CDevConfig.saveCurrentKeyBinds();

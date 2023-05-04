@@ -62,9 +62,10 @@ class MainMenuState extends MusicBeatState
 
 	override function create()
 	{
-		cdev.CDevConfig.setFPS(FlxG.save.data.fpscap);
+		cdev.CDevConfig.setFPS(CDevConfig.saveData.fpscap);
 		Paths.destroyLoadedImages();
 		FlxG.save.flush();
+		CDevConfig.storeSaveData();
 		FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
 		FlxG.sound.volumeDownKeys = [MINUS,NUMPADMINUS];
 		FlxG.sound.volumeUpKeys = [PLUS,NUMPADPLUS];
@@ -94,7 +95,7 @@ class MainMenuState extends MusicBeatState
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.alpha = 0.7;
-		bg.antialiasing = FlxG.save.data.antialiasing;
+		bg.antialiasing = CDevConfig.saveData.antialiasing;
 		add(bg);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
@@ -110,7 +111,7 @@ class MainMenuState extends MusicBeatState
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		magenta.visible = false;
-		magenta.antialiasing = FlxG.save.data.antialiasing;
+		magenta.antialiasing = CDevConfig.saveData.antialiasing;
 		magenta.color = 0xFFfd719b;
 		add(magenta);
 		// magenta.scrollFactor.set();
@@ -136,12 +137,12 @@ class MainMenuState extends MusicBeatState
 			//menuItem.screenCenter(X);
 			menuItems.add(menuItem);
 			menuItem.scrollFactor.set(0, 0.8);
-			menuItem.antialiasing = FlxG.save.data.antialiasing;
+			menuItem.antialiasing = CDevConfig.saveData.antialiasing;
 
 			var theIcon:FlxSprite = new FlxSprite(daX, 0).loadGraphic(Paths.image('menuicons/' + optionShit[i]));
 			theIcon.screenCenter(Y);
 			theIcon.scrollFactor.set();
-			theIcon.antialiasing = FlxG.save.data.antialiasing;
+			theIcon.antialiasing = CDevConfig.saveData.antialiasing;
 			theIcon.ID = i;
 			theIcon.alpha = 0;
 			theIcon.setGraphicSize(Std.int(theIcon.width * 0.8));
@@ -164,10 +165,10 @@ class MainMenuState extends MusicBeatState
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
 
-		engineText = new FlxText(0, FlxG.height - 35, 1000, coreEngineText  + (FlxG.save.data.testMode ? ' - [TESTMODE]' : ''), 16);
+		engineText = new FlxText(0, FlxG.height - 35, 1000, coreEngineText  + (CDevConfig.saveData.testMode ? ' - [TESTMODE]' : ''), 16);
 		engineText.scrollFactor.set();
 		engineText.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		if (FlxG.save.data.engineWM) add(engineText);
+		if (CDevConfig.saveData.engineWM) add(engineText);
 		engineText.x = (FlxG.width - engineText.width) - 20;
 
 		randomTxt = new FlxText(20, FlxG.height - 80, 1000, "", 26);
@@ -188,15 +189,12 @@ class MainMenuState extends MusicBeatState
 
 		cdev.CDevConfig.utils.cacheUISounds();
 
-		if (FlxG.save.data.dfjk)
-			engineutils.PlayerSettings.player1.controls.setKeyboardScheme(KeyboardScheme.Solo, true);
-		else
-			engineutils.PlayerSettings.player1.controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
+		engineutils.PlayerSettings.player1.controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
 
 		changeItem();
 		changeText();
 
-		if (FlxG.save.data.smoothAF)
+		if (CDevConfig.saveData.smoothAF)
 		{
 			FlxG.camera.zoom = 1.5;
 			FlxTween.tween(FlxG.camera, {zoom: 1}, 1, {ease: FlxEase.cubeOut});
@@ -230,10 +228,10 @@ class MainMenuState extends MusicBeatState
 				if (shitHold >= 3)
 					{
 						shitHold = 0;
-						FlxG.save.data.testMode = !FlxG.save.data.testMode;
-						engineText.text = coreEngineText  + (FlxG.save.data.testMode ? ' - [TESTMODE]' : '');
+						CDevConfig.saveData.testMode = !CDevConfig.saveData.testMode;
+						engineText.text = coreEngineText  + (CDevConfig.saveData.testMode ? ' - [TESTMODE]' : '');
 
-						if (FlxG.save.data.testMode)
+						if (CDevConfig.saveData.testMode)
 								FlxG.sound.play(Paths.sound('confirmMenu'));
 							else
 								FlxG.sound.play(Paths.sound('cancelMenu'));
@@ -242,7 +240,7 @@ class MainMenuState extends MusicBeatState
 				shitHold = 0;
 			}
 
-		if (FlxG.save.data.testMode){
+		if (CDevConfig.saveData.testMode){
 			if (FlxG.keys.pressed.CONTROL && FlxG.keys.pressed.ALT && FlxG.keys.justPressed.R){
 				@:privateAccess{
 					TitleState.initialized = false;
@@ -307,7 +305,7 @@ class MainMenuState extends MusicBeatState
 						selectedSomethin = true;
 						FlxG.sound.play(Paths.sound('confirmMenu'));
 	
-						if (FlxG.save.data.flashing)
+						if (CDevConfig.saveData.flashing)
 							FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 	
 						grpIcons.forEach(function(da:FlxSprite){
@@ -331,7 +329,7 @@ class MainMenuState extends MusicBeatState
 								});
 							}else{
 								//spr.screenCenter();
-								if (FlxG.save.data.flashing)
+								if (CDevConfig.saveData.flashing)
 								{
 									FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
 									{
@@ -381,7 +379,7 @@ class MainMenuState extends MusicBeatState
 			switch (daChoice)
 			{
 				case 'story mode':
-					if (FlxG.save.data.smoothAF)
+					if (CDevConfig.saveData.smoothAF)
 					{
 						FlxTween.cancelTweensOf(FlxG.camera);
 						FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
@@ -390,7 +388,7 @@ class MainMenuState extends MusicBeatState
 					FlxG.switchState(new StoryMenuState());
 					trace("Story Menu Selected");
 				case 'freeplay':
-					if (FlxG.save.data.smoothAF)
+					if (CDevConfig.saveData.smoothAF)
 					{
 						FlxTween.cancelTweensOf(FlxG.camera);
 						FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});

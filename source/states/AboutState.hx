@@ -71,7 +71,7 @@ class AboutState extends MusicBeatState
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.alpha = 0.8;
-		bg.antialiasing = FlxG.save.data.antialiasing;
+		bg.antialiasing = CDevConfig.saveData.antialiasing;
 		add(bg);
 
 		grpCredit = new FlxTypedGroup<Alphabet>();

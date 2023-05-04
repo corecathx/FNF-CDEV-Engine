@@ -54,7 +54,7 @@ class EventScriptEditor extends MusicBeatState
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
 		menuBG.alpha = 0.7;
-		menuBG.antialiasing = FlxG.save.data.antialiasing;
+		menuBG.antialiasing = CDevConfig.saveData.antialiasing;
 		add(menuBG);
 
 		updateScriptList();

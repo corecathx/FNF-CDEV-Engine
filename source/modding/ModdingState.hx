@@ -41,7 +41,7 @@ class ModdingState extends states.MusicBeatState
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
 		menuBG.alpha = 0.5;
-		menuBG.antialiasing = FlxG.save.data.antialiasing;
+		menuBG.antialiasing = CDevConfig.saveData.antialiasing;
 		add(menuBG);
 
 		grpOptions = new FlxTypedGroup<Alphabet>();
