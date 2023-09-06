@@ -1,1 +1,1 @@
-/Core5570RYT/FNF-CDEV-Engine/releases/download/release1.2/cdev-win64.rar
+/Core5570RYT/FNF-CDEV-Engine/releases/download/Release/cdev-engine-win64x.rar
