@@ -80,7 +80,8 @@ class GameOverSubstate extends MusicBeatSubstate
 		if (controls.ACCEPT)
 			endBullshit();
 
-		FlxG.camera.angle = Math.sin((game.Conductor.songPosition / 1000) * (game.Conductor.bpm / 60) * -1.0) * 2;
+		//ass
+		//FlxG.camera.angle = Math.sin((game.Conductor.songPosition / 1000) * (game.Conductor.bpm / 60) * -1.0) * 2;
 
 		if (controls.BACK){
 			FlxG.sound.music.stop();
@@ -122,7 +123,7 @@ class GameOverSubstate extends MusicBeatSubstate
 	{
 		super.beatHit();
 		bf.playAnim("deathLoop", true);
-		FlxG.camera.zoom += 0.030;
+		FlxG.camera.zoom += 0.010;
 
 		FlxG.log.add('beat');
 	}

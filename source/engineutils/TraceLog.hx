@@ -1,5 +1,6 @@
 package engineutils;
 
+import flixel.FlxCamera;
 import openfl.events.IOErrorEvent;
 import openfl.events.Event;
 import states.PlayState;
@@ -23,13 +24,9 @@ class TraceLog extends FlxGroup
 {
 	public static var _file:FileReference;
 	public static var TRACE_LOG_DATA:Array<String> = [
-		'This is a trace log window, use "trace(_message);" function on your hscript',
-		"file and the message will appear in here.",
-		'(Replace the "_message" with your message)',
-		''
 	];
 
-	var window_title:String = 'CDEV Engine Trace Log';
+	var window_title:String = 'Trace Log Window';
 
 	static var isItVisible:Bool = false;
 
@@ -53,6 +50,8 @@ class TraceLog extends FlxGroup
 	var widthThis:Int = 0;
 	var heightThis:Int = 0;
 
+	public var mainCameraObject:FlxCamera = null;
+
 	public function new(x:Float, y:Float, width:Int, height:Int)
 	{
 		super();
@@ -71,7 +70,7 @@ class TraceLog extends FlxGroup
 		text = new FlxText(panel_title.x + 2, panel_title.y + 2, PANEL_BG.width - 2, window_title, 10);
 		add(text);
 
-		sprClose = new FlxSprite(panel_title.x + width - 20, panel_title.y + height - 20).makeGraphic(20, 20, 0xFF2F2F2F);
+		sprClose = new FlxSprite(panel_title.x + width - 20, panel_title.y + height - 40).makeGraphic(20, 20, 0xFFFF0000);
 		add(sprClose);
 
 		var pointerSprite:FlxGraphic = FlxGraphic.fromClass(GraphicCursorCross);
@@ -82,7 +81,7 @@ class TraceLog extends FlxGroup
 		sprCloseX.color = FlxColor.WHITE;
 		add(sprCloseX);
 
-		sprSave = new FlxSprite(panel_title.x + width - 40, panel_title.y + height - 20).makeGraphic(20, 20, 0xFF2F2F2F);
+		sprSave = new FlxSprite(panel_title.x + width - 40, panel_title.y + height - 40).makeGraphic(20, 20, 0xFFFFFFFF);
 		add(sprSave);
 		sprSaveI = new FlxSprite().loadGraphic(Paths.image("ui/file", "shared"));
 		sprSaveI.setGraphicSize(10, 10);
@@ -118,32 +117,32 @@ class TraceLog extends FlxGroup
 			panel_title.setPosition(PANEL_BG.x, PANEL_BG.y);
 			text.setPosition(panel_title.x, panel_title.y);
 
-			sprClose.setPosition(panel_title.x + widthThis - 20, panel_title.y + 20);
+			sprClose.setPosition(panel_title.x + widthThis - 20, panel_title.y);
 			sprCloseX.setPosition(sprClose.x + (sprClose.width / 2) - 5, sprClose.y + (sprClose.height / 2) - 5);
 
-			sprSave.setPosition(panel_title.x + widthThis - 40, panel_title.y + 20);
+			sprSave.setPosition(panel_title.x + widthThis - 40, panel_title.y);
 			sprSaveI.setPosition(sprSave.x + (sprSave.width / 2) - 5, sprSave.y + (sprSave.height / 2) - 5);
 
-			if (FlxG.mouse.getWorldPosition().x > sprClose.x
-				&& FlxG.mouse.getWorldPosition().x < sprClose.x + sprClose.width
-				&& FlxG.mouse.getWorldPosition().y > sprClose.y
-				&& FlxG.mouse.getWorldPosition().y < sprClose.y + sprClose.height)
+			if (FlxG.mouse.getScreenPosition(mainCameraObject).x > sprClose.x
+				&& FlxG.mouse.getScreenPosition(mainCameraObject).x < sprClose.x + sprClose.width
+				&& FlxG.mouse.getScreenPosition(mainCameraObject).y > sprClose.y
+				&& FlxG.mouse.getScreenPosition(mainCameraObject).y < sprClose.y + sprClose.height)
 			{
-				sprClose.alpha = 1;
+				sprClose.alpha = 0.5;
 				if (FlxG.mouse.justPressed)
 				{
 					visible = false;
 				}
 			} else{
-				sprClose.alpha = 0.5;
+				sprClose.alpha = 0;
 			}
 
-			if (FlxG.mouse.getWorldPosition().x > sprSave.x
-				&& FlxG.mouse.getWorldPosition().x < sprSave.x + sprSave.width
-				&& FlxG.mouse.getWorldPosition().y > sprSave.y
-				&& FlxG.mouse.getWorldPosition().y < sprSave.y + sprSave.height)
+			if (FlxG.mouse.getScreenPosition(mainCameraObject).x > sprSave.x
+				&& FlxG.mouse.getScreenPosition(mainCameraObject).x < sprSave.x + sprSave.width
+				&& FlxG.mouse.getScreenPosition(mainCameraObject).y > sprSave.y
+				&& FlxG.mouse.getScreenPosition(mainCameraObject).y < sprSave.y + sprSave.height)
 			{
-				sprSave.alpha = 1;
+				sprSave.alpha = 0.5;
 				if (FlxG.mouse.justPressed)
 				{
 					var aw:states.PlayState = null;
@@ -154,7 +153,24 @@ class TraceLog extends FlxGroup
 
 					saveTraceData();
 				}
-			}else sprSave.alpha = 0.5;
+			}else sprSave.alpha = 0;
+
+			if (FlxG.mouse.getScreenPosition(mainCameraObject).x > PANEL_BG.x
+				&& FlxG.mouse.getScreenPosition(mainCameraObject).x < PANEL_BG.x + PANEL_BG.width
+				&& FlxG.mouse.getScreenPosition(mainCameraObject).y > PANEL_BG.y
+				&& FlxG.mouse.getScreenPosition(mainCameraObject).y < PANEL_BG.y + PANEL_BG.height)
+			{
+				if (LogText != null && LogText.textField != null)
+				{
+					if (FlxG.mouse.wheel < 0){
+						trace("scroll up");
+						LogText.textField.scrollV -= 1;
+					} else if (FlxG.mouse.wheel > 0){
+						trace("scroll down");
+						LogText.textField.scrollV += 1;
+					}
+				}
+			}
 
 			if (FlxG.keys.justPressed.F5)
 			{
@@ -256,7 +272,7 @@ class TraceLog extends FlxGroup
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
 			_file.addEventListener(Event.CANCEL, onSaveCancel);
 			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data.trim(), "CDEV-TraceLog.txt");
+			_file.save(data.trim(), "TraceLog- " + Date.now() +".txt");
 		}
 	}
 

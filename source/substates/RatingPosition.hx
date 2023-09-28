@@ -16,6 +16,8 @@ class RatingPosition extends MusicBeatSubstate
 	var rating:FlxSprite = new FlxSprite();
 	var combo:Int = 6;
 
+	public var leftState:Bool = false;
+
 	var defXPos:Float = FlxG.width * 0.55 - 135;
 	var defYPos:Float = FlxG.height / 2 - 50;
 
@@ -43,8 +45,8 @@ class RatingPosition extends MusicBeatSubstate
 
 		// basically ripped off from playstate
 		// cuz' i'm lazy
-		rating = new FlxSprite().loadGraphic(Paths.image('perfect', 'shared'));
-		rating.setGraphicSize(Std.int(rating.width * 0.7));
+		rating = new FlxSprite().loadGraphic(Paths.image('sick', 'shared'));
+		rating.setGraphicSize(Std.int(rating.width * 0.6));
 		rating.antialiasing = CDevConfig.saveData.antialiasing;
 		add(rating);
 
@@ -77,10 +79,10 @@ class RatingPosition extends MusicBeatSubstate
 		for (i in seperatedScore)
 		{
 			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image('num' + Std.int(i)));
-			numScore.x = 43 * daLoop;
+			numScore.x = 36 * daLoop;
 			numScore.ID = daLoop;
 			numScore.antialiasing = CDevConfig.saveData.antialiasing;
-			numScore.setGraphicSize(Std.int(numScore.width * 0.5));
+			numScore.setGraphicSize(Std.int(numScore.width * 0.4));
 			numScore.updateHitbox();
 			numScore.cameras = [camHUD];
 			numScore.scrollFactor.set();
@@ -133,10 +135,13 @@ class RatingPosition extends MusicBeatSubstate
 
 		grpCombo.scrollFactor.set();
 
-		if (!CDevConfig.saveData.middlescroll)
-			generateStaticArrows(0);
+		if (!isFromPause){
+			if (!CDevConfig.saveData.middlescroll)
+				generateStaticArrows(0);
+	
+			generateStaticArrows(1);
+		}
 
-		generateStaticArrows(1);
 
 		rating.updateHitbox();
 		grpCombo.updateHitbox();
@@ -161,10 +166,10 @@ class RatingPosition extends MusicBeatSubstate
 			onRange = false;
 
 		// combo
-		if ((FlxG.mouse.getPositionInCameraView(camHUD).x >= grpCombo.x)
-			&& (FlxG.mouse.getPositionInCameraView(camHUD).x < grpCombo.x + grpCombo.width)
-			&& (FlxG.mouse.getPositionInCameraView(camHUD).y >= grpCombo.y)
-			&& (FlxG.mouse.getPositionInCameraView(camHUD).y < grpCombo.y + grpCombo.height))
+		if ((FlxG.mouse.getScreenPosition(camHUD).x >= grpCombo.x)
+			&& (FlxG.mouse.getScreenPosition(camHUD).x < grpCombo.x + grpCombo.width)
+			&& (FlxG.mouse.getScreenPosition(camHUD).y >= grpCombo.y)
+			&& (FlxG.mouse.getScreenPosition(camHUD).y < grpCombo.y + grpCombo.height))
 			onRangee = true;
 		else
 			onRangee = false;
@@ -230,6 +235,7 @@ class RatingPosition extends MusicBeatSubstate
 
 		if (controls.BACK)
 		{
+			leftState = true;
 			close();
 		}
 

@@ -1,9 +1,0 @@
-#automatically generated do not edit
-#@date Thu May 04 2023 18:30:52 GMT+0800 (Central Indonesia Time)
-#-main source/MenuState
-#-neko bin/text.n
-#lime test neko
--main Main.hx
-#-cmd neko Test.n
---macro server.setModuleCheckPolicy(['package1', 'package2', ...], [NoCheckShadowing, NoCheckDependencies], true)
--cp c:\users\user\appdata\local\temp\618f0a830025f9e1e95dd18a12ebd0ed6062cfcd

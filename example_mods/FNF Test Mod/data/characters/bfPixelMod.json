@@ -1,103 +1,103 @@
 {
 	"animations": [
 		{
-			"fpsValue": 24,
 			"animName": "BF IDLE",
+			"fpsValue": 24,
 			"looping": false,
-			"animPrefix": "idle",
+			"indices": [],
 			"offset": [
 				7,
 				0
 			],
-			"indices": []
+			"animPrefix": "idle"
 		},
 		{
-			"fpsValue": 24,
 			"animName": "BF LEFT MISS",
+			"fpsValue": 24,
 			"looping": false,
-			"animPrefix": "singLEFTmiss",
+			"indices": [],
 			"offset": [
 				0,
 				0
 			],
-			"indices": []
+			"animPrefix": "singLEFTmiss"
 		},
 		{
-			"fpsValue": 24,
 			"animName": "BF LEFT NOTE",
+			"fpsValue": 24,
 			"looping": false,
-			"animPrefix": "singLEFT",
+			"indices": [],
 			"offset": [
 				0,
 				0
 			],
-			"indices": []
+			"animPrefix": "singLEFT"
 		},
 		{
-			"fpsValue": 24,
 			"animName": "BF UP MISS",
+			"fpsValue": 24,
 			"looping": false,
-			"animPrefix": "singUPmiss",
+			"indices": [],
 			"offset": [
 				0,
 				0
 			],
-			"indices": []
+			"animPrefix": "singUPmiss"
 		},
 		{
-			"fpsValue": 24,
 			"animName": "BF UP NOTE",
+			"fpsValue": 24,
 			"looping": false,
-			"animPrefix": "singUP",
+			"indices": [],
 			"offset": [
 				0,
 				0
 			],
-			"indices": []
+			"animPrefix": "singUP"
 		},
 		{
-			"fpsValue": 24,
 			"animName": "BF RIGHT NOTE",
+			"fpsValue": 24,
 			"looping": false,
-			"animPrefix": "singRIGHT",
+			"indices": [],
 			"offset": [
 				0,
 				0
 			],
-			"indices": []
+			"animPrefix": "singRIGHT"
 		},
 		{
-			"fpsValue": 24,
 			"animName": "BF RIGHT MISS",
+			"fpsValue": 24,
 			"looping": false,
-			"animPrefix": "singRIGHTmiss",
+			"indices": [],
 			"offset": [
 				0,
 				0
 			],
-			"indices": []
+			"animPrefix": "singRIGHTmiss"
 		},
 		{
-			"fpsValue": 24,
 			"animName": "BF DOWN NOTE",
+			"fpsValue": 24,
 			"looping": false,
-			"animPrefix": "singDOWN",
+			"indices": [],
 			"offset": [
 				0,
 				0
 			],
-			"indices": []
+			"animPrefix": "singDOWN"
 		},
 		{
-			"fpsValue": 24,
 			"animName": "BF DOWN MISS",
+			"fpsValue": 24,
 			"looping": false,
-			"animPrefix": "singDOWNmiss",
+			"indices": [],
 			"offset": [
 				0,
 				0
 			],
-			"indices": []
+			"animPrefix": "singDOWNmiss"
 		}
 	],
 	"healthBarColor": [
@@ -115,8 +115,8 @@
 	"charScale": 6,
 	"usingAntialiasing": false,
 	"camXYPos": [
-		-300,
-		-220
+		-220,
+		-150
 	],
 	"iconName": "bf-pixelMod"
 }

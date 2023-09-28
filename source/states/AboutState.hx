@@ -61,8 +61,8 @@ class AboutState extends MusicBeatState
 
 		persistentUpdate = persistentDraw = true;
 
-		updateMainCredits();
 		checkCustomCredits();
+		updateMainCredits();
 
 		bg = new FlxSprite(-80).loadGraphic(Paths.image('aboutMenu', "preload"));
 		bg.scrollFactor.x = 0;
@@ -243,20 +243,21 @@ class AboutState extends MusicBeatState
 						}else{
 							data = [actualText.trim()];
 						}
-					}
-					trace(data);
 
-					bro = {
-						title: !actualText.contains("::"),
-						name: data[0],
-						description: data[1],
-						color: Std.parseInt(data[2]),
-						link: data[3],
-						modName: data[4]
-					};
-					trace(bro);
-	
-					textData.push(bro);
+						trace(data);
+
+						bro = {
+							title: !actualText.contains("::"),
+							name: data[0],
+							description: data[1],
+							color: Std.parseInt(data[2]),
+							link: data[3],
+							modName: data[4]
+						};
+						trace(bro);
+		
+						textData.push(bro);
+					}
 				}
 				for (i in textData)
 				{
@@ -267,7 +268,7 @@ class AboutState extends MusicBeatState
 	}
 
 	function updateMainCredits(){
-		mainCredits = [
+		var mainCred:Array<CreditsInfo> = [
 			{
 				title: true,
 				name: "CDEV Engine",
@@ -326,5 +327,8 @@ class AboutState extends MusicBeatState
 			}
 		];
 
+		for (c in mainCred){
+			mainCredits.push(c);
+		}
 	}
 }

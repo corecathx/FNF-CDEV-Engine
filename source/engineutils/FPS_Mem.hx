@@ -59,7 +59,7 @@ class CDevFPSMem extends TextField
 			game.Paths.destroyLoadedImages();
 		}
 
-		var engineText:String = (CDevConfig.saveData.engineWM ? "CDEV FNF v"+CDevConfig.engineVersion: "");
+		var engineText:String = "";//(CDevConfig.saveData.engineWM ? "CDEV FNF v"+CDevConfig.engineVersion: "");
 		var debugText:String = (CDevConfig.debug ? "[Debug version]" : "");
 
 		var s:String = "";

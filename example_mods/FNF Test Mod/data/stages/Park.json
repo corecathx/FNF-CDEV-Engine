@@ -1,0 +1,131 @@
+{
+	"useCustomFollowLerp": false,
+	"girlfriendPosition": [
+		1286.66666666667,
+		536.666666666667
+	],
+	"followLerp": 0.03,
+	"opponentPosition": [
+		1038.88888888889,
+		1033.33333333333
+	],
+	"stageZoom": 0.8,
+	"boyfriendPosition": [
+		1823.33333333333,
+		926.666666666667
+	],
+	"sprites": [
+		{
+			"animType": "",
+			"imageVar": "bg",
+			"imageScale": 1.2,
+			"imageSF": 0.2,
+			"position": [
+				-779.78,
+				-506.89
+			],
+			"spriteType": "bitmap",
+			"imageFlipX": false,
+			"imagePath": "bg_sky/background",
+			"imageAlpha": 1,
+			"imageAntialias": true,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "groundBG",
+			"imageScale": 1.1,
+			"imageSF": 0.4,
+			"position": [
+				-613.33,
+				-483.33
+			],
+			"spriteType": "bitmap",
+			"imageFlipX": false,
+			"imagePath": "bg_sky/stuff",
+			"imageAlpha": 1,
+			"imageAntialias": true,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "fg",
+			"imageScale": 1,
+			"imageSF": 1,
+			"position": [
+				26.67,
+				-70
+			],
+			"spriteType": "bitmap",
+			"imageFlipX": false,
+			"imagePath": "bg_sky/foreground",
+			"imageAlpha": 1,
+			"imageAntialias": true,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "Girlfriend",
+			"imageScale": 1,
+			"imageSF": 1,
+			"position": [
+				1286.67,
+				536.67
+			],
+			"spriteType": "gf",
+			"imageFlipX": false,
+			"imagePath": "",
+			"imageAlpha": 1,
+			"imageAntialias": true,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "bfPixelBox",
+			"imageScale": 1,
+			"imageSF": 1,
+			"position": [
+				833.33,
+				833.33
+			],
+			"spriteType": "bitmap",
+			"imageFlipX": false,
+			"imagePath": "bg_sky/charBox",
+			"imageAlpha": 1,
+			"imageAntialias": true,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "Opponent",
+			"imageScale": 6,
+			"imageSF": 1,
+			"position": [
+				1038.89,
+				1033.33
+			],
+			"spriteType": "dad",
+			"imageFlipX": true,
+			"imagePath": "",
+			"imageAlpha": 1,
+			"imageAntialias": false,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "Boyfriend",
+			"imageScale": 1,
+			"imageSF": 1,
+			"position": [
+				1823.33,
+				926.67
+			],
+			"spriteType": "bf",
+			"imageFlipX": false,
+			"imagePath": "",
+			"imageAlpha": 1,
+			"imageAntialias": true,
+			"animation": null
+		}
+	]
+}

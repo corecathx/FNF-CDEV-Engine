@@ -430,8 +430,7 @@ class CharacterEditor extends states.MusicBeatState
 		healthIcon = new HealthIcon(charJSON.iconName, false);
 		add(healthIcon);
 
-		healthIcon.x = healthBarBG.getGraphicMidpoint().x;
-		healthIcon.y = healthBarBG.y - (healthIcon.height / 2);
+		healthIcon.setPosition(healthBarBG.getGraphicMidpoint().x, healthBarBG.y - (healthIcon.height / 2));
 
 		updateHealthBarDisplay();
 

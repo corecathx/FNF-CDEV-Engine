@@ -1,5 +1,6 @@
 package states;
 
+import settings.data.SettingsProperties;
 import modding.WeekData;
 import modding.ModPaths;
 import cdev.CDevConfig;
@@ -36,7 +37,7 @@ class MainMenuState extends MusicBeatState
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
 	#if !switch
-	var optionShit:Array<String> = ['story mode', 'freeplay', 'modding', 'youtube', 'donate', 'options', 'about'];
+	var optionShit:Array<String> = ['story mode', 'freeplay', 'modding', 'donate', 'options', 'about'];
 	#else
 	var optionShit:Array<String> = ['story mode', 'freeplay'];
 	#end
@@ -203,6 +204,7 @@ class MainMenuState extends MusicBeatState
 		super.create();
 
 		WeekData.loadWeeks();
+		SettingsProperties.load_default();
 	}
 
 	var selectedSomethin:Bool = false;
@@ -299,8 +301,6 @@ class MainMenuState extends MusicBeatState
 				switch(optionShit[curSelected]){
 					case 'donate':
 						CDevConfig.utils.openURL('https://ninja-muffin24.itch.io/funkin');
-					case 'youtube':
-						CDevConfig.utils.openURL('https://www.youtube.com/channel/UCQhxUlrUtrMZjeA05sbEMmA');
 					default:
 						selectedSomethin = true;
 						FlxG.sound.play(Paths.sound('confirmMenu'));

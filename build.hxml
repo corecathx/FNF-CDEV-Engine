@@ -3,4 +3,4 @@
 #lime test neko
 -main Main.hx 
 #-cmd neko Test.n
---macro server.setModuleCheckPolicy(['package1', 'package2', ...], [NoCheckShadowing, NoCheckDependencies], true)
+#--macro server.setModuleCheckPolicy(['package1', 'package2', ...], [NoCheckShadowing, NoCheckDependencies], true)

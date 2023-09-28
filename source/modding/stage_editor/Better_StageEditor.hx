@@ -282,21 +282,21 @@ class Better_StageEditor extends MusicBeatState
 	{
 		gf = new Character(0, 0, "gf", false, true);
 		gf.setPosition(__STAGE_JSON.girlfriendPosition[0], __STAGE_JSON.girlfriendPosition[1]);
-		gf.gfTestBop = true;
+		//gf.gfTestBop = true;
 		gf.objectName = "Girlfriend";
 		gf.type = "gf";
 		// __OBJECT_LIST.push(_create_ObjectList_array(gf, "Girlfriend", false, false, 0xFFC00000));
 
 		dad = new Character(0, 0, "dad", false, true);
 		dad.setPosition(__STAGE_JSON.opponentPosition[0], __STAGE_JSON.opponentPosition[1]);
-		dad.gfTestBop = true;
+		//dad.gfTestBop = true;
 		dad.objectName = "Opponent";
 		dad.type = "dad";
 		// __OBJECT_LIST.push(_create_ObjectList_array(dad, "Opponent", false, false, 0xFF7400CD));
 
 		bf = new Character(0, 0, "bf", true, true);
 		bf.setPosition(__STAGE_JSON.boyfriendPosition[0], __STAGE_JSON.boyfriendPosition[1]);
-		bf.gfTestBop = true;
+		//bf.gfTestBop = true;
 		bf.objectName = "Boyfriend";
 		bf.type = "bf";
 		// __OBJECT_LIST.push(_create_ObjectList_array(bf, "Boyfriend", false, false, 0xFF0078BD));
@@ -499,7 +499,7 @@ class Better_StageEditor extends MusicBeatState
 			var layer = members.indexOf(bf);
 			var char = new Character(0, 0, charList[Std.parseInt(character)], true, true);
 			char.setPosition(__STAGE_JSON.boyfriendPosition[0], __STAGE_JSON.boyfriendPosition[1]);
-			char.gfTestBop = true;
+			//char.gfTestBop = true;
 			char.objectName = "Boyfriend";
 			char.type = "bf";
 
@@ -525,7 +525,7 @@ class Better_StageEditor extends MusicBeatState
 			var layer = members.indexOf(gf);
 			var char = new Character(0, 0, charList[Std.parseInt(character)], false, true);
 			char.setPosition(__STAGE_JSON.girlfriendPosition[0], __STAGE_JSON.girlfriendPosition[1]);
-			char.gfTestBop = true;
+			//char.gfTestBop = true;
 			char.objectName = "Girlfriend";
 			char.type = "gf";
 
@@ -552,7 +552,7 @@ class Better_StageEditor extends MusicBeatState
 				var layer = members.indexOf(dad);
 				var char = new Character(0, 0, charList[Std.parseInt(character)], false, true);
 				char.setPosition(__STAGE_JSON.opponentPosition[0], __STAGE_JSON.opponentPosition[1]);
-				char.gfTestBop = true;
+				//char.gfTestBop = true;
 				char.objectName = "Opponent";
 				char.type = "dad";
 
@@ -1229,9 +1229,9 @@ class Better_StageEditor extends MusicBeatState
 
 	override function beatHit()
 	{
-		gf.dance();
-		dad.dance();
-		bf.dance();
+		gf.dance(false, curBeat);
+		dad.dance(false, curBeat);
+		bf.dance(false, curBeat);
 
 		for (s in beatHit_sprites)
 		{

@@ -316,13 +316,15 @@ class Paths
 	inline static public function getSparrowAtlas(key:String, ?library:String)
 	{
 		var imageLoaded:FlxGraphic = addCustomGraphic(key);
+		//trace(imageLoaded);
 		var xmlExists:Bool = false;
 		if (FileSystem.exists(modXml(key)))
 		{
 			xmlExists = true;
 		}
 
-		return FlxAtlasFrames.fromSparrow((imageLoaded != null ? imageLoaded : image(key, library)),
+		return FlxAtlasFrames.fromSparrow(
+			(imageLoaded != null ? imageLoaded : image(key, library)),
 			(xmlExists ? File.getContent(modXml(key)) : file('images/$key.xml', TEXT, library)));
 		// return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
 	}
@@ -347,6 +349,7 @@ class Paths
 	{
 		if (FileSystem.exists(modImages(key)))
 		{
+			///trace(key + "exists");
 			if (!customImagesLoaded.exists(key))
 			{
 				var data:Bytes = File.getBytes(modImages(key));
@@ -377,8 +380,25 @@ class Paths
 		var path:String = 'cdev-mods/$modFolderName/';
 		var childrens:Array<String> = [];
 		var dumbFolders:Array<String> = [
-			            'data',    'data/charts', 'data/characters', 'data/stages', 'data/weeks', 'data/fonts', 'images', 'images/characters', 'images/icons/',
-			'images/storymenu',		'images/storymenu/difficulty'  , 'images/credits',    'images/notes',      'events',      'notes',     #if USE_VIDEOS 'videos', #end 'sounds',             'music',         'songs'
+			'data',   //DATA FOLDER
+			'data/charts',
+			'data/characters',
+			'data/stages',
+			'data/weeks',
+			'data/fonts',
+			'images', //IMAGES FOLDER
+			'images/characters',
+			'images/icons/',
+			'images/storymenu',
+			'images/storymenu/difficulty',
+			'images/credits',
+			'images/notes',
+			'events',
+			'notes',
+			#if USE_VIDEOS 'videos', #end
+			'sounds',
+			'music',
+			'songs'
 		];
 
 		// path, filename, data
@@ -387,7 +407,7 @@ class Paths
 			[
 				'',
 				'credits.txt',
-				'--Put your custom credits here\n--Credits should be on this format: Name, Desc, Color, Link\n--Credits group should be on this format: Name\n--"Color" should be on hex format (ex: 0xFF000000)'
+				'--Put your custom credits here\n--Credits should be on this format: Name::Desc::Color::Link\n--Credits title should be on this format: Name\n--"Color" should be on hex format (ex: 0xFF000000, rgba)'
 			]
 		];
 		for (n in dumbFolders)
@@ -423,6 +443,11 @@ class Paths
 	inline static public function modStage(key:String)
 	{
 		return modFolders('data/' + STAGES_PATH + key + '.json');
+	}
+
+	inline static public function modStageScript(key:String)
+	{
+		return modFolders('data/' + STAGES_PATH + key + '.hx');
 	}
 
 	inline static public function modWeek(key:String)
@@ -518,7 +543,7 @@ class Paths
 		return modFolders('songs/' + key + '.' + SOUND_EXT);
 	}
 
-	static public function modFolders(key:String, ?thisMod:Null<String>)
+	static public function modFolders(key:String)//, ?thisMod:Null<String>=null)
 	{
 		///if (curModDir != null && curModDir.length > 0)
 		// {
@@ -528,20 +553,22 @@ class Paths
 		//		return checkFile;
 		//	}
 		// }
-		if (thisMod != null && thisMod != '')
+		/*if (thisMod != null && thisMod != '')
 		{
 			var checkFile:String = mods(thisMod + '/' + key);
 			if (FileSystem.exists(checkFile))
 				return checkFile;
-		} else {
+		}
+		else*/
+		{
 			if (currentMod != null && currentMod != '')
 			{
 				var checkFile:String = mods(currentMod + '/' + key);
-				if (FileSystem.exists(checkFile))
+				if (FileSystem.exists(checkFile)){
 					return checkFile;
+				}
 			}
 		}
-
 
 		return 'cdev-mods/' + key; // ok yea, welp.
 	}

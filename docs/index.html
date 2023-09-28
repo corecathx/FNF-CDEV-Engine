@@ -1,60 +1,577 @@
 <!DOCTYPE html>
-
-<html lang="en">
-
-<!-- 
-	@brandybuizel
-	@ninja_muffin2.4
--->
-
-<!--Let's get meta bois-->
+<html>
+<!--what are you looking at?-->
 <head>
-	<meta charset="utf-8">
-	<title>Friday Night Funkin'</title>
-	<meta name="description" content="A dope ass rhythm game">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="styles.css" rel="stylesheet" type="text/css">
-	<!-- <link href="website/mm.ico" rel="icon" type="image/x-icon"> -->
-	<link rel="shortcut icon" type="image/png" href="../art/icon.png" />
+    <meta charset="UTF-8">
+    <title>CDEV Engine Docs</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <style>
+        .body {
+            margin: 0px;
+            background-color: black;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 250px auto;
+        }
+
+        .tab-content {
+            display: none;
+            font-family: 'Roboto', sans-serif;
+            max-width: 80%;
+        }
+
+        .active-tab {
+            display: block;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid rgb(139, 139, 139);
+            padding: 8px;
+            text-align: left;
+        }
+
+        code {
+            font-family: 'Monaco', 'Courier New', monospace;
+            /* Ganti 'Monaco' dengan jenis font yang Anda inginkan jika tidak tersedia di komputer pengguna */
+        }
+
+        #sidebar {
+            background-color: #2a3350;
+            padding: 20px;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        #sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        #sidebar ul li a {
+            text-decoration: none;
+            color: #a1a1a1;
+            font-family: 'Roboto', sans-serif;
+            display: block;
+        }
+
+        #content {
+            background-color: #161d33;
+            color: #FFFFFF;
+            padding: 20px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #sidebar ul li a:hover {
+            background-color: #2b4d80;
+        }
+    </style>
 </head>
 
 <body>
-	<!--Header-->
-	<header>
-	</header>
+    <div class="container">
+        <div id="sidebar">
+            <h2 style="color: white; font-family: 'Roboto', sans-serif;">Basics</h2>
+            <ul>
+                <li><a href="#welcome" onclick="showTab('welcome'); return false;">Welcome</a></li>
+                <li><a href="#new-mod" onclick="showTab('new-mod'); return false;">Making a new mod</a></li>
+            </ul>
 
-	
-	<marquee width="1920" scrollamount="2" scrolldelay="10" truespeed="truespeed">Friday Night Funkin</marquee>
-	<!--Hot tortilla wrap-->
-	<div id="wrapper">
-		<h1>Friday Night Funkin' - Rhythm game extraordinaire</h1>
-		
+            <h2 style="color: white; font-family: 'Roboto', sans-serif;">Modding Stuffs</h2>
+            <ul>
+                <li><a href="#new-song" onclick="showTab('new-song'); return false;">Adding your song</a></li>
+                <li><a href="#new-character" onclick="showTab('new-character'); return false;">Adding a new
+                        character</a></li>
+                <li><a href="#new-stage" onclick="showTab('new-stage'); return false;">Adding a new stage</a></li>
+                <li><a href="#new-week" onclick="showTab('new-week'); return false;">Adding a new week</a></li>
+            </ul>
 
-		<div id="coolervidwrapper">
-			<div class='videoWrapper'>
-				<iframe width="560" height="349" src="https://www.youtube.com/embed/HMNKUo3CCpU" frameborder="0"
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-				allowfullscreen></iframe>
-			</div>
-		</div>
-		
-		
-		<div class="coolBox hovertext" id="twitter">
-			<p class="description">Friday Night Funkin' is a dope ass rhythm game.</p>
-			<p class='description'>It is made by <a href="https://twitter.com/ninja_muffin99">ninjamuffin99 (programmer)</a>, <a
-				href="https://twitter.com/PhantomArcade3K">PhantomArcade (animator)</a>, <a
-				href="https://twitter.com/evilsk8r">evilsk8r (artist)</a>,
-			and <a href="https://twitter.com/kawaisprite">Kawaisprite (musician)</a> originally for Ludum Dare 47.</p>
-		</div>
+            <h2 style="color: white; font-family: 'Roboto', sans-serif;">HScript API</h2>
+            <ul>
+                <li><a href="#script-ex" onclick="showTab('script-ex'); return false;">How scripting works here</a></li>
+                <li><a href="#scripts-used" onclick="showTab('scripts-used'); return false;">Variables</a></li>
+            </ul>
+        </div>
 
-		<div class="linktext hovertext" id="ng">
-			<a href="https://www.newgrounds.com/portal/view/770371">Play demo on Newgrounds</a>
-		</div>
+        <div id="content">
+            <!--
+                BASICS!!!
+            -->
+            <!--Welcome-->
+            <div class="tab-content active-tab" id="welcome">
+                <img src="images/CDEV-Engine-Logo.png" width="600" style="align-self: center;">
+                <h1>Welcome to CDEV Engine's Documentation</h1>
+                <hr>
+                <p>This HTML Page contains the basics of modding in CDEV Engine, such as scripting, adding week, adding
+                    stages, and more.</p>
+                <p>The quickest way to get started is to check out the built-in mod which is the "FNF Test Mod" and
+                    playing around with it.<br>The documentation is for reference if you want to know the specifics of
+                    everything. These are the categories on the left, check them out!<br>there's no "TL;DR" here.</p>
+                <p><br>(Note: This documentation was made in CDEV Engine v.1.4, if you've downloaded an higher version
+                    of CDEV Engine, expect some stuffs not included here.)</p>
+            </div>
 
-		<div class='linktext hovertext' id="itch">
-			<a href="https://ninja-muffin24.itch.io/funkin">Support the game on Itch.io</a>
-		</div>
-		
-	</div>
+            <!--Adding a new mod-->
+            <div class="tab-content" id="new-mod">
+                <h1>Making a new mod</h1>
+                <hr>
+                <p>1. Go to the Modding option from the main menu.</p>
+                <img src="images/new-mod/img0.png" width="400px" />
+                <p>2. Select on the "Create a new mod" option.</p>
+                <p>3. Now give it a name and the description of the mod, and press on "Create Mod" button.</p>
+                <img src="images/new-mod/img1.png" width="500px" />
+                <p>After you done that, the engine will create the mod folder for you in /cdev-mods/ folder and you're
+                    ready for the next steps.</p>
+                <img src="images/new-mod/img2.png" width="400px" />
+            </div>
+
+            <!--
+                MODDING STUFFS!!!
+            -->
+            <!--Adding your song-->
+            <div class="tab-content" id="new-song">
+                <h1>Adding your song</h1>
+                <p><em><strong>(In this example, i'm adding a new song with name "cool-song")</strong></em></p>
+                <hr>
+                <p>First, you'll need a Chart File (.json), Instrumental, and Voices song files (.ogg).</p>
+                <img src="images/new-song/img0.png" />
+                <p>Then, go to "cdev-mods/<strong>yourmod</strong>/songs/", and
+                    "cdev-mods/<strong>yourmod</strong>/data/charts/" and fill the "<strong>yourmod</strong>" with your
+                    mod's name, and make a folder inside of those 2 folders (songs &amp; charts folder) with your song
+                    name on it.</p>
+                <img src="images/new-song/img1.png" />
+                <p>After that, move / copy the json file of your song to
+                    "cdev-mods/<strong>yourmod</strong>/data/charts/".</p>
+                <img src="images/new-song/img2.png" />
+                <p>Also, move / copy the song files of your song to "cdev-mods/<strong>yourmod</strong>/songs/".</p>
+                <img src="images/new-song/img3.png" />
+                <p>Finally, open a txt file on "cdev-mods/<strong>yourmod</strong>/songList.txt", and then add your song
+                    name into the txt file</p>
+                <img src="images/new-song/img4.png" />
+                <p><em>(it should be in this format: <code>songName:characterIcon:weekNumber</code>.)</em></p>
+                <p>After you done all the steps correctly, your song will be available on the Freeplay Menu</p>
+                <img src="images/new-song/img45.png" />
+            </div>
+            <!--Adding a new character-->
+            <div class="tab-content" id="new-character">
+                <h1>Adding a new Character</h1>
+                <hr>
+                <p>Adding a character isn't <b>that</b> hard, especially if you've ever tried Psych Engine before. But
+                    here's the steps on how to add a new character anyways.</p>
+                <h2>Required Files</h2>
+                <hr>
+                <p>You'll need a PNG and XML file of your character in order to make the character data, the file names
+                    should be the same.</p>
+                <p>Health icon image also required too, and it must be a <b>300x150</b> PNG file. <br>(if you wanted
+                    your character to have a winning icon instead of just the defeat icon, make sure the size is 450x150
+                    with normal, losing, and winning icon order.)</p>
+                <p>Put your character PNG and XML file in <b>"yourmod/images/character"</b>, and your character Health
+                    icon in <b>"yourmod/images/icons"</b>, with "yourchar-icon" file name.</p>
+                <h2>Creating the character data</h2>
+                <hr>
+                <p>There are two ways to add a character, the first way is Playing a song from Freeplay and pressing 6
+                    or 8 in gameplay (6 for player one, 8 for player two).<br>The second way is going through Modding
+                    Option in Main menu, and selecting your mod and select "Character Editor.</p>
+                <p>In this case, i'll be adding my own character named "corecat".</p>
+                <p>This should be the first thing you'll see when opening the Character Editor.</p>
+                <img src="images/new-char/img0.png" width="500px" />
+                <p>1. Check / Uncheck the "Playable Character" before you do anything else, in my case, my character
+                    will be not playable. This step is important.</p>
+                <img src="images/new-char/img1.png" width="300px" />
+                <p>2. Type your character png/xml file in the Character Sprite Path text box and type the Health Icon
+                    name in the text box (without the *-icon prefix!). Press the "Reload Image" to refresh the
+                    character.</p>
+                <img src="images/new-char/img2.png" width="300px" />
+                <p>3. Once it loaded, now you can change the character's settings. These are my settings.</p>
+                <img src="images/new-char/img3.png" width="400px" />
+                <p>4. Now all you need to do was just adding the animations and changing the offsets. Switch to
+                    "animation" tab and you'll see something like this.</p>
+                <img src="images/new-char/img4.png" width="400px" />
+                <p>W / A is used for changing animations, Arrow keys is used for offsets, and Space is used for
+                    Previewing the animation.</p>
+                <p>5. After you finished, press the "Save Character" button to save. (If you opened the Character Editor
+                    through a song, save the file to yourmod/data/characters/. but if you opened it from the modding
+                    screen, type your character's name and press save.)</p>
+                <h2>Result</h2>
+                <hr>
+                <p>To load the character, go to Charting Screen and set your character as the player/opponent.</p>
+                <img src="images/new-char/img5.png" width="500" />
+            </div>
+
+            <!--Adding a new stage-->
+            <div class="tab-content" id="new-stage">
+                <h1>Adding a new stage</h1>
+                <hr>
+                <p>We'll going to make a new stage named "outside". The steps is pretty simple to do.</p>
+                <h2>Opening the Stage Editor</h2>
+                <hr>
+                <p>1. Go to Modding menu from Main menu, and if you already have a mod, select "Open an existing mod",
+                    and if not, read <a href="#new-mod" onclick="showTab('new-mod'); return false;"
+                        style="color: white;">this.</a></p>
+                <p>2. Select "Stage Editor" to start.</p>
+                <img src="images/new-stage/img0.png" width="400" />
+                <p>3. When Stage Editor opened, you should be seeing something like this.</p>
+                <img src="images/new-stage/img1.png" width="500" />
+                <p><i>(WASD is used for panning the camera, Mouse Wheel is used for camera zoom, Mouse Right Click for
+                        moving around an object.)</i></p>
+                <h2>Adding a new bitmap sprite</h2>
+                <hr>
+                <p>1. Go to the "Layers" tab in this box, and select "Add sprite"</p>
+                <img src="images/new-stage/img2.png" width="400" />
+                <p>2. Type in your Sprite PNG path on the "Path to sprite bitmap" text box, and give your Sprite a name.
+                    In my case, i'll use "core/bgAssets/city" in the path, and "Background" for the Sprite Name. After
+                    that, press "Add Sprite" button.</p>
+                <img src="images/new-stage/img3.png" width="400" />
+                <p><i>(Note: The sprite png path already starts from "yourmod/images/", so all you need to do was just
+                        type in the PNG name / folder name without the .png extension.)</i></p>
+                <h2>Adding a new sparrow sprite (animated)</h2>
+                <hr>
+                <p>1. Go to the "Layers" tab in this box, and select "Add sprite"</p>
+                <img src="images/new-stage/img2.png" width="400" />
+                <p>2. Select "Sparrow", type in your sprite PNG/XML path on the "Path to sparrow file" text box, and
+                    give your Sprite a name. In my case, i'll use "core/bgAssets/bgBoppers" in the path, and "Background
+                    Characters" for the Sprite Name.</p>
+                <p>3. Set your animation framerate, change your Animation type, and type in your animation name in your
+                    sprite xml file. (i'll use beat-force, and "bop" for the animation name.)</p>
+                <img src="images/new-stage/img6.png" width="550" />
+                <p><i>(Note: The sprite png path already starts from "yourmod/images/", so all you need to do was just
+                        type in the PNG name / folder name without the .png extension.)</i></p>
+                <h2>Changing the sprite options</h2>
+                <hr>
+                <p>1. If you added a new sprite, you'll notice that there's one new layer added with the name you put on
+                    the sprite.</p>
+                <img src="images/new-stage/img4.png" width="300" />
+                <p>2. To set the layer position where ever you want, press this up and down button on the Layers tab.
+                </p>
+                <img src="images/new-stage/img5.png" width="300" />
+                <p><i>(Remember: Pressing the down button will move the sprite forwards, and pressing the up button will
+                        move the sprite backwards.)</i></p>
+                <p>3. Check out the "Information" tab for more settings about the sprite.</p>
+                <h2>Changing the preview characters</h2>
+                <p>Just click on these dropdowns and select your character from there.</p>
+                <img src="images/new-stage/img7.png" width="400" />
+                <h2>Final Result</h2>
+                <hr>
+                <p>After you finished making the stage, press the save button bottom corner right of the game screen and
+                    give it a name.</p>
+                <p>To load the stage, go to your mod song, and load the stage from the charting menu.</p>
+                <img src="images/new-stage/img8.png" width="600" />
+            </div>
+
+            <div class="tab-content" id="new-week">
+                <h1>Making a new week</h1>
+                <hr>
+                <p>wip haha cool swaggy ass</p>
+            </div>
+
+            <!--
+                HSCRIPT API!!
+            -->
+            <!-- How scripting works here-->
+            <div class="tab-content" id="script-ex">
+                <h1>How scripting works here</h1>
+                <hr>
+                <p>CDEV Engine uses HScript for mod scripting, HScript is Haxe script that can be executed during runtime<br><br>You might be asking: <b>"Why HScript? Why not LUA?"</b><br>At first, CDEV Engine was going to use LUA as it's scripting language, but then i changed my mind and then using HScript instead.</p>
+                <p>If you're ever tried to make mods using <a href="https://github.com/FunkinCrew/Funkin">Friday Night Funkin's Source Code</a>, then Scripting on CDEV Engine would be easy for you.</p>
+                <p>HScript uses .hx extension, so make sure your script file ends with .hx so the engine can read and execute the script.</p>
+                <p>Without further ado, let's get on how does scripting works here.</p>
+                <h3>Scripts used</h3>
+                <hr>
+                <p>There are only 3 scripts that used for your mod.</p>
+                <ul>
+                    <li><b>Song Script(s)</b> - This script is used for a specific song and when it's currently being played. It should be placed under yourmod/data/charts/yoursong folder.</li>
+                    <li><b>Stage Script</b> - This script will be used if the Song's stage is this script's file name, also make sure the script's file name matching with the stage's json file name.</li>
+                    <li><b>Custom Note Script</b> - This script is used for custom note types.</li>
+                </ul>
+                <h2>Support Variables</h2>
+                <hr>
+                <p>There's plenty of variables that you can use on these scripts listed below. Check out <a href="#scripts-used" onclick="showTab('scripts-used'); return false;" style="color: cyan;">Variables</a> page.</p>
+                <h2>Song Script</h2>
+                <hr>
+                <p>To create a song script, simply go to cdev-mods/yourmod/data/charts/yoursong folder and create a file with .hx extension.</p>
+                <img src="images/how-scripting-works-here/img0.png" width="300"/>
+                <p>Here are functions that's used for song script (sorted from called first to called last):</p>
+                <ul>
+                    <li><code>createStage()</code> - Whether to create your own stage using script.</li>
+                    <li><code>create()</code> - Called after character and stage initialization.</li>                    
+                    <li><code>postCreate()</code> - Called after the create() function / after game object initialization.</li>
+                    <li><code>onCountdown(swagCounter:Int)</code> - Called on song's countdown.</li>
+                    <ul>
+                        <li><code>swagCounter</code> - Current countdown, from 0 to 4. (0 = three, 1 = two, 2 = one, 3 = go, 4 = song start)</li>
+                    </ul>
+                    <li><code>onStartSong()</code> - Called after onCountdown function.</li>
+                    <li><code>update(elapsed:Float)</code> - Called on every frame update.</li>
+                    <ul>
+                        <li><code>elapsed</code> - Miliseconds passed since last frame.</li>
+                    </ul>
+                    <li><code>p1NoteHit(noteData:Int, isSustainNote:Bool)</code> - Called when the player hits a note (DEPRECATED since 1.4).</li>
+                    <ul>
+                        <li><code>noteData</code> - This note's direction. (0 = left, 1 = down, 2 = up, 3 = right)</li>
+                        <li><code>isSustainNote</code> - Tells you if this note is a sustain note.</li>
+                    </ul>
+                    <li><code>p2NoteHit(noteData:Int, isSustainNote:Bool)</code> - Called when the opponent hits a note (DEPRECATED since 1.4).</li>
+                    <ul>
+                        <li><code>noteData</code> - This note's direction. (0 = left, 1 = down, 2 = up, 3 = right)</li>
+                        <li><code>isSustainNote</code> - Tells you if this note is a sustain note.</li>
+                    </ul>
+                    <li><code>onEvent(name:String, value1:String, value2:String)</code> - Called when an event is called.</li>
+                    <ul>
+                        <li><code>name</code> - The event's name</li>
+                        <li><code>value1</code> - Event's Value1 parameter.</li>
+                        <li><code>value2</code> - Event's Value2 parameter.</li>
+                    </ul>
+                    <li><code>onNoteMiss(direction:Int)</code> - Called when the player missed a note.</li>
+                    <ul>
+                        <li><code>direction</code> - The note's direction. (0 = left, 1 = down, 2 = up, 3 = right)</li>
+                    </ul>
+                    <li><code>onP1Hit(note:Note)</code> - Called when the player hits a note.</li>
+                    <ul>
+                        <li><code>note</code> - Note class.</li>
+                    </ul>
+                    <li><code>onP2Hit(note:Note)</code> - Called when the player hits a note.</li>
+                    <ul>
+                        <li><code>note</code> - Note class.</li>
+                    </ul>
+                    <li><code>stepHit(curStep:Int)</code> - Called on step update.</li>
+                    <ul>
+                        <li><code>curStep</code> - Current song step.</li>
+                    </ul>
+                    <li><code>beatHit(curBeat:Int)</code> - Called on beat update.</li>
+                    <ul>
+                        <li><code>curBeat</code> - Current song beat.</li>
+                    </ul>
+                </ul>
+                <h2>Stage Script</h2>
+                <hr>
+                <p>Here are functions that's used for stage script:</p>
+                <ul>
+                    <li><code>create()</code> - Called on stage creation.</li>
+                    <li><code>update(elapsed:Float)</code> - Called on frame update.</li>
+                    <li><code>beatHit(curBeat:Int)</code> - Called on beat update.</li>
+                    <li><code>stepHit(curStep:Int)</code> - Called on step update.</li>
+                </ul>
+                <p>This one is an callable function.</p>
+                <ul>
+                    <li><code>getObject(name:String)</code> - Returns stage sprite with sprite name <code>name</code>.</li>
+                </ul>
+                <h2>Custom Note Script</h2>
+                <hr>
+                <p>Here are functions that's used for custom note script:</p>
+                <ul>
+                    <li><code>create()</code> - Called on stage creation.</li>
+                    <li><code>update(elapsed:Float)</code> - Called on frame update.</li>
+                    <li><code>onNoteHit(rating:String, player:Bool)</code> - Called on note hit.</li>
+                    <ul>
+                        <li><code>rating</code> - This note's rating after getting hit.</li>
+                        <li><code>player</code> - Tells you if it's the player that hits the note or the opponent.</li>
+                    </ul>
+                    <li><code>onNoteSpawn()</code> - Called after the note gets spawned to the game.</li>
+                    <li><code>onNoteMiss()</code> - Called when the note is missed.</li>
+                </ul>
+                <p>These two is an callable function.</p>
+                <ul>
+                    <li><code>loadTexture(texture:String)</code> - Useful if you want to load a custom note texture, leave the "texture" variable blank for default note skin.</li>
+                    <li><code>initialize()</code> - Call this function AFTER you called the loadTexture function.</li>
+                </ul>
+                <p><b><i>Note: After you made a new custom note script, add this script below to your code:</i></b></p>
+                <code style="font-size:small; background-color: black;">
+                    function create() {<br>
+                    &#8195;loadTexture("notes/NOTE_assets"); // change the path if you want to<br>
+                    &#8195;initialize();<br>
+                    }
+                </code>
+            </div>
+            <!-- Variables -->
+            <div class="tab-content" id="scripts-used">
+                <h1>Variables</h1>
+                <hr>
+                <p>These are lists of variables & functions that you can access using "ClassName.VariableName"</p>
+
+                <div> <!--PLAYSTATE-->
+                    <h2>PlayState</h2>
+                    <hr>
+                    <p>PlayState is where all the characters, stages, and stuff in, basically the main game of FNF.</p>
+                    <p>Usage: <code>PlayState.VariableName</code></p>
+
+                    <h3>Basic Variables</h3>
+                    <ul>
+                        <li><code>curStage</code> - The current stage's name. (string)</li>
+                        <li><code>SONG</code> - Current song's chart data. (SwagSong)</li>
+                        <li><code>isStoryMode</code> - Tells you if the song is played through Story Mode. (boolean)
+                        </li>
+                        <li><code>storyPlaylist</code> - List of current week's queued songs. (Array, String)</li>
+                        <li><code>weekName</code> - Current week's name.</li>
+                        <li><code>isPixel</code> - Tells you if the current stage is pixel stage. (Bool)</li>
+                    </ul>
+
+                    <h3>Functions</h3>
+                    <ul>
+                        <li><b>triggerEvent(eventName:String, value1:String, value2:String)</b>
+                        <br>Useful if you want to run an event through scripting.
+                        <br>"eventName" - The event's name you wanted to execute.
+                        <br>"value1" - Argument 1
+                        <br>"value2" - Argument 2
+                        </li>
+
+                        <li><b>setDeathCharacter(char:String, disableFlipX:Bool)</b>
+                            <br>Useful if you want to change the death character and not the default bf.
+                            <br>"char" - Death character name.
+                            <br>"disableFlipX" - Whether to disable the FlipX variable on your character.
+                        </li>
+
+                        <li><b>setDeathSongBpm(bpm:Float)</b>
+                            <br>Change the death song BPM.
+                            <br>"bpm" - New BPM for the song.
+                        </li>
+                    </ul>
+
+                    <h3>Characters Variables</h3>
+                    <ul>
+                        <li><code>dad</code> - Opponent Character. (Character)</li>
+                        <li><code>gf</code> - Girlfriend Character. (Character)</li>
+                        <li><code>boyfriend</code> - Player Character. (Character)</li>
+                    </ul>
+
+                    <h3>Gameplay Variables</h3>
+                    <ul>
+                        <li><code>convertedAccuracy</code> - Current accuracy. (Bool)</li>
+                        <li><code>sick</code> - Current sicks. (Int)</li>
+                        <li><code>good</code> - Current goods. (Int)</li>
+                        <li><code>bad</code> - Current bads. (Int)</li>
+                        <li><code>shit</code> - Current shits. (Int)</li>
+                        <li><code>misses</code> - Current misses. (Int)</li>
+
+                        <li><code>enableNoteTween</code> - Whether to enable / disable the note receptors slide in
+                            animation in freeplay. (bool)</li>
+
+                        <li><code>randomNote</code> - "Randomize Note" Modifier. (Bool)</li>
+                        <li><code>suddenDeath</code> - "Sudden Death" Modifier. (Bool)</li>
+                        <li><code>scrSpd</code> - "Scroll Speed" Modifier. (Float)</li>
+                        <li><code>healthGainMulti</code> - "Health Gain Multiplier" Modifier. (Float)</li>
+                        <li><code>healthLoseMulti</code> - "Health Lose Multiplier" Modifier. (Float)</li>
+                        <li><code>songSpeed</code> - "Song Speed" Modifier. (Float)</li>
+                        <li><code>playingLeftSide</code> - "Play as opponent" Modifier. (Bool)</li>
+                    </ul>
+
+                    <h3>UI / HUD Variables</h3>
+                    <ul>
+                        <li><code>notes</code> - All spawned notes. (FlxTypedGroup, Note)</li>
+                        <li><code>strumLineNotes</code> - All note receptors. (FlxTypedGroup, StrumArrow)</li>
+                        <li><code>playerStrums</code> - Player note receptors. (FlxTypedGroup, StrumArrow)</li>
+                        <li><code>p2Strums</code> - Opponent note receptors. (FlxTypedGroup, StrumArrow)</li>
+                        <li><code>songPosBG</code> - Time Bar's BG / Outline. (FlxSprite)</li>
+                        <li><code>songPosBar</code> - Song Time Bar. (FlxBar)</li>
+                        <li><code>healthBarBG</code> - Health Bar's BG / Outline. (FlxSprite)</li>
+                        <li><code>healthBar</code> - HealthBar. (FlxBar)</li>
+                        <li><code>iconP1</code> - Player's Health Icon. (HealthIcon)</li>
+                        <li><code>iconP2</code> - Opponent's Health Icon. (HealthIcon)</li>
+                        <li><code>scoreTxt</code> - Score Text. (FlxText)</li>
+                        <li><code>botplayTxt</code> - "> Botplay <" text object. (FlxText)</li>
+                    </ul>
+
+                    <h3>Camera Variables</h3>
+                    <ul>
+                        <li><code>defaultCamZoom</code> - Default FlxG.camera zoom. (Float)</li>
+                        <li><code>defaultHudZoom</code> - Default PlayState.camHUD zoom. (Float)</li>
+                        <li><code>camHUD</code> - Main camera object that handles notes, healthbar, etc.</li>
+                        <li><code>camFollow</code> - It's used for panning camera for "mustHitSection". (FlxObject)</li>
+                        <li><code>camZooming</code> - Whether to enable / disable camera zooming (resets on opponent
+                            note hit). (boolean)</li>
+                        <li><code>cameraPosition</code> - The current camera offsets. (FlxObject)</li>
+                        <li><code>forceCameraPos</code> - Whether to force current camera position to certain point.
+                            (Bool)</li>
+                        <li><code>camPosForced</code> - Forced Camera Position point (requires
+                            <code>forceCameraPos</code> value to <code>true</code>). (Bool)</li>
+                    </ul>
+                </div>
+
+                <div> <!--Paths-->
+                    <h2>Paths</h2>
+                    <hr>
+                    <p>Paths is useful for loading assets on your mod folder.</p>
+                    <p>Usage: <code>Paths.VariableName</code></p>
+                    <h3>Functions</h3>
+                    <ul>
+                        <li>font(name:String) - Returns font from yourmod/data/font/ folder.</li>
+                        <li>sound(name:String) - Returns sound from yourmod/sounds/ folder.</li>
+                        <li>music(name:String) - Returns music from yourmod/music/ folder.</li>
+                        <li>image(name:String) - Returns image from yourmod/images/ folder.</li>
+                        <li>music(name:String) - Returns music from yourmod/music/ folder.</li>
+                        <li>getSparrowAtlas(name:String) - Returns SparrowAtlas from yourmod/images/ folder.</li>
+                        <li>currentModFolder(path:String) - Returns path from Your Mod folder.</li>
+                    </ul>
+                </div>
+
+                <div> <!--Note-->
+                    <h2>Note</h2>
+                    <hr>
+                    <p>Note.hx class.</p>
+                    <p>Usage: <code>Note.VariableName</code></p>
+                    <ul>
+                        <li><code>noteType</code> - The Note's Type. (String, Read only)</li>
+                        <li><code>strumTime</code> - The note's strum time. (Float)</li>
+                        <li><code>mustPress</code> - Tells you if is it a player note or not. (Bool)</li>
+                        <li><code>noteData</code> - Note's Column (0-4). (Int)</li>
+                        <li><code>canBeHit</code> - Tells you if the note is hitable. (Bool)</li>
+                        <li><code>tooLate</code> - Tells you if you missed the note. (Bool)</li>
+                        <li><code>wasGoodHit</code> - Tells you if you hitted the note. (Bool)</li>
+                        <li><code>prevNote</code> - Another Note before This Note. (Note)</li>
+                        <li><code>isSustainNote</code> - Tells you if it's a sustain note. (Bool)</li>
+                        <li><code>noteType</code> - The Note's Type. (String)</li>
+                        <li><code>xAdd</code> and <code>yAdd</code> - X and Y addition position of the note. (Float)</li>
+                        <li><code>offsetX</code> and <code>offsetY</code> - X and Y offset position of the note. (Float)</li>
+                        <li><code>offsetAngle</code> - Angle offset of the note. (Float)</li>
+                        <li><code>multAlpha</code> - Alpha multiplier of the note. (Note)</li>
+                        <li><code>followX</code> and <code>followY</code> - Whether to follow the X of the note receptors, and to follow the Y of the song position. (Bool)</li>
+                        <li><code>followAngle</code> and <code>followAlpha</code> - Whether to follow the Angle / Alpha of the note receptors. (Bool)</li>
+                        <li><code>rating</code> - The note's rating (the default is "shit", changed after the player hits the note). (String)</li>
+                        <li><code>strumParent</code> - This note's note receptor. (StrumArrow)</li>
+                    </ul>
+                </div>
+
+                <div> <!--Characters-->
+                    <h2>Character</h2>
+                    <hr>
+                    <p>Character is a class that handles characters like BF, and GF.</p>
+                    <p>Usage: <code>Character.VariableName</code></p>
+                    <ul>
+                        <li>objects</li>
+                    </ul>
+                </div>
+
+                <div> <!--class template-->
+                    <h2>ClassName</h2>
+                    <hr>
+                    <p>Class Description</p>
+                    <p>Usage: <code>ClassName.VariableName</code></p>
+                    <ul>
+                        <li>objects</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            var tabs = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active-tab");
+            }
+            document.getElementById(tabId).classList.add("active-tab");
+        }
+    </script>
 </body>
+
 </html>

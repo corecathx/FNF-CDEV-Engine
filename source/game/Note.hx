@@ -1,5 +1,9 @@
 package game;
 
+import engineutils.TraceLog;
+import cdev.script.ScriptSupport;
+import cdev.script.CDevScript;
+import sys.FileSystem;
 import cdev.CDevConfig;
 import shaders.WiggleEffect;
 import flixel.FlxSprite;
@@ -15,8 +19,13 @@ import states.PlayState;
 using StringTools;
 
 class Note extends FlxSprite
-{	
+{
 	public static var noteScale:Float = 0.65;
+
+	public var script:CDevScript = null;
+	var gotScript:Bool = false;
+
+	public var noteType:String = "Default Note";
 
 	public var strumTime:Float = 0;
 
@@ -55,6 +64,8 @@ class Note extends FlxSprite
 	// used for hscript
 	public var followX:Bool = true;
 	public var followY:Bool = true;
+	public var noAnim:Bool = false; //should this note trigger an animation?
+	public var canIgnore:Bool = false;
 
 	// follow the strum's arrow angle & alpha
 	public var followAngle:Bool = true;
@@ -72,106 +83,57 @@ class Note extends FlxSprite
 	// TESTING AND SHET
 	public var noteTrail:Array<Note> = []; // note trail yes
 	public var strumParent:StrumArrow;
+	var calcStepH:Bool = true;
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?MustCalcStepHeight:Bool = true, ?beatVal:Float = 0)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?MustCalcStepHeight:Bool = true, ?noteTyp:String = "Default Note")
 	{
 		super();
-		noteBeat = beatVal;
 
 		if (prevNote == null)
 			prevNote = this;
 
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
+		this.strumTime = strumTime;
+		this.noteData = noteData;
+		this.noteType = noteTyp;
+		calcStepH = MustCalcStepHeight;
 
 		x += PlayState.strumXpos + 50;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
-		this.strumTime = strumTime;
 
-		this.noteData = noteData;
-
-		var pixelStage:Bool = PlayState.isPixel;
-
-		if (pixelStage)
-		{
-			loadGraphic(Paths.image('weeb/pixelUI/arrows-pixels', 'week6'), true, 17, 17);
-
-			animation.add('greenScroll', [6]);
-			animation.add('redScroll', [7]);
-			animation.add('blueScroll', [5]);
-			animation.add('purpleScroll', [4]);
-
-			if (isSustainNote)
+		//damn bro.
+		if (!default_notetypes.contains(noteType)){
+			var scriptPath:String = Paths.modFolders("notes/"+noteType+".hx");
+			if (FileSystem.exists(scriptPath))
 			{
-				loadGraphic(Paths.image('weeb/pixelUI/arrowEnds', 'week6'), true, 7, 6);
+				trace(noteType + " loaded");
+				script = CDevScript.create(scriptPath);
+				gotScript = true;
+				script.loadFile(scriptPath);
 
-				animation.add('purpleholdend', [4]);
-				animation.add('greenholdend', [6]);
-				animation.add('redholdend', [7]);
-				animation.add('blueholdend', [5]);
-
-				animation.add('purplehold', [0]);
-				animation.add('greenhold', [2]);
-				animation.add('redhold', [3]);
-				animation.add('bluehold', [1]);
+				script.setVariable("initialize", initialize);
+				script.setVariable("loadTexture", loadTexture);
+				script.setVariable("current", this);
+				ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.song);
+				
+				if (gotScript)
+					script.executeFunc("create", []);
+			} else{
+				PlayState.addNewTraceKey("Note Type " + noteType + " doesn't exist on path " + scriptPath);
+				loadTexture("notes/NOTE_assets");
+				initialize();
 			}
-
-			setGraphicSize(Std.int(width * (PlayState.daPixelZoom-0.1)));
-			updateHitbox();
-			isPixelSkinNote = true;
-			graphicHeightOrigin = height;
+		} else{
+			loadTexture("notes/NOTE_assets");
+			initialize();
+			if (noteType == "No Animation")
+				noAnim = true;
 		}
-		else
-		{
-			if (CDevConfig.saveData.fnfNotes)
-			{
-				frames = Paths.getSparrowAtlas('notes/NOTE_assets');
+	}
 
-				animation.addByPrefix('greenScroll', 'green0');
-				animation.addByPrefix('redScroll', 'red0');
-				animation.addByPrefix('blueScroll', 'blue0');
-				animation.addByPrefix('purpleScroll', 'purple0');
-
-				animation.addByPrefix('purpleholdend', 'pruple end hold');
-				animation.addByPrefix('greenholdend', 'green hold end');
-				animation.addByPrefix('redholdend', 'red hold end');
-				animation.addByPrefix('blueholdend', 'blue hold end');
-
-				animation.addByPrefix('purplehold', 'purple hold piece');
-				animation.addByPrefix('greenhold', 'green hold piece');
-				animation.addByPrefix('redhold', 'red hold piece');
-				animation.addByPrefix('bluehold', 'blue hold piece');
-
-				setGraphicSize(Std.int(width * noteScale));
-				updateHitbox();
-				antialiasing = CDevConfig.saveData.antialiasing;
-			}
-			else
-			{
-				frames = Paths.getSparrowAtlas('notes/CDEVNOTE_assets', 'shared');
-				var aa:Array<String> = ['arrowLEFT', 'arrowDOWN', 'arrowUP', 'arrowRIGHT'];
-				animation.addByPrefix('greenScroll', '${aa[2]}0');
-				animation.addByPrefix('redScroll', '${aa[3]}0');
-				animation.addByPrefix('blueScroll', '${aa[1]}0');
-				animation.addByPrefix('purpleScroll', '${aa[0]}0');
-
-				animation.addByPrefix('purpleholdend', 'arrowEnd');
-				animation.addByPrefix('greenholdend', 'arrowEnd');
-				animation.addByPrefix('redholdend', 'arrowEnd');
-				animation.addByPrefix('blueholdend', 'arrowEnd');
-
-				animation.addByPrefix('purplehold', 'arrowHold');
-				animation.addByPrefix('greenhold', 'arrowHold');
-				animation.addByPrefix('redhold', 'arrowHold');
-				animation.addByPrefix('bluehold', 'arrowHold');
-
-				setGraphicSize(Std.int(width * noteScale));
-				updateHitbox();
-				antialiasing = CDevConfig.saveData.antialiasing;
-			}
-		}
-
+	public function initialize(){
 		switch (noteData)
 		{
 			case 0:
@@ -191,11 +153,10 @@ class Note extends FlxSprite
 		graphicHeightOrigin = frameHeight;
 		prevNote.graphicHeightOrigin = prevNote.frameHeight;
 
-		// trace(prevNote);
-		if (CDevConfig.saveData.downscroll && sustainNote)
+		if (CDevConfig.saveData.downscroll && isSustainNote)
 			flipY = true;
 
-		if (MustCalcStepHeight)
+		if (calcStepH)
 			calculateNoteStepHeight();
 
 		if (isSustainNote && prevNote != null)
@@ -238,7 +199,7 @@ class Note extends FlxSprite
 						prevNote.animation.play('redhold');
 				}
 				var shit:Float = (CDevConfig.saveData.scrollSpeed == 1 ? PlayState.SONG.speed : CDevConfig.saveData.scrollSpeed);
-				prevNote.scale.y *= (Conductor.stepCrochet+10) / 100 * 1.5 * shit;
+				prevNote.scale.y *= (Conductor.stepCrochet + 10) / 100 * 1.5 * shit;
 				prevNote.theYScale = prevNote.scale.y;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
@@ -250,6 +211,72 @@ class Note extends FlxSprite
 			}
 
 			noteColor = CDevConfig.utils.getColor(this);
+		}
+	}
+
+	public function loadTexture(tex:String = "notes/NOTE_assets"){
+		Paths.currentMod = PlayState.fromMod;
+		/*if (tex!="notes/NOTE_assets") trace("loading " + tex);
+		if (tex!="notes/NOTE_assets") trace("playstate frommod " + PlayState.fromMod);
+		if (tex!="notes/NOTE_assets") trace("paths curmod " + Paths.currentMod);
+		if (tex!="notes/NOTE_assets") trace(Paths.modFolders('images/' + tex + '.png'));*/
+		var pixelStage:Bool = PlayState.isPixel;
+
+		if (pixelStage)
+		{
+			loadGraphic(Paths.image('weeb/pixelUI/arrows-pixels', 'week6'), true, 17, 17);
+
+			animation.add('greenScroll', [6]);
+			animation.add('redScroll', [7]);
+			animation.add('blueScroll', [5]);
+			animation.add('purpleScroll', [4]);
+
+			if (isSustainNote)
+			{
+				loadGraphic(Paths.image('weeb/pixelUI/arrowEnds', 'week6'), true, 7, 6);
+
+				animation.add('purpleholdend', [4]);
+				animation.add('greenholdend', [6]);
+				animation.add('redholdend', [7]);
+				animation.add('blueholdend', [5]);
+
+				animation.add('purplehold', [0]);
+				animation.add('greenhold', [2]);
+				animation.add('redhold', [3]);
+				animation.add('bluehold', [1]);
+			}
+
+			setGraphicSize(Std.int(width * (PlayState.daPixelZoom - 0.1)));
+			updateHitbox();
+			isPixelSkinNote = true;
+			graphicHeightOrigin = height;
+		}
+		else
+		{
+			frames = Paths.getSparrowAtlas(tex, "shared");
+			if (frames==null){
+				TraceLog.addLogData("Note.hx:0: Texture asset \""+tex+"\" for note type \""+noteType+"\" doesn't exist!");
+				frames = Paths.getSparrowAtlas("notes/NOTE_assets", "shared");
+			}
+
+			animation.addByPrefix('greenScroll', 'green0');
+			animation.addByPrefix('redScroll', 'red0');
+			animation.addByPrefix('blueScroll', 'blue0');
+			animation.addByPrefix('purpleScroll', 'purple0');
+
+			animation.addByPrefix('purpleholdend', 'pruple end hold');
+			animation.addByPrefix('greenholdend', 'green hold end');
+			animation.addByPrefix('redholdend', 'red hold end');
+			animation.addByPrefix('blueholdend', 'blue hold end');
+
+			animation.addByPrefix('purplehold', 'purple hold piece');
+			animation.addByPrefix('greenhold', 'green hold piece');
+			animation.addByPrefix('redhold', 'red hold piece');
+			animation.addByPrefix('bluehold', 'blue hold piece');
+
+			setGraphicSize(Std.int(width * noteScale));
+			updateHitbox();
+			antialiasing = CDevConfig.saveData.antialiasing;
 		}
 	}
 
@@ -314,6 +341,64 @@ class Note extends FlxSprite
 				if (alpha > 0.3)
 					alpha = 0.3;
 			}
+
+			if (gotScript)
+				script.executeFunc("update", [elapsed]);
 		}
+	}
+
+	//scripting purposes
+	public function onNoteHit(rating:String, player:Bool){
+		if (gotScript)
+			script.executeFunc("onNoteHit", [rating, player]);
+	}
+	public function onNoteSpawn(){
+		if (gotScript)
+			script.executeFunc("onNoteSpawn", []);
+	}
+	public function onNoteMiss(){
+		if (gotScript)
+			script.executeFunc("onNoteMiss", []);
+	}
+
+	public static var default_notetypes:Array<String> = ["Default Note", "Alt Anim", "No Animation", "GF Note"];
+
+	// COPIED STRAIGHT FROM CHARTEVENT.HX LOLLL
+	public static function getNoteList()
+	{
+		var notesNames:Array<String> = [];
+		var path:Array<String> = [];
+		var canDoShit = false;
+		if (FileSystem.exists(Paths.modFolders("notes/")))
+		{
+			path = FileSystem.readDirectory(Paths.modFolders("notes/"));
+			canDoShit = true;
+		}
+		if (canDoShit)
+		{
+			if (path.length > 0)
+			{
+				for (i in 0...path.length)
+				{
+					var noteShit:String = path[i];
+					if (noteShit.endsWith(".hx"))
+					{
+						noteShit = noteShit.substr(0, noteShit.length - 3);
+						notesNames.push(noteShit);
+						trace("loaded " + noteShit);
+					}
+				}
+			}
+			else
+			{
+				return [""];
+			}
+		}
+		else
+		{
+			return [""];
+		}
+
+		return notesNames;
 	}
 }

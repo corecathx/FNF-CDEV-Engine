@@ -60,6 +60,9 @@ class HScript extends CDevScript
 				return result;
 			}
 			// f();
+			if (CDevConfig.DEPRECATED_STUFFS.exists(funcName)){
+				TraceLog.addLogData('Function \"$funcName\" is deprecated since CDEV Engine v.${CDevConfig.DEPRECATED_STUFFS.get(funcName)}.');
+			}
 		}
 		return null;
 	}
@@ -72,7 +75,7 @@ class HScript extends CDevScript
 		fileName = fileName.substr(0, fileName.length-3);
 		fileNameShit = fileName;
 		var paath = path;
-		trace(paath);
+		//trace(paath);
 		if (Path.extension(paath) == "")
 		{
 			var haxeExts = ["hx", "hsc", "hscript"];

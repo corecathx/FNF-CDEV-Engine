@@ -192,7 +192,7 @@ class FreeplayState extends MusicBeatState
 			['Sudden Death', true, CDevConfig.saveData.suddenDeath],
 			['Play as the opponent', true, playOnLeftSide],
 			['Scroll Speed: ', false, CDevConfig.saveData.scrollSpeed, 0.1, 10],
-			#if cpp ['Song Speed (BETA): ', false, speed, 0.1, 10], #end
+			#if cpp ['Song Speed: ', false, speed, 0.1, 10], #end
 			['Health Gain Multi: ', false, CDevConfig.saveData.healthGainMulti, 1, 10],
 			['Health Lose Multi: ', false, CDevConfig.saveData.healthLoseMulti, 1, 10],
 			['Combo Multipiler: ', false, CDevConfig.saveData.comboMultipiler, 1, 10]
@@ -203,7 +203,7 @@ class FreeplayState extends MusicBeatState
 			"If you miss a single note, it will trigger an instant gameover.",
 			"Whether to play on the opponent's side",
 			"Change your note scroll speed.\n(If it's at 1, it will be chart dependent.)",
-			"Change the speed of your song\n(BETA Testing! May cause some song looping below 1x speed.)",
+			"Change the speed of your song.",
 			"Set how much health that you get from hitting a note.",
 			"Set how much health that you lose from missing a note.",
 			"Change the Multipiler of your combo."
@@ -259,15 +259,8 @@ class FreeplayState extends MusicBeatState
 		bottomPanel.alpha = 0.8;
 		add(bottomPanel);
 
-		// diffText = new FlxText(scoreText.x, scoreText.y + 36, 0, "", 24);
-		// diffText.font = scoreText.font;
-		// add(diffText);
-
 		scoreText = new FlxText(50, bottomPanel.y + 18, FlxG.width, "", 28);
-		// scoreText.autoSize = false;
 		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
-		// scoreText.screenCenter(X);
-		// scoreText.alignment = RIGHT;
 		scoreText.borderSize = 2;
 
 		add(scoreText);
@@ -321,9 +314,9 @@ class FreeplayState extends MusicBeatState
 		bottomPanl.alpha = 0.8;
 		add(bottomPanl);
 
-		var daTipsTxt:String = "Press [SPACE] to play this song's instrumental. // Press ["
+		var daTipsTxt:String = "Press [SPACE] to preview this song. // Press ["
 			+ cdev.CDevConfig.keyBinds[4]
-			+ "] to reset this song's score & ratings. // Press [M] to open mods.";
+			+ "] to reset this song's score & ratings. // Press [M] to open modifiers.";
 
 		tip = new FlxText(50, bottomPanel.y - 16, FlxG.width, daTipsTxt, 28);
 		tip.setFormat(Paths.font("vcr.ttf"), 15, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
@@ -374,7 +367,7 @@ class FreeplayState extends MusicBeatState
 			grpModMenu.add(um);
 		}
 
-		modTitle = new Alphabet(0, 50, 'Mods', true);
+		modTitle = new Alphabet(0, 50, 'Song Modifiers', true);
 		modTitle.x = modMenuBG.x + (modMenuBG.width / 2) - (modTitle.width / 2);
 		modTitle.scrollFactor.set();
 		modTitle.scale.set(0.9, 0.9);
@@ -662,7 +655,7 @@ class FreeplayState extends MusicBeatState
 			if (!modOptions[curModSelected][1])
 			{
 				var valueToAdd:Float = controls.RIGHT ? 0.1 : -0.1;
-				if (modOptions[curModSelected][0] == "Song Speed (BETA): ")
+				if (modOptions[curModSelected][0] == "Song Speed: ")
 				{
 					valueToAdd = controls.RIGHT ? 0.05 : -0.05;
 				}
@@ -742,7 +735,7 @@ class FreeplayState extends MusicBeatState
 				playOnLeftSide = false;
 			case 'Scroll Speed: ':
 				CDevConfig.saveData.scrollSpeed = 1;
-			case 'Song Speed (BETA): ':
+			case 'Song Speed: ':
 				speed = 1;
 				changeDaBPM();
 			case 'Health Gain Multi: ':
@@ -758,7 +751,7 @@ class FreeplayState extends MusicBeatState
 			['Sudden Death', true, CDevConfig.saveData.suddenDeath],
 			['Play as the opponent', true, playOnLeftSide],
 			['Scroll Speed: ', false, CDevConfig.saveData.scrollSpeed, 0.1, 10],
-			#if cpp ['Song Speed (BETA): ', false, speed, 0.1, 10], #end
+			#if cpp ['Song Speed: ', false, speed, 0.1, 10], #end
 			['Health Gain Multi: ', false, CDevConfig.saveData.healthGainMulti, 1, 10],
 			['Health Lose Multi: ', false, CDevConfig.saveData.healthLoseMulti, 1, 10],
 			['Combo Multipiler: ', false, CDevConfig.saveData.comboMultipiler, 1, 10]
@@ -784,7 +777,7 @@ class FreeplayState extends MusicBeatState
 				playOnLeftSide = !playOnLeftSide;
 			case 'Scroll Speed: ':
 				CDevConfig.saveData.scrollSpeed = modOptions[curModSelected][2];
-			case 'Song Speed (BETA): ':
+			case 'Song Speed: ':
 				speed = modOptions[curModSelected][2];
 				changeDaBPM();
 			case 'Health Gain Multi: ':
@@ -799,7 +792,7 @@ class FreeplayState extends MusicBeatState
 			['Sudden Death', true, CDevConfig.saveData.suddenDeath],
 			['Play as the opponent', true, playOnLeftSide],
 			['Scroll Speed: ', false, CDevConfig.saveData.scrollSpeed, 0.1, 10],
-			#if cpp ['Song Speed (BETA): ', false, speed, 0.1, 10], #end
+			#if cpp ['Song Speed: ', false, speed, 0.1, 10], #end
 			['Health Gain Multi: ', false, CDevConfig.saveData.healthGainMulti, 1, 10],
 			['Health Lose Multi: ', false, CDevConfig.saveData.healthLoseMulti, 1, 10],
 			['Combo Multipiler: ', false, CDevConfig.saveData.comboMultipiler, 1, 10]
@@ -884,7 +877,7 @@ class FreeplayState extends MusicBeatState
 
 		PlayState.SONG = song.Song.loadFromJson(sel, songs[curSelected].songName.toLowerCase());
 
-		if (isDebug && FlxG.keys.pressed.SHIFT)
+		if (CDevConfig.saveData.testMode && FlxG.keys.pressed.SHIFT)
 			PlayState.isStoryMode = true;
 		else
 			PlayState.isStoryMode = false;

@@ -1,5 +1,7 @@
 package game;
 
+import cdev.script.ScriptSupport;
+import cdev.script.CDevScript;
 import modding.CharacterData.AnimationArray;
 import flixel.FlxG;
 import states.PlayState;
@@ -48,7 +50,7 @@ typedef StageSprite = // basically contains informations about stage sprites
 typedef BeatSprite =
 {
 	var anim:String;
-	var sprite:FlxSprite;
+	var sprite:SpriteStage;
 }
 
 typedef StageLayer =
@@ -63,6 +65,8 @@ class Stage
 {
 	var stage:String = "";
 	var stageJSON:StageJSONData;
+	var script:CDevScript = null;
+	var gotScript:Bool = false;
 
 	public static var templateJSON:StageJSONData = {
 		stageZoom: 0.8,
@@ -102,8 +106,10 @@ class Stage
 
 	var play:PlayState;
 
-	public function beatHit()
+	public function beatHit(b:Int)
 	{
+		if (gotScript)
+			script.executeFunc("beatHit", [b]);
 		for (s in beatHit_sprites)
 		{
 			s.sprite.animation.play(s.anim);
@@ -112,6 +118,8 @@ class Stage
 		{
 			s.sprite.animation.play(s.anim, true);
 		}
+		if (gotScript)
+			script.executeFunc("beatHitPost", [b]);
 	}
 	var jsonWasNull:Bool = false;
 	public function new(stage:String, pla:PlayState)
@@ -157,12 +165,63 @@ class Stage
 				jsonWasNull = false;
 				json = cast Json.parse(crapJSON);
 				stageJSON = json;
+				loadStageScript(stage);
 			}
 			else
 			{
 				jsonWasNull = true;
 			}
 		}
+	}
+
+	//haha
+	public function loadStageScript(name:String){
+		var apa:String = Paths.modStageScript(name);
+		if (FileSystem.exists(apa))
+		{
+			trace("script "+name+" exists.");
+			script = CDevScript.create(apa);
+			gotScript = true;
+			script.loadFile(apa);
+
+			script.setVariable("getObject", getObject);
+			ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.song);
+			
+			if (gotScript)
+				script.executeFunc("create", []);
+		}
+	}
+	
+	public function onStepHit(s:Int) {
+		if (gotScript)
+			script.executeFunc("stepHit", [s]);
+	}
+	public function onUpdate(e:Float){
+		if (gotScript)
+			script.executeFunc("update", [e]);
+	}
+
+	public function getObject(name:String):FlxSprite {
+		for (i in bitmap_sprites){
+			if (i.objectName == name)
+				return i;
+		}
+		for (i in normalAnim_sprites){
+			if (i.sprite.objectName == name)
+				return i.sprite;
+		}
+		for (i in beatHit_sprites){
+			if (i.sprite.objectName == name)
+				return i.sprite;
+		}
+		for (i in beatHit_force_sprites){
+			if (i.sprite.objectName == name)
+				return i.sprite;
+		}
+		//you got NOTHIN'
+		if (play!=null)
+			PlayState.addNewTraceKey("No stage object found: "+name);
+		return null;
 	}
 
 	public function createDaStage()

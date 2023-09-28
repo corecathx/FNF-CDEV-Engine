@@ -178,7 +178,7 @@ class Main extends Sprite
 
 		File.saveContent(filePath, textStuff + "\n");
 
-		Sys.println("Crash info file saved in" + Path.normalize(filePath));
+		Sys.println("Crash info file saved in " + Path.normalize(filePath));
 
 		var cdev_ch_path:String = "cdev-crash_handler.exe";
 

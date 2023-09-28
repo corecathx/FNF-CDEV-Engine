@@ -88,10 +88,10 @@ class NotePress extends FlxSprite
 		frames = Paths.getSparrowAtlas(skin);
 		if (CDevConfig.saveData.noteRipples)
 		{
-			animation.addByPrefix("left", 'leftclick', 30, false);
-			animation.addByPrefix("down", 'downclick', 30, false);
-			animation.addByPrefix("up", 'upclick', 30, false);
-			animation.addByPrefix("right", 'rightclick', 30, false);
+			animation.addByPrefix("left", 'leftclick', 60, false);
+			animation.addByPrefix("down", 'downclick', 60, false);
+			animation.addByPrefix("up", 'upclick', 60, false);
+			animation.addByPrefix("right", 'rightclick', 60, false);
 		}
 		else
 		{

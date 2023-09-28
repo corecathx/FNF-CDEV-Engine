@@ -162,9 +162,9 @@ class TitleState extends MusicBeatState
 					width: 32,
 					height: 32
 				}
-				FlxTransitionableState.defaultTransIn = new TransitionData(FADE, FlxColor.BLACK, 1, new FlxPoint(0, -1), transData,
+				FlxTransitionableState.defaultTransIn = new TransitionData(FADE, FlxColor.BLACK, 0.5, new FlxPoint(0, -1), transData,
 					new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
-				FlxTransitionableState.defaultTransOut = new TransitionData(FADE, FlxColor.BLACK, 1, new FlxPoint(0, -1), transData,
+				FlxTransitionableState.defaultTransOut = new TransitionData(FADE, FlxColor.BLACK, 0.5, new FlxPoint(0, 1), transData,
 					new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
 				transIn = FlxTransitionableState.defaultTransIn;
 				transOut = FlxTransitionableState.defaultTransOut;
@@ -427,17 +427,18 @@ class TitleState extends MusicBeatState
 		if (!closedState)
 		{
 			trace('we do som update checking!1!!1');
-			var http = new Http("https://raw.githubusercontent.com/Core5570RYT/FNF-CoreDEV-Engine/master/githubVersion.txt");
+			var http = new Http("https://raw.githubusercontent.com/Core5570RYT/FNF-CDEV-Engine/master/githubVersion.txt");
 
 			http.onData = function(data:String)
 			{
 				onlineVer = data.split('\n')[0].trim();
-				// var curVersion:String = CDevConfig.engineVersion.trim();
-				var curVersion:String = "0.01".trim();
+				var curVersion:String = CDevConfig.engineVersion.trim();
+				//var curVersion:String = "0.01".trim();
 				trace('GitHub Version: ' + onlineVer + ', Your version: ' + curVersion);
 				if (onlineVer != curVersion)
 				{
 					trace('different versions.');
+					//FlxG.switchState()
 					shouldUpdate = true;
 				}
 			}

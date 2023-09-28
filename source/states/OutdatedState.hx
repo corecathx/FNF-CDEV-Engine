@@ -43,9 +43,9 @@ class OutdatedState extends MusicBeatState{
     override function update(elapsed:Float){
         if (FlxG.keys.justPressed.Z){
             FlxG.sound.play(Paths.sound('confirmMenu'));
-            CDevConfig.utils.openURL('https://gamebanana.com/mods/346832');
-            FlxG.switchState(new MainMenuState());
-            //FlxG.switchState(new UpdateState());wip
+            //CDevConfig.utils.openURL('https://gamebanana.com/mods/346832');
+            //FlxG.switchState(new MainMenuState());
+            FlxG.switchState(new UpdateState());
         }
         if (FlxG.keys.justPressed.X){
             FlxG.sound.play(Paths.sound('cancelMenu'));

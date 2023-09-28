@@ -30,6 +30,11 @@ class Character extends SpriteStage
 	public var specialAnim:Bool = false;
 	public var heyTimer:Float = 0;
 
+	public var singAltPrefix:String = "-alt"; // used For Alt anims
+	public var idleAltPrefix:String = "-alt"; // overrides the default -alt prefix, if not ""
+	public var idleSpeed:Int = 2;
+	public var forceDance:Bool = false;
+
 	var defaultChar:String = 'bf';
 
 	public var lockedChar:Bool = false; // used in WeekEditor.hx
@@ -48,7 +53,7 @@ class Character extends SpriteStage
 	public var previousFlipX:Bool = false;
 	public var usingAntiAlias:Bool = false;
 
-	public var gfTestBop:Bool = false;
+	//public var gfTestBop:Bool = false;
 
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?usedForStoryChar:Bool = false)
 	{
@@ -180,9 +185,6 @@ class Character extends SpriteStage
 		}
 		previousFlipX = flipX;
 
-		defineIdleDance();
-		dance();
-
 		if (isPlayer)
 		{
 			flipX = !flipX;
@@ -204,6 +206,9 @@ class Character extends SpriteStage
 					}
 			}*/
 		}
+
+		defineIdleDance();
+		dance();
 
 		if (!usedForStoryChar)
 		{
@@ -280,7 +285,7 @@ class Character extends SpriteStage
 
 				if (holdTimer >= Conductor.stepCrochet * 0.001 * charHoldTime)
 				{
-					dance();
+					dance(false, 1);
 					holdTimer = 0;
 				}
 			}
@@ -304,50 +309,53 @@ class Character extends SpriteStage
 
 	var danceShit:Bool = false;
 
-	public function dance()
+	public function dance(?alt:Bool = false, ?beat:Int = 1)
 	{
-		if (canDance)
-		{
-			if (!debugMode)
-			{
-				if (!specialAnim)
-				{
-					if (!gfTestBop)
-					{
-						if (idleDance)
-						{
-							danced = !danced;
+		if (!canDance)
+			return;
+		if (debugMode)
+			return;
+		if (specialAnim)
+			return;
 
-							if (danced)
-								playAnim('danceRight');
-							else
-								playAnim('danceLeft');
-						}
-						else if (animation.getByName('idle') != null)
-						{
-							playAnim('idle');
-						}
-					}
-					else
-					{
-						if (animation.getByName('idle') != null)
-						{
-							playAnim('idle');
-						}
-						else
-						{
-							if (animation.curAnim.name == 'danceRight' && animation.curAnim.finished)
-							{
-								playAnim('danceLeft');
-							}
-							else if (animation.curAnim.name == 'danceLeft' && animation.curAnim.finished)
-							{
-								playAnim('danceRight');
-							}
-						}
-					}
-				}
+		/*if (!gfTestBop)
+		{
+			if (idleDance)
+			{
+				danced = !danced;
+
+				if (danced)
+					playAnim('danceRight');
+				else
+					playAnim('danceLeft');
 			}
+			else if (animation.getByName('idle') != null)
+			{
+				playAnim('idle');
+			}
+		}
+		else*/
+		{
+			//if (beat % idleSpeed == 0)
+			//{
+				var dRight:String = "danceRight"+(alt?idleAltPrefix:"");
+				var dLeft:String = "danceLeft"+(alt?idleAltPrefix:"");
+				var aIdle:String = "idle"+(alt?idleAltPrefix:"");
+
+				if ((animation.getByName(dLeft) != null && animation.getByName(dRight) != null))
+				{
+					danced = !danced;
+	
+					if (danced)
+						playAnim(dRight,forceDance);
+					else
+						playAnim(dLeft,forceDance);
+				}
+				else if (animation.getByName(aIdle) != null)
+				{
+					playAnim(aIdle, forceDance);
+				}
+			//s}
 		}
 	}
 

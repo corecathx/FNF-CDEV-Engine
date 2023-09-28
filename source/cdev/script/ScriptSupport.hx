@@ -99,14 +99,15 @@ class ScriptSupport
 				}
 			}
 		});
-
-		if (PlayState.current != null)
+		var curState:Dynamic = FlxG.state;
+		playStated = curState;
+		if (playStated != null)
 		{
-			script.setVariable("global", PlayState.current.vars);
+			script.setVariable("public", playStated.vars);
 		}
 		else
 		{
-			script.setVariable("global", {});
+			script.setVariable("public", {});
 		}
 		script.setVariable("trace", function(text)
 		{
@@ -119,8 +120,6 @@ class ScriptSupport
 				trace(e);
 			}
 		});
-		var curState:Dynamic = FlxG.state;
-		playStated = curState;
 		script.setVariable("add", function(obj)
 		{
 			playStated.add(obj);
@@ -173,7 +172,7 @@ class ScriptSupport
 		script.setVariable("CDevConfig", CDevConfig.saveData); //i can't let the players access the entire CDevConfig class.
 
 		// oh god
-		script.setVariable("importScript", function(scriptname)
+		/*script.setVariable("importScript", function(scriptname)
 		{
 			var scriptfile:String = scriptname;
 			if (scriptfile.endsWith(".hx")) // no need to add .hx ext
@@ -195,10 +194,10 @@ class ScriptSupport
 			{
 				script.trace("Script with name: \"" + scriptname + ".hx\" does not exist.");
 			}
-		});
+		});*/
 
 		script.mod = mod;
-		trace('initfinished');
+		//trace('initfinished');
 	}
 
 	public static function getExprFromPath(path:String, critical:Bool = false):hscript.Expr

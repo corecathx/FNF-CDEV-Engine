@@ -110,55 +110,21 @@ class OffsetTest extends MusicBeatState
 			offs = Math.abs(FlxG.sound.music.time - (Conductor.crochet*curBeat));
 			dance();
 			offsetText.scale.x = 1.2;
-			/*
-			noteGrp.forEachAlive(function(daNote:Note)
-			{
-				if (daNote.canBeHit && !daNote.wasGoodHit)
-				{
-					if (directions.contains(daNote.noteData))
-					{
-						for (coolNote in possibleNotes)
-						{
-							if (coolNote.noteData == daNote.noteData && Math.abs(daNote.strumTime - coolNote.strumTime) < 10)
-							{
-								break;
-							}
-							else if (coolNote.noteData == daNote.noteData && daNote.strumTime < coolNote.strumTime)
-							{
-								possibleNotes.remove(coolNote);
-								possibleNotes.push(daNote);
-								break;
-							}
-						}
-					}
-					else
-					{
-						possibleNotes.push(daNote);
-						directions.push(daNote.noteData);
-					}
-				}
+			var rating:FlxSprite = new FlxSprite();
+			rating.loadGraphic(Paths.image("sick", "shared"));
+			rating.screenCenter();
+			rating.y -= 50;
+			rating.x -= 255;
+			rating.acceleration.y = 550;
+			rating.velocity.y -= FlxG.random.int(140, 175);
+			rating.velocity.x -= FlxG.random.int(0, 10);
+
+			add(rating);
+			rating.setGraphicSize(Std.int(rating.width * 0.5));
+			rating.antialiasing = CDevConfig.saveData.antialiasing;
+			FlxTween.tween(rating, {alpha: 0}, 0.2, {
+				startDelay: Conductor.crochet * 0.001
 			});
-
-			possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
-
-			var stopNote = false;
-
-			if (press && !directions.contains(1))
-				stopNote = true;
-			else if (possibleNotes.length > 0 && !stopNote)
-			{
-				for (coolNote in possibleNotes)
-				{
-					if (press)
-					{
-						goodNoteHit(coolNote);
-						coolNote.kill();
-						noteGrp.remove(coolNote, true);
-						coolNote.destroy();
-					}
-				}
-			}
-			*/
 		}
 	}
 
@@ -263,6 +229,7 @@ class OffsetTest extends MusicBeatState
 				FlxTween.tween(offsetText, {y: FlxG.height - 100}, Conductor.crochet / 1000, {ease: FlxEase.circOut});
 			case 80:
 				dance();
+				canTestNow = false;
 				FlxTween.tween(gfDance, {alpha: 0}, Conductor.crochet / 1000, {ease: FlxEase.linear});
 				FlxTween.tween(offsetText, {y: 800}, Conductor.crochet / 1000, {ease: FlxEase.circOut});
 

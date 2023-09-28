@@ -124,7 +124,8 @@ class InstallModState extends states.MusicBeatState
 			descArray.push(description);
 			add(description);
 		}
-		changeSelection();
+		changeSelection(0, true);
+		changeBackground();
 
 		var text = states.MainMenuState.coreEngineText + ' - Install a mod.';
 		var versionShit:FlxText = new FlxText(20, FlxG.height - 30, 1000, text, 16);
@@ -206,7 +207,7 @@ class InstallModState extends states.MusicBeatState
 		}
 	}
 
-	function changeSelection(change:Int = 0)
+	function changeSelection(change:Int = 0, noBGupdate:Bool = true)
 	{
 		var bullShit:Int = 0;
 
@@ -243,7 +244,8 @@ class InstallModState extends states.MusicBeatState
 			}
 		}
 
-		changeBackground();
+		if (!noBGupdate)
+			changeBackground();
 	}
 
 	var tweenie:FlxTween;
@@ -260,7 +262,7 @@ class InstallModState extends states.MusicBeatState
 			
 			//menuBG.alpha = 0;
 			modBG.loadGraphic(Paths.modImage(Paths.modFolders("background.png"), true));
-			modBG.setPosition();
+			modBG.screenCenter();
 			modBG.setGraphicSize(FlxG.width, FlxG.height);
 			modBG.color = 0xffffffff;
 			modBG.alpha = 0;

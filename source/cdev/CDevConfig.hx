@@ -40,7 +40,7 @@ typedef CDevSaveData =
 	var performTxt:String;
 	var smoothAF:Bool; // fps, fps-mem, mem, hide
 	var middlescroll:Bool;
-    var antialiasing:Bool;
+	var antialiasing:Bool;
 	var fnfNotes:Bool; // this option is kind of useless and may be removed in the future release.
 	var hitsound:Bool;
 	/////// more stuff ////////
@@ -76,17 +76,20 @@ typedef CDevSaveData =
 	var checkNewVersion:Bool;
 	var cameraStartFocus:Int; // i wanted to set this as string soon
 	var showTraceLogAt:Int; // 0=hide, 1=show-g, 2=show-p
-
 	var autosaveChart:Bool;
 	var autosaveChart_interval:Float;
+
+	var traceLogMessage:Bool;
 }
 
 class CDevConfig
 {
 	public static var debug:Bool = false;
 	public static var elapsedGameTime:Float;
-	public static var engineVersion:String = "1.2";
+	public static var engineVersion:String = "1.4";
 	public static var utils(default, null):CDevUtils = new CDevUtils();
+
+	public static var DEPRECATED_STUFFS:Map<String, String>;
 
 	/**
 	 * LEFT
@@ -105,8 +108,11 @@ class CDevConfig
 	public static function initSaves()
 	{
 		saveData = getSaveData();
-
 		updateSettingsOnSaves();
+
+		DEPRECATED_STUFFS = new Map<String, String>();
+		DEPRECATED_STUFFS["p1NoteHit"] = "1.4";
+		DEPRECATED_STUFFS["p2NoteHit"] = "1.4";
 	}
 
 	public static function updateSettingsOnSaves()
@@ -146,181 +152,138 @@ class CDevConfig
 		return toReturn;
 	}
 
-	/*
-		oh mein gott
-		public static function initializeSaves()
-			{
-				if (FlxG.save.data.dfjk == null)
-					FlxG.save.data.dfjk = false;
+	// PAIN
+	public static function getData(name:String):Dynamic
+	{
+		switch (name)
+		{
+			case "Scroll Direction":
+				return saveData.downscroll;
+			case "Middlescroll":
+				return saveData.middlescroll;
+			case "Ghost Tapping":
+				return saveData.ghost;
+			case "Note Hit Timing":
+				return saveData.showDelay;
+			case "Stacking Rating Sprite":
+				return saveData.multiRateSprite;
+			case "Hit Sound":
+				return saveData.hitsound;
+			case "Reset Button":
+				return saveData.resetButton;
+			case "Botplay":
+				return saveData.botplay;
+			case "Health Percentage":
+				return saveData.healthCounter;
+			case "FPS Cap":
+				return saveData.fpscap;
+			case "Note Hit Effect":
+				return saveData.noteImpact;
+			case "Time Bar":
+				return saveData.songtime;
+			case "Flashing Lights":
+				return saveData.flashing;
+			case "Camera Beat Zoom":
+				return saveData.camZoom;
+			case "Camera Movement":
+				return saveData.camMovement;
+			case "Note Offset":
+				return saveData.offset;
+			case "Resources Info":
+				return saveData.performTxt;
+			case "Engine Watermark":
+				return saveData.engineWM;
+			case "Opponent Notes in Midscroll":
+				return saveData.bgNote;
+			case "Strum Lane":
+				return saveData.bgLane;
+			case "Discord Rich Presence":
+				return saveData.discordRpc;
+			case "Antialiasing":
+				return saveData.antialiasing;
+			case "Hit Effect Style":
+				return saveData.noteRipples;
+			case "Resources Info Mode":
+				return saveData.performTxt;
+			case "Trace Log Window":
+				return saveData.showTraceLogAt;
+			case "Trace Log Main Message":
+				return saveData.traceLogMessage;
+			case "Check For Updates":
+				return saveData.checkNewVersion;
+			case "Autosave Chart File":
+				return saveData.autosaveChart;
+			case "Detailed Score Text":
+				return saveData.fullinfo;
+		}
+		return null;
+	}
 
-				if (FlxG.save.data.downscroll == null)
-					FlxG.save.data.downscroll = false;
+	public static function setData(name:String, data:Dynamic)
+	{
+		switch (name)
+		{
+			case "Scroll Direction":
+				saveData.downscroll = data;
+			case "Middlescroll":
+				saveData.middlescroll = data;
+			case "Ghost Tapping":
+				saveData.ghost = data;
+			case "Note Hit Timing":
+				saveData.showDelay = data;
+			case "Stacking Rating Sprite":
+				saveData.multiRateSprite = data;
+			case "Hit Sound":
+				saveData.hitsound = data;
+			case "Reset Button":
+				saveData.resetButton = data;
+			case "Botplay":
+				saveData.botplay = data;
+			case "Health Percentage":
+				saveData.healthCounter = data;
+			case "FPS Cap":
+				saveData.fpscap = data;
+			case "Note Hit Effect":
+				saveData.noteImpact = data;
+			case "Time Bar":
+				saveData.songtime = data;
+			case "Flashing Lights":
+				saveData.flashing = data;
+			case "Camera Beat Zoom":
+				saveData.camZoom = data;
+			case "Camera Movement":
+				saveData.camMovement = data;
+			case "Note Offset":
+				saveData.offset = data;
+			case "Resources Info":
+				saveData.performTxt = data;
+			case "Engine Watermark":
+				saveData.engineWM = data;
+			case "Opponent Notes in Midscroll":
+				saveData.bgNote = data;
+			case "Strum Lane":
+				saveData.bgLane = data;
+			case "Discord Rich Presence":
+				saveData.discordRpc = data;
+			case "Antialiasing":
+				saveData.antialiasing = data;
+			case "Hit Effect Style":
+				saveData.noteRipples = data;
+			case "Resources Info Mode":
+				saveData.performTxt = data;
+			case "Trace Log Window":
+				saveData.showTraceLogAt = data;
+			case "Trace Log Main Message":
+				saveData.traceLogMessage = data;
+			case "Check For Updates":
+				saveData.checkNewVersion = data;
+			case "Autosave Chart File":
+				saveData.autosaveChart = data;
+			case "Detailed Score Text":
+				saveData.fullinfo = data;
+		}
+	}
 
-				if (FlxG.save.data.songtime == null)
-					FlxG.save.data.songtime = true;
-					
-				if (FlxG.save.data.flashing == null)
-					FlxG.save.data.flashing = true;
-
-				if (FlxG.save.data.camZoom == null)
-					FlxG.save.data.camZoom = true;
-
-				if (FlxG.save.data.camMovement == null)
-					FlxG.save.data.camMovement = true;
-
-				if (FlxG.save.data.fpplay == null)
-					FlxG.save.data.fpplay = true;
-
-				if (FlxG.save.data.fullinfo == null)
-					FlxG.save.data.fullinfo = true;
-
-				if (FlxG.save.data.frames == null)
-					FlxG.save.data.frames = 10;
-
-				if (FlxG.save.data.offset == null)
-					FlxG.save.data.offset = 0;
-
-				if (FlxG.save.data.ghost == null)
-					FlxG.save.data.ghost = false;
-
-				if (FlxG.save.data.fpscap == null)
-					FlxG.save.data.fpscap = 120;
-
-				if (FlxG.save.data.botplay == null)
-					FlxG.save.data.botplay = false;
-
-				if (FlxG.save.data.noteImpact == null)
-					FlxG.save.data.noteImpact = true;
-				
-				if (FlxG.save.data.noteRipples == null)
-					FlxG.save.data.noteRipples = false; //false = note splashes, true = note ripples
-
-				if (FlxG.save.data.autoPause == null)
-					FlxG.save.data.autoPause = false;
-
-				//the keybinds
-				if (FlxG.save.data.leftBind == null)
-					FlxG.save.data.leftBind = 'A';
-
-				if (FlxG.save.data.downBind == null)
-					FlxG.save.data.downBind = 'S';
-
-				if (FlxG.save.data.upBind == null)
-					FlxG.save.data.upBind = 'W';
-
-				if (FlxG.save.data.rightBind == null)
-					FlxG.save.data.rightBind = 'D';
-
-				if (FlxG.save.data.resetBind == null)
-					FlxG.save.data.resetBind = 'R';
-
-				//more flxgsave
-				if (FlxG.save.data.performTxt == null) //fps, fps-engine, fps-mem, fps-mem-engine, mem, mem-engine, hide
-					FlxG.save.data.performTxt = "fps-mem-engine"; 
-
-				if (FlxG.save.data.smoothAF == null)
-					FlxG.save.data.smoothAF = true;
-
-				if (FlxG.save.data.middlescroll == null)
-					FlxG.save.data.middlescroll = false;
-
-				if (FlxG.save.data.antialiasing == null)
-					FlxG.save.data.antialiasing = true;
-
-				if (FlxG.save.data.fnfNotes == null)
-					FlxG.save.data.fnfNotes = true;
-
-				if (FlxG.save.data.hitsound == null)
-					FlxG.save.data.hitsound = false;
-				
-				//Rating sprite position
-
-				if (FlxG.save.data.rX == null)
-					FlxG.save.data.rX = -1;
-
-				if (FlxG.save.data.rY == null)
-					FlxG.save.data.rY = -1;
-
-				if (FlxG.save.data.rChanged == null)
-					FlxG.save.data.rChanged = false;
-
-				
-				if (FlxG.save.data.cX == null)
-					FlxG.save.data.cX = -1;
-
-				if (FlxG.save.data.cY == null)
-					FlxG.save.data.cY = -1;
-
-				if (FlxG.save.data.cChanged == null)
-					FlxG.save.data.cChanged = false;
-
-
-				#if desktop
-				if (FlxG.save.data.discordRpc == null)
-					FlxG.save.data.discordRpc = true;
-				#end
-
-				if (FlxG.save.data.bgNote == null)
-					FlxG.save.data.bgNote = false;
-
-				if (FlxG.save.data.bgLane == null)
-					FlxG.save.data.bgLane = false;
-
-				if (FlxG.save.data.engineWM == null)
-					FlxG.save.data.engineWM = true;
-
-				if (FlxG.save.data.resetButton == null)
-					FlxG.save.data.resetButton = false;
-
-				if (FlxG.save.data.healthCounter == null)
-					FlxG.save.data.healthCounter = false;   
-
-				if (FlxG.save.data.showDelay == null)
-					FlxG.save.data.showDelay = false;       
-
-				if (FlxG.save.data.multiRateSprite == null)
-					FlxG.save.data.multiRateSprite = true;
-
-				//Chart Modifiers
-				if (FlxG.save.data.randomNote == null)
-					FlxG.save.data.randomNote = false;
-
-				if (FlxG.save.data.suddenDeath == null)
-					FlxG.save.data.suddenDeath = false;
-				
-				if (FlxG.save.data.scrollSpeed == null)
-					FlxG.save.data.scrollSpeed = 1;
-
-				if (FlxG.save.data.healthGainMulti == null)
-					FlxG.save.data.healthGainMulti = 1;
-
-				if (FlxG.save.data.healthLoseMulti == null)
-					FlxG.save.data.healthLoseMulti = 1;
-
-				if (FlxG.save.data.comboMultipiler == null)
-					FlxG.save.data.comboMultipiler = 1;            
-
-				if (FlxG.save.data.testMode == null)
-					FlxG.save.data.testMode = false;
-
-				if (FlxG.save.data.loadedMods == null)
-					FlxG.save.data.loadedMods = [];
-
-				if (FlxG.save.data.checkNewVersion == null)
-					FlxG.save.data.checkNewVersion = true;
-
-				//new ass settings
-				if (FlxG.save.data.cameraStartFocus == null)
-					FlxG.save.data.cameraStartFocus = 0; //0=dad, 1=gf, 2=bf
-
-				//0=hide, 1=show-g, 2=show-p
-				if (FlxG.save.data.showTraceLogAt == null)
-					FlxG.save.data.showTraceLogAt = 0; 
-
-				if (FlxG.save.data.quantizeNote == null)
-					FlxG.save.data.quantizeNote = false;
-
-	}*/
 	public static function checkLoadedMods()
 	{
 		// is this actually working??
@@ -354,7 +317,10 @@ class CDevConfig
 	}
 
 	// what to do before application get closed?
-	public static var onExitFunction:openfl.utils.Function = function(){};
+	public static var onExitFunction:openfl.utils.Function = function()
+	{
+	};
+
 	public static function setExitHandler(func:openfl.utils.Function):Void
 	{
 		trace("exit handler change: " + func);
@@ -401,7 +367,7 @@ class CDevConfig
 			performTxt: "fps-mem",
 			smoothAF: true,
 			middlescroll: false,
-            antialiasing: true,
+			antialiasing: true,
 			fnfNotes: true,
 			hitsound: false,
 
@@ -440,7 +406,9 @@ class CDevConfig
 			showTraceLogAt: 0,
 
 			autosaveChart: false,
-			autosaveChart_interval: 0
+			autosaveChart_interval: 0,
+
+			traceLogMessage: true
 		}
 		return save;
 	}

@@ -2,7 +2,7 @@ package song;
 
 typedef SwagSection =
 {
-	var sectionNotes:Array<Dynamic>;
+	var sectionNotes:Array<Dynamic>; // strumtime, notedata, sustain, //new: notetype
 	var sectionEvents:Array<Dynamic>; // eventName, data, strumtime, val1, val2
 	var lengthInSteps:Int;
 	var typeOfSection:Int;

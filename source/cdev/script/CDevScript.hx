@@ -40,10 +40,10 @@ class CDevScript
 	public static function create(filePath:String):CDevScript
 	{
 		var path = filePath;
-		trace('CDEVSCRIPT CREATE FUNCTION $path');
+		//trace('CDEVSCRIPT CREATE FUNCTION $path');
 		if (FileSystem.exists(path))
 		{
-			trace('file exists');
+			//trace('file exists');
 			return new HScript();
 		}
 		return null;
