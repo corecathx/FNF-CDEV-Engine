@@ -86,7 +86,7 @@ class CDevConfig
 {
 	public static var debug:Bool = false;
 	public static var elapsedGameTime:Float;
-	public static var engineVersion:String = "1.4";
+	public static var engineVersion:String = "1.4.1";
 	public static var utils(default, null):CDevUtils = new CDevUtils();
 
 	public static var DEPRECATED_STUFFS:Map<String, String>;

@@ -395,6 +395,7 @@ class Paths
 			'images/notes',
 			'events',
 			'notes',
+			'scripts/',
 			#if USE_VIDEOS 'videos', #end
 			'sounds',
 			'music',

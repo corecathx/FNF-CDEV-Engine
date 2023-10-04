@@ -22,7 +22,7 @@ class MusicBeatState extends FlxUIState
 
 	private var curStep:Int = -1;
 	private var curBeat:Int = -1;
-	private var controls(get, never):game.Controls;
+	public var controls(get, never):game.Controls;
 
 	// my attempt of preventing repeating beats
 	var hitBeats:Int = 0;

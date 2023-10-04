@@ -36,6 +36,28 @@ class SongConfScript
 			trace("it's cdev-mods");
 			folder = 'cdev-mods/$mod/data/charts/$song/';
 		}
+
+		scripts = getScript(folder, mod);
+		
+
+		if (scripts.length == 0)
+		{
+			trace('script was null. uh huh');
+			scripts = [
+				{
+					daPath: 'cdev-mods/FNF Test Mod/data/charts/mod-test/unknown.hx',
+					daMod: mod
+				}
+			];
+		}
+
+		return {
+			scripts: scripts,
+		};
+	}
+
+	public static function getScript(folder:String, mod:String){
+		var scripts:Array<CDevModScript> = [];
 		var insideTheThing:Array<String> = FileSystem.readDirectory(folder);
 
 		var notAllowed:Array<String> = ["unknown", "intro", "outro"];
@@ -67,22 +89,9 @@ class SongConfScript
 					}
 				}
 			}
+			return scripts;
 		}
-
-		if (scripts.length == 0)
-		{
-			trace('script was null. uh huh');
-			scripts = [
-				{
-					daPath: 'cdev-mods/FNF Test Mod/data/charts/mod-test/unknown.hx',
-					daMod: mod
-				}
-			];
-		}
-
-		return {
-			scripts: scripts,
-		};
+		return [];
 	}
 
 	public static function getScriptShit(mod:String, sus:String):CDevModScript

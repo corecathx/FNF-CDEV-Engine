@@ -190,7 +190,7 @@ class CharacterEditor extends states.MusicBeatState
 		check_toggleStageHelper.cameras = [camHUD];
 
 		check_playableChar = new FlxUICheckBox(uiBox.x + 120, uiBox.y + uiBox.height + 20, null, null, 'Playable Character');
-		check_playableChar.checked = char.flipX;
+		check_playableChar.checked = char.previousFlipX;
 		add(check_playableChar);
 		check_playableChar.cameras = [camHUD];
 
@@ -675,13 +675,17 @@ class CharacterEditor extends states.MusicBeatState
 					else
 						char.antialiasing = false;
 				case 'Flip X':
-					charJSON.flipX = check.checked;
-					char.flipX = charJSON.flipX;
+					char.previousFlipX = !char.previousFlipX;
+					char.flipX = char.previousFlipX;
+					if(char.isPlayer) char.flipX = !char.flipX;
+
 				case 'Toggle Ground':
 					stageFront.visible = check.checked;
 				case 'Playable Character':
-					char.flipX = !char.flipX;
 					char.isPlayer = !char.isPlayer;
+					char.flipX = !char.flipX;
+					updateCamPointPos();
+
 			}
 		}
 		else if (id == FlxUINumericStepper.CHANGE_EVENT && (sender is FlxUINumericStepper))

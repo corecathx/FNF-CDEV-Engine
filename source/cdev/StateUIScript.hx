@@ -1,6 +1,16 @@
-package cdev.script;
+package cdev;
 
 import states.MusicBeatState;
+import substates.GameOverSubstate;
+import substates.PauseSubState;
+import states.FreeplayState;
+import states.StoryMenuState;
+import states.MainMenuState;
+
+import cdev.script.HScript;
+import sys.FileSystem;
+import cdev.script.CDevScript;
+
 import sys.FileSystem;
 import cdev.CDevMods.CDEV_FlxAxes;
 import flixel.addons.display.FlxBackdrop;
@@ -43,24 +53,51 @@ import cdev.script.CDevScript.CDevModScript;
 
 using StringTools;
 
-class ScriptSupport
-{
-	public static var scripts:Array<CDevModScript> = [];
-	public static var typedScripts:Array<CDevScript> = [];
-	public static var currentMod:String = "FNF Test Mod";
-	public static var playStated:PlayState = null;
+typedef StuffForUI = {
+    var name:String;
+    var object:Dynamic;
+}
 
-	public static function parseSongConfig()
-	{
-		var songConf = SongConfScript.parse(currentMod, PlayState.SONG.song.toLowerCase());
+//STATESCRIPT WIP!!1
+class StateUIScript {
+    public var script:CDevScript = null;
+    public var type:String = "";
+    public var mod:String = "";
+    public var state:MusicBeatState = null;
 
-		scripts = songConf.scripts;
-		trace(songConf.scripts);
-	}
+    public var stateObjects:Array<StuffForUI> = [];
+    var gotScript:Bool = false;
+    public function new(type:String, mod:String, state:MusicBeatState){
+        this.type = type;
+        this.mod = mod;
+        this.state = state;
 
-	public static function setScriptDefaultVars(script:CDevScript, mod:String, ?song:String)
-	{
-		var superVar = {};
+        var scriptPath = Paths.modFolders("ui/"+this.type+".hx");
+        if (FileSystem.exists(scriptPath))
+	    {
+            script = CDevScript.create(scriptPath);
+            gotScript = true;
+            script.loadFile(scriptPath);
+
+            if (gotScript)
+                script.executeFunc("create", []);
+        }
+    }
+
+    public function addObject(obj:Dynamic, name:String) {
+        stateObjects.push({
+            name: name,
+            object: obj
+        });
+    }
+
+    public function executeFunc(name:String,?args:Array<Any>):Dynamic {
+        if (gotScript) return script.executeFunc(name,args);
+        return null;
+    }
+
+    public function load_supports() {
+        var superVar = {};
 		if (Std.isOfType(script, HScript))
 		{
 			var hscript:HScript = cast script;
@@ -71,7 +108,17 @@ class ScriptSupport
 		}
 		script.setVariable("super", superVar);
 		script.setVariable("mod", mod);
-		script.setVariable("PlayState", PlayState.current);
+
+        //brUH
+        switch (type) {
+            case StateUIType.MAIN_MENU:
+                script.setVariable(type, cast(state, MainMenuState));
+            case StateUIType.STORY_MENU:
+                script.setVariable(type, cast(state, StoryMenuState));
+            case StateUIType.FREEPLAY:
+                script.setVariable(type, cast(state, FreeplayState));
+        }
+
 		script.setVariable("import", function(className:String)
 		{
 			var splitClassName = [for (e in className.split(".")) e.trim()];
@@ -101,15 +148,7 @@ class ScriptSupport
 			}
 		});
 		var curState:Dynamic = FlxG.state;
-		playStated = curState;
-		if (playStated != null)
-		{
-			script.setVariable("public", playStated.vars);
-		}
-		else
-		{
-			script.setVariable("public", {});
-		}
+		var state:MusicBeatState = curState;
 		script.setVariable("trace", function(text)
 		{
 			try
@@ -121,18 +160,17 @@ class ScriptSupport
 				trace(e);
 			}
 		});
-		script.setVariable("controls", playStated.controls);
 		script.setVariable("add", function(obj)
 		{
-			playStated.add(obj);
+			state.add(obj);
 		});
 		script.setVariable("remove", function(obj)
 		{
-			playStated.remove(obj);
+			state.remove(obj);
 		});
 		script.setVariable("insert", function(pos, obj)
 		{
-			playStated.insert(pos, obj);
+			state.insert(pos, obj);
 		});
 		script.setVariable("PlayState", PlayState);
 		script.setVariable("FlxSprite", FlxSprite);
@@ -144,8 +182,6 @@ class ScriptSupport
 		script.setVariable("FlxMath", FlxMath);
 		script.setVariable("FlxAssets", FlxAssets);
 		script.setVariable("Assets", Assets);
-		script.setVariable("PlayState_Config", PlayStateConfig);
-		script.setVariable("ScriptSupport", ScriptSupport);
 		script.setVariable("Note", Note);
 		script.setVariable("Character", Character);
 		script.setVariable("Conductor", Conductor);
@@ -171,60 +207,17 @@ class ScriptSupport
 		script.setVariable("Rectangle", Rectangle);
 		script.setVariable("Point", Point);
 		script.setVariable("Window", Application.current.window);
-		script.setVariable("CDevConfig", CDevConfig.saveData); //i can't let the players access the entire CDevConfig class.
+		script.setVariable("CDevConfig", CDevConfig.saveData);
+    }
+}
 
-		// oh god
-		/*script.setVariable("importScript", function(scriptname)
-		{
-			var scriptfile:String = scriptname;
-			if (scriptfile.endsWith(".hx")) // no need to add .hx ext
-				scriptfile = scriptfile.substr(0, scriptfile.length-3);
+class StateUIType{
+    //states
+    public static var MAIN_MENU(default,never):String = "MainMenuState";
+    public static var STORY_MENU(default,never):String = "StoryMenuState";
+    public static var FREEPLAY(default,never):String = "FreeplayState";
 
-			trace("\n\n" + script.fileName + ".hx is trying to import " + scriptname);
-
-			var scriptPath = Paths.mods(mod + "/data/charts/" + PlayState.SONG.song + '/$scriptname.hx');
-			trace("script path: " + scriptPath);
-			if (FileSystem.exists(scriptPath))
-			{
-				trace("script exists, adding variable to " + script.fileName);
-				var cdev:CDevScript = CDevScript.create(scriptPath);
-				cdev.loadFile(scriptPath);
-				setScriptDefaultVars(cdev, mod, PlayState.SONG.song);
-				script.setVariable(scriptname, new CDevCustomScript(cdev));
-			}
-			else
-			{
-				script.trace("Script with name: \"" + scriptname + ".hx\" does not exist.");
-			}
-		});*/
-
-		script.mod = mod;
-		//trace('initfinished');
-	}
-
-	public static function getExprFromPath(path:String, critical:Bool = false):hscript.Expr
-	{
-		var parser = new hscript.Parser();
-		parser.allowTypes = true;
-		var ast:Expr = null;
-		try
-		{
-			#if sys
-			ast = parser.parseString(sys.io.File.getContent(path));
-			#else
-			trace("No sys support detected.");
-			#end
-		}
-		catch (ex)
-		{
-			trace(ex);
-			var ext = Std.string(ex);
-			var line = parser.line;
-			var gay:String = 'An error occured while parsing the file located at "$path".\r\n$ext at $line';
-			if (!openfl.Lib.application.window.fullscreen)
-				openfl.Lib.application.window.alert(gay);
-			trace(gay);
-		}
-		return ast;
-	}
+    //substates
+    public static var PAUSE_MENU(default,never):String = "PauseSubState";
+    public static var GAMEOVER_MENU(default,never):String = "GameOverSubState";
 }

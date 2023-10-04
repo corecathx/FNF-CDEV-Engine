@@ -111,6 +111,11 @@ class ModPaths
 		return currentModFolder('videos/$key.mp4');
 	}
 
+	public function text(key:String):String
+	{
+		return File.getContent(currentModFolder(key+".txt"));
+	}
+
 	public function getFile(key:String, type:AssetType):Any
 	{
 		return LimeAssets.getAsset(key, type, false);

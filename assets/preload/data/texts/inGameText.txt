@@ -1,16 +1,10 @@
 If you feel tired while playing this game--please take a break for a bit!
-CDEV-Engine--With modding support!
 Friday Night Funkin'--The full ass game.
 Press F11 to enable fullscreen mode!
-If you find a bug in this engine, please report--the bug on my discord or my twitter dm!
+If you find a bug in this engine, please report--the bug on my discord or my twitter (x) dm!
 Funkin Forever.
-Try to change your note offset on the options menu!
-You're currently playing--CDEV-Engine v.1.1
-HOPEFULLY easy to mod--this engine's source code.
+You're currently playing--CDEV-Engine v.1.4
 Does anyone actually read this?
-You can Toggle this engine's watermark.
-Man--I love dark mode.
-Softcoded Characters!
 DARK MODE.--YES.
 Rewritten Inputs!
 Pro tip:--Press the notes.
@@ -18,11 +12,11 @@ HaxeFlixel, my beloved.
 An engine powered--by a cat
 pls don't crash again
 a--aa
-Better Modcharting Compability!
-HAH you looked.
-Better Stage Editor!
+HAH--you looked.
 Trace Log is useful to--debug / test your mods!
 it's stable now--hehe
 i woke up in the new bugatti--:fire: :fire:
 Press F5 in any song to open Trace Log Window
 It is stable and less buggy :))
+boom--explode
+Don't forget to check the documentation--for more modding tips!
