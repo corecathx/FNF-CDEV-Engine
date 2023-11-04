@@ -30,10 +30,6 @@ You should have everything ready for compiling the engine! Follow the guide belo
 At the moment, you can optionally fix the transition bug in songs with zoomed out cameras.
 - Run `haxelib git flixel-addons https://github.com/HaxeFlixel/flixel-addons` in the terminal/command-prompt.
 
-### Ignored files
-
-nah, you dont need to create APIStuff.hx file anymore.
-
 ### Compiling game
 
 Once you have all those installed, it's pretty easy to compile the engine. You just need to run 'lime test html5 -debug' in the root of the project to build and run the HTML5 version.
@@ -47,16 +43,13 @@ The executables are located on export/ folder in the root of your project after 
 
 Once everything has done, have fun with the engine!
 
+## WHAT?? MESSY SOURCE CODE??
+yeah uh, most of the codes there are made when i still lack of haxe understanding, i'm still cleaning it up
+
 ## Credits
 
 CDEV Engine
 - [CoreDev](https://twitter.com/core5570r) - Programmer of this engine, additional assets.
-
-Codes
-- [Shadow Mario](https://twitter.com/Shadow_Mario_) - Downscroll Code, Custom songs and charts / mods folder support, and some Week 7 Code.
-- [YoshiCrafter29](https://twitter.com/YoshiCrafter29) - Week 7 cutscene codes.
-- [RozeBud](https://twitter.com/helpme_thebigt) - KeyBinds menu codes.
-- [KadeDev](https://twitter.com/kade0912) - Song Speed Code, and Botplay code.
 
 Friday Night Funkin'
 - [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programmer

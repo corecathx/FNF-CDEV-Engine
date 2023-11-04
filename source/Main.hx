@@ -10,9 +10,9 @@ import haxe.CallStack.StackItem;
 import openfl.events.UncaughtErrorEvent;
 import sys.io.Process;
 #end
-import states.TitleState;
+import meta.states.TitleState;
 import flixel.system.scaleModes.StageSizeScaleMode;
-import engineutils.FPS_Mem.CDevFPSMem;
+import game.cdev.engineutils.FPS_Mem.CDevFPSMem;
 import flixel.FlxGame;
 import flixel.FlxState;
 import openfl.Assets;
@@ -22,7 +22,7 @@ import openfl.display.Sprite;
 import openfl.events.Event;
 import flixel.FlxG;
 #if desktop
-import engineutils.Discord.DiscordClient;
+import game.cdev.engineutils.Discord.DiscordClient;
 #end
 import lime.app.Application;
 
@@ -32,7 +32,7 @@ class Main extends Sprite
 {
 	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
-	var initialState:Class<FlxState> = states.TitleState; // The FlxState the game starts with.
+	var initialState:Class<FlxState> = meta.states.TitleState; // The FlxState the game starts with.
 	var zoom:Float = 1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var framerate:Int = 60; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
@@ -44,6 +44,8 @@ class Main extends Sprite
 
 	var playState:Bool = false;
 
+	public static var instance:Main = null;
+
 	// You can pretty much ignore everything from here on - your code should go in your states.
 
 	public static function main():Void
@@ -54,6 +56,7 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+		instance = this;
 		#if CRASH_HANDLER
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 		#end
@@ -193,7 +196,7 @@ class Main extends Sprite
 
 		if (FileSystem.exists(cdev_ch_path)){
 			//cool python crash handler!
-			new Process(cdev_ch_path, [filePath]);
+			new Process(cdev_ch_path, ["crash", filePath]);
 		} else{
 			//gotta call a simple message box thingie
 			Application.current.window.alert("CDEV Engine crashed during runtime.\n\nCall Stacks:" + textStuff + "Please report this error to CDEV Engine's GitHub page: \nhttps://github.com/Core5570RYT/FNF-CoreDEV-Engine");

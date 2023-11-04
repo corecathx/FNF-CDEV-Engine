@@ -1,7 +1,7 @@
 package game;
 
 import haxe.io.Bytes;
-import modding.ModPaths;
+import meta.modding.ModPaths;
 import sys.io.File;
 import openfl.display.BitmapData;
 import flixel.graphics.FlxGraphic;
@@ -393,9 +393,11 @@ class Paths
 			'images/storymenu/difficulty',
 			'images/credits',
 			'images/notes',
+			'ui',
 			'events',
 			'notes',
-			'scripts/',
+			'scripts',
+			'shaders',
 			#if USE_VIDEOS 'videos', #end
 			'sounds',
 			'music',

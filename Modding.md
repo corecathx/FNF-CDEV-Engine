@@ -11,3 +11,11 @@ You may have noticed that there's a new folder in the assets. MODS. Within it yo
 modList.txt will load any folder into the game. Put the folder you want to load into a new line in modList.txt, and reboot the game.
 
 Now you may be wondering, what do I put in the folder? Well later down it'll get a bit more complicated, especially as I'll make the IN-GAME mod loader nicer.
+
+
+
+
+
+
+
+aaaaaaaaaaaaaaaaaaaaaaaaaaaa

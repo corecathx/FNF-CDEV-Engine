@@ -13,7 +13,7 @@ class CoolUtil
 
 	public static function difficultyString():String
 	{
-		return difficultyArray[states.PlayState.storyDifficulty];
+		return difficultyArray[meta.states.PlayState.storyDifficulty];
 	}
 
 	public static function coolTextFile(path:String):Array<String>

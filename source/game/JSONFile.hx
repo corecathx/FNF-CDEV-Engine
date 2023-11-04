@@ -1,6 +1,6 @@
 package game;
 
-import song.Section.SwagSection;
+import game.song.Section.SwagSection;
 import haxe.Json;
 import haxe.format.JsonParser;
 import lime.utils.Assets;

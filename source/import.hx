@@ -1,2 +1,2 @@
 import game.Paths;
-import cdev.CDevConfig;
+import game.cdev.CDevConfig;

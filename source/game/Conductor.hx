@@ -1,7 +1,7 @@
 
 package game;
 
-import song.Song.SwagSong;
+import game.song.Song.SwagSong;
 import flixel.FlxG;
 
 /**
@@ -18,6 +18,7 @@ typedef BPMChangeEvent =
 
 class Conductor
 {
+	public static var last_bpm:Float = 100;
 	public static var bpm:Float = 100;
 	public static var crochet:Float = ((60 / bpm) * 1000); // beats in milliseconds
 	public static var stepCrochet:Float = crochet / 4; // steps in milliseconds
@@ -26,7 +27,7 @@ class Conductor
 	public static var lastSongPos:Float;
 	public static var offset:Float = 0;
 
-	public static var safeFrames:Int = 10;
+	public static var safeFrames:Int = 20;
 	public static var safeZoneOffset:Float = Math.floor((safeFrames / 60) * 1000); // is calculated in create(), is safeFrames in milliseconds
 	public static var timeScale:Float = Conductor.safeZoneOffset / 166;
 
@@ -94,8 +95,9 @@ class Conductor
 		trace("new BPM map BUDDY " + bpmChangeMap);
 	}
 
-	public static function changeBPM(newBpm:Float)
+	public static function changeBPM(newBpm:Float, ?alsoChangeLast:Bool=false)
 	{
+		if (alsoChangeLast) last_bpm = newBpm;
 		bpm = newBpm;
 
 		crochet = ((60 / bpm) * 1000);

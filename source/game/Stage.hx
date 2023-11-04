@@ -1,10 +1,10 @@
 package game;
 
-import cdev.script.ScriptSupport;
-import cdev.script.CDevScript;
-import modding.CharacterData.AnimationArray;
+import game.cdev.script.ScriptSupport;
+import game.cdev.script.CDevScript;
+import meta.modding.char_editor.CharacterData.AnimationArray;
 import flixel.FlxG;
-import states.PlayState;
+import meta.states.PlayState;
 import haxe.Json;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
