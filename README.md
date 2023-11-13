@@ -36,7 +36,7 @@ Once you have all those installed, it's pretty easy to compile the engine. You j
 
 To compile the engine on your desktop (Windows, Mac, Linux), you need to install Visual Studio Community 2019.
 While installing VSC, don't click on any of the options to install workloads. Instead, go to the individual components tab and choose the following:
-* MSVC v142 - VS 2019 C++ x64/x86 build tools
+* MSVC v143 - VS 2019 C++ x64/x86 build tools
 * Windows SDK (10.0.17763.0)
 
 The executables are located on export/ folder in the root of your project after it was compiled.
