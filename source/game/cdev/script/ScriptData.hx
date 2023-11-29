@@ -1,5 +1,6 @@
 package game.cdev.script;
 
+import meta.states.PlayState;
 import game.cdev.script.CDevScript.CDevModScript;
 import game.Paths;
 
@@ -8,7 +9,7 @@ class ScriptData
 	public var scripts:Array<CDevScript> = [];
 	public var scriptModScripts:Array<CDevModScript> = [];
 
-	public function new(scripts:Array<CDevModScript>, song:String)
+	public function new(scripts:Array<CDevModScript>, song:String, state:PlayState)
 	{
 		ScriptSupport.typedScripts = null;
 		var traced:Array<CDevScript> = [];
@@ -19,7 +20,7 @@ class ScriptData
 			var sc = CDevScript.create(pth);
 			if (sc == null)
 				continue;
-			ScriptSupport.setScriptDefaultVars(sc, s.daMod, song);
+			ScriptSupport.setScriptDefaultVars(sc, s.daMod, song, state);
 			this.scripts.push(sc);
 			scriptModScripts.push(s);
 		}

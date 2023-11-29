@@ -1,5 +1,8 @@
 package game.cdev;
 
+import flixel.sound.FlxSound;
+import game.settings.data.SettingsProperties;
+import meta.states.TitleState;
 import flixel.addons.transition.FlxTransitionableState;
 import meta.states.CustomState;
 import flixel.FlxObject;
@@ -77,25 +80,76 @@ class CDevUtils
 		return diffs;
 	}
 
+	/**
+	 * Sets `object` pitch to `pitch`
+	 * @param object 
+	 * @param pitch
+	 */
+	public function setSoundPitch(object:FlxSound, pitch:Float)
+	{
+		object.pitch = pitch;
+	}
+
 	public function bound(toConvert:Float, min:Float, max:Float):Float
 	{
 		return FlxMath.bound(toConvert, min, max); // ye
 	}
 
-	public function getStateScript(defaultState:String){
-		if (Paths.curModDir.length == 1){
+	public function removeSymbols(input:String):String
+	{
+		var result:String = "";
+		for (i in 0...input.length)
+		{
+			// Memeriksa apakah karakter adalah huruf atau angka
+			if ((input >= "0" && input <= "9")
+				|| (input >= "a" && input <= "z") 
+				|| (input >= "A" && input <= "Z"))
+			{
+				result += input.charAt(i);
+			}
+		}
+		return result;
+	}
+
+	public function getStateScript(defaultState:String, ?enableTransit:Bool = true)
+	{
+		if (Paths.curModDir.length == 1)
+		{
 			var tempCurMod = Paths.currentMod;
 			Paths.currentMod = Paths.curModDir[0];
-			var scriptPath:String = Paths.modFolders("ui/"+defaultState+".hx");
+			var scriptPath:String = Paths.modFolders("ui/" + defaultState + ".hx");
 			trace(scriptPath);
-			if (FileSystem.exists(scriptPath)){
-				FlxTransitionableState.skipNextTransIn = true;
+			if (FileSystem.exists(scriptPath))
+			{
+				FlxTransitionableState.skipNextTransIn = enableTransit;
 				FlxTransitionableState.skipNextTransOut = true;
 				trace("existed, switching to custom state for " + defaultState);
 				FlxG.switchState(new CustomState(defaultState));
 			}
 			Paths.currentMod = tempCurMod;
 		}
+	}
+
+	public function restartGame()
+	{
+		CDevConfig.storeSaveData();
+		@:privateAccess {
+			TitleState.initialized = false;
+			TitleState.closedState = false;
+			TitleState.isLoaded = false;
+			TitleState.loadedSaves = false;
+		}
+		SettingsProperties.reset();
+		FlxG.resetGame();
+	}
+
+	public function isPriorityMod(returnMod:Bool = false):Dynamic
+	{
+		if (Paths.curModDir.length == 1)
+		{
+			return (returnMod ? Paths.curModDir[0] : true);
+		}
+		return (returnMod ? "" : false);
 	}
 
 	public function pasteFunction(prefix:String = ''):String
@@ -146,6 +200,12 @@ class CDevUtils
 			object.y = (FlxG.height / 2) - ((object.frameHeight * object.scale.y) / 2);
 	}
 
+	/**
+	 * Sets `object` label offset to `x` and `y`
+	 * @param object 
+	 * @param x 
+	 * @param y 
+	 */
 	public function setFlxButtonLabelOffset(object:FlxButton, x:Float, y:Float)
 	{
 		for (offset in object.labelOffsets)

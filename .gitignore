@@ -1,15 +1,10 @@
 export/
 .vscode/
-APIStuff.hx
-ldingbackuplalaldasf.txt
-fpstatebackup.txt
-CreateCharacterBETATEST.hx
-CHARACTERHX-CHARCODE
 art/backupcodeshit/
-source/modding/StageEdit.hx
-docs/hscript.md
 todo.txt
 cdev-changelog.txt
 build.hxml
 vscode-project.hxml
+hxformat.json
 crash_handler/src
+CHANGELOG.md

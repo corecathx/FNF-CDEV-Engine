@@ -12,6 +12,12 @@ typedef ModFile =
 	var modDesc:String;
 	var mod_difficulties:Array<String>; //easy,hard,normal (only in 1.1)
 
+	//started in 1.6
+	var restart_required:Bool;
+	var disable_base_game:Bool;
+	var window_title:String;
+	var window_icon:String;
+
 	var modVer:String;
 }
 

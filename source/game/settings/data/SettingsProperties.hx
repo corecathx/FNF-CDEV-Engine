@@ -56,31 +56,6 @@ class SettingsProperties
 			new BaseSettings("Reset Button", ["Disabled", "Enabled"], "If disabled, you won't get instant killed if you press the \"R\" key.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "resetButton"),
 			new BaseSettings("Botplay", ["OFF", "ON"], "If enabled, a bot will play the game for you.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "botplay"),
 			new BaseSettings("Health Percentage", ["Hide", "Show"], "Whether to show or hide the Health percentage in Score Text.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "healthCounter"),
-			new BaseSettings("FPS Cap", ["", ""], "Choose how many frames per second that this game should run at.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
-				var daValueToAdd:Int = FlxG.keys.pressed.RIGHT ? 1 : -1;
-				if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.RIGHT)
-					holdTime += elapsed;
-				else
-					holdTime = 0;
-		
-				var e = [FlxG.keys.pressed.LEFT, FlxG.keys.pressed.RIGHT];
-				if (holdTime <= 0 && e.contains(true))
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-	
-				if (holdTime > 0.5 || FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.RIGHT)
-				{
-					CDevConfig.setData("fpscap", CDevConfig.getData("fpscap")+daValueToAdd);
-		
-					if (CDevConfig.getData("fpscap") <= 50)
-						CDevConfig.setData("fpscap", 50);
-
-					if (CDevConfig.getData("fpscap") > 300)
-						CDevConfig.setData("fpscap", 300);
-
-					CDevConfig.setFPS(CDevConfig.getData("fpscap"));
-				}
-				bs.value_name[0] = CDevConfig.getData("fpscap") + " FPS";
-			}, function(){}, ""),	
 			new BaseSettings("Note Hit Effect", ["Hide", "Show"], "Whether to show or hide the hit effect when you hit a note.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "noteImpact"),	
 			new BaseSettings("Time Bar", ["Hide", "Show"], "If enabled, it will show current playing song time as a bar.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "songtime"),
 			new BaseSettings("Flashing Lights", ["Disabled", "Enabled"], "Enable / Disable Flashing Lights.\n(Disable this if you're sensitive to flashing lights!)", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "flashing"),	
@@ -114,21 +89,68 @@ class SettingsProperties
 				}
 				bs.value_name[0] = CDevConfig.getData("offset") + "ms";
 			}, function(){}, "", false),
-			new BaseSettings("Detailed Score Text", ["OFF", "ON"], "If enabled, the game will show your misses and accuracy in the score text.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "fullinfo"),
+			new BaseSettings("Detailed Score Text", ["OFF", "ON"], "If enabled, the game will show your misses and accuracy in the score text.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "fullinfo")
+		], null);
+
+		create_category("Graphics", [
+			new BaseSettings("Shaders", ["Disabled", "Enabled"], "Whether to enable / disable shaders in the engine.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "shaders", false),
+			new BaseSettings("FPS Cap", ["", ""], "Choose how many frames per second that this game should run at.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
+				var daValueToAdd:Int = FlxG.keys.pressed.RIGHT ? 1 : -1;
+				if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.RIGHT)
+					holdTime += elapsed;
+				else
+					holdTime = 0;
+		
+				var e = [FlxG.keys.pressed.LEFT, FlxG.keys.pressed.RIGHT];
+				if (holdTime <= 0 && e.contains(true))
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+	
+				if (holdTime > 0.5 || FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.RIGHT)
+				{
+					CDevConfig.setData("fpscap", CDevConfig.getData("fpscap")+daValueToAdd);
+		
+					if (CDevConfig.getData("fpscap") <= 50)
+						CDevConfig.setData("fpscap", 50);
+
+					if (CDevConfig.getData("fpscap") > 300)
+						CDevConfig.setData("fpscap", 300);
+
+					CDevConfig.setFPS(CDevConfig.getData("fpscap"));
+				}
+				bs.value_name[0] = CDevConfig.getData("fpscap") + " FPS";
+			}, function(){}, ""),	
+			new BaseSettings("Antialiasing", ["OFF", "ON"], "If disabled, your game will run as smooth but at cost of graphics.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "antialiasing", false),
 			new BaseSettings("Auto Pause", ["Disabled", "Enabled"], "If disabled, the game will no longer pauses whenever the game window is unfocused.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
 				if (FlxG.keys.justPressed.ENTER){
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 					CDevConfig.saveData.autoPause = !CDevConfig.saveData.autoPause;
 					FlxG.autoPause = CDevConfig.saveData.autoPause;
-
+	
 					bs.value_name[0] = (CDevConfig.saveData.autoPause ? "Enabled":"Disabled");
 				}
-			}, function(){}, "")
+			}, function(){}, ""),
+			new BaseSettings("Bitmaps on GPU", ["Disabled", "Enabled"], "Whether to store all bitmaps to your GPU, and not storing bitmaps to your RAM.\n(Warning: This option is still experimental.)", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "gpuBitmap", false),
+			new BaseSettings("Clear Game Cache", ["", ""], "Press ENTER to clear memory cache.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
+				var usedMem:Float = Math.round(System.totalMemory / 1024 / 1024 * 100) / 100;
+				if (usedMem > 1024){
+					bs.description = "You might need this option.\nPress ENTER to clear memory cache.";
+					if (usedMem > 2048){
+						bs.description = "You DEFINITELY need this option.\nPress ENTER to clear memory cache.";
+					}
+				} else{
+					bs.description = "Press ENTER to clear memory cache.";
+				}
+				
+				if (FlxG.keys.justPressed.ENTER){
+					FlxG.sound.play(Paths.sound('confirmMenu'));
+					openfl.utils.Assets.cache.clear();
+					Paths.destroyLoadedImages();
+				}
+			}, function(){}, "", false),
 		], null);
 
-		// GAMEPLAY//
+		// APPEARANCE //
 		create_category("Appearance", [
-			new BaseSettings("Shaders", ["Disabled", "Enabled"], "Whether to enable / disable shaders in the engine.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "shaders", false),
 			new BaseSettings("Engine Watermark", ["Hide", "Show"], "Whether to show CDEV Engine's watermark in the game.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "engineWM"),	
 			new BaseSettings("Opponent Notes in Midscroll", ["Hide", "Show"], "If enabled, opponent notes will be slightly visible.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "bgNote"),
 			new BaseSettings("Strum Lane", ["Hide", "Show"], "If enabled, your strum notes playfield will have a black background.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "bgLane"),
@@ -136,16 +158,10 @@ class SettingsProperties
 				if (FlxG.keys.justPressed.ENTER){
 					CDevConfig.saveData.discordRpc = !CDevConfig.saveData.discordRpc;
 					Main.discordRPC = CDevConfig.saveData.discordRpc;
-					@:privateAccess{
-						TitleState.initialized = false;
-						TitleState.closedState = false;
-					}
-					reset();
-					FlxG.resetGame();
+					CDevConfig.utils.restartGame();
 				}
 				bs.value_name[0] = (CDevConfig.saveData.discordRpc ? "ON":"OFF");
 			}, function(){}, "", false),#end
-			new BaseSettings("Antialiasing", ["OFF", "ON"], "If disabled, your game will run as smooth but at cost of graphics.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "antialiasing", false),
 			new BaseSettings("Hit Effect Style", ["Splash", "Ripple"], "Choose your preferred Hit Effect Style.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "noteRipples", false),
 			new BaseSettings("Set Rating Sprite Position", ["Press ENTER",""], "Set your preferred Rating sprite position.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
 				if (FlxG.keys.justPressed.ENTER){
@@ -223,23 +239,6 @@ class SettingsProperties
 				bs.value_name[0] = (CDevConfig.saveData.autosaveChart?"Enabled":"Disabled");
 				
 			}, function(){},"", false),
-			new BaseSettings("Clear Game Cache", ["", ""], "Press ENTER to clear memory cache.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
-				var usedMem:Float = Math.round(System.totalMemory / 1024 / 1024 * 100) / 100;
-				if (usedMem > 1024){
-					bs.description = "You might need this option.\nPress ENTER to clear memory cache.";
-					if (usedMem > 2048){
-						bs.description = "You DEFINITELY need this option.\nPress ENTER to clear memory cache.";
-					}
-				} else{
-					bs.description = "Press ENTER to clear memory cache.";
-				}
-				
-				if (FlxG.keys.justPressed.ENTER){
-					FlxG.sound.play(Paths.sound('confirmMenu'));
-					openfl.utils.Assets.cache.clear();
-					Paths.destroyLoadedImages();
-				}
-			}, function(){}, "", false),
 		], null);
 	}
 

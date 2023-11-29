@@ -1094,13 +1094,10 @@ class ChartingState extends MusicBeatState
 		{
 			// FlxG.sound.music.pitch = songSpeed;
 			// vocals.pitch = songSpeed;
-			@:privateAccess
-			{
-				AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, AL.PITCH, speedMod);
-				if (_song.needsVoices)
-					if (vocals.playing)
-						AL.sourcef(vocals._channel.__source.__backend.handle, AL.PITCH, speedMod);
-			}
+			
+			CDevConfig.utils.setSoundPitch(FlxG.sound.music, speedMod);
+			if (_song.needsVoices && vocals.playing)
+				CDevConfig.utils.setSoundPitch(vocals, speedMod);
 		}
 		#end
 

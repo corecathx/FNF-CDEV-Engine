@@ -61,7 +61,6 @@ class HScript extends CDevScript
 				}
 				return result;
 			}
-			// f();
 			if (CDevConfig.DEPRECATED_STUFFS.exists(funcName)){
 				TraceLog.addLogData('Function \"$funcName\" is deprecated since CDEV Engine v.${CDevConfig.DEPRECATED_STUFFS.get(funcName)}.');
 			}
@@ -111,7 +110,7 @@ class HScript extends CDevScript
 		var methodName = posInfo.methodName;
 		var className = posInfo.className;
 		trace('$fileName:$methodName:$lineNumber: $text');
-		PlayState.addNewTraceKey('$fileName:$methodName:$lineNumber: $text');
+		TraceLog.addLogData('$fileName:$methodName:$lineNumber: $text');
 
 		if (!CDevConfig.saveData.testMode)
 			return;

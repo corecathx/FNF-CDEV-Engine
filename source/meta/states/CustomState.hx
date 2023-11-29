@@ -1,5 +1,7 @@
 package meta.states;
 
+import meta.modding.ModdingState;
+import game.cdev.engineutils.TraceLog;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxState;
 import game.objects.Alphabet;
@@ -49,25 +51,30 @@ import flixel.FlxSprite;
 
 using StringTools;
 
-class CStateStatics{
+class CStateStatics
+{
 	public static var statics:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public static var mod:String = "";
 
-	public static function get(key:String){
-		if (!statics.exists(key)) return null;
+	public static function get(key:String)
+	{
+		if (!statics.exists(key))
+			return null;
 		return statics.get(key);
 	}
 
-	public static function set(key:String, val:Dynamic){
+	public static function set(key:String, val:Dynamic)
+	{
 		return statics.set(key, val);
 	}
 
-	
-	public static function exists(key:String){
+	public static function exists(key:String)
+	{
 		return statics.exists(key);
 	}
 
-	public static function __RESET(){
+	public static function __RESET()
+	{
 		statics.clear();
 		mod = "";
 	}
@@ -77,6 +84,12 @@ class CustomState extends MusicBeatState
 {
 	public static var lastMod:String = "";
 	public static var current:CustomState = null;
+
+	// trace window stuffs
+	public var camGame:FlxCamera;
+
+	var traceWindow:TraceLog;
+	var traceCam:FlxCamera;
 
 	var script:CDevScript = null;
 	var gotScript = false;
@@ -95,19 +108,24 @@ class CustomState extends MusicBeatState
 		Reflect.setProperty(this, key, value);
 	}
 
-	public function changeState(state:FlxState){
+	public function changeState(state:FlxState)
+	{
 		FlxTransitionableState.skipNextTransIn = false;
 		FlxTransitionableState.skipNextTransOut = false;
+		transIn = FlxTransitionableState.defaultTransIn;
+		transOut = FlxTransitionableState.defaultTransOut;
+
 		FlxG.switchState(state);
 	}
 
 	function setStuff()
 	{
-		if (lastMod != Paths.currentMod){
+		if (lastMod != Paths.currentMod)
+		{
 			CStateStatics.__RESET();
 		}
 		CStateStatics.mod = Paths.currentMod;
-		script.setVariable("static", CStateStatics);
+		script.setVariable("_static", CStateStatics);
 
 		script.setVariable("import", function(className:String)
 		{
@@ -136,14 +154,13 @@ class CustomState extends MusicBeatState
 				}
 			}
 		});
-		var curState:Dynamic = FlxG.state;
-		current = curState;
-		script.setVariable("current", current);
+		script.setVariable("current", this);
 		script.setVariable("trace", function(text)
 		{
 			try
 			{
 				script.trace(text);
+				TraceLog.addLogData(text);
 			}
 			catch (e)
 			{
@@ -152,15 +169,15 @@ class CustomState extends MusicBeatState
 		});
 		script.setVariable("add", function(obj)
 		{
-			current.add(obj);
+			add(obj);
 		});
 		script.setVariable("remove", function(obj)
 		{
-			current.remove(obj);
+			remove(obj);
 		});
 		script.setVariable("insert", function(pos, obj)
 		{
-			current.insert(pos, obj);
+			insert(pos, obj);
 		});
 		script.setVariable("Alphabet", Alphabet);
 		script.setVariable("controls", current.controls);
@@ -211,7 +228,9 @@ class CustomState extends MusicBeatState
 		script.setVariable("StoryMenuState", StoryMenuState);
 		script.setVariable("FreeplayState", FreeplayState);
 		script.setVariable("PlayState", PlayState);
-
+		script.setVariable("OptionsState", OptionsState);
+		script.setVariable("ModdingState", ModdingState);
+		script.setVariable("AboutState", AboutState);
 		lastMod = Paths.currentMod;
 	}
 
@@ -227,9 +246,26 @@ class CustomState extends MusicBeatState
 	{
 		trace("yay");
 		super.create();
+		
+		camGame = new FlxCamera();
+		traceCam = new FlxCamera();
+		traceCam.bgColor.alpha = 0;
+		FlxG.cameras.reset(camGame);
+		FlxG.cameras.add(traceCam);
+		FlxCamera.defaultCameras = [camGame];
+
+		if (CDevConfig.saveData.showTraceLogAt == 1)
+		{
+			traceWindow = new TraceLog(10, 60, 600, 250);
+			add(traceWindow);
+			traceWindow.cameras = [traceCam];
+			traceWindow.mainCameraObject = traceCam;
+			FlxG.mouse.visible = true;
+		}
 		if (state != "")
 		{
-			if (Paths.curModDir.length == 1){
+			if (Paths.curModDir.length == 1)
+			{
 				Paths.currentMod = Paths.curModDir[0];
 			}
 			var scriptPath = Paths.modFolders("ui/" + state + ".hx");
@@ -239,8 +275,8 @@ class CustomState extends MusicBeatState
 				trace("load");
 				script = CDevScript.create(scriptPath);
 				gotScript = true;
-				script.loadFile(scriptPath);
 				setStuff();
+				script.loadFile(scriptPath);
 			}
 		}
 		if (gotScript)
@@ -250,17 +286,60 @@ class CustomState extends MusicBeatState
 			script.executeFunc("postCreate", []);
 	}
 
+	var offsetX:Float = 0;
+	var pressed = false;
+
+	var isErrorBefore = false;
+
 	override function update(e:Float)
 	{
 		if (gotScript)
 			script.executeFunc("update", [e]);
 		super.update(e);
 
+		if (CDevConfig.saveData.showTraceLogAt == 1)
+		{
+			if (traceWindow != null)
+			{
+				if (FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x > traceWindow.PANEL_BG.x
+					&& FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x < traceWindow.PANEL_BG.x + traceWindow.PANEL_BG.width
+					&& FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).y > traceWindow.PANEL_BG.y
+					&& FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).y < traceWindow.PANEL_BG.y + 20)
+				{
+					if (FlxG.mouse.justPressed)
+					{
+						offsetX = traceWindow.PANEL_BG.x - FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x;
+						pressed = true;
+					}
+				}
+
+				if (pressed)
+				{
+					traceWindow.PANEL_BG.setPosition(FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x + offsetX,
+						FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).y - 5);
+
+					if (FlxG.mouse.justReleased)
+					{
+						pressed = false;
+					}
+				}
+			}
+		}
+
+		if (gotScript && script.error){
+			if (isErrorBefore != script.error){
+				if (traceWindow != null) traceWindow.visible = true;
+				FlxG.sound.play(Paths.sound("cancelMenu"));
+				TraceLog.addLogData("ERROR: An error occured on the script. If you're stuck on this Custom State, press Shift + Escape.");
+				isErrorBefore = script.error;
+			}
+		}
+
 		if (gotScript && script.error && FlxG.keys.pressed.SHIFT && FlxG.keys.justPressed.ESCAPE)
 		{
 			var newState = new MainMenuState();
 			newState.disableSwitching = true;
-			FlxG.switchState(newState);
+			changeState(newState);
 		}
 
 		if (gotScript)

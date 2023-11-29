@@ -263,7 +263,7 @@ class Stage
 
 					if (!CDevConfig.saveData.antialiasing)
 						daSprite.antialiasing = false;
-					
+
 					daSprite.objectName = stageJSON.sprites[i].imageVar;
 					daSprite.type = "sparrow";
 					daSprite.ID = i;
@@ -309,6 +309,7 @@ class Stage
 						}
 					}
 					play.add(daSprite);
+					daSprite.scale.set(stageJSON.sprites[i].imageScale, stageJSON.sprites[i].imageScale);
 				// checkSprites(stageJSON.sprites[i], i, daSprite);
 				case "bf":
 					play.add(PlayState.boyfriend);

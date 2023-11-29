@@ -3,7 +3,6 @@ package game.cdev.engineutils;
 import flixel.FlxCamera;
 import openfl.events.IOErrorEvent;
 import openfl.events.Event;
-import meta.states.PlayState;
 import flixel.graphics.FlxGraphic;
 import flixel.system.debug.interaction.tools.Pointer.GraphicCursorCross;
 import flixel.FlxG;
@@ -81,13 +80,13 @@ class TraceLog extends FlxGroup
 		sprCloseX.color = FlxColor.WHITE;
 		add(sprCloseX);
 
-		sprSave = new FlxSprite(panel_title.x + width - 40, panel_title.y + height - 40).makeGraphic(20, 20, 0xFFFFFFFF);
+		/*sprSave = new FlxSprite(panel_title.x + width - 40, panel_title.y + height - 40).makeGraphic(20, 20, 0xFFFFFFFF);
 		add(sprSave);
 		sprSaveI = new FlxSprite().loadGraphic(Paths.image("ui/file", "shared"));
 		sprSaveI.setGraphicSize(10, 10);
 		sprSaveI.updateHitbox();
 		sprSaveI.setPosition(sprSave.x + (sprSave.width / 2) - 10, sprSave.y + (sprSave.height / 2) - 10);
-		add(sprSaveI);
+		add(sprSaveI);*/
 
 		if (LogText == null)
 		{
@@ -123,8 +122,8 @@ class TraceLog extends FlxGroup
 			sprClose.setPosition(panel_title.x + widthThis - 20, panel_title.y);
 			sprCloseX.setPosition(sprClose.x + (sprClose.width / 2) - 5, sprClose.y + (sprClose.height / 2) - 5);
 
-			sprSave.setPosition(panel_title.x + widthThis - 40, panel_title.y);
-			sprSaveI.setPosition(sprSave.x + (sprSave.width / 2) - 5, sprSave.y + (sprSave.height / 2) - 5);
+			//sprSave.setPosition(panel_title.x + widthThis - 40, panel_title.y);
+			//sprSaveI.setPosition(sprSave.x + (sprSave.width / 2) - 5, sprSave.y + (sprSave.height / 2) - 5);
 
 			if (FlxG.mouse.getScreenPosition(mainCameraObject).x > sprClose.x
 				&& FlxG.mouse.getScreenPosition(mainCameraObject).x < sprClose.x + sprClose.width
@@ -139,7 +138,7 @@ class TraceLog extends FlxGroup
 			} else{
 				sprClose.alpha = 0;
 			}
-
+			/*
 			if (FlxG.mouse.getScreenPosition(mainCameraObject).x > sprSave.x
 				&& FlxG.mouse.getScreenPosition(mainCameraObject).x < sprSave.x + sprSave.width
 				&& FlxG.mouse.getScreenPosition(mainCameraObject).y > sprSave.y
@@ -156,7 +155,7 @@ class TraceLog extends FlxGroup
 
 					saveTraceData();
 				}
-			}else sprSave.alpha = 0;
+			}else sprSave.alpha = 0;*/
 
 			if (FlxG.mouse.getScreenPosition(mainCameraObject).x > PANEL_BG.x
 				&& FlxG.mouse.getScreenPosition(mainCameraObject).x < PANEL_BG.x + PANEL_BG.width
@@ -178,6 +177,7 @@ class TraceLog extends FlxGroup
 			if (FlxG.keys.justPressed.F5)
 			{
 				this.visible = !this.visible;
+				FlxG.mouse.visible = this.visible;
 			}
 
 			if (LogText != null)

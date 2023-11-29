@@ -1,5 +1,6 @@
 package meta.states;
 
+import game.cdev.CDevMods.ModFile;
 import meta.modding.week_editor.WeekData;
 import game.cdev.CDevConfig;
 import sys.io.File;
@@ -108,6 +109,7 @@ class FreeplayState extends MusicBeatState
 
 	override function create()
 	{
+		CDevConfig.utils.getStateScript("FreeplayState");
 		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
 		var customSongList:Array<String> = [];
 		var songModListIdk:Array<String> = [];
@@ -134,23 +136,39 @@ class FreeplayState extends MusicBeatState
 				{
 					customSongList.push(songListTxt[i]);
 					songModListIdk.push(crapz);
-					//trace('\nSong: ' + songListTxt[i] + "\nMod: " + crapz);
+					// trace('\nSong: ' + songListTxt[i] + "\nMod: " + crapz);
 				}
 			}
 		}
 		#end
-
-		for (i in 0...initSonglist.length)
+		var allowDefSongs = true;
+		if (CDevConfig.utils.isPriorityMod())
 		{
-			var data:Array<String> = initSonglist[i].split(':');
-			songs.push(new SongMetadata(data[0], Std.parseInt(data[2]), data[1], 'BASEFNF'));
+			Paths.currentMod = CDevConfig.utils.isPriorityMod(true);
+			var data:ModFile = Paths.modData();
+			if (data != null)
+			{
+				if (Reflect.hasField(data, "disable_base_game"))
+				{
+					allowDefSongs = !data.disable_base_game;
+				}
+			}
+		}
+
+		if (allowDefSongs)
+		{
+			for (i in 0...initSonglist.length)
+			{
+				var data:Array<String> = initSonglist[i].split(':');
+				songs.push(new SongMetadata(data[0], Std.parseInt(data[2]), data[1], 'BASEFNF'));
+			}
 		}
 
 		#if desktop
 		for (i in 0...customSongList.length)
 		{
 			var bruh:Array<String> = customSongList[i].split(':');
-			songs.push(new SongMetadata(bruh[0], Std.parseInt(bruh[2]), bruh[1], songModListIdk[i]));
+			songs.push(new SongMetadata(bruh[0], 1, bruh[1], songModListIdk[i]));
 		}
 		#end
 
@@ -177,7 +195,7 @@ class FreeplayState extends MusicBeatState
 						{
 							colors = [146, 113, 253];
 						}
-						songs.push(new SongMetadata(song.song, 1, song.character, WeekData.loadedWeeks[i][1],colors, true, daWeek));
+						songs.push(new SongMetadata(song.song, 1, song.character, WeekData.loadedWeeks[i][1], colors, true, daWeek));
 						// addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
 					}
 				}
@@ -283,7 +301,7 @@ class FreeplayState extends MusicBeatState
 		leftArrow.y = FlxG.height - leftArrow.height - 30;
 
 		sprDifficulty = new FlxText(leftArrow.x + 70, leftArrow.y + 20, (308 * 0.8), "DIFF", 44);
-		sprDifficulty.setFormat("VCR OSD Mono", 44, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		sprDifficulty.setFormat(Paths.font("diffic.ttf"), 44, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 
 		// sprDifficulty = new FlxSprite(leftArrow.x + 130, leftArrow.y);
 		// sprDifficulty.frames = ui_tex;
@@ -470,12 +488,8 @@ class FreeplayState extends MusicBeatState
 			barValue += elapsed;
 		}
 
-		@:privateAccess { // hi
-			#if cpp
-			if (FlxG.sound.music.playing)
-				lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, speed);
-			#end
-		}
+		if (FlxG.sound.music != null && FlxG.sound.music.playing)
+			CDevConfig.utils.setSoundPitch(FlxG.sound.music, speed);
 
 		if (!modMenuOpened)
 		{
@@ -580,12 +594,9 @@ class FreeplayState extends MusicBeatState
 					{
 						FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
 					}
-					@:privateAccess { // hi
-						#if cpp
-						if (FlxG.sound.music.playing)
-							lime.media.openal.AL.sourcef(FlxG.sound.music._channel.__source.__backend.handle, lime.media.openal.AL.PITCH, 1.0);
-						#end
-					}
+
+					if (FlxG.sound.music != null && FlxG.sound.music.playing)
+						CDevConfig.utils.setSoundPitch(FlxG.sound.music, speed);
 
 					FlxG.switchState(new MainMenuState());
 
@@ -928,10 +939,10 @@ class FreeplayState extends MusicBeatState
 			{
 				item.lerpOnForceX = true;
 				item.alpha = 1;
-				//item.screenCenter(X);
+				// item.screenCenter(X);
 				item.xAdd -= 70;
 				item.wasChoosed = true;
-				//item.forceX = item.x;
+				// item.forceX = item.x;
 
 				// item.setGraphicSize(Std.int(item.width));
 			}
@@ -1023,13 +1034,23 @@ class FreeplayState extends MusicBeatState
 		{
 			sprDifficulty.text = "NORMAL";
 			yeahNormal = true;
-			//trace("yes normal");
+			// trace("yes normal");
 		}
 		else
 		{
 			yeahNormal = false;
-			//trace("no.");
+			// trace("no.");
 		}
+		var c = FlxColor.WHITE;
+		switch (sprDifficulty.text.toLowerCase()){
+			case "easy":
+				c = FlxColor.LIME;
+			case "normal":
+				c = FlxColor.YELLOW;
+			case "hard":
+				c = FlxColor.RED;
+		}
+		sprDifficulty.color = c;
 	}
 
 	override function closeSubState()
@@ -1084,12 +1105,15 @@ class FreeplayState extends MusicBeatState
 	function changeBGColor(?fromColor:Array<Int>)
 	{
 		var nextColor:Int = -1;
-		if (fromColor != null){
+		if (fromColor != null)
+		{
 			nextColor = FlxColor.fromRGB(fromColor[0], fromColor[1], fromColor[2]);
-		}else{
+		}
+		else
+		{
 			nextColor = game.cdev.CDevConfig.utils.getColor(iconArray[curSelected]);
 		}
-		
+
 		if (nextColor != toThisColor)
 		{
 			if (tween != null)
@@ -1216,10 +1240,11 @@ class SongMetadata
 	public var week:Int = 0;
 	public var songCharacter:String = "";
 	public var fromMod:String = "";
-	public var color:Array<Int> = [0,0,0];
+	public var color:Array<Int> = [0, 0, 0];
 	public var weekMode:Bool = false;
 	public var weekFile:WeekFile = null;
-	public function new(song:String, week:Int, songCharacter:String, fromMod:String, ?color:Array<Int>, ?weekMode:Bool =false, ?weekFile:WeekFile = null)
+
+	public function new(song:String, week:Int, songCharacter:String, fromMod:String, ?color:Array<Int>, ?weekMode:Bool = false, ?weekFile:WeekFile = null)
 	{
 		this.songName = song;
 		this.week = week;

@@ -1,5 +1,6 @@
 package meta.states;
 
+import flixel.FlxCamera;
 import flixel.system.scaleModes.StageSizeScaleMode;
 import flixel.system.scaleModes.BaseScaleMode;
 import openfl.display.StageScaleMode;
@@ -78,21 +79,6 @@ class MusicBeatState extends FlxUIState
 
 	private function updateCurStep():Void
 	{
-		/*if (FlxG.state == PlayState.current){
-			var lastChange:BPMChangeEvent = {
-				stepTime: 0,
-				songTime: 0,
-				bpm: 0
-			}
-			for (i in 0...Conductor.bpmChangeMap.length)
-			{
-				if (Conductor.rawTime >= Conductor.bpmChangeMap[i].songTime)
-					lastChange = Conductor.bpmChangeMap[i];
-			}
-
-			curStep = lastChange.stepTime + Math.floor((Conductor.rawTime - lastChange.songTime) / Conductor.stepCrochet); */
-
-		// } else{
 		var lastChange:BPMChangeEvent = {
 			stepTime: 0,
 			songTime: 0,
@@ -100,10 +86,10 @@ class MusicBeatState extends FlxUIState
 		}
 		for (i in 0...Conductor.bpmChangeMap.length)
 		{
-			if (Conductor.songPosition >= Conductor.bpmChangeMap[i].songTime)
+			if (Conductor.songPosition + Conductor.offset >= Conductor.bpmChangeMap[i].songTime)
 				lastChange = Conductor.bpmChangeMap[i];
 		}
-		hitSteps = lastChange.stepTime + Math.floor((Conductor.songPosition - lastChange.songTime) / Conductor.stepCrochet);
+		hitSteps = lastChange.stepTime + Math.floor((Conductor.songPosition + Conductor.offset - lastChange.songTime) / Conductor.stepCrochet);
 		if (hitSteps > curStep)
 		{
 			curStep = hitSteps;

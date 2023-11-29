@@ -1,94 +1,25 @@
 <!DOCTYPE html>
 <html>
 <!--what are you looking at?-->
+<!--i'm bad at making html and stuff, still learning tho!-->
 <head>
     <meta charset="UTF-8">
     <title>CDEV Engine Docs</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-    <style>
-        .body {
-            margin: 0px;
-            background-color: black;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 250px auto;
-        }
-
-        .tab-content {
-            display: none;
-            font-family: 'Roboto', sans-serif;
-            max-width: 80%;
-        }
-
-        .active-tab {
-            display: block;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th,
-        td {
-            border: 1px solid rgb(139, 139, 139);
-            padding: 8px;
-            text-align: left;
-        }
-
-        code {
-            font-family: 'Monaco', 'Courier New', monospace;
-            /* Ganti 'Monaco' dengan jenis font yang Anda inginkan jika tidak tersedia di komputer pengguna */
-        }
-
-        #sidebar {
-            background-color: #2a3350;
-            padding: 20px;
-            min-height: 100vh;
-            overflow-y: auto;
-        }
-
-        #sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        #sidebar ul li {
-            margin-bottom: 10px;
-        }
-
-        #sidebar ul li a {
-            text-decoration: none;
-            color: #a1a1a1;
-            font-family: 'Roboto', sans-serif;
-            display: block;
-        }
-
-        #content {
-            background-color: #161d33;
-            color: #FFFFFF;
-            padding: 20px;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        #sidebar ul li a:hover {
-            background-color: #2b4d80;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
         <div id="sidebar">
-            <h2 style="color: white; font-family: 'Roboto', sans-serif;">Basics</h2>
+            <h2 class="titlestuffsD">DOCS PAGES</h2>
+            <h2 class="titlestuffs">Basics</h2>
             <ul>
                 <li><a href="#welcome" onclick="showTab('welcome'); return false;">Welcome</a></li>
                 <li><a href="#new-mod" onclick="showTab('new-mod'); return false;">Making a new mod</a></li>
             </ul>
 
-            <h2 style="color: white; font-family: 'Roboto', sans-serif;">Modding Stuffs</h2>
+            <h2 class="titlestuffs">Modding Stuffs</h2>
             <ul>
                 <li><a href="#new-song" onclick="showTab('new-song'); return false;">Adding your song</a></li>
                 <li><a href="#new-character" onclick="showTab('new-character'); return false;">Adding a new
@@ -97,13 +28,13 @@
                 <li><a href="#new-week" onclick="showTab('new-week'); return false;">Adding a new week</a></li>
             </ul>
 
-            <h2 style="color: white; font-family: 'Roboto', sans-serif;">HScript API</h2>
+            <h2 class="titlestuffs">HScript API</h2>
             <ul>
                 <li><a href="#script-ex" onclick="showTab('script-ex'); return false;">How scripting works here</a></li>
                 <li><a href="#scripts-used" onclick="showTab('scripts-used'); return false;">Variables</a></li>
             </ul>
 
-            <h2 style="color: white; font-family: 'Roboto', sans-serif;">Example Scripts</h2>
+            <h2 class="titlestuffs">Example Scripts</h2>
             <ul>
                 <li><a href="#song-scripts" onclick="showTab('song-scripts'); return false;">Song Scripts</a></li>
                 <li><a href="#stage-scripts" onclick="showTab('stage-scripts'); return false;">Stage Scripts</a></li>
@@ -278,7 +209,7 @@
             <div class="tab-content" id="new-week">
                 <h1>Making a new week</h1>
                 <hr>
-                <p>wip haha cool swaggy ass</p>
+                <p>wip </p>
             </div>
 
             <!--

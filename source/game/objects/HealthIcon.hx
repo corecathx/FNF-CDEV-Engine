@@ -55,7 +55,7 @@ class HealthIcon extends FlxSprite
 		loadGraphic(file, true, 150, 150);
 
 		//winning icon
-		if (testSprite.width >= 301 && testSprite.width <= 450) {
+		if (testSprite.width > 300 && testSprite.width <= 450) {
 			animation.add(char, [0, 1, 2], 0, false, isPlayer);
 			hasWinningIcon = true;
 		} else{

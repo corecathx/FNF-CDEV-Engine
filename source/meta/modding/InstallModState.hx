@@ -1,5 +1,6 @@
 package meta.modding;
 
+import meta.states.TitleState;
 import flixel.tweens.FlxTween;
 import game.cdev.CDevConfig;
 import sys.io.File;
@@ -78,6 +79,10 @@ class InstallModState extends meta.states.MusicBeatState
 				modName: 'No Mods Found',
 				modDesc: 'Please check your cdev-mods folder.',
 				modVer: CDevConfig.engineVersion,
+				restart_required: false,
+				disable_base_game: false,
+				window_title: "Friday Night Funkin' CDEV Engine",
+				window_icon: "",
 				mod_difficulties: []
 			};
 			modShits.push(sad);
@@ -106,7 +111,7 @@ class InstallModState extends meta.states.MusicBeatState
 
 		for (i in 0...modShits.length)
 		{
-			var optionText:Alphabet = new Alphabet(0, (70 * i) + 30, modShits[i].modName, true, false);
+			var optionText:Alphabet = new Alphabet(0, (70 * i) + 30, modShits[i].modName, true, false, 32);
 			// optionText.screenCenter();
 			optionText.isMenuItem = true;
 			optionText.isFreeplay = true;
@@ -120,13 +125,12 @@ class InstallModState extends meta.states.MusicBeatState
 			add(iconShit);
 
 			iconArray.push(iconShit);
-			var description:FlxText = new FlxText(optionText.x + 10, optionText.y + optionText.height + 10, FlxG.width / 2, modShits[i].modDesc, 14);
+			var description:FlxText = new FlxText(optionText.x + 10, optionText.y + optionText.height + 10, (FlxG.width / 2)+100, modShits[i].modDesc, 14);
 			description.setFormat('VCR OSD Mono', 20, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 			descArray.push(description);
 			add(description);
 		}
-		changeSelection(0, true);
-		changeBackground();
+		changeSelection(0, false);
 
 		var text = meta.states.MainMenuState.coreEngineText + ' - Install a mod.';
 		var versionShit:FlxText = new FlxText(20, FlxG.height - 30, 1000, text, 16);
@@ -134,6 +138,23 @@ class InstallModState extends meta.states.MusicBeatState
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
 		versionShit.alpha = 0.7;
+
+		if (Paths.curModDir.length == 1)
+		{
+			var lastCurMod = Paths.currentMod;
+			Paths.currentMod = Paths.curModDir[0];
+			var d:ModFile = Paths.modData();
+			if (Reflect.hasField(d, "restart_required"))
+			{
+				if (d.restart_required)
+				{
+					lastModRequireRestart = true;
+					trace("will restart");
+				}
+			}
+			Paths.currentMod = lastCurMod;
+		}
+
 		super.create();
 	}
 
@@ -142,6 +163,10 @@ class InstallModState extends meta.states.MusicBeatState
 		super.closeSubState();
 		changeSelection();
 	}
+
+	var restartOnExit:Bool = false;
+
+	public var lastModRequireRestart:Bool = false;
 
 	override function update(elapsed:Float)
 	{
@@ -157,14 +182,7 @@ class InstallModState extends meta.states.MusicBeatState
 		{
 			var thing:Array<String> = Paths.curModDir.copy();
 			var theObject:Alphabet = grpOptions.members[i];
-			if (thing.contains(theObject.text))
-			{
-				theObject.color = FlxColor.CYAN;
-			}
-			else
-			{
-				theObject.color = FlxColor.WHITE;
-			}
+			theObject.color = (thing.contains(theObject.text) ? FlxColor.CYAN : FlxColor.WHITE);
 		}
 
 		if (controls.UI_UP_P)
@@ -178,15 +196,31 @@ class InstallModState extends meta.states.MusicBeatState
 
 		if (controls.BACK)
 		{
+			if (!restartOnExit)
+			{
+				FlxG.switchState(new ModdingState());
+			}
+			else
+			{
+				Paths.currentMod = Paths.curModDir[0];
+				if (!lastModRequireRestart) TitleState.loadMod = true; else TitleState.loadMod = false;
+				FlxTween.tween(FlxG.sound.music, {volume: 0}, 1);
+				FlxTween.tween(FlxG.camera, {alpha: 0}, 1, {
+					onComplete: function(e:FlxTween)
+					{
+						CDevConfig.utils.restartGame();
+					}
+				});
+			}
 			FlxG.save.flush();
 			Conductor.updateSettings();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			FlxG.switchState(new ModdingState());
 		}
 		if (controls.RESET)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			Paths.curModDir = [];
+			doCheck();
 		}
 		if (controls.ACCEPT)
 		{
@@ -200,15 +234,49 @@ class InstallModState extends meta.states.MusicBeatState
 				else
 				{
 					FlxG.sound.play(Paths.sound('cancelMenu'));
+					checkRestart(modShits[curSelected].modName);
 					Paths.curModDir.remove(modShits[curSelected].modName);
 				}
-				trace(Paths.curModDir);
-				CDevConfig.saveData.loadedMods = Paths.curModDir;
+				doCheck();
 			}
 		}
 	}
 
-	function changeSelection(change:Int = 0, noBGupdate:Bool = true)
+	function doCheck()
+	{
+		trace(Paths.curModDir);
+		restartOnExit = false;
+		CDevConfig.saveData.loadedMods = Paths.curModDir;
+		CDevConfig.checkLoadedMods();
+		Paths.curModDir = CDevConfig.saveData.loadedMods;
+		trace("new " + Paths.curModDir);
+		if (Paths.curModDir.length == 1)
+		{
+			var lastCurMod = Paths.currentMod;
+			checkRestart(Paths.curModDir[0]);
+			Paths.currentMod = lastCurMod;
+		} else{
+			if (lastModRequireRestart){
+				restartOnExit = true;
+			}
+		}
+	}
+
+	function checkRestart(mod)
+	{
+		Paths.currentMod = mod;
+		var d:ModFile = Paths.modData();
+		if (Reflect.hasField(d, "restart_required"))
+		{
+			if (d.restart_required)
+			{
+				restartOnExit = true;
+				trace("Going to restart cuz of " + d.modName);
+			}
+		}
+	}
+
+	function changeSelection(change:Int = 0, noBGupdate:Bool = false)
 	{
 		var bullShit:Int = 0;
 
@@ -256,51 +324,69 @@ class InstallModState extends meta.states.MusicBeatState
 	{
 		var mod:String = modShits[curSelected].modName;
 		Paths.currentMod = mod;
+		trace(usingCustomBG);
 
 		if (FileSystem.exists(Paths.modFolders("background.png")))
 		{
 			trace("it exists");
-			
-			//menuBG.alpha = 0;
+
+			// menuBG.alpha = 0;
 			modBG.loadGraphic(Paths.modImage(Paths.modFolders("background.png"), true));
 			modBG.screenCenter();
 			modBG.setGraphicSize(FlxG.width, FlxG.height);
 			modBG.color = 0xffffffff;
-			modBG.alpha = 0;
-			
-			if (!usingCustomBG){
-				if (tweenie != null) tweenie.cancel();
-			
-				tweenie = FlxTween.tween(modBG,{alpha:0.9}, 0.5, {onComplete:function(aa:FlxTween){
-					tweenie = null;
-				}});
+			if (!usingCustomBG) modBG.alpha = 0;
 
-				if (uhh != null) uhh.cancel();
-			
-				uhh = FlxTween.tween(menuBG,{alpha:0}, 0.5, {onComplete:function(aa:FlxTween){
-					uhh = null;
-				}});
+			if (!usingCustomBG)
+			{
+				if (tweenie != null)
+					tweenie.cancel();
 
+				tweenie = FlxTween.tween(modBG, {alpha: 0.9}, 0.5, {
+					onComplete: function(aa:FlxTween)
+					{
+						tweenie = null;
+					}
+				});
+
+				if (uhh != null)
+					uhh.cancel();
+
+				uhh = FlxTween.tween(menuBG, {alpha: 0}, 0.5, {
+					onComplete: function(aa:FlxTween)
+					{
+						uhh = null;
+					}
+				});
 			}
-
 			usingCustomBG = true;
 			return;
 		}
 
-		if (usingCustomBG){
-			if (tweenie != null) tweenie.cancel();	
-		
-			tweenie = FlxTween.tween(modBG,{alpha:0}, 0.5, {onComplete:function(aa:FlxTween){
-				tweenie = null;
-			}});
+		if (usingCustomBG)
+		{
+			if (tweenie != null)
+				tweenie.cancel();
 
-			if (uhh != null) uhh.cancel();	
-		
-			uhh = FlxTween.tween(menuBG,{alpha:0.6}, 0.5, {onComplete:function(aa:FlxTween){
-				uhh = null;
-			}});
+			tweenie = FlxTween.tween(modBG, {alpha: 0}, 0.5, {
+				onComplete: function(aa:FlxTween)
+				{
+					tweenie = null;
+				}
+			});
+
+			if (uhh != null)
+				uhh.cancel();
+
+			uhh = FlxTween.tween(menuBG, {alpha: 0.6}, 0.5, {
+				onComplete: function(aa:FlxTween)
+				{
+					uhh = null;
+				}
+			});
 		}
 
 		usingCustomBG = false;
+		trace(usingCustomBG);
 	}
 }

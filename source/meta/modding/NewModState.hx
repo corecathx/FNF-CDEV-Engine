@@ -1,5 +1,6 @@
 package meta.modding;
 
+import lime.app.Application;
 import game.cdev.CDevConfig;
 import game.Paths;
 import sys.io.File;
@@ -29,13 +30,14 @@ import game.cdev.engineutils.Discord.DiscordClient;
 #end
 import game.cdev.CDevMods.ModFile;
 
+using StringTools;
+
 class NewModState extends meta.states.MusicBeatState
 {
 	var modFile:ModFile;
 	var curSelected:Int = 0;
 	var menuBG:FlxSprite;
 	var box:FlxSprite;
-	var exitButt:FlxSprite;
 
 	override function create()
 	{
@@ -43,6 +45,11 @@ class NewModState extends meta.states.MusicBeatState
 			modName: "",
 			modDesc: "",
 			modVer: "",
+			restart_required: false,
+			disable_base_game: false,
+			window_title: "FNF MOD",
+			window_icon: "",
+
 			mod_difficulties: []
 		}
 		FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
@@ -60,71 +67,157 @@ class NewModState extends meta.states.MusicBeatState
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
-		menuBG.alpha = 0.7;
+		menuBG.alpha = 0.2;
 		menuBG.antialiasing = CDevConfig.saveData.antialiasing;
 		add(menuBG);
 
-		box = new FlxSprite().makeGraphic(800, 400, FlxColor.BLACK);
-		box.alpha = 0.7;
-		box.screenCenter();
-		add(box);
-
-		exitButt = new FlxSprite().makeGraphic(30, 20, FlxColor.RED);
-		exitButt.alpha = 0.7;
-		exitButt.x = ((box.x + box.width) - 30) - 10;
-		exitButt.y = (box.y + 20) - 10;
-		add(exitButt);
-
-		createBoxUI();
+		createBGUI();
 		super.create();
 	}
 
 	var input_modName:FlxUIInputText;
+	var txtMn:FlxText;
+
 	var input_modDesc:FlxUIInputText;
+	var txtMd:FlxText;
+
+	var check_restart:FlxSprite;
+	var label_restart:FlxText;
+
+	var check_disable:FlxSprite;
+	var label_disable:FlxText;
+
+	var input_windowTitle:FlxUIInputText;
+	var label_windowTitle:FlxText;
+
 	var butt_createMod:FlxSprite;
 	var txtbcm:FlxText;
 
-    var txtMn:FlxText;
-
-	function createBoxUI()
+	function createBGUI()
 	{
-		var header:FlxText = new FlxText(box.x, box.y + 10, 800, "Create a mod", 40);
+		var header:FlxText = new FlxText(25, 50, -1, "Create a new mod", 40);
 		header.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(header);
 
-		input_modName = new FlxUIInputText(box.x + 50, box.y + 100, 500, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
+		// MOD NAME
+		input_modName = new FlxUIInputText(50, 120, 500, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
 		input_modName.font = "VCR OSD Mono";
 		add(input_modName);
-		txtMn = new FlxText(input_modName.x, input_modName.y - 25, 500, "Mod name", 20);
+		txtMn = new FlxText(input_modName.x, input_modName.y - 25, 500, "Mod Name", 20);
 		txtMn.font = "VCR OSD Mono";
 		add(txtMn);
 
-		input_modDesc = new FlxUIInputText(box.x + 50, box.y + 150, 500, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
+		// MOD DESC
+		input_modDesc = new FlxUIInputText(50, 180, 500, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
 		input_modDesc.font = "VCR OSD Mono";
 		add(input_modDesc);
-		var txtMd:FlxText = new FlxText(input_modDesc.x, input_modDesc.y - 25, 500, "Mod description", 20);
+		txtMd = new FlxText(input_modDesc.x, input_modDesc.y - 25, 500, "Mod Description", 20);
 		txtMd.font = "VCR OSD Mono";
 		add(txtMd);
 
-		butt_createMod = new FlxSprite(865, 510).makeGraphic(150, 32, FlxColor.fromRGB(70, 70, 70));
+		// MOD ANOTHER STUFF
+		var labelanother = new FlxText(input_modDesc.x, input_modDesc.y + 35, 500, "Mod Icon & Background", 20);
+		labelanother.font = "VCR OSD Mono";
+		add(labelanother);
+		var txt:String = ""
+		+ "\nTo set the mod icon, put a .png file on root of your mod folder"
+		+ "\nand rename it to \"icon.png\"."
+		+ "\nSame goes to background image, just rename it to \"background.png\"";
+		var wee = new FlxText(labelanother.x, labelanother.y + 15, -1, txt, 18);
+		wee.font = "VCR OSD Mono";
+		add(wee);
+
+
+		// ...Additional...//
+		var header:FlxText = new FlxText(25, 350, -1, "Additional Settings", 40);
+		header.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		add(header);
+
+		var ea:FlxText = new FlxText(header.x+header.width + 15, header.y + 5, -1, "(Will apply if it's a priority mod.)", 26);
+		ea.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		add(ea);
+
+		// RESTART
+		check_restart = new FlxSprite(50, header.y + 45).makeGraphic(25, 25, 0xFFBFBFBF);
+		add(check_restart);
+		label_restart = new FlxText(check_restart.x + 30, check_restart.y, -1, "Restart Required", 20);
+		label_restart.font = "VCR OSD Mono";
+		add(label_restart);
+
+		// BASE GAME DISABLE
+		check_disable = new FlxSprite(50, check_restart.y + 50).makeGraphic(25, 25, 0xFFBFBFBF);
+		add(check_disable);
+		label_disable = new FlxText(check_disable.x + 30, check_disable.y, -1, "Disable base game songs & weeks", 20);
+		label_disable.font = "VCR OSD Mono";
+		add(label_disable);
+
+		// WINDOW TITLE
+		input_windowTitle = new FlxUIInputText(50, check_disable.y + 70, 500, "Friday Night Funkin' CDEV Engine", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
+		input_windowTitle.font = "VCR OSD Mono";
+		add(input_windowTitle);
+		label_windowTitle = new FlxText(input_windowTitle.x, input_windowTitle.y - 25, 500, "Window Title", 20);
+		label_windowTitle.font = "VCR OSD Mono";
+		add(label_windowTitle);
+
+		// WINDOW ICON
+		var label_windowIcon = new FlxText(input_windowTitle.x, input_windowTitle.y + 35, 500, "Window Icon", 20);
+		label_windowIcon.font = "VCR OSD Mono";
+		add(label_windowIcon);
+		var txt:String = ""
+		+ "\nTo set a custom window icon, put a .png file on the root of your mod folder"
+		+ "\nand rename it to \"winicon.png\".";
+		var label_windowIco = new FlxText(label_windowIcon.x, label_windowIcon.y + 15, -1, txt, 18);
+		label_windowIco.font = "VCR OSD Mono";
+		add(label_windowIco);
+
+		// CREATE MOD BUTTON
+		butt_createMod = new FlxSprite(FlxG.width - 170, FlxG.height - 42).makeGraphic(150, 32, FlxColor.fromRGB(70, 70, 70));
 		add(butt_createMod);
-		txtbcm = new FlxText(870, 515, 140, "Create Mod", 18);
+		txtbcm = new FlxText(butt_createMod.x + 5, butt_createMod.y + 5, 140, "Create Mod", 18);
 		txtbcm.font = "VCR OSD Mono";
 		txtbcm.alignment = CENTER;
 		add(txtbcm);
-
-		trace("x: " + txtbcm.x + " y: " + txtbcm.y);
+		butt_createMod.scrollFactor.set();
+		txtbcm.scrollFactor.set();
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		var the:Array<FlxUIInputText> = [input_modDesc, input_modName];
+		var the:Array<FlxUIInputText> = [input_modDesc, input_modName, input_windowTitle];
+		var e:Array<FlxSprite> = [check_restart, check_disable];
+		for (i in 0...e.length)
+		{
+			if (FlxG.mouse.overlaps(e[i]))
+			{
+				e[i].alpha = 1;
+
+				if (FlxG.mouse.justPressed)
+				{
+					var cur:Bool = false;
+					switch (i)
+					{
+						case 0:
+							modFile.restart_required = !modFile.restart_required;
+							cur = modFile.restart_required;
+						case 1:
+							modFile.disable_base_game = !modFile.disable_base_game;
+							cur = modFile.disable_base_game;
+					}
+					e[i].color = (cur ? 0xFF00FFFF : 0xFFBFBFBF);
+					FlxG.sound.play(game.Paths.sound('scrollMenu'));
+				}
+			}
+			else
+			{
+				e[i].alpha = 0.7;
+			}
+		}
 
 		for (i in 0...the.length)
 		{
-			if (the[i].hasFocus)
+			if (the[i] != null && the[i].hasFocus)
 			{
 				if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V && Clipboard.text != null)
 				{
@@ -137,80 +230,91 @@ class NewModState extends meta.states.MusicBeatState
 			}
 		}
 
-		if (the[1].hasFocus)
-		{
+		if (the[1] != null && the[1].hasFocus)
 			txtMn.color = FlxColor.WHITE;
-		}
 
-		if (FlxG.mouse.overlaps(exitButt))
-		{
-			exitButt.alpha = 1;
-			if (FlxG.mouse.justPressed)
-				exitStateShit();
-		}
-		else
-		{
-			exitButt.alpha = 0.7;
-		}
+		if (input_windowTitle.hasFocus)
+			label_windowTitle.color = FlxColor.WHITE;
 
-		if (FlxG.keys.justPressed.ESCAPE){
+		if (FlxG.keys.justPressed.ESCAPE)
 			exitStateShit();
-		}
 
-		if (FlxG.mouse.overlaps(butt_createMod))
+
+		if (butt_createMod != null && FlxG.mouse.overlaps(butt_createMod))
 		{
 			butt_createMod.alpha = 1;
 			txtbcm.alpha = 1;
 
 			if (FlxG.mouse.justPressed)
 			{
-				if (input_modName.text != '')
+				var allow = true;
+
+				if (input_modName.text.trim() == "")
+				{
+					allow = false;
+					txtMn.color = FlxColor.RED;
+				}
+
+				if (input_windowTitle.text.trim() == "")
+				{
+					allow = false;
+					label_windowTitle.color = FlxColor.RED;
+				}
+
+				if (allow)
 				{
 					modFile = {
-						modName: input_modName.text,
-						modDesc: input_modDesc.text,
-
+						
+						modName: input_modName.text.trim(),
+						modDesc: input_modDesc.text.trim(),
 						modVer: CDevConfig.engineVersion,
+						restart_required: modFile.restart_required,
+						disable_base_game: modFile.disable_base_game,
+						window_title: input_windowTitle.text.trim(),
+						window_icon: "",
+			
 						mod_difficulties: []
 					}
-                    FlxG.sound.play(game.Paths.sound('confirmMenu'));
+
+					FlxG.sound.play(game.Paths.sound('confirmMenu'));
 					game.Paths.createModFolder(input_modName.text);
 					Paths.curModDir = [];
-                    Paths.curModDir.push(modFile.modName);
+					Paths.curModDir.push(modFile.modName);
 
-                    createModJSON();
+					createModJSON();
 
-                    FlxG.switchState(new meta.modding.ModdingScreen());
+					FlxG.switchState(new meta.modding.ModdingScreen());
 					CDevConfig.saveData.loadedMods = Paths.curModDir;
 				}
 				else
 				{
-                    txtMn.color = FlxColor.RED;
 					FlxG.sound.play(game.Paths.sound('cancelMenu'));
 				}
 			}
 		}
 		else
 		{
-			txtbcm.alpha = 0.7;
-			butt_createMod.alpha = 0.7;
+			if (txtbcm != null)
+				txtbcm.alpha = 0.7;
+			if (butt_createMod != null)
+				butt_createMod.alpha = 0.7;
 		}
 	}
 
 	function exitStateShit()
 	{
 		FlxG.save.flush();
-        FlxG.sound.play(game.Paths.sound('cancelMenu'));
+		FlxG.sound.play(game.Paths.sound('cancelMenu'));
 		FlxG.switchState(new meta.modding.ModdingState());
 	}
-    
-    function createModJSON()
-    {
-        var data:String = Json.stringify(modFile, "\t");
-    
-        if (data.length > 0)
-        {
-			File.saveContent('cdev-mods/' + modFile.modName + '/mod.json' ,data);
+
+	function createModJSON()
+	{
+		var data:String = Json.stringify(modFile, "\t");
+
+		if (data.length > 0)
+		{
+			File.saveContent('cdev-mods/' + modFile.modName + '/mod.json', data);
 		}
-    }
+	}
 }

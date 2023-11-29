@@ -65,7 +65,7 @@ class ModdingState extends meta.states.MusicBeatState
 		box2.alpha = 0.5;
 		add(box1);
 		add(box2);
-		var text = meta.states.MainMenuState.coreEngineText + ' - Modding State (BETA)';
+		var text = meta.states.MainMenuState.coreEngineText + ' - Modding State';
 		var versionShit:FlxText = new FlxText(20, FlxG.height - 30, 1000, text, 16);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);

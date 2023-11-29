@@ -1,5 +1,9 @@
 package game;
 
+import game.system.FunkinBitmap;
+import lime.graphics.Image;
+import game.cdev.CDevMods.ModFile;
+import haxe.Json;
 import haxe.io.Bytes;
 import meta.modding.ModPaths;
 import sys.io.File;
@@ -32,9 +36,8 @@ class Paths
 	static public var WEEK_PATH:String = 'weeks/';
 
 	static var currentLevel:String;
-	// static public var curModDir:String = null;
 	static public var curModDir:Array<String> = [];
-	static public var currentMod:String = ''; // script shit
+	static public var currentMod:String = '';
 	public static var modsPath:String = 'cdev-mods';
 
 	#if (haxe >= "4.0.0")
@@ -47,8 +50,8 @@ class Paths
 
 	public static function destroyLoadedImages(ignoreCheck:Bool = false)
 	{
-		// if (!ignoreCheck && FlxGraphic.defaultPersist)
-		//	return; // If there's 20+ images loaded, do a cleanup just for preventing a crash
+		if (!ignoreCheck && FlxGraphic.defaultPersist)
+			return; // If there's 20+ images loaded, do a cleanup just for preventing a crash
 
 		for (key in customImagesLoaded.keys())
 		{
@@ -316,15 +319,14 @@ class Paths
 	inline static public function getSparrowAtlas(key:String, ?library:String)
 	{
 		var imageLoaded:FlxGraphic = addCustomGraphic(key);
-		//trace(imageLoaded);
+		// trace(imageLoaded);
 		var xmlExists:Bool = false;
 		if (FileSystem.exists(modXml(key)))
 		{
 			xmlExists = true;
 		}
 
-		return FlxAtlasFrames.fromSparrow(
-			(imageLoaded != null ? imageLoaded : image(key, library)),
+		return FlxAtlasFrames.fromSparrow((imageLoaded != null ? imageLoaded : image(key, library)),
 			(xmlExists ? File.getContent(modXml(key)) : file('images/$key.xml', TEXT, library)));
 		// return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
 	}
@@ -349,11 +351,21 @@ class Paths
 	{
 		if (FileSystem.exists(modImages(key)))
 		{
-			///trace(key + "exists");
 			if (!customImagesLoaded.exists(key))
 			{
-				var data:Bytes = File.getBytes(modImages(key));
-				var newBitmap:BitmapData = BitmapData.fromBytes(data);
+				var data:Image = Image.fromBytes(File.getBytes(modImages(key)));
+				var newBitmap:BitmapData = null; // BitmapData.fromImage(data);
+
+				if (CDevConfig.saveData.gpuBitmap)
+				{
+					newBitmap = new FunkinBitmap(0, 0, true, 0);
+					@:privateAccess newBitmap.__fromImage(data);
+				}
+				else
+				{
+					newBitmap = BitmapData.fromImage(data);
+				}
+
 				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
 				newGraphic.persist = true;
 				FlxG.bitmap.addGraphic(newGraphic);
@@ -380,13 +392,13 @@ class Paths
 		var path:String = 'cdev-mods/$modFolderName/';
 		var childrens:Array<String> = [];
 		var dumbFolders:Array<String> = [
-			'data',   //DATA FOLDER
+			'data', // DATA FOLDER
 			'data/charts',
 			'data/characters',
 			'data/stages',
 			'data/weeks',
 			'data/fonts',
-			'images', //IMAGES FOLDER
+			'images', // IMAGES FOLDER
 			'images/characters',
 			'images/icons/',
 			'images/storymenu',
@@ -425,6 +437,18 @@ class Paths
 		}
 
 		File.saveContent(path + 'songList.txt', ''); // prevents crash when installing a mod
+	}
+
+	inline static public function modData()
+	{
+		var p = modFolders("mod.json");
+		if (FileSystem.exists(p))
+		{
+			var f:ModFile = cast Json.parse(File.getContent(p));
+			return f;
+		}
+		trace("cannot find mod data in " + p);
+		return null;
 	}
 
 	inline static public function modText(key:String)
@@ -546,7 +570,7 @@ class Paths
 		return modFolders('songs/' + key + '.' + SOUND_EXT);
 	}
 
-	static public function modFolders(key:String)//, ?thisMod:Null<String>=null)
+	static public function modFolders(key:String) // , ?thisMod:Null<String>=null)
 	{
 		///if (curModDir != null && curModDir.length > 0)
 		// {
@@ -557,17 +581,18 @@ class Paths
 		//	}
 		// }
 		/*if (thisMod != null && thisMod != '')
-		{
-			var checkFile:String = mods(thisMod + '/' + key);
-			if (FileSystem.exists(checkFile))
-				return checkFile;
-		}
-		else*/
+			{
+				var checkFile:String = mods(thisMod + '/' + key);
+				if (FileSystem.exists(checkFile))
+					return checkFile;
+			}
+			else */
 		{
 			if (currentMod != null && currentMod != '')
 			{
 				var checkFile:String = mods(currentMod + '/' + key);
-				if (FileSystem.exists(checkFile)){
+				if (FileSystem.exists(checkFile))
+				{
 					return checkFile;
 				}
 			}

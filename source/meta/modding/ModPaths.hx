@@ -1,5 +1,7 @@
 package meta.modding;
 
+import game.system.FunkinBitmap;
+import lime.graphics.Image;
 import game.cdev.engineutils.TraceLog;
 import meta.states.PlayState;
 import openfl.utils.Assets;
@@ -47,9 +49,23 @@ class ModPaths
 
 	public function addCustomGraphic(key:String):FlxGraphic
 	{
-		if (FileSystem.exists('cdev-mods/$mod/images/$key.png'))
+		var path:String = 'cdev-mods/$mod/images/$key.png';
+		if (FileSystem.exists(path))
 		{
-			var newBitmap:BitmapData = BitmapData.fromFile('cdev-mods/$mod/images/$key.png');
+			//var newBitmap:BitmapData = BitmapData.fromFile('cdev-mods/$mod/images/$key.png');
+
+			var data:Image = Image.fromBytes(File.getBytes(path));
+			var newBitmap:BitmapData = null;
+
+			if (CDevConfig.saveData.gpuBitmap)
+			{
+				newBitmap = new FunkinBitmap(0, 0, true, 0);
+				@:privateAccess newBitmap.__fromImage(data);
+			}
+			else
+			{
+				newBitmap = BitmapData.fromImage(data);
+			}
 
 			var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
 			newGraphic.persist = true;
@@ -85,7 +101,8 @@ class ModPaths
 	public function sound(key:String)
 	{
 		var e:String = key;
-		if (e.endsWith(".ogg")){
+		if (e.endsWith(".ogg"))
+		{
 			e = e.replace(".ogg", "");
 		}
 		return returnAudioFile(currentModFolder('sounds/$e.ogg'));
@@ -94,7 +111,8 @@ class ModPaths
 	public function music(key:String)
 	{
 		var e:String = key;
-		if (e.endsWith(".ogg")){
+		if (e.endsWith(".ogg"))
+		{
 			e = e.replace(".ogg", "");
 		}
 		return returnAudioFile(currentModFolder('music/$e.ogg'));
@@ -109,7 +127,8 @@ class ModPaths
 		}
 		else
 		{
-			PlayState.addNewTraceKey('Error while loading "$key" image asset, returning null value.');
+			TraceLog.addLogData('Error while loading "$key" image asset, returning null value.');
+			//PlayState.addNewTraceKey('Error while loading "$key" image asset, returning null value.');
 		}
 
 		return currentModFolder('images/$key.png');
@@ -152,5 +171,25 @@ class ModPaths
 		if (FileSystem.exists(checkFile))
 			return checkFile;
 		return 'cdev-mods/$mod/' + key;
+	}
+
+	/*
+		WIP
+	 */
+	public function getFromAssets(key:String, type:String, fromPreload:Bool)
+	{
+		var lib:String = (fromPreload ? "preload" : "shared");
+		switch (type.toLowerCase()){
+			case "sound":
+				return Paths.sound(key, lib);
+			case "image":
+				return Paths.image(key, lib);
+			case "music":
+				return Paths.music(key, lib);
+			default:
+				TraceLog.addLogData('getFromAssets($key,$type,$fromPreload): Your "AssetType" should be "sound" / "image" / "music". $type is invalid.');
+				return null;
+		}
+		return null;
 	}
 }

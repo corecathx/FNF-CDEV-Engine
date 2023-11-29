@@ -4,7 +4,7 @@ import sys.FileSystem;
 import sys.io.File;
 import openfl.display.BlendMode;
 import flixel.addons.transition.FlxTransitionableState;
-import game.cdev.engineutils.Discord.DiscordClient;
+#if desktop import game.cdev.engineutils.Discord.DiscordClient; #end
 import game.cdev.CDevConfig;
 import flixel.tweens.FlxTween;
 import game.objects.AttachedSprite;

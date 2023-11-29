@@ -49,7 +49,7 @@
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
 
 	<!--CDEV Engine's define names-->
-	<define name="ALLOW_MODS" if="desktop"/>
+	<define name="ALLOW_MODS"/><!-- if="desktop"-->
 	<define name="CRASH_HANDLER" if="desktop"/>
 	<!--<define name="USE_VIDEOS"/>-->
 	
@@ -126,8 +126,6 @@
 	<haxelib name="flixel-addons" />
 	<haxelib name="hscript" />
 
-	
-
 	<!--In case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
 	<haxelib name="faxe" if='switch'/>
@@ -192,8 +190,7 @@
 	<icon path="art/icon256.png" size='256'/>
 	<icon path="art/icon512.png" size='512'/>
 	<icon path="art/iconOG.png" />
-
-	<!-- <haxedef name="SKIP_TO_PLAYSTATE" if="debug" /> -->
+	
 	<haxedef name="NG_LOGIN" if="newgrounds" />
 	
 </project>

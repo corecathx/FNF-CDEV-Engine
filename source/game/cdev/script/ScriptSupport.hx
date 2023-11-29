@@ -51,7 +51,7 @@ class ScriptSupport
 	public static var scripts:Array<CDevModScript> = [];
 	public static var typedScripts:Array<CDevScript> = [];
 	public static var currentMod:String = "FNF Test Mod";
-	public static var playStated:PlayState = null;
+	public static var playStated:PlayState = new PlayState();
 
 	public static function parseSongConfig()
 	{
@@ -61,7 +61,7 @@ class ScriptSupport
 		trace(songConf.scripts);
 	}
 
-	public static function setScriptDefaultVars(script:CDevScript, mod:String, ?song:String)
+	public static function setScriptDefaultVars(script:CDevScript, mod:String, ?song:String, ?state:PlayState)
 	{
 		var curState:Dynamic = FlxG.state;
 		playStated = curState;
@@ -78,7 +78,7 @@ class ScriptSupport
 		script.setVariable("super", superVar);
 		script.setVariable("mod", mod);
 		script.setVariable("PlayState", playStated);
-		script.setVariable("import", function(className:String)
+		script.setVariable("import", function(className:String, ?as:String = "-") //as = whether to import that class as another name
 		{
 			var splitClassName = [for (e in className.split(".")) e.trim()];
 			var realClassName = splitClassName.join(".");
@@ -86,10 +86,19 @@ class ScriptSupport
 			var en = Type.resolveEnum(realClassName);
 			if (cl == null && en == null)
 			{
-				trace('Class / Enum at $realClassName does not exist.');
+				var msg = 'Class / Enum at $realClassName does not exist.';
+				script.trace(msg);
+				trace(msg);
 			}
 			else
 			{
+				var classname:String = splitClassName[splitClassName.length - 1];
+
+				if (as != "-"){
+					classname = CDevConfig.utils.removeSymbols(as);
+				}
+				trace(classname);
+
 				if (en != null)
 				{
 					var enumThingy = {};
@@ -97,12 +106,11 @@ class ScriptSupport
 					{
 						Reflect.setField(enumThingy, c, en.createByName(c));
 					}
-					script.setVariable(splitClassName[splitClassName.length - 1], enumThingy);
+					script.setVariable(classname, enumThingy);
 				}
 				else
 				{
-					// CLASS!!!!
-					script.setVariable(splitClassName[splitClassName.length - 1], cl);
+					script.setVariable(classname, cl);
 				}
 			}
 		});
@@ -176,7 +184,10 @@ class ScriptSupport
 		script.setVariable("Rectangle", Rectangle);
 		script.setVariable("Point", Point);
 		script.setVariable("Window", Application.current.window);
-		script.setVariable("CDevConfig", CDevConfig.saveData); //i can't let the players access the entire CDevConfig class.
+		script.setVariable("CDevConfig", { //
+			saveData: CDevConfig.saveData,
+			engineVersion: CDevConfig.engineVersion
+		});//CDevConfig.saveData);
 		script.setVariable("GraphicsShader", GraphicsShader);
 		script.setVariable("FlxGraphicsShader", FlxGraphicsShader);
 		script.setVariable("ShaderFilter", ShaderFilter);

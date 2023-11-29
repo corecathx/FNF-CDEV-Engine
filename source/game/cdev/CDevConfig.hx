@@ -1,5 +1,9 @@
 package game.cdev;
 
+import sys.io.Process;
+import game.cdev.engineutils.Discord.DiscordClient;
+import lime.graphics.Image;
+import lime.app.Application;
 import haxe.io.Bytes;
 import haxe.Unserializer;
 import haxe.Serializer;
@@ -15,99 +19,20 @@ import openfl.Lib;
 
 using StringTools;
 
-typedef CDevSaveData =
-{
-	var save_version:String;
-	// basic settings
-	var downscroll:Bool;
-	var songtime:Bool;
-	var flashing:Bool;
-	var camZoom:Bool;
-	var camMovement:Bool;
-	var fullinfo:Bool;
-	var frames:Int;
-	var offset:Float;
-	var ghost:Bool;
-	var fpscap:Int;
-	var botplay:Bool;
-	var noteImpact:Bool;
-	var noteRipples:Bool;
-	var autoPause:Bool;
-
-	// keybind stuff
-	var leftBind:String;
-	var downBind:String;
-	var upBind:String;
-	var rightBind:String;
-	var resetBind:String;
-
-	// appearance
-	var performTxt:String;
-	var smoothAF:Bool; // fps, fps-mem, mem, hide
-	var middlescroll:Bool;
-	var antialiasing:Bool;
-	var fnfNotes:Bool; // this option is kind of useless and may be removed in the future release.
-	var hitsound:Bool;
-	var shaders:Bool;
-
-	/////// more stuff ////////
-	// rating sprite
-	var rX:Float;
-	var rY:Float;
-	var rChanged:Bool;
-	// combo sprite
-	var cX:Float;
-	var cY:Float;
-	var cChanged:Bool;
-	// discord RPC
-	#if desktop var discordRpc:Bool; #end
-	// misc settings
-	var bgNote:Bool;
-	var bgLane:Bool;
-	var engineWM:Bool;
-	var resetButton:Bool;
-	var healthCounter:Bool;
-	var showDelay:Bool;
-	var multiRateSprite:Bool;
-	// chart modifiers
-	var randomNote:Bool;
-	var suddenDeath:Bool;
-	var scrollSpeed:Float;
-	var healthGainMulti:Float;
-	var healthLoseMulti:Float;
-	var comboMultipiler:Float;
-	// debug and testing
-	var testMode:Bool;
-	// more more stuff
-	var loadedMods:Array<String>;
-	var checkNewVersion:Bool;
-	var cameraStartFocus:Int; // i wanted to set this as string soon
-	var showTraceLogAt:Int; // 0=hide, 1=show-g, 2=show-p
-	var autosaveChart:Bool;
-	var autosaveChart_interval:Float;
-
-	var traceLogMessage:Bool;
-}
-
 /**
  * Configuration class for CDEV Engine
  */
 class CDevConfig
 {
+	public static var window_title:String = "Friday Night Funkin' CDEV Engine";
+	public static var window_icon_custom:Bool = false;
 	public static var debug:Bool = false;
 	public static var elapsedGameTime:Float;
-	public static var engineVersion:String = "1.5";
+	public static var engineVersion:String = "1.6";
 	public static var utils(default, null):CDevUtils = new CDevUtils();
 
 	public static var DEPRECATED_STUFFS:Map<String, String>;
 
-	/**
-	 * LEFT
-	 * DOWN
-	 * UP
-	 * RIGHT
-	 * RESET
-	 */
 	public static var keyBinds:Dynamic = {
 		left: "A",
 		down: "S",
@@ -121,10 +46,8 @@ class CDevConfig
 
 		reset: "R",
 		accept: "BACK"
-	}; // LEFT, DOWN, UP, RIGHT, RESET
+	};
 
-	//public static var saveData:CDevSaveData = null;
-	//FlxG.save.data styled shit
 	public static var saveData(default, null):Dynamic;
 	public static var savePath:String = "";
 	public static var saveFolder:String = "\\CDEV Engine\\";
@@ -182,7 +105,16 @@ class CDevConfig
 		{
 			trace("Save folder existed.");
 			var data:String = File.getContent(fullPath);
-			var json = Json.parse(Unserializer.run(data));
+			var json = null;
+			
+			try {
+				json = Json.parse(Unserializer.run(data));
+			} catch(ex){
+				var text:String = 'An error occured while opening your save data\nPlease restart your CDEV Engine to see if the problem fixed.\nIf the issue persists, then delete "$saveFileName" file on your\r\n$savePath folder.';
+				Application.current.window.alert(text);
+		
+				Sys.exit(1);
+			}
 
 			toReturn = json;
 		}
@@ -227,9 +159,12 @@ class CDevConfig
 		// is this actually working??
 
 		Paths.curModDir = saveData.loadedMods;
+		trace(Paths.curModDir);
 		var dirs:Array<String> = FileSystem.readDirectory('cdev-mods/');
+		trace(dirs);
 		for (i in 0...saveData.loadedMods.length)
 		{
+			//if ()
 			var mod:String = saveData.loadedMods[i];
 			if (!dirs.contains(mod))
 			{
@@ -242,25 +177,32 @@ class CDevConfig
 
 	public static function saveCurrentKeyBinds()
 	{
-		/*keyBinds.left = "A";
-		keyBinds.down = "S";
-		keyBinds.up = "W";
-		keyBinds.right = "D";
-
-		keyBinds.ui_left = "A";
-		keyBinds.ui_down = "S";
-		keyBinds.ui_up = "W";
-		keyBinds.ui_right = "D";
-
-		keyBinds.reset = "R";
-		keyBinds.accept = "BACK";
-		keyBinds.back = "";
-		keyBinds[0] = saveData.leftBind;
-		keyBinds[1] = saveData.downBind;
-		keyBinds[2] = saveData.upBind;
-		keyBinds[3] = saveData.rightBind;
-		keyBinds[4] = saveData.resetBind;*/
+		//hi
 	}
+
+	
+	public static function setWindowProperty(reset:Bool, ?title:String, ?icon:String){
+		trace("SetWindowProperty called.");
+		var error = (title==null || icon==null);
+		trace("Error is " + error);
+		if (error){
+			return;
+		}
+
+		window_title = (reset ? "Friday Night Funkin' CDEV Engine" : title);
+		window_icon_custom = (FileSystem.exists(icon) && !reset);
+		var iconAsset = (window_icon_custom ? icon : "assets/shared/images/icon16.png");
+
+		trace("\nInformation:\nTitle: "+window_title+"\nIcon Custom: " + window_icon_custom+"\niconasset: " + iconAsset);
+
+		Application.current.window.title = window_title;
+		trace("Set title success.");
+		var f = File.getBytes(iconAsset);
+		var i:Image = Image.fromBytes(f);
+		trace("image: " + i + " // file: " + f);
+		Application.current.window.setIcon(i);
+	}
+
 
 	public static function setFPS(daSet:Int)
 	{
@@ -371,7 +313,9 @@ class CDevConfig
 			autosaveChart: false,
 			autosaveChart_interval: 0,
 
-			traceLogMessage: true
+			traceLogMessage: true,
+
+			gpuBitmap: false
 		}
 		return save;
 	}

@@ -8,6 +8,8 @@ import sys.FileSystem;
 
 using StringTools;
 
+// ZIP CLASS OG = YoshiCrafterEngine
+// Modified for CDEV Engine
 class CDevZip
 {
 	public static function unzip(_path:String, _dest:String, ignoreRootFolder:String = "")

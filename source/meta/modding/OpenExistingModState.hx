@@ -69,7 +69,11 @@ class OpenExistingModState extends meta.states.MusicBeatState
 			var sad:ModFile = {
 				modName: 'No Mods Found',
 				modDesc: 'Please check your cdev-mods folder.',
-				modVer: game.cdev.CDevConfig.engineVersion,
+				modVer: CDevConfig.engineVersion,
+				restart_required: false,
+				disable_base_game: false,
+				window_title: "Friday Night Funkin' CDEV Engine",
+				window_icon: "",
 				mod_difficulties: []
 			};
 			modShits.push(sad);

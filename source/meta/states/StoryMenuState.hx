@@ -1,5 +1,6 @@
 package meta.states;
 
+import game.cdev.CDevMods.ModFile;
 import game.objects.StoryDiffSprite;
 import game.objects.Alphabet;
 import openfl.display.BitmapData;
@@ -68,6 +69,8 @@ class StoryMenuState extends MusicBeatState
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
+
+		CDevConfig.utils.getStateScript("StoryMenuState");
 
 		loadWeeks();
 
@@ -207,7 +210,21 @@ class StoryMenuState extends MusicBeatState
 	{
 		var theFiles:Array<Dynamic> = [];
 
-		for (i in 0...8)
+		var allowDefSongs = true;
+		if (CDevConfig.utils.isPriorityMod())
+		{
+			Paths.currentMod = CDevConfig.utils.isPriorityMod(true);
+			var data:ModFile = Paths.modData();
+			if (data != null)
+			{
+				if (Reflect.hasField(data, "disable_base_game"))
+				{
+					allowDefSongs = !data.disable_base_game;
+				}
+			}
+		}
+
+		if (allowDefSongs) for (i in 0...8)
 		{
 			var path:String = Paths.week('week' + i);
 			trace(path);
@@ -252,6 +269,7 @@ class StoryMenuState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		super.update(elapsed);
 		// scoreText.setFormat('VCR OSD Mono', 32);
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, 0.5));
 
@@ -325,8 +343,6 @@ class StoryMenuState extends MusicBeatState
 			}
 			FlxG.switchState(new MainMenuState());
 		}
-
-		super.update(elapsed);
 	}
 
 	var movedBack:Bool = false;

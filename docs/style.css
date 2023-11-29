@@ -1,0 +1,97 @@
+@font-face {
+    font-family: funkinFont;
+    src: url(assets/pmf.ttf);
+}
+@font-face {
+    font-family: funkinDiff;
+    src: url(assets/pmf2.ttf);
+}
+
+body {
+    background-color: black;
+}
+body, html {
+    margin: 0;
+    padding: 0;
+}
+.container {
+    display: grid;
+    grid-template-columns: 300px auto;
+}
+
+.tab-content {
+    display: none;
+    font-family: funkinFont;
+    max-width: 85%;
+}
+
+.active-tab {
+    display: block;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    border: 1px solid rgb(139, 139, 139);
+    padding: 8px;
+    text-align: left;
+}
+
+code {
+    font-family: Consolas,"courier new";
+    background-color: black;
+}
+
+#sidebar {
+    background-color: #111111;
+    padding: 20px;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+#sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#sidebar ul li {
+    margin-bottom: 10px;
+}
+
+#sidebar ul li a {
+    text-decoration: none;
+    color: #a1a1a1;
+    font-family: funkinFont;
+    display: block;
+    letter-spacing: 0.5px;
+}
+
+#content {
+    background-color: #000000;
+    color: #FFFFFF;
+    padding: 20px;
+    font-family: funkinFont;
+    letter-spacing: 0.5px;
+    line-height: 120%;
+}
+
+#sidebar ul li a:hover {
+    background-color: #353535;
+}
+
+.titlestuffs{
+    color: white; 
+    font-family: funkinDiff;
+    font-size: 24px;
+    letter-spacing: 2px;
+}
+
+.titlestuffsD{
+    color: white; 
+    font-family: funkinFont;
+    font-size: 34px;
+}

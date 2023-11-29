@@ -67,7 +67,7 @@ class MainMenuState extends MusicBeatState
 		game.cdev.CDevConfig.setFPS(CDevConfig.saveData.fpscap);
 		Paths.destroyLoadedImages();
 		FlxG.save.flush();
-		CDevConfig.storeSaveData();
+
 		FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
 		FlxG.sound.volumeDownKeys = [MINUS,NUMPADMINUS];
 		FlxG.sound.volumeUpKeys = [PLUS,NUMPADPLUS];
@@ -78,9 +78,22 @@ class MainMenuState extends MusicBeatState
 			DiscordClient.changePresence("In the Menus", null);
 		#end				
 
-
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
+
+		WeekData.loadWeeks();
+		SettingsProperties.load_default();
+
+		CDevConfig.storeSaveData();
+
+		game.cdev.CDevConfig.utils.cacheUISounds();
+
+		game.cdev.engineutils.PlayerSettings.player1.controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
+		
+		super.create();
+
+		if (!disableSwitching)
+			CDevConfig.utils.getStateScript("MainMenuState");
 
 		if (FlxG.sound.music != null){
 			if (!FlxG.sound.music.playing)
@@ -184,10 +197,6 @@ class MainMenuState extends MusicBeatState
 		gameTimeElasped.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(gameTimeElasped);
 
-		game.cdev.CDevConfig.utils.cacheUISounds();
-
-		game.cdev.engineutils.PlayerSettings.player1.controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
-
 		changeItem();
 		changeText();
 
@@ -196,15 +205,6 @@ class MainMenuState extends MusicBeatState
 			FlxG.camera.zoom = 1.5;
 			FlxTween.tween(FlxG.camera, {zoom: 1}, 1, {ease: FlxEase.cubeOut});
 		}
-
-		super.create();
-
-		WeekData.loadWeeks();
-		SettingsProperties.load_default();
-
-		CDevConfig.storeSaveData();
-		if (!disableSwitching)
-			CDevConfig.utils.getStateScript("MainMenuState");
 	}
 
 	var selectedSomethin:Bool = false;
