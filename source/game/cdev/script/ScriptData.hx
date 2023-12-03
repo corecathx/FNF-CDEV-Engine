@@ -16,7 +16,6 @@ class ScriptData
 		for (s in scripts)
 		{
 			var pth:String = s.daPath;
-			trace('path: ' + pth);
 			var sc = CDevScript.create(pth);
 			if (sc == null)
 				continue;

@@ -295,8 +295,6 @@ class Stage
 								anim: animName,
 								sprite: daSprite
 							}
-							trace(beatSprite_anim);
-							trace(stageJSON.sprites[i].animType.toLowerCase());
 							switch (stageJSON.sprites[i].animType.toLowerCase())
 							{
 								case "beat-force":

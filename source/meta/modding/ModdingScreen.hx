@@ -23,7 +23,7 @@ import game.*;
 
 class ModdingScreen extends meta.states.MusicBeatState
 {
-	var options:Array<String> = [/*"Add a new song" ,*/'Character Editor', 'Stage Editor', 'Week Editor'/*, 'Add Event Script' no*/];
+	var options:Array<String> = ["Add a new song" ,'Character Editor', 'Stage Editor', 'Week Editor'/*, 'Add Event Script' no*/];
 	var curSelected:Int = 0;
 	var grpMenu:FlxTypedGroup<Alphabet>;
 	var menuBG:FlxSprite;
@@ -40,7 +40,7 @@ class ModdingScreen extends meta.states.MusicBeatState
 		#end
 
 		menuBG = new FlxSprite().loadGraphic(Paths.image('menuDesat', 'preload'));
-		menuBG.color = 0xFFea71fd;
+		menuBG.color = 0xff0088ff;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();

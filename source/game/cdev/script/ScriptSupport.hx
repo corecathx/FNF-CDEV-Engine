@@ -58,7 +58,6 @@ class ScriptSupport
 		var songConf = SongConfScript.parse(currentMod, PlayState.SONG.song.toLowerCase());
 
 		scripts = songConf.scripts;
-		trace(songConf.scripts);
 	}
 
 	public static function setScriptDefaultVars(script:CDevScript, mod:String, ?song:String, ?state:PlayState)
@@ -97,7 +96,6 @@ class ScriptSupport
 				if (as != "-"){
 					classname = CDevConfig.utils.removeSymbols(as);
 				}
-				trace(classname);
 
 				if (en != null)
 				{
@@ -193,33 +191,8 @@ class ScriptSupport
 		script.setVariable("ShaderFilter", ShaderFilter);
 		script.setVariable("FlxCamera", FlxCamera);
 
-		// oh god
-		/*script.setVariable("importScript", function(scriptname)
-		{
-			var scriptfile:String = scriptname;
-			if (scriptfile.endsWith(".hx")) // no need to add .hx ext
-				scriptfile = scriptfile.substr(0, scriptfile.length-3);
-
-			trace("\n\n" + script.fileName + ".hx is trying to import " + scriptname);
-
-			var scriptPath = Paths.mods(mod + "/data/charts/" + PlayState.SONG.song + '/$scriptname.hx');
-			trace("script path: " + scriptPath);
-			if (FileSystem.exists(scriptPath))
-			{
-				trace("script exists, adding variable to " + script.fileName);
-				var cdev:CDevScript = CDevScript.create(scriptPath);
-				cdev.loadFile(scriptPath);
-				setScriptDefaultVars(cdev, mod, PlayState.SONG.song);
-				script.setVariable(scriptname, new CDevCustomScript(cdev));
-			}
-			else
-			{
-				script.trace("Script with name: \"" + scriptname + ".hx\" does not exist.");
-			}
-		});*/
-
 		script.mod = mod;
-		//trace('initfinished');
+		trace('init script finished');
 	}
 
 	public static function getExprFromPath(path:String, critical:Bool = false, ea:CDevScript):hscript.Expr

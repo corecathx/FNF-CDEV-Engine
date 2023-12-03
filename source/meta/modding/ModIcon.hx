@@ -32,9 +32,6 @@ class ModIcon extends FlxSprite
         } else{
             name = 'noIconMod';
         }
-		
-        trace(name);
-        trace(iconExist);
 
 		var file:Dynamic = Paths.modImage(name,iconExist);
 		//trace(file);

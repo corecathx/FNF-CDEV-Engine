@@ -30,10 +30,8 @@ class SongConfScript
 		var folder:String = '';
 
 		if (mod == "BASEFNF"){
-			trace("it's assets");
 			folder = "assets/data/charts/"+song+"/";
 		} else{
-			trace("it's cdev-mods");
 			folder = 'cdev-mods/$mod/data/charts/$song/';
 		}
 
@@ -43,7 +41,6 @@ class SongConfScript
 		
 		if (scripts.length == 0)
 		{
-			trace('script was null. uh huh');
 			scripts = [
 				{
 					daPath: 'cdev-mods/FNF Test Mod/data/charts/mod-test/unknown.hx',
@@ -71,13 +68,11 @@ class SongConfScript
 		{
 			for (object in insideTheThing)
 			{
-				trace(object);
 				if (!FileSystem.isDirectory(folder + object))
 				{
 					if (object.endsWith('.hx'))
 					{
 						var objName:String = object.substr(0, object.length - 3);
-						trace(objName);
 						if (notAllowed.contains(objName))
 						{
 							trace(object + " can't be used as song script. skipping...");

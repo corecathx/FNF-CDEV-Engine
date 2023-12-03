@@ -1,5 +1,7 @@
 package meta.modding;
 
+import game.cdev.CDevPopUp;
+import game.cdev.CDevPopUp.PopUpButton;
 import lime.app.Application;
 import game.cdev.CDevConfig;
 import game.Paths;
@@ -47,7 +49,7 @@ class NewModState extends meta.states.MusicBeatState
 			modVer: "",
 			restart_required: false,
 			disable_base_game: false,
-			window_title: "FNF MOD",
+			window_title: "Friday Night Funkin' CDEV Engine",
 			window_icon: "",
 
 			mod_difficulties: []
@@ -63,7 +65,7 @@ class NewModState extends meta.states.MusicBeatState
 		#end
 
 		menuBG = new FlxSprite().loadGraphic(game.Paths.image('menuDesat'));
-		menuBG.color = FlxColor.CYAN;
+		menuBG.color = 0xff0088ff;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
@@ -261,30 +263,23 @@ class NewModState extends meta.states.MusicBeatState
 					label_windowTitle.color = FlxColor.RED;
 				}
 
+				var path:String = Paths.modsPath + "/"+input_modName.text.trim();
+				if (FileSystem.exists(path) && FileSystem.isDirectory(path)){
+					allow = false;
+
+					var butt:Array<PopUpButton> = [];
+					var text:String = "Failed to create \"" + input_modName.text.trim() + "\": a mod with the same name already exists." +
+					"\n\nIf you wanted to update the mod's directories, press \"Update\"; This action will reset your mod.json, songList.txt, and credits.txt.";
+					butt = [
+						{text: "Update", callback: createMod},
+						{text: "Cancel", callback: function(){}},
+					];
+					openSubState(new CDevPopUp("Error", text, butt,false, true));
+				}
+
 				if (allow)
 				{
-					modFile = {
-						
-						modName: input_modName.text.trim(),
-						modDesc: input_modDesc.text.trim(),
-						modVer: CDevConfig.engineVersion,
-						restart_required: modFile.restart_required,
-						disable_base_game: modFile.disable_base_game,
-						window_title: input_windowTitle.text.trim(),
-						window_icon: "",
-			
-						mod_difficulties: []
-					}
-
-					FlxG.sound.play(game.Paths.sound('confirmMenu'));
-					game.Paths.createModFolder(input_modName.text);
-					Paths.curModDir = [];
-					Paths.curModDir.push(modFile.modName);
-
-					createModJSON();
-
-					FlxG.switchState(new meta.modding.ModdingScreen());
-					CDevConfig.saveData.loadedMods = Paths.curModDir;
+					createMod();
 				}
 				else
 				{
@@ -299,6 +294,31 @@ class NewModState extends meta.states.MusicBeatState
 			if (butt_createMod != null)
 				butt_createMod.alpha = 0.7;
 		}
+	}
+
+	function createMod(){
+		modFile = {
+						
+			modName: input_modName.text.trim(),
+			modDesc: input_modDesc.text.trim(),
+			modVer: CDevConfig.engineVersion,
+			restart_required: modFile.restart_required,
+			disable_base_game: modFile.disable_base_game,
+			window_title: input_windowTitle.text.trim(),
+			window_icon: "",
+
+			mod_difficulties: []
+		}
+
+		FlxG.sound.play(game.Paths.sound('confirmMenu'));
+		game.Paths.createModFolder(input_modName.text);
+		Paths.curModDir = [];
+		Paths.curModDir.push(modFile.modName);
+
+		createModJSON();
+
+		FlxG.switchState(new meta.modding.ModdingScreen());
+		CDevConfig.saveData.loadedMods = Paths.curModDir;
 	}
 
 	function exitStateShit()

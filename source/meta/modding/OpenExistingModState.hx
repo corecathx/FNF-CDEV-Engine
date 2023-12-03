@@ -47,7 +47,6 @@ class OpenExistingModState extends meta.states.MusicBeatState
         var shit:Array<String> = FileSystem.readDirectory('cdev-mods/');
 
 		shit.remove('readme.txt'); //excludes readme.txt from the list.
-        trace(shit);
         for (i in 0...shit.length){
             if (FileSystem.isDirectory('cdev-mods/' + shit[i])){
                 var crapJSON = null;

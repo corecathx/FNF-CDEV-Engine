@@ -44,6 +44,12 @@ class ModPaths
 
 	public function xml(key:String):String
 	{
+		var e = currentModFolder('images/$key.xml');
+		if (FileSystem.exists(e)) return e;
+
+		e = Paths.xml(e);
+		if (FileSystem.exists(e)) return e; 
+
 		return currentModFolder('images/$key.xml');
 	}
 
@@ -52,8 +58,6 @@ class ModPaths
 		var path:String = 'cdev-mods/$mod/images/$key.png';
 		if (FileSystem.exists(path))
 		{
-			//var newBitmap:BitmapData = BitmapData.fromFile('cdev-mods/$mod/images/$key.png');
-
 			var data:Image = Image.fromBytes(File.getBytes(path));
 			var newBitmap:BitmapData = null;
 
@@ -101,36 +105,40 @@ class ModPaths
 	public function sound(key:String)
 	{
 		var e:String = key;
-		if (e.endsWith(".ogg"))
-		{
-			e = e.replace(".ogg", "");
-		}
-		return returnAudioFile(currentModFolder('sounds/$e.ogg'));
+		if (e.endsWith(".ogg")) e = e.replace(".ogg", "");
+
+		var snd:Sound = returnAudioFile(currentModFolder('sound/$e.ogg'));
+		if (snd != null) return snd; 
+
+		snd = Paths.sound(key);
+		if (snd != null) return snd;
+
+		return null;
 	}
 
 	public function music(key:String)
 	{
 		var e:String = key;
-		if (e.endsWith(".ogg"))
-		{
-			e = e.replace(".ogg", "");
-		}
-		return returnAudioFile(currentModFolder('music/$e.ogg'));
+		if (e.endsWith(".ogg")) e = e.replace(".ogg", "");
+
+		var snd:Sound = returnAudioFile(currentModFolder('music/$e.ogg'));
+		if (snd != null) return snd; 
+
+		snd = Paths.music(key);
+		if (snd != null) return snd;
+
+		return null;
 	}
 
 	public function image(key:String):Dynamic
 	{
 		var imageToReturn:FlxGraphic = addCustomGraphic(key);
-		if (imageToReturn != null)
-		{
-			return imageToReturn;
-		}
-		else
-		{
-			TraceLog.addLogData('Error while loading "$key" image asset, returning null value.');
-			//PlayState.addNewTraceKey('Error while loading "$key" image asset, returning null value.');
-		}
+		if (imageToReturn != null) return imageToReturn;
 
+		imageToReturn = Paths.image(key);
+		if (imageToReturn != null) return imageToReturn;
+
+		TraceLog.addLogData('Error while loading "$key" image asset, returning null value.');
 		return currentModFolder('images/$key.png');
 	}
 

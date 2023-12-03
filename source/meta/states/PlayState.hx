@@ -1442,7 +1442,8 @@ class PlayState extends MusicBeatState
 		scripts.executeFunc('postCreate', []);
 	}
 
-	function initModifiers(){
+	function initModifiers()
+	{
 		randomNote = CDevConfig.saveData.randomNote;
 		suddenDeath = CDevConfig.saveData.suddenDeath;
 		scrSpd = CDevConfig.saveData.scrollSpeed;
@@ -1453,7 +1454,8 @@ class PlayState extends MusicBeatState
 		playingLeftSide = FreeplayState.playOnLeftSide;
 	}
 
-	function initCutsceneScripts(){
+	function initCutsceneScripts()
+	{
 		var introExist:Bool = false;
 		var outroExist:Bool = false;
 
@@ -1471,10 +1473,8 @@ class PlayState extends MusicBeatState
 
 		for (i in pathIntro)
 		{
-			trace(i);
 			if (FileSystem.exists(i))
 			{
-				trace("existed." + i);
 				introExist = true;
 				intro_cutscene_script = CDevScript.create(i);
 				introPath = i;
@@ -1484,10 +1484,8 @@ class PlayState extends MusicBeatState
 
 		for (i in pathOutro)
 		{
-			trace(i);
 			if (FileSystem.exists(i))
 			{
-				trace("existed.");
 				outroExist = true;
 				outro_cutscene_script = CDevScript.create(i);
 				outroPath = i;
@@ -1514,7 +1512,6 @@ class PlayState extends MusicBeatState
 			outro_cutscene_script.setVariable("runOnFreeplay", false);
 			ScriptSupport.setScriptDefaultVars(outro_cutscene_script, fromMod);
 		}
-
 	}
 
 	// tank Week
@@ -2123,46 +2120,44 @@ class PlayState extends MusicBeatState
 
 	function startSong():Void
 	{
-		camHUD.visible = true;
-		startingSong = false;
-		songStarted = true;
-		previousFrameTime = FlxG.game.ticks;
-		lastReportedPlayheadPosition = 0;
-
-		if (!paused)
-			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
-
-		// FlxG.sound.music.time += SONG.offset + Conductor.offset;
-		if (songSpeed == 1)
+		if (!songStarted)
 		{
-			FlxG.sound.music.onComplete = endSong;
-			FlxAnimationController.animSpeed = 1;
-		}
-		else
-		{
-			FlxAnimationController.animSpeed = songSpeed;
-			FlxG.sound.music.onComplete = function()
+			camHUD.visible = true;
+			startingSong = false;
+			songStarted = true;
+			previousFrameTime = FlxG.game.ticks;
+			lastReportedPlayheadPosition = 0;
+
+			if (songSpeed == 1)
 			{
-			};
+				FlxG.sound.music.onComplete = endSong;
+				FlxAnimationController.animSpeed = 1;
+			}
+			else
+			{
+				FlxAnimationController.animSpeed = songSpeed;
+				FlxG.sound.music.onComplete = null;
+			}
+
+			if (!paused){
+				FlxG.sound.music.play();
+				vocals.play();
+			}
+
+			FlxTween.tween(bgNoteLane, {alpha: 0.5}, Conductor.crochet / 1000, {ease: FlxEase.linear});
+			FlxTween.tween(songPosBGspr, {alpha: 1}, Conductor.crochet / 1000, {ease: FlxEase.linear});
+			FlxTween.tween(songPosBar, {alpha: 1}, Conductor.crochet / 1000, {ease: FlxEase.linear});
+			#if desktop
+			// Song duration in a float, useful for the time left feature
+			songLength = FlxG.sound.music.length;
+
+			// Updating Discord Rich Presence (with Time Left)
+			if (Main.discordRPC)
+				DiscordClient.changePresence(detailsText, daRPCInfo, iconRPC, true, songLength);
+			#end
+
+			scripts.executeFunc('onStartSong', []);
 		}
-
-		if (!paused)
-			vocals.play();
-		// vocals_opponent.play();
-
-		FlxTween.tween(bgNoteLane, {alpha: 0.5}, Conductor.crochet / 1000, {ease: FlxEase.linear});
-		FlxTween.tween(songPosBGspr, {alpha: 1}, Conductor.crochet / 1000, {ease: FlxEase.linear});
-		FlxTween.tween(songPosBar, {alpha: 1}, Conductor.crochet / 1000, {ease: FlxEase.linear});
-		#if desktop
-		// Song duration in a float, useful for the time left feature
-		songLength = FlxG.sound.music.length;
-
-		// Updating Discord Rich Presence (with Time Left)
-		if (Main.discordRPC)
-			DiscordClient.changePresence(detailsText, daRPCInfo, iconRPC, true, songLength);
-		#end
-
-		scripts.executeFunc('onStartSong', []);
 	}
 
 	var debugNum:Int = 0;
@@ -2171,25 +2166,20 @@ class PlayState extends MusicBeatState
 
 	private function generateSong(dataPath:String):Void
 	{
-		// FlxG.log.add(ChartParser.parse());
-
 		var songData = SONG;
 		Conductor.changeBPM(songData.bpm);
-
 		curSong = songData.song;
+
 		if (SONG.needsVoices)
-		{
 			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
-			// vocals_opponent = new FlxSound().loadEmbedded(Paths.voice_opponent(PlayState.SONG.song));
-		}
 		else
-		{
 			vocals = new FlxSound();
-			// vocals_opponent = new FlxSound();
-		}
 
 		FlxG.sound.list.add(vocals);
-		// FlxG.sound.list.add(vocals_opponent);
+		vocals.pause();
+
+		FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
+		FlxG.sound.music.pause();
 
 		notes = new FlxTypedGroup<Note>();
 		add(notes);
@@ -2199,14 +2189,12 @@ class PlayState extends MusicBeatState
 		noteData = songData.notes;
 
 		var crapNote:Note;
-		var playerCounter:Int = 0;
 
-		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
+		var daBeats:Int = 0;
+		var calledEvents:Array<String> = [];
 
 		for (i in 0...ChartEvent.builtInEvents.length)
-		{
 			eventNames.push(ChartEvent.builtInEvents[i][0]);
-		}
 
 		for (section in noteData)
 		{
@@ -2320,7 +2308,10 @@ class PlayState extends MusicBeatState
 					event.value1 = val1;
 					event.value2 = val2;
 					toDoEvents.push(event);
-					scripts.executeFunc("onEventLoaded", [event.EVENT_NAME, event.value1, event.value2]);
+
+					// onEventLoaded will only be called once.
+					if (!calledEvents.contains(eventName))
+						scripts.executeFunc("onEventLoaded", [event.EVENT_NAME, event.value1, event.value2]);
 				}
 			}
 
@@ -2981,7 +2972,7 @@ class PlayState extends MusicBeatState
 			{
 				Conductor.songPosition += (FlxG.elapsed * 1000) * songSpeed;
 				Conductor.rawTime = Conductor.songPosition;
-				if (Conductor.songPosition >= 0)
+				if (Conductor.songPosition >= 0 + Conductor.offset)
 				{
 					startSong();
 					if (songSpeed != 1)
@@ -3028,13 +3019,10 @@ class PlayState extends MusicBeatState
 				songTime += FlxG.game.ticks - previousFrameTime;
 				previousFrameTime = FlxG.game.ticks;
 
-				// Interpolation type beat
 				if (Conductor.lastSongPos != Conductor.songPosition)
 				{
 					songTime = (songTime + Conductor.songPosition) / 2;
 					Conductor.lastSongPos = Conductor.songPosition;
-					// Conductor.songPosition += FlxG.elapsed * 1000;
-					// trace('MISSED FRAME');
 				}
 
 				if (CDevConfig.saveData.songtime)
@@ -3048,10 +3036,8 @@ class PlayState extends MusicBeatState
 					songName.screenCenter(X);
 				}
 			}
-
-			// Conductor.lastSongPos = FlxG.sound.music.time;
 		}
-		// moveCamera(Math.floor(curStep / 16));
+
 		if (!forceCameraPos)
 		{
 			mustHitCamera();
@@ -4272,7 +4258,7 @@ class PlayState extends MusicBeatState
 					{
 						if (outro_cutscene_script != null)
 						{
-							outroCutscene(false,true);
+							outroCutscene(false, true);
 						}
 						else
 						{
@@ -4335,7 +4321,6 @@ class PlayState extends MusicBeatState
 			}
 			else
 			{
-				trace('nah you cant end this song on charting mode >:]');
 				transIn = FlxTransitionableState.defaultTransIn;
 				transOut = FlxTransitionableState.defaultTransOut;
 
@@ -4358,15 +4343,19 @@ class PlayState extends MusicBeatState
 			inCutscene = false;
 			outro_cutscene_script.executeFunc("outroEnd", []);
 			outro_cutscene_script = null;
-			if (next) nextSong();
-			else switchAfterEnd(story);
+			if (next)
+				nextSong();
+			else
+				switchAfterEnd(story);
 		});
 
 		outro_cutscene_script.executeFunc("postOutro", []);
 	}
 
-	function switchAfterEnd(story:Bool){
-		if (story){
+	function switchAfterEnd(story:Bool)
+	{
+		if (story)
+		{
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 
 			transIn = FlxTransitionableState.defaultTransIn;
@@ -4378,9 +4367,10 @@ class PlayState extends MusicBeatState
 				game.cdev.engineutils.Highscore.saveWeekScore(weekName, campaignScore, storyDifficulty);
 
 			FlxG.save.flush();
-		} else {
+		}
+		else
+		{
 			GameOverSubstate.resetDeathStatus();
-			trace('WENT BACK TO FREEPLAY??');
 			FlxG.switchState(new FreeplayState());
 			if (CDevConfig.saveData.showTraceLogAt == 1)
 				TraceLog.clearLogData();

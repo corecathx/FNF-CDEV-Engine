@@ -161,7 +161,7 @@ class PauseSubState extends MusicBeatSubstate
 					FlxG.resetState();
 				case "Exit to menu", "Exit to freeplay":
 					PlayState.chartingMode = false;
-					FlxG.sound.music.onComplete = function(){};
+					FlxG.sound.music.onComplete = null;
 					if (PlayState.isStoryMode)
 						FlxG.switchState(new meta.states.MainMenuState());
 					else{

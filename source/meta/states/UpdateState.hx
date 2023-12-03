@@ -233,12 +233,6 @@ class UpdateState extends MusicBeatState
 
 	function convert_size(bytes:Int)
 	{
-		// public static String readableFileSize(long size) {
-		//	if(size <= 0) return "0";
-		//	final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
-		//	int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
-		//	return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-		// }
 		if (bytes == 0)
 		{
 			return "0B";
@@ -337,45 +331,5 @@ class UpdateState extends MusicBeatState
 			}},
 		];
 		openSubState(new CDevPopUp("", "Update has sucessfully downloaded, install update? (once you pressed the \"Update\" button, the game will close and starts the updating process.)", butt,false, true));
-
-		/*
-			currentTask = "install_update";
-			downloadedSize = 0;
-			maxFileSize = 0;
-			entire_progress = 0;
-			var game_path:String = FileSystem.fullPath("./assets/data").replace("/assets/data", "");
-			trace(game_path);
-
-			var game_exe_path:String = "";
-
-			var directories:Array<String> = FileSystem.readDirectory(updateFolder);
-			trace(directories);
-			maxFileSize = directories.length;
-			for (file in directories)
-			{
-				currentFile = file;
-				//folder
-				if (FileSystem.isDirectory(updateFolder + "/" + file))
-				{
-					trace(file + " was a directory.");
-					if (!FileSystem.exists(game_path + "/" + file))
-					{
-						FileSystem.createDirectory(game_path + "/" + file);
-					}
-
-					directories.remove(file);
-					continue;
-				}
-
-				if (file.contains("CDEV Engine"))
-				{
-					game_exe_path = file;
-					trace(game_exe_path);
-					directories.remove(file);
-					continue;
-				}
-
-				downloadedSize = directories.indexOf(file);
-		}*/
 	}
 }

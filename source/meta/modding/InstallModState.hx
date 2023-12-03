@@ -53,7 +53,6 @@ class InstallModState extends meta.states.MusicBeatState
 		var shit:Array<String> = FileSystem.readDirectory('cdev-mods/');
 
 		shit.remove('readme.txt'); // excludes readme.txt from the list.
-		trace(shit);
 		for (i in 0...shit.length)
 		{
 			if (FileSystem.isDirectory('cdev-mods/' + shit[i]))
@@ -132,11 +131,11 @@ class InstallModState extends meta.states.MusicBeatState
 		}
 		changeSelection(0, false);
 
-		var text = meta.states.MainMenuState.coreEngineText + ' - Install a mod.';
+		var text = meta.states.MainMenuState.coreEngineText + ' - ';
 		var versionShit:FlxText = new FlxText(20, FlxG.height - 30, 1000, text, 16);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		add(versionShit);
+		//add(versionShit);
 		versionShit.alpha = 0.7;
 
 		if (Paths.curModDir.length == 1)
@@ -244,12 +243,10 @@ class InstallModState extends meta.states.MusicBeatState
 
 	function doCheck()
 	{
-		trace(Paths.curModDir);
 		restartOnExit = false;
 		CDevConfig.saveData.loadedMods = Paths.curModDir;
 		CDevConfig.checkLoadedMods();
 		Paths.curModDir = CDevConfig.saveData.loadedMods;
-		trace("new " + Paths.curModDir);
 		if (Paths.curModDir.length == 1)
 		{
 			var lastCurMod = Paths.currentMod;
@@ -324,11 +321,8 @@ class InstallModState extends meta.states.MusicBeatState
 	{
 		var mod:String = modShits[curSelected].modName;
 		Paths.currentMod = mod;
-		trace(usingCustomBG);
-
 		if (FileSystem.exists(Paths.modFolders("background.png")))
 		{
-			trace("it exists");
 
 			// menuBG.alpha = 0;
 			modBG.loadGraphic(Paths.modImage(Paths.modFolders("background.png"), true));
@@ -387,6 +381,5 @@ class InstallModState extends meta.states.MusicBeatState
 		}
 
 		usingCustomBG = false;
-		trace(usingCustomBG);
 	}
 }

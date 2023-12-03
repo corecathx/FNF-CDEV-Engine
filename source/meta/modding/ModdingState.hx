@@ -36,7 +36,7 @@ class ModdingState extends meta.states.MusicBeatState
 		#end
 
 		menuBG = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		menuBG.color = 0xFFea71fd;
+		menuBG.color = 0xff0088ff;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
@@ -59,7 +59,7 @@ class ModdingState extends meta.states.MusicBeatState
 		}
 		changeSelection();
 		
-		var box1:FlxSprite = new FlxSprite(FlxG.height - 20, 0).makeGraphic(FlxG.width,20,FlxColor.BLACK);
+		var box1:FlxSprite = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width,20,FlxColor.BLACK);
 		var box2:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width,20,FlxColor.BLACK);
 		box1.alpha = 0.5;
 		box2.alpha = 0.5;
