@@ -1,5 +1,6 @@
 package meta.modding.song_editor;
 
+import flixel.FlxSprite;
 import meta.states.MusicBeatState;
 
 class SongEditor extends MusicBeatState {

@@ -23,6 +23,7 @@ using StringTools;
 class ModPaths
 {
 	private var mod:String;
+	var cantFind:Array<String> = [];
 
 	#if (haxe >= "4.0.0")
 	public static var modImagesLoaded:Map<String, Bool> = new Map();
@@ -91,7 +92,6 @@ class ModPaths
 			}
 			return modSoundsLoaded.get(file);
 		}
-		TraceLog.addLogData("Can't find audio asset: " + file);
 		return null;
 	}
 	#end
@@ -102,37 +102,47 @@ class ModPaths
 		return sound('$key$ranVal');
 	}
 
-	public function sound(key:String)
+	public function sound(key:String):Dynamic
 	{
 		var e:String = key;
 		if (e.endsWith(".ogg")) e = e.replace(".ogg", "");
+		var ogAssetPath:String = currentModFolder('sound/$e.ogg');
 
-		var snd:Sound = returnAudioFile(currentModFolder('sound/$e.ogg'));
+		var snd:Dynamic = returnAudioFile(ogAssetPath);
 		if (snd != null) return snd; 
 
-		snd = Paths.sound(key);
+		snd = Paths.sound(e);
 		if (snd != null) return snd;
-
+		
+		if (!cantFind.contains(ogAssetPath)){
+			TraceLog.addLogData("Can't find audio (sound) asset: " + ogAssetPath);
+			cantFind.push(ogAssetPath);
+		}
 		return null;
 	}
 
-	public function music(key:String)
+	public function music(key:String):Dynamic
 	{
 		var e:String = key;
 		if (e.endsWith(".ogg")) e = e.replace(".ogg", "");
+		var ogAssetPath:String = currentModFolder('music/$e.ogg');
 
-		var snd:Sound = returnAudioFile(currentModFolder('music/$e.ogg'));
+		var snd:Dynamic = returnAudioFile(ogAssetPath);
 		if (snd != null) return snd; 
 
-		snd = Paths.music(key);
+		snd = Paths.music(e);
 		if (snd != null) return snd;
-
+		
+		if (!cantFind.contains(ogAssetPath)){
+			TraceLog.addLogData("Can't find audio (music) asset: " + ogAssetPath);
+			cantFind.push(ogAssetPath);
+		}
 		return null;
 	}
 
 	public function image(key:String):Dynamic
 	{
-		var imageToReturn:FlxGraphic = addCustomGraphic(key);
+		var imageToReturn:Dynamic = addCustomGraphic(key);
 		if (imageToReturn != null) return imageToReturn;
 
 		imageToReturn = Paths.image(key);

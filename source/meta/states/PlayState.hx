@@ -73,6 +73,11 @@ import game.objects.*;
 import meta.modding.char_editor.CharacterData;
 import meta.modding.char_editor.CharacterEditor;
 
+#if USE_VIDEOS
+import hxcodec.flixel.FlxVideo;
+import hxcodec.flixel.FlxVideoSprite;
+#end
+
 using StringTools;
 
 class PlayState extends MusicBeatState
@@ -1432,6 +1437,8 @@ class PlayState extends MusicBeatState
 						intro_cutscene_script.executeFunc("init");
 						if (intro_cutscene_script.getVariable("runOnFreeplay") == true)
 							introCutscene();
+						else
+							startCountdown();
 					}
 					else
 						startCountdown();
@@ -2310,8 +2317,10 @@ class PlayState extends MusicBeatState
 					toDoEvents.push(event);
 
 					// onEventLoaded will only be called once.
-					if (!calledEvents.contains(eventName))
+					if (!calledEvents.contains(eventName)){
 						scripts.executeFunc("onEventLoaded", [event.EVENT_NAME, event.value1, event.value2]);
+						calledEvents.push(eventName);
+					}
 				}
 			}
 
@@ -2534,6 +2543,7 @@ class PlayState extends MusicBeatState
 
 	override function destroy()
 	{
+		scripts.executeFunc("onDestroy", []);
 		super.destroy();
 	}
 
@@ -2588,6 +2598,7 @@ class PlayState extends MusicBeatState
 					DiscordClient.changePresence(detailsText, daRPCInfo, iconRPC);
 			}
 			#end
+			scripts.executeFunc("onGameResumed", []);
 		}
 
 		super.closeSubState();
@@ -4144,59 +4155,66 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	function mustHitCamera(isBF:Bool = false)
+	//stuff used for this thing
+	public function getBaseGamePosition(mustSect:Bool):FlxPoint{
+		var point:FlxPoint = new FlxPoint(0,0);
+		if (mustSect){
+			switch (curStage)
+			{
+				case 'limo':
+					point.x = boyfriend.getMidpoint().x - 300;
+					point.y = boyfriend.getMidpoint().y - 100;
+				case 'mall':
+					point.y = boyfriend.getMidpoint().y - 200;
+					point.x = boyfriend.getMidpoint().x - 100;
+				case 'school':
+					point.x = boyfriend.getMidpoint().x - 200;
+					point.y = boyfriend.getMidpoint().y - 200;
+				case 'schoolEvil':
+					point.x = boyfriend.getMidpoint().x - 200;
+					point.y = boyfriend.getMidpoint().y - 200;
+				default:
+					point.x = boyfriend.getMidpoint().x - 100;
+					point.y = boyfriend.getMidpoint().y - 100;
+			}
+		}else{
+			switch (dad.curCharacter)
+			{
+				case 'mom':
+					point.x = dad.getMidpoint().x + 150;
+					point.y = dad.getMidpoint().y;
+				case 'senpai':
+					point.y = dad.getMidpoint().y - 430;
+					point.x = dad.getMidpoint().x - 100;
+				case 'senpai-angry':
+					point.y = dad.getMidpoint().y - 430;
+					point.x = dad.getMidpoint().x - 100;
+				default:
+					point.x = dad.getMidpoint().x + 150;
+					point.y = dad.getMidpoint().y - 100;
+			}
+		}
+		return point;
+	}
+
+	//tried my best
+	function mustHitCamera()
 	{
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
 		{
-			if (PlayState.SONG.notes[Math.floor(curStep / 16)].mustHitSection)
-			{
-				switch (curStage)
-				{
-					case 'limo':
-						bfCamXPos = boyfriend.getMidpoint().x - 300;
-						bfCamYPos = boyfriend.getMidpoint().y - 100;
-					case 'mall':
-						bfCamYPos = boyfriend.getMidpoint().y - 200;
-						bfCamXPos = boyfriend.getMidpoint().x - 100;
-					case 'school':
-						bfCamXPos = boyfriend.getMidpoint().x - 200;
-						bfCamYPos = boyfriend.getMidpoint().y - 200;
-					case 'schoolEvil':
-						bfCamXPos = boyfriend.getMidpoint().x - 200;
-						bfCamYPos = boyfriend.getMidpoint().y - 200;
-					default:
-						bfCamXPos = boyfriend.getMidpoint().x - 100;
-						bfCamYPos = boyfriend.getMidpoint().y - 100;
-				}
+			var must:Bool = PlayState.SONG.notes[Math.floor(curStep / 16)].mustHitSection;
+			var p:FlxPoint = getBaseGamePosition(must);
+			var curPos:FlxPoint = new FlxPoint();
+			var char:Character = (must ? boyfriend : dad);
+			var offset = [(must ? bfCamX : dadCamX), (must ? bfCamY : dadCamY)];
 
-				camFollow.setPosition(bfCamXPos + cameraPosition.x + bfCamX, bfCamYPos + cameraPosition.y + bfCamY);
+			curPos.x = p.x + cameraPosition.x + offset[0];
+			curPos.y = p.y + cameraPosition.y + offset[1];
 
-				camFollow.x -= boyfriend.charCamPos[0];
-				camFollow.y += boyfriend.charCamPos[1];
-			}
-			if (!PlayState.SONG.notes[Math.floor(curStep / 16)].mustHitSection)
-			{
-				switch (dad.curCharacter)
-				{
-					case 'mom':
-						dadCamXPos = dad.getMidpoint().x + 150;
-						dadCamYPos = dad.getMidpoint().y;
-					case 'senpai':
-						dadCamYPos = dad.getMidpoint().y - 430;
-						dadCamXPos = dad.getMidpoint().x - 100;
-					case 'senpai-angry':
-						dadCamYPos = dad.getMidpoint().y - 430;
-						dadCamXPos = dad.getMidpoint().x - 100;
-					default:
-						dadCamXPos = dad.getMidpoint().x + 150;
-						dadCamYPos = dad.getMidpoint().y - 100;
-				}
 
-				camFollow.setPosition(dadCamXPos + cameraPosition.x + dadCamX, dadCamYPos + cameraPosition.y + dadCamY);
-
-				camFollow.x += dad.charCamPos[0];
-				camFollow.y += dad.charCamPos[1];
-			}
+			camFollow.setPosition(curPos.x, curPos.y);
+			camFollow.x += (must ? -char.charCamPos[0] : char.charCamPos[0]);
+			camFollow.y += char.charCamPos[1];
 		}
 	}
 
@@ -4314,6 +4332,8 @@ class PlayState extends MusicBeatState
 						outro_cutscene_script.executeFunc("init");
 						if (outro_cutscene_script.getVariable("runOnFreeplay") == true)
 							outroCutscene(false, false);
+						else
+							switchAfterEnd(false);
 					}
 					else
 						switchAfterEnd(false);
@@ -4644,6 +4664,7 @@ class PlayState extends MusicBeatState
 					onComplete: function(tween:FlxTween)
 					{
 						numScore.destroy();
+						remove(rating);
 					},
 					startDelay: Conductor.crochet * 0.002
 				});
@@ -4666,14 +4687,14 @@ class PlayState extends MusicBeatState
 			add(sRating);
 		}
 
-		if (setting)
-			FlxTween.tween(rating, {alpha: 0}, 0.2, {
-				onComplete: function(tween:FlxTween)
-				{
-					rating.destroy();
-				},
-				startDelay: Conductor.crochet * 0.001
-			});
+		if (setting) FlxTween.tween(rating, {alpha: 0}, 0.2, {
+			onComplete: function(tween:FlxTween)
+			{
+				rating.destroy();
+				remove(rating);
+			},
+			startDelay: Conductor.crochet * 0.001
+		});
 	}
 
 	private function keyShit():Void

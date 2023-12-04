@@ -51,7 +51,9 @@
 	<!--CDEV Engine's define names-->
 	<define name="ALLOW_MODS"/><!-- if="desktop"-->
 	<define name="CRASH_HANDLER" if="desktop"/>
-	<!--<define name="USE_VIDEOS"/>-->
+	<define name="USE_VIDEOS" if="desktop || android"/>
+
+	<haxelib name="hxCodec" if="USE_VIDEOS"/>
 	
 
 	<section if="PRELOAD_ALL">

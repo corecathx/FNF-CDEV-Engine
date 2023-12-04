@@ -16,6 +16,7 @@ flixel-addons
 flixel-ui
 hscript
 newgrounds
+hxCodec
 ```
 Type `haxelib install [library]` for each of those libs, so like: `haxelib install newgrounds`.
 

@@ -182,24 +182,17 @@ class CDevConfig
 
 	
 	public static function setWindowProperty(reset:Bool, ?title:String, ?icon:String){
-		trace("SetWindowProperty called.");
 		var error = (title==null || icon==null);
-		trace("Error is " + error);
-		if (error){
+		if (error)
 			return;
-		}
 
-		window_title = (reset ? "Friday Night Funkin' CDEV Engine" : title);
+		window_title = (reset ? Lib.application.meta["name"] : title);
+		Application.current.window.title = window_title;
+
 		window_icon_custom = (FileSystem.exists(icon) && !reset);
 		var iconAsset = (window_icon_custom ? icon : "assets/shared/images/icon16.png");
-
-		trace("\nInformation:\nTitle: "+window_title+"\nIcon Custom: " + window_icon_custom+"\niconasset: " + iconAsset);
-
-		Application.current.window.title = window_title;
-		trace("Set title success.");
 		var f = File.getBytes(iconAsset);
 		var i:Image = Image.fromBytes(f);
-		trace("image: " + i + " // file: " + f);
 		Application.current.window.setIcon(i);
 	}
 

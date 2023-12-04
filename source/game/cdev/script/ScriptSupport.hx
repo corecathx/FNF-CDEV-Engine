@@ -1,5 +1,9 @@
 package game.cdev.script;
 
+#if USE_VIDEOS
+import hxcodec.flixel.FlxVideo;
+import hxcodec.flixel.FlxVideoSprite;
+#end
 import flixel.graphics.tile.FlxGraphicsShader;
 import flixel.FlxCamera;
 import openfl.filters.ShaderFilter;
@@ -190,9 +194,12 @@ class ScriptSupport
 		script.setVariable("FlxGraphicsShader", FlxGraphicsShader);
 		script.setVariable("ShaderFilter", ShaderFilter);
 		script.setVariable("FlxCamera", FlxCamera);
-
+		#if USE_VIDEOS 
+		script.setVariable("FlxVideo", FlxVideo);
+		script.setVariable("FlxVideoSprite", FlxVideoSprite);
+		#end
 		script.mod = mod;
-		trace('init script finished');
+		//trace('init script finished');
 	}
 
 	public static function getExprFromPath(path:String, critical:Bool = false, ea:CDevScript):hscript.Expr
