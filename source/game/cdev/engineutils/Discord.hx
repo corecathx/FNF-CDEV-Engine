@@ -1,15 +1,16 @@
-
-#if desktop
 package game.cdev.engineutils;
 
 import game.cdev.CDevConfig;
 import Sys.sleep;
+#if DISCORD_RPC
 import discord_rpc.DiscordRpc;
+#end
 
 using StringTools;
 
 class DiscordClient
 {
+	#if DISCORD_RPC
 	public function new()
 	{
 		trace("Discord Client starting...");
@@ -25,7 +26,7 @@ class DiscordClient
 		{
 			DiscordRpc.process();
 			sleep(2);
-			//trace("Discord Client Update");
+			// trace("Discord Client Update");
 		}
 
 		DiscordRpc.shutdown();
@@ -35,14 +36,14 @@ class DiscordClient
 	{
 		DiscordRpc.shutdown();
 	}
-	
+
 	static function onReady()
 	{
 		DiscordRpc.presence({
 			details: "In the Menus",
 			state: null,
 			largeImageKey: 'icon',
-			largeImageText: 'CDEV Engine v.'+CDevConfig.engineVersion
+			largeImageText: 'CDEV Engine v.' + CDevConfig.engineVersion
 		});
 	}
 
@@ -65,28 +66,43 @@ class DiscordClient
 		trace("Discord Client initialized");
 	}
 
-	public static function changePresence(details:String, state:Null<String>, ?smallImageKey : String, ?hasStartTimestamp : Bool, ?endTimestamp: Float)
+	public static function changePresence(details:String, state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float)
 	{
-		var startTimestamp:Float = if(hasStartTimestamp) Date.now().getTime() else 0;
+		var startTimestamp:Float = if (hasStartTimestamp) Date.now().getTime() else 0;
 
 		if (endTimestamp > 0)
 		{
 			endTimestamp = startTimestamp + endTimestamp;
 		}
 
-		var largeImgtxt:String = 'CDEV Engine v.'+CDevConfig.engineVersion;
+		var largeImgtxt:String = 'CDEV Engine v.' + CDevConfig.engineVersion;
 		DiscordRpc.presence({
 			details: details,
 			state: state,
 			largeImageKey: 'icon',
 			largeImageText: largeImgtxt,
-			smallImageKey : smallImageKey,
+			smallImageKey: smallImageKey,
 			// Obtained times are in milliseconds so they are divided so Discord can use it
-			startTimestamp : Std.int(startTimestamp / 1000),
-            endTimestamp : Std.int(endTimestamp / 1000)
+			startTimestamp: Std.int(startTimestamp / 1000),
+			endTimestamp: Std.int(endTimestamp / 1000)
 		});
 
-		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
+		// trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
+	#else
+	//balls
+	public function new(){}
+
+	public static function shutdown(){}
+
+	static function onReady(){}
+
+	static function onError(_code:Int, _message:String){}
+
+	static function onDisconnected(_code:Int, _message:String){}
+
+	public static function initialize(){}
+
+	public static function changePresence(details:String, state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float){}
+	#end
 }
-#end

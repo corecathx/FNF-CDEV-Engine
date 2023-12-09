@@ -24,7 +24,7 @@ The Itch.io release is the only official source for the desktop (PC, Mac, Linux)
 As of right now, the game is FREE! If you paid for it, you got SCAMMED!
 
 Now that that's out of the way....
-THANKS FOR DOWNLOADIN. 
+THANKS FOR DOWNLOADIN.
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
     PERMISSIONS XDDDD

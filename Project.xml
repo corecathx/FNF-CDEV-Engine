@@ -51,10 +51,12 @@
 	<!--CDEV Engine's define names-->
 	<define name="ALLOW_MODS"/><!-- if="desktop"-->
 	<define name="CRASH_HANDLER" if="desktop"/>
-	<define name="USE_VIDEOS" if="desktop || android"/>
+	<define name="USE_VIDEOS" if="cpp"/>
+	<haxelib name="DISCORD_RPC" if="cpp"/>
 
-	<haxelib name="hxCodec" if="USE_VIDEOS"/>
-	
+	<section if="USE_VIDEOS">
+		<haxelib name="hxCodec"/>
+	</section>
 
 	<section if="PRELOAD_ALL">
 		<library name="songs"    preload="true" />
@@ -82,7 +84,6 @@
 		<library name="week7"    preload="false" />
 	</section>
 	
-	<!--<assets path="plugins/"             rename=''               />-->
 	<assets path="assets/songs"    library="songs"    exclude="*.ogg" if="web"/>
 	<assets path="assets/songs"    library="songs"    exclude="*.mp3" unless="web"/>
 	<assets path="assets/shared"   library="shared"   exclude="*.ogg" if="web"/>
@@ -106,10 +107,8 @@
 
 	<assets path='example_mods' rename='cdev-mods' embed='false' if="desktop"/>
 	
-	<assets path='crash_handler/cdev-crash_handler.exe' rename='cdev-crash_handler.exe' embed='false' if="desktop"/>
+	<assets path='crash_handler/cdev-crash_handler.exe' rename='cdev-crash_handler.exe' embed='false' if="windows"/>
 	<assets path='art/readme.txt' rename='do NOT readme.txt'  />
-
-	<!-- <template path='mods' /> -->
 	
 	<assets path="CHANGELOG.md" rename='changelog.txt'/>
 

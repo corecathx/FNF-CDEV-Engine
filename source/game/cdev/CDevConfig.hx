@@ -1,5 +1,6 @@
 package game.cdev;
 
+import haxe.Constraints.Function;
 import sys.io.Process;
 import game.cdev.engineutils.Discord.DiscordClient;
 import lime.graphics.Image;
@@ -9,7 +10,6 @@ import haxe.Unserializer;
 import haxe.Serializer;
 import sys.io.File;
 import haxe.Json;
-import cpp.Function;
 import sys.FileSystem;
 import game.Paths;
 import flixel.math.FlxMath;
@@ -203,11 +203,11 @@ class CDevConfig
 	}
 
 	// what to do before application get closed?
-	public static var onExitFunction:openfl.utils.Function = function()
+	public static var onExitFunction:Function = function()
 	{
 	};
 
-	public static function setExitHandler(func:openfl.utils.Function):Void
+	public static function setExitHandler(func:Function):Void
 	{
 		trace("exit handler change: " + func);
 		#if openfl_legacy

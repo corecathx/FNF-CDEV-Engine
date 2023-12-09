@@ -203,7 +203,7 @@ class InstallModState extends meta.states.MusicBeatState
 			{
 				Paths.currentMod = Paths.curModDir[0];
 				if (!lastModRequireRestart) TitleState.loadMod = true; else TitleState.loadMod = false;
-				FlxTween.tween(FlxG.sound.music, {volume: 0}, 1);
+				if (FlxG.sound.music != null) FlxTween.tween(FlxG.sound.music, {volume: 0}, 1);
 				FlxTween.tween(FlxG.camera, {alpha: 0}, 1, {
 					onComplete: function(e:FlxTween)
 					{
