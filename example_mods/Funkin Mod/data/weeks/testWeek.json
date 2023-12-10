@@ -1,0 +1,38 @@
+{
+	"weekTxtImgPath": "weekLogo",
+	"weekCharacters": [
+		"bf-pixel",
+		"bf",
+		""
+	],
+	"weekName": "CDEV-Engine Mod Testing",
+	"tracks": [
+		"mod-test"
+	],
+	"charSetting": [
+		{
+			"position": [
+				392.5,
+				197.5
+			],
+			"flipX": true,
+			"scale": 4.5
+		},
+		{
+			"position": [
+				631.5,
+				43
+			],
+			"flipX": false,
+			"scale": 0.7
+		},
+		{
+			"position": [
+				850,
+				100
+			],
+			"flipX": false,
+			"scale": 0.5
+		}
+	]
+}

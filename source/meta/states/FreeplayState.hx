@@ -438,9 +438,11 @@ class FreeplayState extends MusicBeatState
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
 
-		if (!selectedThing)
-			if (FlxG.sound.music.volume < 0.7)
+		if (!selectedThing){
+			if (FlxG.sound.music!=null&&FlxG.sound.music.volume < 0.7)
 				FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
+		}
+
 
 		bg.alpha = FlxMath.lerp(0.7, bg.alpha, game.cdev.CDevConfig.utils.bound(1 - (elapsed * 8), 0, 1));
 
@@ -862,6 +864,7 @@ class FreeplayState extends MusicBeatState
 
 	function selectedSong() // look at how messy this function is
 	{
+		// i'll actually implement song asset caching later :pensive:
 		curPlayedSong = songs[curSelected].songName;
 		songBG = new FlxSprite(0, FlxG.height / 2 + 90).loadGraphic(Paths.image('healthBar', 'shared'));
 		songBG.screenCenter(X);

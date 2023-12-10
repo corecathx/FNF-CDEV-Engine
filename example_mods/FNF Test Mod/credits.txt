@@ -1,6 +1,0 @@
---Put your custom credits here
---Credits should be on this format: Name::Desc::Color::Link
---Credits title should be on this format: Name
---"Color" should be on hex format (ex: 0xFF000000, rgba)
-FNF Test Mod
-CoreDev::Coder of the mod.::0xFF656565::https://youtube.com/c/Core5570RYT

@@ -1,0 +1,73 @@
+{
+	"girlfriendPosition": [
+		-2650.5,
+		1374
+	],
+	"opponentPosition": [
+		-2859.5,
+		1902.5
+	],
+	"stageZoom": 0.7,
+	"boyfriendPosition": [
+		-2002.5,
+		1728
+	],
+	"pixelStage": false,
+	"sprites": [
+		{
+			"imageScale": 1,
+			"imageSF": 1,
+			"position": [
+				231,
+				102.5
+			],
+			"imagePath": "stgFrt",
+			"imageAlpha": 1,
+			"imageAntialias": true
+		},
+		{
+			"imageScale": 1.1,
+			"imageSF": 1,
+			"position": [
+				-1032,
+				-601
+			],
+			"imagePath": "stgBck",
+			"imageAlpha": 1,
+			"imageAntialias": true
+		},
+		{
+			"imageScale": 1.1,
+			"imageSF": 0.7,
+			"position": [
+				-2768,
+				395
+			],
+			"imagePath": "stgBck",
+			"imageAlpha": 1,
+			"imageAntialias": true
+		},
+		{
+			"imageScale": 1.2,
+			"imageSF": 1,
+			"position": [
+				-3552,
+				1947.5
+			],
+			"imagePath": "stgFrt",
+			"imageAlpha": 1,
+			"imageAntialias": true
+		},
+		{
+			"imageScale": 1.3,
+			"imageSF": 0.9,
+			"position": [
+				-3178,
+				934
+			],
+			"imagePath": "stgCur",
+			"imageAlpha": 1,
+			"imageAntialias": true
+		}
+	]
+}

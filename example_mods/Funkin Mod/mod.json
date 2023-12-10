@@ -1,0 +1,10 @@
+{
+	"window_title": "Friday Night Funkin' CDEV Engine - Funkin Mod",
+	"disable_base_game": true,
+	"modVer": "1.6.1",
+	"modDesc": "CDEV Engine built-in mod. (Do not remove this mod from cdev-mods folder, this engine cannot run without it.)",
+	"modName": "Funkin Mod",
+	"restart_required": true,
+	"window_icon": "",
+	"mod_difficulties": []
+}

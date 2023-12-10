@@ -1,0 +1,54 @@
+{
+	"weekTxtImgPath": "weekLogo",
+	"disableFreeplay": false,
+	"weekCharacters": [
+		"bfPixelMod",
+		"gf",
+		"bf"
+	],
+	"weekDifficulties": [
+		"hard"
+	],
+	"weekName": "CDEV Engine Custom Week!",
+	"tracks": [
+		"mod-test"
+	],
+	"charSetting": [
+		{
+			"position": [
+				272.5,
+				229.5
+			],
+			"flipX": true,
+			"scale": 2.9
+		},
+		{
+			"position": [
+				302.5,
+				-128
+			],
+			"flipX": false,
+			"scale": 0.45
+		},
+		{
+			"position": [
+				735.5,
+				85
+			],
+			"flipX": false,
+			"scale": 0.45
+		}
+	],
+	"freeplaySongs": [
+		{
+			"colors": [
+				90,
+				180,
+				255
+			],
+			"bpm": 120,
+			"character": "bf-pixelMod",
+			"song": "mod-test"
+		}
+	]
+}
