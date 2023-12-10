@@ -43,7 +43,7 @@ class SongConfScript
 		{
 			scripts = [
 				{
-					daPath: 'cdev-mods/FNF Test Mod/data/charts/mod-test/unknown.hx',
+					daPath: 'cdev-mods/Funkin Mod/data/charts/mod-test/unknown.hx',
 					daMod: mod
 				}
 			];
@@ -97,7 +97,7 @@ class SongConfScript
 
 	public static function getScriptShit(mod:String, sus:String):CDevModScript
 	{
-		var p:String = 'cdev-mods/FNF Test Mod/data/charts/mod-test/unknown.hx';
+		var p:String = 'cdev-mods/Funkin Mod/data/charts/mod-test/unknown.hx';
 		var exist:Bool = false;
 		// classic script method
 		for (ext in CDevScript.haxeExts)
@@ -119,8 +119,8 @@ class SongConfScript
 			}
 		}
 		return {
-			daMod: "FNF Test Mod",
-			daPath: "cdev-mods/FNF Test Mod/data/charts/mod-test/unknown.hx"
+			daMod: "Funkin Mod",
+			daPath: "cdev-mods/Funkin Mod/data/charts/mod-test/unknown.hx"
 		}
 	}
 }

@@ -55,7 +55,7 @@ class ScriptSupport
 {
 	public static var scripts:Array<CDevModScript> = [];
 	public static var typedScripts:Array<CDevScript> = [];
-	public static var currentMod:String = "FNF Test Mod";
+	public static var currentMod:String = "Funkin Mod";
 	public static var playStated:PlayState = new PlayState();
 
 	public static function parseSongConfig()

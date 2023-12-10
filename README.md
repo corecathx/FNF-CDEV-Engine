@@ -47,6 +47,9 @@ Once everything has done, have fun with the engine!
 ## WHAT?? MESSY SOURCE CODE??
 yeah uh, most of the codes there are made when i still lack of haxe understanding, i'm still cleaning it up
 
+# Important thing
+CDEV Engine is currently only supported for Windows target only since the code is messed up and more (sorry!)
+
 ## Credits
 
 CDEV Engine

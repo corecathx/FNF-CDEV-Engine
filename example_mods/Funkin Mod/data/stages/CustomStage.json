@@ -1,0 +1,147 @@
+{
+	"useCustomFollowLerp": false,
+	"girlfriendPosition": [
+		410,
+		-120
+	],
+	"followLerp": 0.03,
+	"opponentPosition": [
+		220,
+		370
+	],
+	"stageZoom": 0.85,
+	"boyfriendPosition": [
+		847.5,
+		240
+	],
+	"sprites": [
+		{
+			"animType": "",
+			"imageVar": "Background",
+			"imageScale": 1,
+			"imageSF": 0.8,
+			"position": [
+				-653.33,
+				-593.33
+			],
+			"spriteType": "bitmap",
+			"imageFlipX": true,
+			"imagePath": "stgBck",
+			"imageAlpha": 1,
+			"imageAntialias": false,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "Frontground",
+			"imageScale": 1,
+			"imageSF": 1,
+			"position": [
+				-625,
+				375
+			],
+			"spriteType": "bitmap",
+			"imageFlipX": false,
+			"imagePath": "stgFrt",
+			"imageAlpha": 1,
+			"imageAntialias": false,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "Girlfriend",
+			"imageScale": 1,
+			"imageSF": 1,
+			"position": [
+				410,
+				-120
+			],
+			"spriteType": "gf",
+			"imageFlipX": false,
+			"imagePath": "",
+			"imageAlpha": 1,
+			"imageAntialias": true,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "Opponent",
+			"imageScale": 6,
+			"imageSF": 1,
+			"position": [
+				220,
+				370
+			],
+			"spriteType": "dad",
+			"imageFlipX": true,
+			"imagePath": "",
+			"imageAlpha": 1,
+			"imageAntialias": false,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "Boyfriend",
+			"imageScale": 1,
+			"imageSF": 1,
+			"position": [
+				847.5,
+				240
+			],
+			"spriteType": "bf",
+			"imageFlipX": false,
+			"imagePath": "",
+			"imageAlpha": 1,
+			"imageAntialias": true,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "LeftLight",
+			"imageScale": 1,
+			"imageSF": 1,
+			"position": [
+				-177.5,
+				-235
+			],
+			"spriteType": "bitmap",
+			"imageFlipX": false,
+			"imagePath": "stgLgt",
+			"imageAlpha": 1,
+			"imageAntialias": false,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "RightLight",
+			"imageScale": 1,
+			"imageSF": 1,
+			"position": [
+				1246.67,
+				-236.67
+			],
+			"spriteType": "bitmap",
+			"imageFlipX": true,
+			"imagePath": "stgLgt",
+			"imageAlpha": 1,
+			"imageAntialias": false,
+			"animation": null
+		},
+		{
+			"animType": "",
+			"imageVar": "Curtains",
+			"imageScale": 1,
+			"imageSF": 1.3,
+			"position": [
+				-585,
+				-522.5
+			],
+			"spriteType": "bitmap",
+			"imageFlipX": false,
+			"imagePath": "stgCur",
+			"imageAlpha": 1,
+			"imageAntialias": false,
+			"animation": null
+		}
+	]
+}
