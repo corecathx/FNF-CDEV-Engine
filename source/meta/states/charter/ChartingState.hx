@@ -1088,8 +1088,8 @@ class ChartingState extends MusicBeatState
 		//p1Lerp = FlxMath.lerp(0.6, leftIcon.scale.x, CDevConfig.utils.bound(1 - (elapsed * 10), 0, 1));
 		//p2Lerp = FlxMath.lerp(0.6, rightIcon.scale.x, CDevConfig.utils.bound(1 - (elapsed * 10), 0, 1));
 
-		p1Lerp = 1+((Conductor.songPosition % (Conductor.crochet))*0.2);
-		p2Lerp = 1+((Conductor.songPosition % (Conductor.crochet))*0.2);
+		p1Lerp = 0.8-((Conductor.songPosition % (Conductor.crochet))/Conductor.crochet)*0.2;
+		p2Lerp = 0.8-((Conductor.songPosition % (Conductor.crochet))/Conductor.crochet)*0.2;
 
 		leftIcon.scale.set(p1Lerp, p1Lerp);
 		leftIcon.updateHitbox();
@@ -2098,7 +2098,6 @@ class ChartingState extends MusicBeatState
 					if (lastTime >= time)
 					{
 						lastCount += elapsed;
-						trace(lastCount);
 						if (!hitted)
 						{
 							hitted = true;

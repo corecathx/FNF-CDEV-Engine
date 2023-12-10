@@ -50,8 +50,8 @@ class Paths
 
 	public static function destroyLoadedImages(ignoreCheck:Bool = false)
 	{
-		if (!ignoreCheck && FlxGraphic.defaultPersist)
-			return; // If there's 20+ images loaded, do a cleanup just for preventing a crash
+		//if (!ignoreCheck && FlxGraphic.defaultPersist)
+		//	return; // If there's 20+ images loaded, do a cleanup just for preventing a crash
 
 		for (key in customImagesLoaded.keys())
 		{
