@@ -41,7 +41,7 @@ class HScript extends CDevScript
 				catch (e)
 				{
 					this.trace('$e');
-					TraceLog.addLogData('$e');
+					TraceLog.addLog('$e');
 					error = true;
 				}
 				return result;
@@ -56,13 +56,13 @@ class HScript extends CDevScript
 				catch (e)
 				{
 					this.trace('$e');
-					TraceLog.addLogData('$e');
+					TraceLog.addLog('$e');
 					error = true;
 				}
 				return result;
 			}
 			if (CDevConfig.DEPRECATED_STUFFS.exists(funcName)){
-				TraceLog.addLogData('Function \"$funcName\" is deprecated since CDEV Engine v.${CDevConfig.DEPRECATED_STUFFS.get(funcName)}.');
+				TraceLog.addLog('Function \"$funcName\" is deprecated since CDEV Engine v.${CDevConfig.DEPRECATED_STUFFS.get(funcName)}.');
 			}
 		}
 		return null;
@@ -97,7 +97,7 @@ class HScript extends CDevScript
 		catch (e)
 		{
 			this.trace('${e.message}');
-			TraceLog.addLogData('${e.message}');
+			//TraceLog.addLog('${e.message}');
 		}
 	}
 
@@ -109,8 +109,8 @@ class HScript extends CDevScript
 		var lineNumber = Std.string(posInfo.lineNumber);
 		var methodName = posInfo.methodName;
 		var className = posInfo.className;
-		trace('$fileName:$methodName:$lineNumber: $text');
-		TraceLog.addLogData('$fileName:$methodName:$lineNumber: $text');
+		//trace('$fileName:$methodName:$lineNumber: $text');
+		TraceLog.addLog('$fileName:$methodName:$lineNumber: $text');
 
 		if (!CDevConfig.saveData.testMode)
 			return;

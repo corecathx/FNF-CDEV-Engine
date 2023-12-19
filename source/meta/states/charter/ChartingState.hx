@@ -1767,8 +1767,6 @@ class ChartingState extends MusicBeatState
 		{
 			curSection = sec;
 
-			updateGrid();
-
 			if (updateMusic)
 			{
 				FlxG.sound.music.pause();
@@ -1905,37 +1903,37 @@ class ChartingState extends MusicBeatState
 		}
 		return -1;
 	}
-
+	function destroyThis(note:FlxSprite){
+		//note.graphic.bitmap.dispose(); uhh
+		//note.graphic.destroy();
+		note.destroy();
+	}
 	function updateGrid(?justUpdateTheNotes:Bool = false):Void
 	{
 		curRenderedNotes.forEach(function(note:Note)
 		{
-			note.destroy();
+			//IDK LOLL
+			destroyThis(note);
 			curRenderedNotes.remove(note);
-			remove(note);
 		});
 
 		curRenderedSustains.forEach(function(note:FlxSprite)
 		{
-			note.destroy();
+			destroyThis(note);
 			curRenderedSustains.remove(note);
-			remove(note);
 		});
 
 		curRenderedEvents.forEach(function(note:ChartEvent)
 		{
-			note.destroy();
+			destroyThis(note);
 			curRenderedEvents.remove(note);
-			remove(note);
 		});
 
 		renderedNotesLabel.forEach(function(spr:FlxText)
 		{
-			spr.destroy();
+			destroyThis(spr);
 			renderedNotesLabel.remove(spr);
-			remove(spr);
 		});
-		// renderedNotesLabel.clear();
 
 		remove(gridBG);
 		gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * _song.notes[curSection].lengthInSteps);
@@ -2082,7 +2080,7 @@ class ChartingState extends MusicBeatState
 			if (Paths.currentMod != "BASEFNF")
 			{
 				var time:Float = CDevConfig.saveData.autosaveChart_interval;
-				if (!(lastTime >= time))
+				if (time != -1 && !(lastTime >= time))
 					lastTime += elapsed;
 				if (time == -1)
 				{

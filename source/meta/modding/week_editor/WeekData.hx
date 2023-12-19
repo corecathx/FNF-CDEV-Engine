@@ -1,5 +1,6 @@
 package meta.modding.week_editor;
 
+import game.cdev.CDevMods.ModFile;
 import game.Paths;
 import haxe.Json;
 import lime.utils.Assets;
@@ -52,6 +53,40 @@ class WeekData
 	public static function loadWeeks()
 	{
         loadedWeeks = [];
+
+		var allowDefSongs = true;
+		if (CDevConfig.utils.isPriorityMod())
+		{
+			Paths.currentMod = CDevConfig.utils.isPriorityMod(true);
+			var data:ModFile = Paths.modData();
+			if (data != null)
+			{
+				if (Reflect.hasField(data, "disable_base_game"))
+				{
+					allowDefSongs = !data.disable_base_game;
+				}
+			}
+		}
+		var pathraw = "assets/data/weeks/";
+		var direct:Array<String> = FileSystem.readDirectory(pathraw);
+
+		if (allowDefSongs) for (i in 0...direct.length)
+		{
+			if (direct[i].endsWith(".json")){
+				var pathJson:String = pathraw+direct[i];
+				trace(pathraw + " - " + i);
+
+				var crapJSON = null;
+				if (FileSystem.exists(pathJson))
+					crapJSON = File.getContent(pathJson);
+
+				var json:WeekFile = null;
+				if (crapJSON != null) json = cast Json.parse(crapJSON);
+
+				if (json != null) loadedWeeks.push([json, 'BASEFNF']);
+			}
+		}
+
 		for (mod in 0...Paths.curModDir.length)
 		{
 			var path:String = Paths.mods(Paths.curModDir[mod] + '/data/weeks/');

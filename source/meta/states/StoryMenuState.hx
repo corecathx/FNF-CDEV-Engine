@@ -224,18 +224,24 @@ class StoryMenuState extends MusicBeatState
 			}
 		}
 
-		if (allowDefSongs) for (i in 0...8)
-		{
-			var path:String = Paths.week('week' + i);
-			trace(path);
-			var crapJSON = null;
-			if (Assets.exists(path, TEXT))
-				crapJSON = Assets.getText(path);
+		var path = "assets/data/weeks/";
+		var direct:Array<String> = FileSystem.readDirectory(path);
 
-			var json:WeekFile = cast Json.parse(crapJSON);
-			var gugugaga:Array<Dynamic> = [json, 'BASEFNF'];
-			if (crapJSON != null)
-				theFiles.push(gugugaga);
+		if (allowDefSongs) for (i in 0...direct.length)
+		{
+			if (direct[i].endsWith(".json")){
+				var pathJson:String = path+direct[i];
+				trace(path + " - " + i);
+
+				var crapJSON = null;
+				if (FileSystem.exists(pathJson))
+					crapJSON = File.getContent(pathJson);
+
+				var json:WeekFile = null;
+				if (crapJSON != null) json = cast Json.parse(crapJSON);
+
+				if (json != null) theFiles.push([json, 'BASEFNF']);
+			}
 		}
 		for (mod in 0...Paths.curModDir.length)
 		{
@@ -356,17 +362,12 @@ class StoryMenuState extends MusicBeatState
 	{
 		for (a in 0...grpWeekCharacters.members.length)
 		{
-			// if (prevCharacters[a] != weekJSONs[curWeek].weekCharacters[a])
-			// {
-			grpWeekCharacters.members[a].kill();
+			grpWeekCharacters.members[a].destroy();
 			grpWeekCharacters.members[a] = null;
-			// remove(a);
-			// }
+			//grpWeekCharacters.members[a].kill();
 		}
 		for (b in 0...3)
 		{
-			// if (prevCharacters[b] != weekJSONs[curWeek].weekCharacters[b])
-			// {
 			var no:Bool = (b == 2);
 			grpWeekCharacters.add(new Character(weekJSONs[curWeek][0].charSetting[b].position[0], weekJSONs[curWeek][0].charSetting[b].position[1],
 				weekJSONs[curWeek][0].weekCharacters[b], no, true));
@@ -374,15 +375,7 @@ class StoryMenuState extends MusicBeatState
 			char.scale.set(weekJSONs[curWeek][0].charSetting[b].scale, weekJSONs[curWeek][0].charSetting[b].scale);
 			char.flipX = weekJSONs[curWeek][0].charSetting[b].flipX;
 
-			if (weekJSONs[curWeek][0].weekCharacters[b] == '')
-			{
-				char.visible = false;
-			}
-			else
-			{
-				char.visible = true;
-			}
-			// }
+			char.visible = !(weekJSONs[curWeek][0].weekCharacters[b] == '');
 		}
 	}
 

@@ -50,7 +50,7 @@
 				200
 			],
 			"bpm": 120,
-			"character": "parents",
+			"character": "senpai",
 			"song": "senpai"
 		},
 		{
@@ -60,7 +60,7 @@
 				255
 			],
 			"bpm": 120,
-			"character": "dad",
+			"character": "senpai",
 			"song": "roses"
 		},
 		{
@@ -70,7 +70,7 @@
 				255
 			],
 			"bpm": 120,
-			"character": "dad",
+			"character": "spirit",
 			"song": "thorns"
 		}
 	],

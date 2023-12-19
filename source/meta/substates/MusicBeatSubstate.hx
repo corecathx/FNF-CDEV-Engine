@@ -25,7 +25,7 @@ class MusicBeatSubstate extends FlxSubState
 
 	override function update(elapsed:Float)
 	{
-		//everyStep();
+		// everyStep();
 		var oldStep:Int = curStep;
 
 		updateCurStep();
@@ -34,14 +34,14 @@ class MusicBeatSubstate extends FlxSubState
 		if (oldStep != curStep && curStep > 0)
 			stepHit();
 
-		
 		if (FlxG.keys.justPressed.F11)
 			FlxG.fullscreen = !FlxG.fullscreen;
-		
+
 		super.update(elapsed);
 	}
-	
-	override function onFocus() {
+
+	override function onFocus()
+	{
 		super.onFocus();
 		CDevConfig.setFPS(CDevConfig.saveData.fpscap);
 	}
@@ -58,7 +58,7 @@ class MusicBeatSubstate extends FlxSubState
 			if (Conductor.songPosition + CDevConfig.saveData.offset >= Conductor.bpmChangeMap[i].songTime)
 				lastChange = Conductor.bpmChangeMap[i];
 		}
-	
+
 		curStep = lastChange.stepTime + Math.floor((Conductor.songPosition + CDevConfig.saveData.offset - lastChange.songTime) / Conductor.stepCrochet);
 	}
 
@@ -70,6 +70,6 @@ class MusicBeatSubstate extends FlxSubState
 
 	public function beatHit():Void
 	{
-		//do literally nothing dumbass
+		// do literally nothing dumbass
 	}
 }

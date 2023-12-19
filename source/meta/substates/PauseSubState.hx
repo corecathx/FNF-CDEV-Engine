@@ -124,13 +124,9 @@ class PauseSubState extends MusicBeatSubstate
 		var accepted = controls.ACCEPT;
 
 		if (upP)
-		{
 			changeSelection(-1);
-		}
 		if (downP)
-		{
 			changeSelection(1);
-		}
 
 		if (accepted)
 		{
@@ -143,7 +139,7 @@ class PauseSubState extends MusicBeatSubstate
 				case "Restart Song":
 					GameOverSubstate.resetDeathStatus();
 					FlxG.resetState();
-					if (CDevConfig.saveData.showTraceLogAt == 1) TraceLog.clearLogData();
+					if (CDevConfig.saveData.showTraceLogAt == 1) TraceLog.clearLog();
 				case "Options":
 					for (item in grpMenuShit.members)
 						{
@@ -168,7 +164,7 @@ class PauseSubState extends MusicBeatSubstate
 						FlxG.switchState(new meta.states.FreeplayState());
 					}
 						
-					if (CDevConfig.saveData.showTraceLogAt == 1) TraceLog.clearLogData();
+					if (CDevConfig.saveData.showTraceLogAt == 1) TraceLog.clearLog();
 			}
 		}
 

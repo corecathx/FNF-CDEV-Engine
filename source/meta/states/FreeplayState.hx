@@ -155,22 +155,14 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
-		if (allowDefSongs)
+		/*if (allowDefSongs)
 		{
 			for (i in 0...initSonglist.length)
 			{
 				var data:Array<String> = initSonglist[i].split(':');
 				songs.push(new SongMetadata(data[0], Std.parseInt(data[2]), data[1], 'BASEFNF'));
 			}
-		}
-
-		#if desktop
-		for (i in 0...customSongList.length)
-		{
-			var bruh:Array<String> = customSongList[i].split(':');
-			songs.push(new SongMetadata(bruh[0], 1, bruh[1], songModListIdk[i]));
-		}
-		#end
+		}*/
 
 		for (i in 0...WeekData.loadedWeeks.length)
 		{
@@ -201,6 +193,14 @@ class FreeplayState extends MusicBeatState
 				}
 			}
 		}
+
+		#if desktop
+		for (i in 0...customSongList.length)
+		{
+			var bruh:Array<String> = customSongList[i].split(':');
+			songs.push(new SongMetadata(bruh[0], 1, bruh[1], songModListIdk[i]));
+		}
+		#end
 
 		// modName, isClickable, currentValue, min, max.
 		// the min and max value are used if isClickable is true.

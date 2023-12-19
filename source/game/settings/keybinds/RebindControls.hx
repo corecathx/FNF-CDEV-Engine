@@ -1,7 +1,5 @@
 package game.settings.keybinds;
 
-// the codes are from RozeBud for FPS Plus
-// modified by coredev
 import flixel.group.FlxGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;

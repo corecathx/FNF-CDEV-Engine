@@ -28,7 +28,7 @@ class CDevConfig
 	public static var window_icon_custom:Bool = false;
 	public static var debug:Bool = false;
 	public static var elapsedGameTime:Float;
-	public static var engineVersion:String = "1.6.1";
+	public static var engineVersion:String = "1.6.1h";
 	public static var utils(default, null):CDevUtils = new CDevUtils();
 
 	public static var DEPRECATED_STUFFS:Map<String, String>;

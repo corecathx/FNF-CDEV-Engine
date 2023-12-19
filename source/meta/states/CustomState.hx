@@ -4,7 +4,6 @@ import meta.modding.ModdingState;
 import game.cdev.engineutils.TraceLog;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxState;
-import game.objects.Alphabet;
 import game.cdev.script.CDevScript;
 import flixel.graphics.tile.FlxGraphicsShader;
 import flixel.FlxCamera;
@@ -19,16 +18,12 @@ import openfl.display.BlendMode;
 import game.cdev.CDevMods.CDEV_FlxTextBorderStyle;
 import game.cdev.CDevMods.CDEV_FlxTextAlign;
 import game.cdev.CDevMods.CDEV_FlxColor;
+import game.cdev.CDevMods.CDEV_Json;
 import meta.modding.ModPaths;
 import lime.app.Application;
-import game.CoolUtil;
-import game.objects.BackgroundGirls;
-import game.objects.BackgroundDancer;
-import game.objects.Boyfriend;
-import game.Conductor;
-import game.objects.Note;
-import game.objects.Character;
-import game.Paths;
+import game.objects.*;
+import game.*;
+import game.cdev.*;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import flixel.util.FlxAxes;
@@ -48,37 +43,9 @@ import meta.states.PlayState;
 import hscript.Expr;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import game.cdev.engineutils.custom_states.CStateStatics;
 
 using StringTools;
-
-class CStateStatics
-{
-	public static var statics:Map<String, Dynamic> = new Map<String, Dynamic>();
-	public static var mod:String = "";
-
-	public static function get(key:String)
-	{
-		if (!statics.exists(key))
-			return null;
-		return statics.get(key);
-	}
-
-	public static function set(key:String, val:Dynamic)
-	{
-		return statics.set(key, val);
-	}
-
-	public static function exists(key:String)
-	{
-		return statics.exists(key);
-	}
-
-	public static function __RESET()
-	{
-		statics.clear();
-		mod = "";
-	}
-}
 
 class CustomState extends MusicBeatState
 {
@@ -160,7 +127,7 @@ class CustomState extends MusicBeatState
 			try
 			{
 				script.trace(text);
-				TraceLog.addLogData(text);
+				if (traceWindow != null) traceWindow._addData(text);
 			}
 			catch (e)
 			{
@@ -205,7 +172,7 @@ class CustomState extends MusicBeatState
 		script.setVariable("BackgroundDancer", BackgroundDancer);
 		script.setVariable("BackgroundGirls", BackgroundGirls);
 		script.setVariable("FlxTimer", FlxTimer);
-		script.setVariable("Json", Json);
+		script.setVariable("Json", CDEV_Json);
 		script.setVariable("CoolUtil", CoolUtil);
 		script.setVariable("FlxTypeText", FlxTypeText);
 		script.setVariable("FlxText", FlxText);
@@ -235,16 +202,17 @@ class CustomState extends MusicBeatState
 	}
 
 	var state:String = "";
+	var args:Array<Any> = []; //aa
 
-	public function new(state:String = "")
+	public function new(state:String = "", ?argh:Array<Any>)
 	{
 		super();
 		this.state = state;
+		args = (argh == null ? [] : argh);
 	}
 
 	override function create()
 	{
-		trace("yay");
 		super.create();
 		
 		camGame = new FlxCamera();
@@ -280,7 +248,7 @@ class CustomState extends MusicBeatState
 			}
 		}
 		if (gotScript)
-			script.executeFunc("create", []);
+			script.executeFunc("create", args);
 
 		if (gotScript)
 			script.executeFunc("postCreate", []);
@@ -330,7 +298,7 @@ class CustomState extends MusicBeatState
 			if (isErrorBefore != script.error){
 				if (traceWindow != null) traceWindow.visible = true;
 				FlxG.sound.play(Paths.sound("cancelMenu"));
-				TraceLog.addLogData("ERROR: An error occured on the script. If you're stuck on this Custom State, press Shift + Escape.");
+				if (traceWindow != null) traceWindow._addData("ERROR: An error occured on the script. If you're stuck on this Custom State, press Shift + Escape.");
 				isErrorBefore = script.error;
 			}
 		}

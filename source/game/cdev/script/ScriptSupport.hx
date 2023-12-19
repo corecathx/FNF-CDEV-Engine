@@ -18,6 +18,7 @@ import openfl.display.BlendMode;
 import game.cdev.CDevMods.CDEV_FlxTextBorderStyle;
 import game.cdev.CDevMods.CDEV_FlxTextAlign;
 import game.cdev.CDevMods.CDEV_FlxColor;
+import game.cdev.CDevMods.CDEV_Json;
 import meta.modding.ModPaths;
 import lime.app.Application;
 import game.CoolUtil;
@@ -177,7 +178,7 @@ class ScriptSupport
 		script.setVariable("BackgroundDancer", BackgroundDancer);
 		script.setVariable("BackgroundGirls", BackgroundGirls);
 		script.setVariable("FlxTimer", FlxTimer);
-		script.setVariable("Json", Json);
+		script.setVariable("Json", CDEV_Json);
 		script.setVariable("CoolUtil", CoolUtil);
 		script.setVariable("FlxTypeText", FlxTypeText);
 		script.setVariable("FlxText", FlxText);

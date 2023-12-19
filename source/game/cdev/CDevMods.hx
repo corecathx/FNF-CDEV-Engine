@@ -4,6 +4,7 @@ import flixel.util.FlxAxes;
 import openfl.display.BlendMode;
 import flixel.text.FlxText.FlxTextBorderStyle;
 import flixel.util.FlxColor;
+import haxe.Json;
 
 //contains some cool stuffs
 typedef ModFile =
@@ -22,9 +23,7 @@ typedef ModFile =
 }
 
 class CDevMods
-{
-    
-}
+{}
 
 
 
@@ -506,5 +505,15 @@ class CDEV_FlxAxes {
 			case "none" | "" | null : NONE;
 			default : throw "Invalid axes value: " + axes;
 		}
+	}
+}
+
+class CDEV_Json {
+	public static function parse(text:String){
+		return Json.parse(text);
+	}
+
+	public static function stringify(value:Dynamic, ?replacer:(key:Dynamic, value:Dynamic) -> Dynamic, ?space:String){
+		return Json.stringify(value, replacer, space);
 	}
 }

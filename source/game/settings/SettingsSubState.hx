@@ -49,7 +49,7 @@ class SettingsSubState extends MusicBeatSubstate
 			add(grpOptions);
 
 			title = new FlxTextTag(50, 50, 0, theCat.name, 38);
-			title.setFormat("wendy", 66, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+			title.setFormat("wendy", 68, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 			// text.screenCenter(X);
 			title.borderSize = 4;
 			add(title);
@@ -58,7 +58,7 @@ class SettingsSubState extends MusicBeatSubstate
 			{
 				var currentSetting:BaseSettings = theCat.settings[i];
 				var text:FlxTextTag = new FlxTextTag(50, 0, 0, currentSetting.name, 38);
-				text.setFormat("wendy", 36, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+				text.setFormat("wendy", 38, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 				text.y = 0 + ((66) * i) + 5;
 				text.borderSize = 2;
 				// text.screenCenter(X);
@@ -74,7 +74,7 @@ class SettingsSubState extends MusicBeatSubstate
 
 			versionSht = new FlxText(20, FlxG.height - 100, 1000, '', 24);
 			versionSht.scrollFactor.set();
-			versionSht.setFormat("wendy", 30, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			versionSht.setFormat("wendy", 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			versionSht.screenCenter(X);
 			add(versionSht);
 			versionSht.borderSize = 2;

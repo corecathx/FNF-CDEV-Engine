@@ -285,7 +285,7 @@ class Character extends SpriteStage
 
 				if (holdTimer >= Conductor.stepCrochet * 0.001 * charHoldTime)
 				{
-					dance(false, 1);
+					dance(animation.curAnim.name.endsWith(singAltPrefix), 1);
 					holdTimer = 0;
 				}
 			}

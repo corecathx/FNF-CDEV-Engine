@@ -261,7 +261,7 @@ class Note extends FlxSprite
 		{
 			frames = Paths.getSparrowAtlas(tex, "shared");
 			if (frames==null){
-				TraceLog.addLogData("Note.hx:0: Texture asset \""+tex+"\" for note type \""+noteType+"\" doesn't exist!");
+				TraceLog.addLog("Note.hx:0: Texture asset \""+tex+"\" for note type \""+noteType+"\" doesn't exist!");
 				frames = Paths.getSparrowAtlas("notes/NOTE_assets", "shared");
 			}
 

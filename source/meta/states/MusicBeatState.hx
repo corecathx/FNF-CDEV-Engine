@@ -43,7 +43,7 @@ class MusicBeatState extends FlxUIState
 	override function onResize(width:Int, height:Int)
 	{
 		super.onResize(width, height);
-		FlxG.resizeGame(Application.current.window.width, Application.current.window.height);
+		//FlxG.resizeGame(Application.current.window.width, Application.current.window.height);
 	}
 
 	override function update(elapsed:Float)
@@ -60,6 +60,12 @@ class MusicBeatState extends FlxUIState
 		if (FlxG.keys.justPressed.F11)
 			FlxG.fullscreen = !FlxG.fullscreen;
 
+		// fix stuff where the beat & step counter didn't refreshed after the song finished.
+		if (FlxG.sound.music != null && FlxG.sound.music.time > FlxG.sound.music.length - 10)
+		{
+			curBeat = hitBeats;
+			curStep = hitSteps;
+		}
 		super.update(elapsed);
 	}
 

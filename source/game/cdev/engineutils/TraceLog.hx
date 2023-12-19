@@ -22,8 +22,15 @@ using StringTools;
 class TraceLog extends FlxGroup
 {
 	public static var _file:FileReference;
-	public static var TRACE_LOG_DATA:Array<String> = [
-	];
+
+	// these two sucks
+	public var RENDERED_DATA:Array<String> = [];
+
+	public function set_TRACE_LOG_DATA(val:Array<Dynamic>)
+	{
+		_clearData();
+		return val;
+	}
 
 	var window_title:String = 'Trace Log Window';
 
@@ -36,7 +43,7 @@ class TraceLog extends FlxGroup
 
 	var closeButton:FlxGroup;
 
-	public static var LogText:FlxText;
+	public var logText:FlxText;
 
 	var __x:Float = 0;
 	var __y:Float = 0;
@@ -51,6 +58,8 @@ class TraceLog extends FlxGroup
 
 	public var mainCameraObject:FlxCamera = null;
 
+	public static var instance:TraceLog = null;
+
 	public function new(x:Float, y:Float, width:Int, height:Int)
 	{
 		super();
@@ -59,6 +68,7 @@ class TraceLog extends FlxGroup
 		killed = false;
 		heightThis = height;
 		widthThis = width;
+		instance = this;
 
 		PANEL_BG = new FlxSprite(x, y).makeGraphic(width, height, FlxColor.BLACK);
 		PANEL_BG.alpha = 0.5;
@@ -80,28 +90,17 @@ class TraceLog extends FlxGroup
 		sprCloseX.color = FlxColor.WHITE;
 		add(sprCloseX);
 
-		/*sprSave = new FlxSprite(panel_title.x + width - 40, panel_title.y + height - 40).makeGraphic(20, 20, 0xFFFFFFFF);
-		add(sprSave);
-		sprSaveI = new FlxSprite().loadGraphic(Paths.image("ui/file", "shared"));
-		sprSaveI.setGraphicSize(10, 10);
-		sprSaveI.updateHitbox();
-		sprSaveI.setPosition(sprSave.x + (sprSave.width / 2) - 10, sprSave.y + (sprSave.height / 2) - 10);
-		add(sprSaveI);*/
+		logText = new FlxText(x + 2.5, y + 20 + 10, PANEL_BG.width - 20, '', 10);
+		add(logText);
 
-		if (LogText == null)
+		if (!CDevConfig.saveData.traceLogMessage)
 		{
-			LogText = new FlxText(x + 2.5, y + 20 + 10, PANEL_BG.width-20, '', 10);
-			add(LogText);
-		}
+			addLog('This is a trace log window, use "trace(_message);" function on your hscript');
+			addLog('file and the message will appear in here.');
+			addLog('Press F5 to Hide / Show this window.');
 
-		if (!CDevConfig.saveData.traceLogMessage){
-			addLogData('This is a trace log window, use "trace(_message);" function on your hscript');
-			addLogData('file and the message will appear in here.');
-			addLogData('Press F5 to Hide / Show this window.');
-	
-			addLogData('');
+			addLog('');
 		}
-
 
 		visible = isItVisible;
 	}
@@ -122,8 +121,8 @@ class TraceLog extends FlxGroup
 			sprClose.setPosition(panel_title.x + widthThis - 20, panel_title.y);
 			sprCloseX.setPosition(sprClose.x + (sprClose.width / 2) - 5, sprClose.y + (sprClose.height / 2) - 5);
 
-			//sprSave.setPosition(panel_title.x + widthThis - 40, panel_title.y);
-			//sprSaveI.setPosition(sprSave.x + (sprSave.width / 2) - 5, sprSave.y + (sprSave.height / 2) - 5);
+			// sprSave.setPosition(panel_title.x + widthThis - 40, panel_title.y);
+			// sprSaveI.setPosition(sprSave.x + (sprSave.width / 2) - 5, sprSave.y + (sprSave.height / 2) - 5);
 
 			if (FlxG.mouse.getScreenPosition(mainCameraObject).x > sprClose.x
 				&& FlxG.mouse.getScreenPosition(mainCameraObject).x < sprClose.x + sprClose.width
@@ -135,41 +134,28 @@ class TraceLog extends FlxGroup
 				{
 					visible = false;
 				}
-			} else{
+			}
+			else
+			{
 				sprClose.alpha = 0;
 			}
-			/*
-			if (FlxG.mouse.getScreenPosition(mainCameraObject).x > sprSave.x
-				&& FlxG.mouse.getScreenPosition(mainCameraObject).x < sprSave.x + sprSave.width
-				&& FlxG.mouse.getScreenPosition(mainCameraObject).y > sprSave.y
-				&& FlxG.mouse.getScreenPosition(mainCameraObject).y < sprSave.y + sprSave.height)
-			{
-				sprSave.alpha = 0.5;
-				if (FlxG.mouse.justPressed)
-				{
-					var aw:meta.states.PlayState = null;
-					var curState:Dynamic = FlxG.state;
-					aw = curState;
-
-					aw.pauseGame();
-
-					saveTraceData();
-				}
-			}else sprSave.alpha = 0;*/
 
 			if (FlxG.mouse.getScreenPosition(mainCameraObject).x > PANEL_BG.x
 				&& FlxG.mouse.getScreenPosition(mainCameraObject).x < PANEL_BG.x + PANEL_BG.width
 				&& FlxG.mouse.getScreenPosition(mainCameraObject).y > PANEL_BG.y
 				&& FlxG.mouse.getScreenPosition(mainCameraObject).y < PANEL_BG.y + PANEL_BG.height)
 			{
-				if (LogText != null && LogText.textField != null)
+				if (logText != null && logText.textField != null)
 				{
-					if (FlxG.mouse.wheel < 0){
+					if (FlxG.mouse.wheel < 0)
+					{
 						trace("scroll up");
-						LogText.textField.scrollV -= 1;
-					} else if (FlxG.mouse.wheel > 0){
+						logText.textField.scrollV -= 1;
+					}
+					else if (FlxG.mouse.wheel > 0)
+					{
 						trace("scroll down");
-						LogText.textField.scrollV += 1;
+						logText.textField.scrollV += 1;
 					}
 				}
 			}
@@ -180,138 +166,110 @@ class TraceLog extends FlxGroup
 				FlxG.mouse.visible = this.visible;
 			}
 
-			if (LogText != null)
+			if (logText != null)
 			{
-				LogText.setPosition(PANEL_BG.x + 2, PANEL_BG.y + 20 + 10);
+				logText.setPosition(PANEL_BG.x + 2, PANEL_BG.y + 20 + 10);
 			}
 		}
 		else
 		{
-			if (members.contains(LogText))
+			if (members.contains(logText))
 			{
-				remove(LogText);
+				remove(logText);
 			}
 		}
 	}
 
 	public static var killed:Bool = false;
 
-	public static function resetLogText()
+	override function destroy()
 	{
-		if (LogText != null)
+		_resetText();
+		this.kill();
+		super.destroy();
+
+	}
+
+	public function _resetText()
+	{
+		if (logText != null)
 		{
-			LogText.destroy();
-			LogText.kill();
-			LogText = null;
+			logText.destroy();
+			logText.kill();
+			if (members.contains(logText))
+				remove(logText);
+			logText = null;
+
 			killed = true;
 		}
 	}
 
-	public static function clearLogData()
+	public function _clearData()
 	{
-		TRACE_LOG_DATA = [
+		RENDERED_DATA = [
 			'This is a trace log window, use "trace(_message);" function on your hscript file and the message will appear in here.',
 			'(Replace the "_message" with your message)',
 			''
 		];
 
-		if (!CDevConfig.saveData.traceLogMessage){
-			TRACE_LOG_DATA = [];
-		}
-		LogText.text = '';
+		if (!CDevConfig.saveData.traceLogMessage) RENDERED_DATA = [];
+
+		if (logText != null) logText.text = '';
 	}
 
-	public static function addLogData(Data:Dynamic)
+	public function _addData(Data:Dynamic)
 	{
-		if (LogText != null)
+		if (logText != null)
 		{
-			if (Data == null)
-			{
-				return;
-			}
+			if (Data == null) return;
 
 			var textt:String = '';
-
 			textt = Std.string(Data);
 
-			// Actually add it to the textfield
-			if (TRACE_LOG_DATA.length <= 0)
+			if (RENDERED_DATA.length <= 0)
 			{
-				LogText.text = "";
+				logText.text = "";
 			}
 
-			TRACE_LOG_DATA.push(textt);
+			RENDERED_DATA.push(textt);
 
-			if (TRACE_LOG_DATA.length > 15)
+			if (RENDERED_DATA.length > 15)
 			{
-				TRACE_LOG_DATA.shift();
+				RENDERED_DATA.shift();
 				var newText:String = "";
-				for (i in 0...TRACE_LOG_DATA.length)
+				for (i in 0...RENDERED_DATA.length)
 				{
-					newText += TRACE_LOG_DATA[i] + '\n';
+					newText += RENDERED_DATA[i] + '\n';
 				}
 
-				LogText.text = newText;
+				logText.text = newText;
 			}
 			else
 			{
-				LogText.text += textt + "\n";
+				logText.text += textt + "\n";
 			}
 
-			if (LogText.textField != null)
-				LogText.textField.scrollV = Std.int(LogText.textField.maxScrollV);
+			if (logText.textField != null)
+				logText.textField.scrollV = Std.int(logText.textField.maxScrollV);
 		}
-	}
-
-	public static function saveTraceData()
-	{
-		// var data:String = Json.stringify(json);
-		var data:String = "";
-
-		for (tr in TRACE_LOG_DATA)
-		{
-			data += tr + '\n';
-		}
-
-		if ((data != null) && (data.length > 0))
-		{
-			_file = new FileReference();
-			_file.addEventListener(Event.COMPLETE, onSaveComplete);
-			_file.addEventListener(Event.CANCEL, onSaveCancel);
-			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data.trim(), "TraceLog- " + Date.now() +".txt");
-		}
-	}
-
-	public static function onSaveComplete(_):Void
-	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
-		FlxG.log.notice("Successfully saved trace DATA.");
 	}
 
 	/**
-	 * Called when the save file dialog is cancelled.
+	 *  shortcut functions
 	 */
-	public static function onSaveCancel(_):Void
+	public static function addLog(text:Dynamic)
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
+		if (TraceLog.instance != null) TraceLog.instance._addData(text);
 	}
 
-	/**
-	 * Called if there is an error while saving the gameplay recording.
-	 */
-	public static function onSaveError(_):Void
+	public static function clearLog()
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
-		FlxG.log.error("Problem saving trace data");
+		if (TraceLog.instance != null) TraceLog.instance._clearData();
+	}
+
+	public static function resetLog()
+	{
+		// basically clearLog()
+		if (TraceLog.instance != null) TraceLog.instance._clearData();
 	}
 }
