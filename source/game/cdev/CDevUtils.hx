@@ -1,5 +1,7 @@
 package game.cdev;
 
+import meta.substates.CustomSubstate;
+import meta.states.MusicBeatState;
 import flixel.sound.FlxSound;
 import game.settings.data.SettingsProperties;
 import meta.states.TitleState;
@@ -101,9 +103,7 @@ class CDevUtils
 		for (i in 0...input.length)
 		{
 			// Memeriksa apakah karakter adalah huruf atau angka
-			if ((input >= "0" && input <= "9")
-				|| (input >= "a" && input <= "z") 
-				|| (input >= "A" && input <= "Z"))
+			if ((input >= "0" && input <= "9") || (input >= "a" && input <= "z") || (input >= "A" && input <= "Z"))
 			{
 				result += input.charAt(i);
 			}
@@ -113,7 +113,7 @@ class CDevUtils
 
 	public function getStateScript(defaultState:String, ?enableTransit:Bool = true)
 	{
-		if (Paths.curModDir.length == 1)
+		if (Paths.curModDir.length >= 1 && Paths.currentMod != "BASEFNF")
 		{
 			var tempCurMod = Paths.currentMod;
 			Paths.currentMod = Paths.curModDir[0];
@@ -128,6 +128,36 @@ class CDevUtils
 			}
 			Paths.currentMod = tempCurMod;
 		}
+	}
+
+	public function getSubStateScript(currentState:MusicBeatState, defaultState:String, ?arguments:Array<Any>)
+	{
+		if (Paths.curModDir.length >= 1 && Paths.currentMod != "BASEFNF")
+		{
+			var tempCurMod = Paths.currentMod;
+			Paths.currentMod = Paths.curModDir[0];
+			var scriptPath:String = Paths.modFolders("ui/" + defaultState + ".hx");
+			trace(scriptPath);
+			if (FileSystem.exists(scriptPath))
+			{
+				trace("existed, switching to custom SUBstate for " + defaultState);
+				currentState.openSubState(new CustomSubstate(defaultState,arguments));
+			}
+			Paths.currentMod = tempCurMod;
+		}
+	}
+
+	public function hasStateScript(stateName:String):Bool{
+		var ret = false;
+		if (Paths.curModDir.length >= 1 && Paths.currentMod != "BASEFNF"){
+			var tempCurMod = Paths.currentMod;
+			Paths.currentMod = Paths.curModDir[0];
+			var scriptPath:String = Paths.modFolders("ui/" + stateName + ".hx");
+			trace(scriptPath);
+			ret = FileSystem.exists(scriptPath);
+			Paths.currentMod = tempCurMod;
+		}
+		return ret;
 	}
 
 	public function restartGame()

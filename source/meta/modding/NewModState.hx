@@ -135,7 +135,7 @@ class NewModState extends meta.states.MusicBeatState
 		header.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(header);
 
-		var ea:FlxText = new FlxText(header.x+header.width + 15, header.y + 5, -1, "(Will apply if it's a priority mod.)", 26);
+		var ea:FlxText = new FlxText(header.x+header.width + 15, header.y + 5, -1, "(Will apply if it's a first enabled mod.)", 26);
 		ea.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(ea);
 

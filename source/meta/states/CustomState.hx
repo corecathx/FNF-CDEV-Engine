@@ -314,6 +314,12 @@ class CustomState extends MusicBeatState
 			script.executeFunc("postUpdate", [e]);
 	}
 
+	override function destroy() {
+		super.destroy();
+		if (gotScript)
+			script.executeFunc("onDestroy", []);	
+	}
+
 	override function onFocus()
 	{
 		super.onFocus();

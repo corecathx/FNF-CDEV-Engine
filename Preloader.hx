@@ -1,4 +1,4 @@
-package ;
+package;
  
 import flixel.system.FlxBasePreloader;
 import openfl.display.Sprite;
@@ -9,7 +9,7 @@ import flash.display.Sprite;
 import flash.Lib;
 import flixel.FlxG;
  
-@:bitmap("art/preloaderArt.png") class LogoImage extends BitmapData { }
+@:bitmap("art/preloaderArt.png") class LogoImage extends BitmapData { } //huh
  
 class Preloader extends FlxBasePreloader
 {

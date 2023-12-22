@@ -2470,20 +2470,12 @@ class PlayState extends MusicBeatState
 			{
 				if (enableNoteTween)
 				{
-					if (!CDevConfig.saveData.downscroll)
-					{
-						babyArrow.y -= 50;
-						babyArrow.alpha = 0;
-						FlxTween.tween(babyArrow, {y: babyArrow.y + 50, alpha: 1}, ((Conductor.crochet * 4) / 1000) - 0.1,
-							{ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
-					}
-					else
-					{
-						babyArrow.y += 50;
-						babyArrow.alpha = 0;
-						FlxTween.tween(babyArrow, {y: babyArrow.y - 50, alpha: 1}, ((Conductor.crochet * 4) / 1000) - 0.1,
-							{ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
-					}
+					var posAddition = CDevConfig.saveData.downscroll ? -50 : 50;
+
+					babyArrow.y += posAddition;
+					babyArrow.alpha = 0;
+					FlxTween.tween(babyArrow, {y: babyArrow.y - posAddition, alpha: 1}, ((Conductor.crochet * 4) / 1000) - 0.1,
+					{ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
 				}
 			}
 
@@ -2498,8 +2490,8 @@ class PlayState extends MusicBeatState
 			babyArrow.playAnim('static', false);
 			babyArrow.x += 50;
 			babyArrow.x += ((FlxG.width / 2) * player);
-			var down:Float = (CDevConfig.saveData.downscroll ? -1 : 1);
-			babyArrow.noteScroll = down;
+
+			babyArrow.noteScroll = (CDevConfig.saveData.downscroll ? -1 : 1);
 
 			if (CDevConfig.saveData.botplay)
 				playerStrums.forEach(function(spr:StrumArrow)
@@ -3823,6 +3815,8 @@ class PlayState extends MusicBeatState
 						}
 					}
 					
+					// this:
+					// https://cdn.discordapp.com/attachments/1172878696844111892/1187717373675974706/image.png?ex=6597e700&is=65857200&hm=9bc44e18aefffdeb9f4d3cc233b5b5c936ef4057a771750f1544d97648b77508&
 					daNote.flipY = (strum.noteScroll < 0);
 
 					StrumArrow.checkRects(daNote, strum);

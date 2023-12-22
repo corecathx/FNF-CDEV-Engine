@@ -21,7 +21,7 @@ function postCreate(){
     add(text);
     text.borderSize = 4;
     text.visible = false;
-    PlayState.botplayTxt.text=" ";
+    //PlayState.botplayTxt.text=" ";
 }
 
 function onNoteMiss(a){
@@ -30,7 +30,20 @@ function onNoteMiss(a){
         missed=true;
     }
 }
+function update(b){
+    if (beat > 68 && beat < 100)
+    {
+        if (controls.LEFT_P || controls.DOWN_P){
+            FlxG.sound.play(Paths.sound("kick"), 0.7);
+            PlayState.boyfriend.playAnim((controls.LEFT_P ? "singLEFT" : "singDOWN"), true);
+        }
 
+        if (controls.UP_P || controls.RIGHT_P){
+            FlxG.sound.play(Paths.sound("snare"), 0.7);
+            PlayState.boyfriend.playAnim((controls.UP_P ? "singUP" : "singRIGHT"), true);
+        }
+    }
+}
 function beatHit(b){
     beat = b;
     if (b>4){

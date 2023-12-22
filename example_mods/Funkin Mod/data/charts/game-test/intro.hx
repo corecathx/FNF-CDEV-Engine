@@ -1,9 +1,9 @@
 function init() {
     runOnFreeplay = true;
 }
-
+var video:FlxVideo;
 function introStart() {
-    var video:FlxVideo = new FlxVideo();
+    video = new FlxVideo();
     video.play(Paths.video("game_cutscene"));
     video.onEndReached.add(function()
     {
@@ -14,7 +14,10 @@ function introStart() {
 }
 
 function update(e) {
-    /*if (FlxG.keys.justPressed.SPACE){
+    if (FlxG.keys.justPressed.SPACE){
+        //startSong();
+        video.stop();
+        video.dispose();
         startSong();
-    }*/
+    }
 }

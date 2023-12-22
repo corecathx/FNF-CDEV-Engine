@@ -1,10 +1,10 @@
-package meta.states;
+package meta.substates;
 
+import meta.states.*;
 import meta.modding.ModdingState;
 import game.cdev.engineutils.TraceLog;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxState;
-import game.objects.Alphabet;
 import game.cdev.script.CDevScript;
 import flixel.graphics.tile.FlxGraphicsShader;
 import flixel.FlxCamera;
@@ -19,16 +19,12 @@ import openfl.display.BlendMode;
 import game.cdev.CDevMods.CDEV_FlxTextBorderStyle;
 import game.cdev.CDevMods.CDEV_FlxTextAlign;
 import game.cdev.CDevMods.CDEV_FlxColor;
+import game.cdev.CDevMods.CDEV_Json;
 import meta.modding.ModPaths;
 import lime.app.Application;
-import game.CoolUtil;
-import game.objects.BackgroundGirls;
-import game.objects.BackgroundDancer;
-import game.objects.Boyfriend;
-import game.Conductor;
-import game.objects.Note;
-import game.objects.Character;
-import game.Paths;
+import game.objects.*;
+import game.*;
+import game.cdev.*;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import flixel.util.FlxAxes;
@@ -49,14 +45,13 @@ import hscript.Expr;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import game.cdev.engineutils.custom_states.CStateStatics;
-import meta.states.*;
 
 using StringTools;
 
 class CustomSubstate extends MusicBeatSubstate
 {
 	public static var lastMod:String = "";
-	public static var current:CustomState = null;
+	public static var current:CustomSubstate = null;
 
 	// trace window stuffs
 	public var camGame:FlxCamera;
@@ -127,8 +122,9 @@ class CustomSubstate extends MusicBeatSubstate
 		{
 			try
 			{
+				trace(text);
 				script.trace(text);
-				if (traceWindow != null) traceWindow._addData(text);
+				TraceLog.addLog(text);
 			}
 			catch (e)
 			{
@@ -146,6 +142,10 @@ class CustomSubstate extends MusicBeatSubstate
 		script.setVariable("insert", function(pos, obj)
 		{
 			insert(pos, obj);
+		});
+		script.setVariable("close", function(){
+			close();
+			this.destroy();
 		});
 		script.setVariable("Alphabet", Alphabet);
 		script.setVariable("controls", current.controls);
@@ -173,7 +173,7 @@ class CustomSubstate extends MusicBeatSubstate
 		script.setVariable("BackgroundDancer", BackgroundDancer);
 		script.setVariable("BackgroundGirls", BackgroundGirls);
 		script.setVariable("FlxTimer", FlxTimer);
-		script.setVariable("Json", Json);
+		script.setVariable("Json", CDEV_Json);
 		script.setVariable("CoolUtil", CoolUtil);
 		script.setVariable("FlxTypeText", FlxTypeText);
 		script.setVariable("FlxText", FlxText);
@@ -203,33 +203,27 @@ class CustomSubstate extends MusicBeatSubstate
 	}
 
 	var state:String = "";
+	var args:Array<Any> = []; //aa
 
-	public function new(state:String = "")
+	public function new(state:String = "", ?argh:Array<Any>)
 	{
 		super();
 		this.state = state;
+		args = (argh == null ? [] : argh);
+
+		initSub();
 	}
 
-	override function create()
+	function initSub()
 	{
-		trace("yay");
-		super.create();
-		
-		camGame = new FlxCamera();
-		traceCam = new FlxCamera();
-		traceCam.bgColor.alpha = 0;
-		FlxG.cameras.reset(camGame);
-		FlxG.cameras.add(traceCam);
-		FlxCamera.defaultCameras = [camGame];
-
-		if (CDevConfig.saveData.showTraceLogAt == 1)
+		/*if (CDevConfig.saveData.showTraceLogAt == 1)
 		{
 			traceWindow = new TraceLog(10, 60, 600, 250);
 			add(traceWindow);
-			traceWindow.cameras = [traceCam];
-			traceWindow.mainCameraObject = traceCam;
+			traceWindow.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+			traceWindow.mainCameraObject = FlxG.cameras.list[FlxG.cameras.list.length - 1];
 			FlxG.mouse.visible = true;
-		}
+		}*/
 		if (state != "")
 		{
 			if (Paths.curModDir.length == 1)
@@ -248,7 +242,7 @@ class CustomSubstate extends MusicBeatSubstate
 			}
 		}
 		if (gotScript)
-			script.executeFunc("create", []);
+			script.executeFunc("create", args);
 
 		if (gotScript)
 			script.executeFunc("postCreate", []);
@@ -265,53 +259,34 @@ class CustomSubstate extends MusicBeatSubstate
 			script.executeFunc("update", [e]);
 		super.update(e);
 
-		if (CDevConfig.saveData.showTraceLogAt == 1)
-		{
-			if (traceWindow != null)
-			{
-				if (FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x > traceWindow.PANEL_BG.x
-					&& FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x < traceWindow.PANEL_BG.x + traceWindow.PANEL_BG.width
-					&& FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).y > traceWindow.PANEL_BG.y
-					&& FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).y < traceWindow.PANEL_BG.y + 20)
-				{
-					if (FlxG.mouse.justPressed)
-					{
-						offsetX = traceWindow.PANEL_BG.x - FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x;
-						pressed = true;
-					}
-				}
-
-				if (pressed)
-				{
-					traceWindow.PANEL_BG.setPosition(FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x + offsetX,
-						FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).y - 5);
-
-					if (FlxG.mouse.justReleased)
-					{
-						pressed = false;
-					}
-				}
-			}
-		}
 
 		if (gotScript && script.error){
 			if (isErrorBefore != script.error){
-				if (traceWindow != null) traceWindow.visible = true;
 				FlxG.sound.play(Paths.sound("cancelMenu"));
-				if (traceWindow != null) traceWindow._addData("ERROR: An error occured on the script. If you're stuck on this Custom State, press Shift + Escape.");
+				TraceLog.addLog("ERROR: An error occured on the script. If you're stuck on this Custom Substate, press Shift + Escape.");
 				isErrorBefore = script.error;
 			}
 		}
 
 		if (gotScript && script.error && FlxG.keys.pressed.SHIFT && FlxG.keys.justPressed.ESCAPE)
 		{
-			var newState = new MainMenuState();
-			newState.disableSwitching = true;
-			changeState(newState);
+			close();
 		}
 
 		if (gotScript)
 			script.executeFunc("postUpdate", [e]);
+	}
+
+	override function closeSubState() {
+		super.closeSubState();
+		if (gotScript)
+			script.executeFunc("onCloseSubState", []);
+	}
+
+	override function destroy() {
+		super.destroy();
+		if (gotScript)
+			script.executeFunc("onDestroy", []);	
 	}
 
 	override function onFocus()

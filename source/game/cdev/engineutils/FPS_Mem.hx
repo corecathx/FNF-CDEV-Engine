@@ -1,5 +1,6 @@
 package game.cdev.engineutils;
 
+import lime.app.Application;
 import openfl.display.IBitmapDrawable;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;

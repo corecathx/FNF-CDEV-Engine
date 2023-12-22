@@ -1076,6 +1076,7 @@ class ChartingState extends MusicBeatState
 		}
 
 		super.update(elapsed);
+		updateHeads();
 
 		if (FlxG.keys.justPressed.F1)
 		{
@@ -1108,7 +1109,9 @@ class ChartingState extends MusicBeatState
 		}
 		#end
 
-		if (FlxG.sound.music.time >= (FlxG.sound.music.length-10))
+		if (FlxG.sound.music != null
+			&& FlxG.sound.music.playing
+			&& FlxG.sound.music.time >= (FlxG.sound.music.length-10))
 		{
 			vocals.pause();
 			vocals.time = 0;
@@ -1767,6 +1770,7 @@ class ChartingState extends MusicBeatState
 		{
 			curSection = sec;
 
+			updateGrid();
 			if (updateMusic)
 			{
 				FlxG.sound.music.pause();
@@ -1777,9 +1781,7 @@ class ChartingState extends MusicBeatState
 				updateCurStep();
 			}
 
-			updateGrid();
 			updateSectionUI();
-			updateHeads();
 		}
 	}
 

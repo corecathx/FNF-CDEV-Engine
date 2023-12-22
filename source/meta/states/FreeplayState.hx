@@ -94,7 +94,7 @@ class FreeplayState extends MusicBeatState
 	var songBG:FlxSprite;
 	var songBar:FlxBar;
 
-	var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+	var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('aboutMenu'));
 	private var iconArray:Array<HealthIcon> = [];
 
 	var songInfo:FlxText;

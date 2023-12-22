@@ -20,6 +20,7 @@ using StringTools;
 class Note extends FlxSprite
 {
 	public static var noteScale:Float = 0.65;
+	public static var defaultGraphicSize:Float = 160;
 
 	public var script:CDevScript = null;
 	var gotScript:Bool = false;
@@ -47,7 +48,7 @@ class Note extends FlxSprite
 	//avoid repetitive missing note type file warnings
 	public static var noteTypeFail:Array<String> = [];
 
-	public static var swagWidth:Float = 160 * noteScale;
+	public static var swagWidth:Float = defaultGraphicSize * noteScale;
 	public static var PURP_NOTE:Int = 0;
 	public static var GREEN_NOTE:Int = 2;
 	public static var BLUE_NOTE:Int = 1;
