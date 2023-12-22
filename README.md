@@ -55,6 +55,9 @@ CDEV Engine is currently only supported for Windows target only since the code i
 CDEV Engine
 - [CoreDev](https://twitter.com/core5570r) - Programmer of this engine, additional assets.
 
+Special Thanks
+- [PolybiusProxy](https://github.com/polybiusproxy) - MP4 Video Haxe Library (hxCodec)
+
 Engines that inspired CDEV Engine & Codes used in this engine
 - [Codename Engine](https://github.com/FNF-CNE-Devs/CodenameEngine) - GPU Bitmap code.
 - [Psych Engine](https://github.com/ShadowMario/FNF-PsychEngine) - Literally inspired CDEV Engine to have Modding Supports.
