@@ -1,1 +1,1 @@
-/Core5570RYT/FNF-CDEV-Engine/releases/download/v1.6.1/cdev-engine-v161.zip
+Core5570RYT/FNF-CDEV-Engine/releases/download/v1.6.1h/cdev-engine-v161h-win64.zip
