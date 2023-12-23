@@ -141,9 +141,8 @@ class PlayState extends MusicBeatState
 
 	public static var camZooming:Bool = false;
 
-	public static var convertedAccuracy:Float = 0;
-
-	var accuracyShit:Float = 0;
+	public static var accuracy:Float = 0;
+	public static var convertedAccuracy:Float = 0; // backward compability support
 
 	public static var strumLineNotes:FlxTypedGroup<StrumArrow>;
 	public static var playerStrums:FlxTypedGroup<StrumArrow>;
@@ -312,7 +311,8 @@ class PlayState extends MusicBeatState
 
 	var isModStage:Bool = false;
 
-	public static var enableNoteTween:Bool = false;
+	public static var enableNoteTween:Bool = true;
+	public static var enableCountdown:Bool = true;
 
 	var singAnimationNames:Array<String> = ["singLEFT", "singDOWN", "singUP", "singRIGHT"];
 
@@ -422,6 +422,7 @@ class PlayState extends MusicBeatState
 		bad = 0;
 		shit = 0;
 		misses = 0;
+		accuracy = 0;
 		convertedAccuracy = 0;
 
 		switch (SONG.song.toLowerCase())
@@ -497,7 +498,7 @@ class PlayState extends MusicBeatState
 		// String for when the game is paused
 		detailsPausedText = "Paused - " + detailsText;
 
-		daRPCInfo = 'Score: ' + songScore + "\n" + 'Misses: ' + misses + '\n' + 'Accuracy: ' + RatingsCheck.fixFloat(convertedAccuracy, 2) + "% ("
+		daRPCInfo = 'Score: ' + songScore + "\n" + 'Misses: ' + misses + '\n' + 'Accuracy: ' + RatingsCheck.fixFloat(accuracy, 2) + "% ("
 			+ ratingText + ')';
 
 		// Updating Discord Rich Presence.
@@ -2822,10 +2823,10 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		ratingText = RatingsCheck.getRating(convertedAccuracy)
+		ratingText = RatingsCheck.getRating(accuracy)
 			+ " ("
-			+ RatingsCheck.getRatingText(convertedAccuracy)
-			+ (convertedAccuracy == 0 ? ')' : ", " + RatingsCheck.getRankText() + ")");
+			+ RatingsCheck.getRatingText(accuracy)
+			+ (accuracy == 0 ? ')' : ", " + RatingsCheck.getRankText() + ")");
 
 		if (!CDevConfig.saveData.botplay)
 		{
@@ -2835,7 +2836,7 @@ class PlayState extends MusicBeatState
 					+ ' // ${config.scoreText}: '
 					+ songScore
 					+ ' // ${config.accuracyText}: '
-					+ RatingsCheck.fixFloat(convertedAccuracy, 2)
+					+ RatingsCheck.fixFloat(accuracy, 2)
 					+ "% "
 					+ "("
 					+ ratingText
@@ -2852,7 +2853,7 @@ class PlayState extends MusicBeatState
 					+ ' // ${config.scoreText}: '
 					+ songScore
 					+ ' // ${config.accuracyText}: '
-					+ RatingsCheck.fixFloat(convertedAccuracy, 2)
+					+ RatingsCheck.fixFloat(accuracy, 2)
 					+ "% (Botplay)"
 					+ (CDevConfig.saveData.healthCounter ? ' // Health: ' + Math.floor(healthBarPercent) + '%' : '');
 			else
@@ -2860,7 +2861,7 @@ class PlayState extends MusicBeatState
 		}
 
 		daRPCInfo = '${config.scoreText}: ' + songScore + " | " + '${config.missesText}: ' + misses + ' | ' + '${config.accuracyText}: '
-			+ RatingsCheck.fixFloat(convertedAccuracy, 2) + "% (" + ratingText + ')';
+			+ RatingsCheck.fixFloat(accuracy, 2) + "% (" + ratingText + ')';
 
 		scoreWidth = Std.int((scoreTxt.size * 0.59) * scoreTxt.text.length);
 		// bgScore.setGraphicSize(Std.int(FlxMath.lerp(bgSWidth, bgScore.width, CDevConfig.utils.bound(1 - (elapsed * 7), 0, 1))), Std.int(FlxMath.lerp(bgSHeight, bgScore.height, CDevConfig.utils.bound(1 - (elapsed * 7), 0, 1))));
@@ -3064,13 +3065,9 @@ class PlayState extends MusicBeatState
 		}
 
 		if (!forceCameraPos)
-		{
 			mustHitCamera();
-		}
 		else
-		{
 			camFollow.setPosition(camPosForced[0], camPosForced[1]);
-		}
 
 		if (camZooming)
 		{
@@ -3085,65 +3082,34 @@ class PlayState extends MusicBeatState
 
 		beatBasedEvents();
 
-		if (!inCutscene)
-			songEventHandler();
+		if (!inCutscene) songEventHandler();
 
-		if (!inCutscene)
-			if (controls.RESET && CDevConfig.saveData.resetButton)
-			{
-				health = (playingLeftSide ? 2 : 0);
-				trace("RESET = True");
+		if (!inCutscene && controls.RESET && CDevConfig.saveData.resetButton)
+			health = (playingLeftSide ? 2 : 0);
+
+		if ((playingLeftSide ? (health >= 2) : (health <= 0))){
+			scripts.executeFunc("onGameOver", []);
+			boyfriend.stunned = true;
+
+			persistentUpdate = false;
+			persistentDraw = false;
+			paused = true;
+
+			vocals.stop();
+			FlxG.sound.music.stop();
+
+			var char:Character = (playingLeftSide ? dad : boyfriend);
+
+			if (CDevConfig.utils.hasStateScript("GameOverSubstate")){
+				CDevConfig.utils.getSubStateScript(this, "GameOverSubstate", [char.getScreenPosition().x, char.getScreenPosition().y]);
+			} else{
+				openSubState(new meta.substates.GameOverSubstate(char.getScreenPosition().x, char.getScreenPosition().y));
 			}
 
-		if (!playingLeftSide)
-		{
-			if (health <= 0)
-			{
-				scripts.executeFunc('onGameOver', []);
-				boyfriend.stunned = true;
-
-				persistentUpdate = false;
-				persistentDraw = false;
-				paused = true;
-
-				vocals.stop();
-				// vocals_opponent.stop();
-				FlxG.sound.music.stop();
-
-				openSubState(new meta.substates.GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-
-				#if desktop
-				// Game Over doesn't get his own variable because it's only used here
-				if (Main.discordRPC)
-					DiscordClient.changePresence("Game Over - " + detailsText, daRPCInfo, iconRPC);
-				#end
-			}
-		}
-		else
-		{
-			if (health >= 2)
-			{
-				scripts.executeFunc('onGameOver', []);
-				boyfriend.stunned = true;
-
-				persistentUpdate = false;
-				persistentDraw = false;
-				paused = true;
-
-				vocals.stop();
-				// vocals_opponent.stop();
-				FlxG.sound.music.stop();
-
-				openSubState(new meta.substates.GameOverSubstate(dad.getScreenPosition().x, dad.getScreenPosition().y));
-
-				// FlxG.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-
-				#if desktop
-				// Game Over doesn't get his own variable because it's only used here
-				if (Main.discordRPC)
-					DiscordClient.changePresence("Game Over - " + detailsText, daRPCInfo, iconRPC);
-				#end
-			}
+			#if desktop
+			if (Main.discordRPC)
+				DiscordClient.changePresence("Game Over - " + detailsText, daRPCInfo, iconRPC);
+			#end
 		}
 
 		notesUpdateFunction();
@@ -3172,7 +3138,11 @@ class PlayState extends MusicBeatState
 		persistentDraw = true;
 		paused = true;
 
-		openSubState(new meta.substates.PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+		if (CDevConfig.utils.hasStateScript("PauseSubState")){
+			CDevConfig.utils.getSubStateScript(this, "PauseSubState", [boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y]);
+		} else{
+			openSubState(new meta.substates.PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+		}
 
 		#if desktop
 		if (Main.discordRPC)
@@ -4274,7 +4244,7 @@ class PlayState extends MusicBeatState
 			if (SONG.validScore && !chartingMode)
 			{
 				#if !switch
-				var val:Float = convertedAccuracy;
+				var val:Float = accuracy;
 				if (Math.isNaN(val))
 					val = 0;
 				game.cdev.engineutils.Highscore.saveScore(SONG.song, songScore, storyDifficulty, val, Date.now());
@@ -4938,7 +4908,8 @@ class PlayState extends MusicBeatState
 
 	public function recalculateAccuracy()
 	{
-		convertedAccuracy = (accuracyScore / ((allDaNotesHit + misses) * 400)) * 100;
+		accuracy = (accuracyScore / ((allDaNotesHit + misses) * 400)) * 100;
+		convertedAccuracy = accuracy; //backwards compability
 	}
 
 	function noteMiss(direction:Int = 1):Void
