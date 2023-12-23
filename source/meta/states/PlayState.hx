@@ -3740,16 +3740,9 @@ class PlayState extends MusicBeatState
 				// check where the note is right now to see if it's active or not
 				var noteValid:Bool = (CDevConfig.saveData.downscroll ? ((Conductor.songPosition - Conductor.safeZoneOffset) > daNote.strumTime
 					+ (Conductor.crochet / 4)) : daNote.strumTime < (Conductor.songPosition - Conductor.safeZoneOffset));
-				if (noteValid)
-				{
-					daNote.active = false;
-					daNote.visible = false;
-				}
-				else
-				{
-					daNote.visible = true;
-					daNote.active = true;
-				}
+
+				daNote.active = !noteValid;
+				daNote.visible = !noteValid;
 
 				if (!CDevConfig.saveData.middlescroll)
 				{
@@ -3761,33 +3754,12 @@ class PlayState extends MusicBeatState
 
 				if (daNote.followX)
 				{
-					if (!daNote.isPixelSkinNote)
-					{
-						if (daNote.isSustainNote)
-							daNote.x += daNote.width / 2 + 20;
-					}
-					else
-					{
-						if (isPixel)
-						{
-							if (daNote.isSustainNote)
-								daNote.x += daNote.width / 2 + 15;
-						}
-						else
-						{
-							if (daNote.isSustainNote)
-								daNote.x += daNote.width / 2 + 15;
-						}
-					}
+					if (daNote.isSustainNote)
+						daNote.x += daNote.width / 2 + (daNote.isPixelSkinNote ? 20 : 15);
 				}
 
 				if (!daNote.mustPress && CDevConfig.saveData.middlescroll)
-				{
-					if (CDevConfig.saveData.bgNote)
-						daNote.alpha = 0.07;
-					else
-						daNote.alpha = 0;
-				}
+					daNote.alpha = (CDevConfig.saveData.bgNote ? 0.07 : 0);
 
 				var strum:StrumArrow = daNote.mustPress ? playerStrums.members[daNote.noteData] : p2Strums.members[daNote.noteData];
 
@@ -3806,9 +3778,7 @@ class PlayState extends MusicBeatState
 				if (daNote.followAngle)
 				{
 					if (!daNote.isSustainNote)
-					{
 						daNote.angle = strum.angle;
-					}
 				}
 
 				// fixing this since the last code was ass (tbh this one also ass)
@@ -3852,11 +3822,8 @@ class PlayState extends MusicBeatState
 							daNote.y -= daNote.height / noteSpeed;
 						}
 					}
-
-					if (strum.noteScroll < 0)
-						daNote.flipY = true;
-					else
-						daNote.flipY = false;
+					
+					daNote.flipY = (strum.noteScroll < 0);
 
 					StrumArrow.checkRects(daNote, strum);
 				}
