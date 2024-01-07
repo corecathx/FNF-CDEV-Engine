@@ -6,7 +6,7 @@ This is the repository of CDEV Engine, an Friday Night Funkin' Engine.
 ## Build instructions
 
 First you need to install Haxe and HaxeFlixel.
-1. [Install Haxe 4.2.5](https://haxe.org/download/version/4.2.5/) (Download 4.2.5 instead of 4.1.5, seriously stop using Haxe 4.1.5, it misses a lot of stuffs)
+1. [Install Haxe 4.2.5](https://haxe.org/download/version/4.2.5/) (Download 4.2.5 instead of 4.1.5.)
 2. [Install HaxeFlixel](https://haxeflixel.com/documentation/install-haxeflixel/) after downloading Haxe.
 
 Second, you need to install the additional libraries, a fully updated list will be in `Project.xml` in the project root. Here's the list of libraries that you need to install:
@@ -17,6 +17,7 @@ flixel-ui
 hscript
 newgrounds
 hxCodec
+extension-androidtools
 ```
 Type `haxelib install [library]` for each of those libs, so like: `haxelib install newgrounds`.
 
@@ -48,6 +49,7 @@ Once everything has done, have fun with the engine!
 yeah uh, most of the codes there are made when i still lack of haxe understanding, i'm still cleaning it up
 
 # Important thing
+## READ THE ENGINE'S DOCUMENTATION HERE: https://core5570ryt.github.io/FNF-CDEV-Engine/
 CDEV Engine is currently only supported for Windows target only since the code is messed up and more (sorry!)
 
 ## Credits
@@ -61,7 +63,6 @@ Special Thanks
 Engines that inspired CDEV Engine & Codes used in this engine
 - [Codename Engine](https://github.com/FNF-CNE-Devs/CodenameEngine) - GPU Bitmap code.
 - [Psych Engine](https://github.com/ShadowMario/FNF-PsychEngine) - Literally inspired CDEV Engine to have Modding Supports.
-- [Forever Engine](https://github.com/SomeKitten/Forever-Engine) - Shaders code.
 - [Kade Engine](https://github.com/Kade-github/Kade-Engine) - Song Speed modifier code.
 
 Friday Night Funkin'
