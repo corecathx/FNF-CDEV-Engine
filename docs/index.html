@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>CDEV Engine Docs</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -47,7 +47,7 @@
             -->
             <!--Welcome-->
             <div class="tab-content active-tab" id="welcome">
-                <img src="images/CDEV-Engine-Logo.png" width="600" style="align-self: center;">
+                <img src="images/CDEV-Engine-Logo.png" width="500" style="align-self: center;">
                 <h1>Welcome to CDEV Engine's Documentation</h1>
                 <hr>
                 <p>This HTML Page contains the basics of modding in CDEV Engine, such as scripting, adding week, adding
@@ -55,8 +55,9 @@
                 <p>The quickest way to get started is to check out the built-in mod which is the "FNF Test Mod" and
                     playing around with it.<br>The documentation is for reference if you want to know the specifics of
                     everything. These are the categories on the left, check them out!<br>there's no "TL;DR" here.</p>
-                <p><br>(Note: This documentation was made in CDEV Engine v.1.4, if you've downloaded an higher version
+                <p><br>(Note: This documentation was made in CDEV Engine v.1.6.2, if you've downloaded an higher version
                     of CDEV Engine, expect some stuffs not included here.)</p>
+                <a href="https://discord.gg/w8sFmXsFpk" style="color:#9CDCFE;">Join the Public Discord Server of CDEV Engine!</a>
             </div>
 
             <!--Adding a new mod-->
@@ -96,7 +97,7 @@
                 <p>Finally, open a txt file on "cdev-mods/<strong>yourmod</strong>/songList.txt", and then add your song
                     name into the txt file</p>
                 <img src="images/new-song/img4.png" />
-                <p><em>(it should be in this format: <code>songName:characterIcon:weekNumber</code>.)</em></p>
+                <p><em>(it should be in this format: <pre>songName:characterIcon:weekNumber</pre>.)</em></p>
                 <p>After you done all the steps correctly, your song will be available on the Freeplay Menu</p>
                 <img src="images/new-song/img45.png" />
             </div>
@@ -209,7 +210,53 @@
             <div class="tab-content" id="new-week">
                 <h1>Making a new week</h1>
                 <hr>
-                <p>wip </p>
+                <p>We'll be making a new week here, it's a pretty easy thing to do.</p>
+                <h1>Required files</h1>
+                <hr>
+                <p>To make a new week, you have to make sure you have the assets for it.</p>
+                <p>First file you need is the Week Sprite path, which is this image.</p>
+                <img src="images/new-week/img4.png" width="250" />
+                <p>Place that file under the <b>yourmod/images/storymenu/</b> folder.</p>
+                <p>Another file you need is the Difficulty Sprites, it should be located on <b>yourmod/images/storymenu/difficulty</b> folder.</p>
+                <h1>Opening the Week Editor</h1>
+                <hr>
+                <p>1. Go to Modding menu from Main menu, and if you already have a mod, select "Open an existing mod",
+                    and if not, read <a href="#new-mod" onclick="showTab('new-mod'); return false;"
+                        style="color: white;">this.</a></p>
+                <p>2. Once you're on the Modding menu, select Week Editor to begin.</p>
+                <img src="images/new-week/img1.png" width="600" />
+                <p>3. You should be seeing something like this once you entered the Week Editor.</p>
+                <img src="images/new-week/img2.png" width="700" />
+                <h1>Making the week</h1>
+                <hr>
+                <p>1. Switch to the week tab, and you'll be seeing something like this.</p>
+                <img src="images/new-week/img3.png" width="650" />
+                <p>2. Change the week sprite path to your sprite name, in this case, i'll be using my sprite called "catweek"</p>
+                <img src="images/new-week/img5.png" height="100"/>
+                <p>(Once you done writing your sprite name on the text box, you'll notice that the sprite on the week editor changed, that means you've done it correctly!)</p>
+                <p>3. Type in your week name, it'll be displayed on top corner right, i'll be naming it "CoreCat week"</p>
+                <img src="images/new-week/img6.png" width="400"/>
+                <img src="images/new-week/img7.png" width="300"/>
+                <p>4. For the characters part, type in your characters name, and separate them with "," <i>(Note: Only 3 characters are allowed)</i></p>
+                <p>(CDEV Engine uses an existing Character JSON files for the week characters, so just type in your character's name based on <b>yourmod/data/characters/</b> folder.)</p>
+                <img src="images/new-week/img8.png" width="500"/>
+                <p>5. Adjust the position, scale, flip x properties of your characters. (To adjust the position of your character, simply press & hold your character and move 'em)</p>
+                <p>(If you got a problem where you always end up moving the wrong character, make sure you've locked the character so it can't be moved)</p>
+                <img src="images/new-week/img9.png" width="650"/>
+                <p>6. Also type in your week songs, and the difficulty. Separate them with ",".</p>
+                <img src="images/new-week/img10.png" width="450"/>
+                <h1>Setting up the freeplay</h1>
+                <hr>
+                <p>1. Switch to the Options tab, and then press on "Open Freeplay".</p>
+                <img src="images/new-week/img11.png" width="350"/>
+                <p>2. Once you pressed the Open Freeplay button, you'll be moved to this screen.</p>
+                <img src="images/new-week/img12.png" width="550"/>
+                <p><i>(Use the UP and DOWN keys to navigate through the songs.)</i></p>
+                <p>3. Look at the "Freeplay" box, and change the Background color, which character that assigned to that song, and whether to hide these songs from the freeplay.</p>
+                <img src="images/new-week/img13.png" width="550"/>
+                <h1>Ending</h1>
+                <hr>
+                <p>Press ESCAPE to go back to the week editor, and then press the "Save Week" button and there you go! You have made your own CDEV Engine week!</p>
             </div>
 
             <!--
@@ -220,217 +267,264 @@
                 <h1>How scripting works here</h1>
                 <hr>
                 <p>CDEV Engine uses HScript for mod scripting, HScript is Haxe script that can be executed during runtime<br><br>You might be asking: <b>"Why HScript? Why not LUA?"</b><br>At first, CDEV Engine was going to use LUA as it's scripting language, but then i changed my mind and then using HScript instead.</p>
-                <p>If you're ever tried to make mods using <a href="https://github.com/FunkinCrew/Funkin">Friday Night Funkin's Source Code</a>, then Scripting on CDEV Engine would be easy for you.</p>
+                <p>If you're ever tried to make mods using <a href="https://github.com/FunkinCrew/Funkin" style="color:#9CDCFE;">Friday Night Funkin's Source Code</a>, then Scripting on CDEV Engine would be easy for you.</p>
                 <p>HScript uses .hx extension, so make sure your script file ends with .hx so the engine can read and execute the script.</p>
                 <p>Without further ado, let's get on how does scripting works here.</p>
                 <h3>Scripts used</h3>
                 <hr>
                 <p>There are only 3 scripts that used for your mod.</p>
                 <ul>
+                    <li><b>State & Substate Scripts</b> - This script is used for making custom states / substates, it's like a room for your objects. it's located on yourmod/ui/ folder.</li>
                     <li><b>Song Script(s)</b> - This script is used for a specific song and when it's currently being played. It should be placed under yourmod/data/charts/yoursong folder.</li>
                     <li><b>Stage Script</b> - This script will be used if the Song's stage is this script's file name, also make sure the script's file name matching with the stage's json file name.</li>
                     <li><b>Custom Note Script</b> - This script is used for custom note types.</li>
                 </ul>
-                <h2>Support Variables</h2>
+                <h2>Variables</h2>
                 <hr>
-                <p>There's plenty of variables that you can use on these scripts listed below. Check out <a href="#scripts-used" onclick="showTab('scripts-used'); return false;" style="color: cyan;">Variables</a> page.</p>
+                <p>There's plenty of variables that you can use on these scripts listed below. Check out <a href="#scripts-used" onclick="showTab('scripts-used'); return false;" style="color:#9CDCFE;">Variables</a> page.</p>
                 <h2>Song Script</h2>
                 <hr>
                 <p>To create a song script, simply go to cdev-mods/yourmod/data/charts/yoursong folder and create a file with .hx extension.</p>
                 <img src="images/how-scripting-works-here/img0.png" width="300"/>
                 <p>Here are functions that's used for song script (sorted from called first to called last):</p>
                 <ul>
-                    <li><code>createStage()</code> - Whether to create your own stage using script.</li>
-                    <li><code>create()</code> - Called after character and stage initialization.</li>                    
-                    <li><code>postCreate()</code> - Called after the create() function / after game object initialization.</li>
-                    <li><code>onCountdown(swagCounter:Int)</code> - Called on song's countdown.</li>
+                    <li><pre class="func">create<code class="param">()</code></pre> - Called first when the player enters <code class="clas">PlayState</code>.</li>      
+                    <li><pre class="func">createStage<code class="param">()</code></pre> - Called after the create() function and before stage & characters initialization, use this if you want to manually code your stages.</li>
+                    <li><pre class="func">postCreate<code class="param">()</code></pre> - Called after the createStage() function / after game object initialization.</li>
+                    <li><pre class="func">onStartCountdown<code class="param">()</code></pre> - Called before the countdown starts and if <code class="vari">enableCountdown</code> is <code class="val">true</code>.</li>
+                    <li><pre class="func">onCountdown<code class="param">(<code class="vari">swagCounter</code>:<code class="clas">Int</code>)</code></pre> - Called on song's countdown.</li>
                     <ul>
-                        <li><code>swagCounter</code> - Current countdown, from 0 to 4. (0 = three, 1 = two, 2 = one, 3 = go, 4 = song start)</li>
+                        <li><code class="vari">swagCounter</code> - Current countdown, from 0 to 4. (0 = three, 1 = two, 2 = one, 3 = go, 4 = song start)</li>
                     </ul>
-                    <li><code>onStartSong()</code> - Called after onCountdown function.</li>
-                    <li><code>update(elapsed:Float)</code> - Called on every frame update.</li>
+                    <li><pre class="func">onStartSong<code class="param">()</code></pre> - Called after onCountdown function.</li>
+                    <li><pre class="func">update<code class="param">(<code class="vari">elapsed</code>:<code class="clas">Float</code>)</code></pre> - Called on every frame update.</li>
                     <ul>
-                        <li><code>elapsed</code> - Miliseconds passed since last frame.</li>
+                        <li><code class="vari">elapsed</code> - Miliseconds passed since last frame.</li>
                     </ul>
-                    <li><code>p1NoteHit(noteData:Int, isSustainNote:Bool)</code> - Called when the player hits a note (DEPRECATED since 1.4).</li>
+                    <li><pre class="func">postUpdate<code class="param">(<code class="vari">elapsed</code>:<code class="clas">Float</code>)</code></pre> - Called after frame update.</li>
                     <ul>
-                        <li><code>noteData</code> - This note's direction. (0 = left, 1 = down, 2 = up, 3 = right)</li>
-                        <li><code>isSustainNote</code> - Tells you if this note is a sustain note.</li>
+                        <li><code class="vari">elapsed</code> - Miliseconds passed since last frame.</li>
                     </ul>
-                    <li><code>p2NoteHit(noteData:Int, isSustainNote:Bool)</code> - Called when the opponent hits a note (DEPRECATED since 1.4).</li>
+                    <li><pre class="func">p1NoteHit<code class="param">(<code class="vari">noteData</code>:<code class="clas">Int</code>, <code class="vari">isSustainNote</code>:<code class="clas">Bool</code>)</code></pre> - Called when the player hits a note (<span style="color:#fe9c9c;">DEPRECATED</span>, use <code class="func">onP1Hit</code> instead).</li>
                     <ul>
-                        <li><code>noteData</code> - This note's direction. (0 = left, 1 = down, 2 = up, 3 = right)</li>
-                        <li><code>isSustainNote</code> - Tells you if this note is a sustain note.</li>
+                        <li><code class="vari">noteData</code> - This note's direction. (0 = left, 1 = down, 2 = up, 3 = right)</li>
+                        <li><code class="vari">isSustainNote</code> - Tells you if this note is a sustain note.</li>
                     </ul>
-                    <li><code>onEvent(name:String, value1:String, value2:String)</code> - Called when an event is called.</li>
+                    <li><pre class="func">p2NoteHit<code class="param">(<code class="vari">noteData</code>:<code class="clas">Int</code>, <code class="vari">isSustainNote</code>:<code class="clas">Bool</code>)</code></pre> - Called when the opponent hits a note (<span style="color:#fe9c9c;">DEPRECATED</span>, use <code class="func">onP2Hit</code> instead).</li>
                     <ul>
-                        <li><code>name</code> - The event's name</li>
-                        <li><code>value1</code> - Event's Value1 parameter.</li>
-                        <li><code>value2</code> - Event's Value2 parameter.</li>
+                        <li><code class="vari">noteData</code> - This note's direction. (0 = left, 1 = down, 2 = up, 3 = right)</li>
+                        <li><code class="vari">isSustainNote</code> - Tells you if this note is a sustain note.</li>
                     </ul>
-                    <li><code>onNoteMiss(direction:Int)</code> - Called when the player missed a note.</li>
+                    <li><pre class="func">onEventLoaded<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>, <code class="vari">value1</code>:<code class="clas">String</code>, <code class="vari">value2</code>:<code class="clas">String</code>)</code></pre> - Called when an event is loaded & spawned.</li>
                     <ul>
-                        <li><code>direction</code> - The note's direction. (0 = left, 1 = down, 2 = up, 3 = right)</li>
+                        <li><code class="vari">name</code> - The event's name</li>
+                        <li><code class="vari">value1</code> - Event's Value1 parameter.</li>
+                        <li><code class="vari">value2</code> - Event's Value2 parameter.</li>
                     </ul>
-                    <li><code>onP1Hit(note:Note)</code> - Called when the player hits a note.</li>
+                    <li><pre class="func">onEvent<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>, <code class="vari">value1</code>:<code class="clas">String</code>, <code class="vari">value2</code>:<code class="clas">String</code>)</code></pre> - Called when an event is called.</li>
                     <ul>
-                        <li><code>note</code> - Note class.</li>
+                        <li><code class="vari">name</code> - The event's name</li>
+                        <li><code class="vari">value1</code> - Event's Value1 parameter.</li>
+                        <li><code class="vari">value2</code> - Event's Value2 parameter.</li>
                     </ul>
-                    <li><code>onP2Hit(note:Note)</code> - Called when the player hits a note.</li>
+                    <li><pre class="func">onNoteMiss<code class="param">(<code class="vari">direction</code>:<code class="clas">Int</code>)</code></pre> - Called when the player missed a note.</li>
                     <ul>
-                        <li><code>note</code> - Note class.</li>
+                        <li><code class="vari">direction</code> - The note's direction. (0 = left, 1 = down, 2 = up, 3 = right)</li>
                     </ul>
-                    <li><code>stepHit(curStep:Int)</code> - Called on step update.</li>
+                    <li><pre class="func">onP1Hit<code class="param">(<code class="vari">note</code>:<code class="clas">Note</code>)</code></pre> - Called when the player hits a note.</li>
                     <ul>
-                        <li><code>curStep</code> - Current song step.</li>
+                        <li><code class="vari">note</code> - <code class="clas">Note</code> class.</li>
                     </ul>
-                    <li><code>beatHit(curBeat:Int)</code> - Called on beat update.</li>
+                    <li><pre class="func">onP2Hit<code class="param">(<code class="vari">note</code>:<code class="clas">Note</code>)</code></pre> - Called when the opponent hits a note.</li>
                     <ul>
-                        <li><code>curBeat</code> - Current song beat.</li>
+                        <li><code class="vari">note</code> - <code class="clas">Note</code> class.</li>
                     </ul>
+                    <li><pre class="func">stepHit<code class="param">(<code class="vari">curStep</code>:<code class="clas">Int</code>)</code></pre> - Called on step counter update.</li>
+                    <ul>
+                        <li><code class="vari">curStep</code> - Current song step counter.</li>
+                    </ul>
+                    <li><pre class="func">beatHit<code class="param">(<code class="vari">curBeat</code>:<code class="clas">Int</code>)</code></pre> - Called on beat counter update.</li>
+                    <ul>
+                        <li><code class="vari">curBeat</code> - Current song beat counter.</li>
+                    </ul>
+                    <li><pre class="func">onDestroy<code class="param">()</code></pre> - Called before <code class="clas">PlayState</code> gets destroyed.</li>      
+                    <li><pre class="func">onGameResumed<code class="param">()</code></pre> - Called after the game unpaused.</li>      
+                    <li><pre class="func">onGamePaused<code class="param">()</code></pre> - Called when the game paused & before the pause screen shows up.</li>      
+                    <li><pre class="func">onGameOver<code class="param">()</code></pre> - Called when the player's health is 0 / before game over screen shows up.</li>      
+                    <li><pre class="func">onEndSong<code class="param">()</code></pre> - Called when the current song finished playing.</li>      
+
                 </ul>
                 <h2>Stage Script</h2>
                 <hr>
                 <p>Here are functions that's used for stage script:</p>
                 <ul>
-                    <li><code>create()</code> - Called on stage creation.</li>
-                    <li><code>update(elapsed:Float)</code> - Called on frame update.</li>
-                    <li><code>beatHit(curBeat:Int)</code> - Called on beat update.</li>
-                    <li><code>stepHit(curStep:Int)</code> - Called on step update.</li>
+                    <li><pre class="func">create<code class="param">()</code></pre> - Called after stage creation.</li>    
+                    <li><pre class="func">update<code class="param">(<code class="vari">elapsed</code>:<code class="clas">Float</code>)</code></pre> - Called on frame update.</li>    
+                    <ul>
+                        <li><code class="vari">elapsed</code> - Miliseconds passed since last frame.</li>
+                    </ul>
+                    <li><pre class="func">beatHit<code class="param">(<code class="vari">curBeat</code>:<code class="clas">Int</code>)</code></pre> - Called on beat counter update.</li>    
+                    <ul>
+                        <li><code class="vari">curBeat</code> - Current song beat counter.</li>
+                    </ul>
+                    <li><pre class="func">stepHit<code class="param">(<code class="vari">curStep</code>:<code class="clas">Int</code>)</code></pre> - Called on step counter update.</li>    
+                    <ul>
+                        <li><code class="vari">curStep</code> - Current song step counter.</li>
+                    </ul>
                 </ul>
-                <p>This one is an callable function.</p>
+                <p>This one is a callable function.</p>
                 <ul>
-                    <li><code>getObject(name:String)</code> - Returns stage sprite with sprite name <code>name</code>.</li>
+                    <li><pre class="func">getObject<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>):<a href="https://api.haxeflixel.com/flixel/FlxSprite.html"><code class="clas">FlxSprite</code></a></code></pre> - Returns <a href="https://api.haxeflixel.com/flixel/FlxSprite.html"><code class="clas">FlxSprite</code></a> based on <code class="vari">name</code>, if sprite with name <code class="vari">name</code> doesn't exists, it will return <code class="val">null</code>.</li>  
+                    <ul>
+                        <li><code class="vari">name</code> - Stage Sprite name to be returned.</li>
+                    </ul>
                 </ul>
                 <h2>Custom Note Script</h2>
                 <hr>
                 <p>Here are functions that's used for custom note script:</p>
                 <ul>
-                    <li><code>create()</code> - Called on stage creation.</li>
-                    <li><code>update(elapsed:Float)</code> - Called on frame update.</li>
-                    <li><code>onNoteHit(rating:String, player:Bool)</code> - Called on note hit.</li>
+                    <li><pre class="func">create<code class="param">()</code></pre> - Called after note creation.</li>    
+                    <li><pre class="func">update<code class="param">(<code class="vari">elapsed</code>:<code class="clas">Float</code>)</code></pre> - Called on frame update.</li>    
                     <ul>
-                        <li><code>rating</code> - This note's rating after getting hit.</li>
-                        <li><code>player</code> - Tells you if it's the player that hits the note or the opponent.</li>
+                        <li><code class="vari">elapsed</code> - Miliseconds passed since last frame.</li>
                     </ul>
-                    <li><code>onNoteSpawn()</code> - Called after the note gets spawned to the game.</li>
-                    <li><code>onNoteMiss()</code> - Called when the note is missed.</li>
+                    <li><pre class="func">onNoteHit<code class="param">(<code class="vari">rating</code>:<code class="clas">String</code>,<code class="vari">player</code>:<code class="clas">Bool</code>)</code></pre> - Called when the note gets hit.</li>    
+                    <ul>
+                        <li><code class="vari">rating</code> - This note's rating after getting hit, whether it's "sick", "good", "bad", "shit".</li>
+                        <li><code class="vari">player</code> - Tells you who's hitting this note, if <code class="val">true</code> then it's the player, but if it's <code class="val">false</code> then it's the opponent.</li>
+                    </ul>
+                    <li><pre class="func">onNoteSpawn<code class="param">()</code></pre> - Called after the note gets spawned to the game.</li>   
+                    <li><pre class="func">onNoteMiss<code class="param">()</code></pre> - Called when the note is missed.</li>
                 </ul>
                 <p>These two is an callable function.</p>
                 <ul>
-                    <li><code>loadTexture(texture:String)</code> - Useful if you want to load a custom note texture, leave the "texture" variable blank for default note skin.</li>
-                    <li><code>initialize()</code> - Call this function AFTER you called the loadTexture function.</li>
+                    <li><pre class="func">loadTexture<code class="param">(<code class="vari">texture</code>:<code class="clas">String</code>)</code></pre> - Useful if you want to load a custom note texture, leave the <code class="vari">texture</code> variable blank for default note skin.</li>    
+                    <li><pre class="func">initialize<code class="param">()</code></pre> - You must call this function AFTER you called the <code class="func">loadTexture</code> function, if you called this first and not the <code class="func">loadTexture</code> function, then it won't work.</li>    
                 </ul>
                 <p><b><i>Note: After you made a new custom note script, add this script below to your code:</i></b></p>
-                <code style="font-size:small; background-color: black;">
-                    function create() {<br>
-                    &#8195;loadTexture("notes/NOTE_assets"); // change the path if you want to<br>
-                    &#8195;initialize();<br>
-                    }
-                </code>
+                <pre class="codeblock">
+                    <code class="val">function</code> <code class="func">create<code class="param">() {</code>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<code class="func">loadTexture<code class="param">(<code class="str">"notes/NOTE_assets"</code>); <code class="com">// Change the "notes/NOTE_assets" to your asset path.</code></code></code>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<code class="func">initialize<code class="param">(); <code class="com">// Initialize the note.</code></code></code>
+                    <code class="param">}</code></code>
+                </pre>
             </div>
             <!-- Variables -->
             <div class="tab-content" id="scripts-used">
                 <h1>Variables</h1>
                 <hr>
-                <p>These are lists of variables & functions that you can access using "ClassName.VariableName"</p>
+                <p>These are lists of variables & functions that you can access using "<code><span class="clas">ClassName</span>.<span class="vari">variableName</span></code>"</p>
 
                 <div> <!--PLAYSTATE-->
                     <h2>PlayState</h2>
                     <hr>
                     <p>PlayState is where all the characters, stages, and stuff in, basically the main game of FNF.</p>
-                    <p>Usage: <code>PlayState.VariableName</code></p>
+                    <p>Example Usage: <code><span class="clas">PlayState</span>.<span class="vari">curStage</span></code></p>
 
                     <h3>Basic Variables</h3>
+                    <p><b>(Note: These variables are written in this format: "<code><span class="vari">variableName</span>:<span class="clas">Type</span></code>")</b></p>
                     <ul>
-                        <li><code>curStage</code> - The current stage's name. (string)</li>
-                        <li><code>SONG</code> - Current song's chart data. (SwagSong)</li>
-                        <li><code>isStoryMode</code> - Tells you if the song is played through Story Mode. (boolean)
-                        </li>
-                        <li><code>storyPlaylist</code> - List of current week's queued songs. (Array, String)</li>
-                        <li><code>weekName</code> - Current week's name.</li>
-                        <li><code>isPixel</code> - Tells you if the current stage is pixel stage. (Bool)</li>
+                        <li><pre><span class="vari">curStage</span>:<span class="clas">String</span></pre> - Current stage's name.</li>
+                        <li><pre><span class="vari">SONG</span>:<span class="clas">SwagSong</span></pre> - Current song's chart data.</li>
+                        <li><pre><span class="vari">isStoryMode</span>:<span class="clas">Bool</span></pre> - Tells you if the song is played through Story Mode.</li>
+                        <li><pre><span class="vari">storyPlaylist</span>:<span class="clas">Array</span><<span class="clas">String</span>></pre> - List of current week's queued songs.</li>
+                        <li><pre><span class="vari">weekName</span>:<span class="clas">String</span></pre> - Current week's name.</li>
+                        <li><pre><span class="vari">isPixel</span>:<span class="clas">Bool</span></pre> - Tells you if the current stage is pixel stage.</li>
                     </ul>
 
-                    <h3>Functions</h3>
+                    <h3>Callable Functions</h3>
+                    <hr>
+                    <p>Example usage: <code><span class="clas">PlayState</span>.<span class="func">triggerEvent</span>(<span class="str">"Camera Force Pos"</span>, <span class="str">"-533"</span>, <span class="str">"260"</span>);</code></p>
                     <ul>
-                        <li><b>triggerEvent(eventName:String, value1:String, value2:String)</b>
-                        <br>Useful if you want to run an event through scripting.
-                        <br>"eventName" - The event's name you wanted to execute.
-                        <br>"value1" - Argument 1
-                        <br>"value2" - Argument 2
-                        </li>
+                        <li><pre class="func">triggerEvent<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>, <code class="vari">value1</code>:<code class="clas">String</code>, <code class="vari">value2</code>:<code class="clas">String</code>)</code></pre> - Useful if you wanted to execute an event through scripting.</li>
+                        <ul>
+                            <li><code class="vari">name</code> - The event's name that will be triggered</li>
+                            <li><code class="vari">value1</code> - Event's Value1.</li>
+                            <li><code class="vari">value2</code> - Event's Value2.</li>
+                        </ul>
 
-                        <li><b>setDeathCharacter(char:String, disableFlipX:Bool)</b>
-                            <br>Useful if you want to change the death character and not the default bf.
-                            <br>"char" - Death character name.
-                            <br>"disableFlipX" - Whether to disable the FlipX variable on your character.
-                        </li>
+                        <li><pre class="func">setDeathCharacter<code class="param">(<code class="vari">char</code>:<code class="clas">String</code>, <code class="vari">disableFlipX</code>:<code class="clas">Bool</code>)</code></pre> - Useful if you want to change the death character and not the default bf.</li>
+                        <ul>
+                            <li><code class="vari">char</code> - Death character name.</li>
+                            <li><code class="vari">disableFlipX</code> - Whether to disable the FlipX property of your character.</li>
+                        </ul>
 
-                        <li><b>setDeathSongBpm(bpm:Float)</b>
-                            <br>Change the death song BPM.
-                            <br>"bpm" - New BPM for the song.
-                        </li>
+                        <li><pre class="func">setDeathSongBpm<code class="param">(<code class="vari">bpm</code>:<code class="clas">Float</code>)</code></pre> - Change the death song BPM.</li>
+                        <ul>
+                            <li><code class="vari">bpm</code> - New BPM for the death song (gameOver.ogg).</li>
+                        </ul>
                     </ul>
 
-                    <h3>Characters Variables</h3>
+                    <h3>Charcters Variables</h3>
+                    <hr>
+                    <p><b>(Note: These variables are written in this format: "<code><span class="vari">variableName</span>:<span class="clas">Type</span></code>")</b></p>
                     <ul>
-                        <li><code>dad</code> - Opponent Character. (Character)</li>
-                        <li><code>gf</code> - Girlfriend Character. (Character)</li>
-                        <li><code>boyfriend</code> - Player Character. (Character)</li>
+                        <li><pre><span class="vari">dad</span>:<span class="clas">Character</span></pre> - Opponent character.</li>
+                        <li><pre><span class="vari">gf</span>:<span class="clas">Character</span></pre> - Girlfriend character.</li>
+                        <li><pre><span class="vari">boyfriend</span>:<span class="clas">Character</span></pre> - Player Character.</li>
                     </ul>
 
                     <h3>Gameplay Variables</h3>
+                    <hr>
+                    <p><b>(Note: These variables are written in this format: "<code><span class="vari">variableName</span>:<span class="clas">Type</span></code>")</b></p>
                     <ul>
-                        <li><code>controls</code> - Player's Controls.</li>
-                        <li><code>convertedAccuracy</code> - Current accuracy. (Bool)</li>
-                        <li><code>sick</code> - Current sicks. (Int)</li>
-                        <li><code>good</code> - Current goods. (Int)</li>
-                        <li><code>bad</code> - Current bads. (Int)</li>
-                        <li><code>shit</code> - Current shits. (Int)</li>
-                        <li><code>misses</code> - Current misses. (Int)</li>
+                        <li><pre><span class="vari">controls</span>:<span class="clas">Controls</span></pre> - Player Controls.</li>
+                        <li><pre><span class="vari">convertedAccuracy</span>:<span class="clas">Float</span></pre> - Current accuracy (<span style="color:#fe9c9c;">DEPRECATED</span>, use <code class="vari">accuracy</code> instead).</li>
+                        <li><pre><span class="vari">accuracy</span>:<span class="clas">Float</span></pre> - Current accuracy.</li>
+                        <li><pre><span class="vari">sick</span>:<span class="clas">Int</span></pre> - Current sicks count.</li>
+                        <li><pre><span class="vari">good</span>:<span class="clas">Int</span></pre> - Current goods count.</li>
+                        <li><pre><span class="vari">bad</span>:<span class="clas">Int</span></pre> - Current bads count.</li>
+                        <li><pre><span class="vari">shit</span>:<span class="clas">Int</span></pre> - Current shits count.</li>
+                        <li><pre><span class="vari">misses</span>:<span class="clas">Int</span></pre> - Current misses count.</li>
 
-                        <li><code>enableNoteTween</code> - Whether to enable / disable the note receptors slide in
-                            animation in freeplay. (bool)</li>
-
-                        <li><code>randomNote</code> - "Randomize Note" Modifier. (Bool)</li>
-                        <li><code>suddenDeath</code> - "Sudden Death" Modifier. (Bool)</li>
-                        <li><code>scrSpd</code> - "Scroll Speed" Modifier. (Float)</li>
-                        <li><code>healthGainMulti</code> - "Health Gain Multiplier" Modifier. (Float)</li>
-                        <li><code>healthLoseMulti</code> - "Health Lose Multiplier" Modifier. (Float)</li>
-                        <li><code>songSpeed</code> - "Song Speed" Modifier. (Float)</li>
-                        <li><code>playingLeftSide</code> - "Play as opponent" Modifier. (Bool)</li>
+                        <li><pre><span class="vari">randomNote</span>:<span class="clas">Bool</span></pre> - "Randomize Note" Modifier.</li>
+                        <li><pre><span class="vari">suddenDeath</span>:<span class="clas">Bool</span></pre> - "Sudden Death" Modifier.</li>
+                        <li><pre><span class="vari">scrSpd</span>:<span class="clas">Float</span></pre> - "Scroll Speed" Modifier.</li>
+                        <li><pre><span class="vari">healthGainMulti</span>:<span class="clas">Float</span></pre> - "Health Gain Multiplier" Modifier.</li>
+                        <li><pre><span class="vari">healthLoseMulti</span>:<span class="clas">Float</span></pre> - "Health Lose Multiplier" Modifier.</li>
+                        <li><pre><span class="vari">songSpeed</span>:<span class="clas">Float</span></pre> - "Song Speed" Modifier.</li>
+                        <li><pre><span class="vari">playingLeftSide</span>:<span class="clas">Bool</span></pre> - "Play as opponent" Modifier.</li>
                     </ul>
 
                     <h3>UI / HUD Variables</h3>
+                    <hr>
+                    <p><b>(Note: These variables are written in this format: "<code><span class="vari">variableName</span>:<span class="clas">Type</span></code>")</b></p>
                     <ul>
-                        <li><code>notes</code> - All spawned notes. (FlxTypedGroup, Note)</li>
-                        <li><code>strumLineNotes</code> - All note receptors. (FlxTypedGroup, StrumArrow)</li>
-                        <li><code>playerStrums</code> - Player note receptors. (FlxTypedGroup, StrumArrow)</li>
-                        <li><code>p2Strums</code> - Opponent note receptors. (FlxTypedGroup, StrumArrow)</li>
-                        <li><code>songPosBG</code> - Time Bar's BG / Outline. (FlxSprite)</li>
-                        <li><code>songPosBar</code> - Song Time Bar. (FlxBar)</li>
-                        <li><code>healthBarBG</code> - Health Bar's BG / Outline. (FlxSprite)</li>
-                        <li><code>healthBar</code> - HealthBar. (FlxBar)</li>
-                        <li><code>iconP1</code> - Player's Health Icon. (HealthIcon)</li>
-                        <li><code>iconP2</code> - Opponent's Health Icon. (HealthIcon)</li>
-                        <li><code>scoreTxt</code> - Score Text. (FlxText)</li>
-                        <li><code>botplayTxt</code> - "> Botplay <" text object. (FlxText)</li>
+                        <li><pre><span class="vari">notes</span>:<span class="clas">FlxTypedGroup</span><<span class="clas">StrumArrow</span>></pre> - All spawned notes.</li>
+                        <li><pre><span class="vari">strumLineNotes</span>:<span class="clas">FlxTypedGroup</span><<span class="clas">StrumArrow</span>></pre> - All note receptors group.</li>
+                        <li><pre><span class="vari">playerStrums</span>:<span class="clas">FlxTypedGroup</span><<span class="clas">StrumArrow</span>></pre> - Player note receptors group.</li>
+                        <li><pre><span class="vari">p2Strums</span>:<span class="clas">FlxTypedGroup</span><<span class="clas">StrumArrow</span>></pre> - Opponent note receptors group.</li>
+                        <li><pre><span class="vari">songPosBG</span>:<span class="clas">FlxSprite</span></pre> - Time Bar's BG / Outline.</li>
+                        <li><pre><span class="vari">songPosBar</span>:<span class="clas">FlxBar</span></pre> - Time Bar.</li>
+                        <li><pre><span class="vari">healthBarBG</span>:<span class="clas">FlxSprite</span></pre> - Health Bar's BG / Outline.</li>
+                        <li><pre><span class="vari">healthBar</span>:<span class="clas">FlxBar</span></pre> - Health Bar.</li>
+                        <li><pre><span class="vari">iconP1</span>:<span class="clas">HealthIcon</span></pre> - Player's Health Icon.</li>
+                        <li><pre><span class="vari">iconP2</span>:<span class="clas">HealthIcon</span></pre> - Opponent's Health Icon.</li>
+                        <li><pre><span class="vari">scoreTxt</span>:<span class="clas">FlxText</span></pre> - Score, Misses, and Accuracy Text.</li>
+                        <li><pre><span class="vari">botplayTxt</span>:<span class="clas">FlxText</span></pre> - "> Botplay <" text object.</li>
                     </ul>
 
                     <h3>Camera Variables</h3>
+                    <hr>
+                    <p><b>(Note: These variables are written in this format: "<code><span class="vari">variableName</span>:<span class="clas">Type</span></code>")</b></p>
                     <ul>
-                        <li><code>defaultCamZoom</code> - Default FlxG.camera zoom. (Float)</li>
-                        <li><code>defaultHudZoom</code> - Default PlayState.camHUD zoom. (Float)</li>
-                        <li><code>camHUD</code> - Main camera object that handles notes, healthbar, etc.</li>
-                        <li><code>camFollow</code> - It's used for panning camera for "mustHitSection". (FlxObject)</li>
-                        <li><code>camZooming</code> - Whether to enable / disable camera zooming (resets on opponent
-                            note hit). (boolean)</li>
-                        <li><code>cameraPosition</code> - The current camera offsets. (FlxObject)</li>
-                        <li><code>forceCameraPos</code> - Whether to force current camera position to certain point.
-                            (Bool)</li>
-                        <li><code>camPosForced</code> - Forced Camera Position point (requires
-                            <code>forceCameraPos</code> value to <code>true</code>). (Bool)</li>
+                        <li><pre><span class="vari">defaultCamZoom</span>:<span class="clas">Float</span></pre> - Default game camera's zoom.</li>
+                        <li><pre><span class="vari">defaultHudZoom</span>:<span class="clas">Float</span></pre> - Default <code class="vari">camHUD</code> zoom.</li>
+                        <li><pre><span class="vari">camHUD</span>:<span class="clas">FlxCamera</span></pre> - Camera object that handles UI / HUD elements.</li>
+                        <li><pre><span class="vari">camFollow</span>:<span class="clas">FlxObject</span></pre> - Current game focus camera position.</li>
+                        <li><pre><span class="vari">camZooming</span>:<span class="clas">Bool</span></pre> - Tells you if the camera can zoom on 4th beat (Will turn to <code class="val">true</code> when the opponent hits a note).</li>
+                        <li><pre><span class="vari">cameraPosition</span>:<span class="clas">FlxObject</span></pre> - Current camera offset position.</li>
+                        <li><pre><span class="vari">forceCameraPos</span>:<span class="clas">Bool</span></pre> - Whether to force current camera position to certain point.</li>
+                        <li><pre><span class="vari">camPosForced</span>:<span class="clas">Array</span><<span class="clas">Float</span>></pre> - Forced camera position point (Requires <code class="vari">forceCameraPos</code> value to <code class="val">true</code>).</li>
+                    </ul>
+
+                    <h3>Configuration Variables</h3>
+                    <hr>
+                    <p><b>(Note: These variables are written in this format: "<code><span class="vari">variableName</span>:<span class="clas">Type</span></code>")</b></p>
+                    <ul>
+                        <li><pre><span class="vari">enableNoteTween</span>:<span class="clas">Bool</span></pre> - Whether to enable / disable the note receptors slide-in animation in freeplay.</li>
+                        <li><pre><span class="vari">enableCountdown</span>:<span class="clas">Bool</span></pre> - Whether to enable / disable countdown before the song starts.</li>
+                        <li><pre><span class="vari">enableEditors</span>:<span class="clas">Bool</span></pre> - Whether to enable / disable Editor shortcuts (Like 6,7,8 keys).</li>
                     </ul>
                 </div>
 
@@ -438,7 +532,8 @@
                     <h2>Paths</h2>
                     <hr>
                     <p>Paths is useful for loading assets on your mod folder.</p>
-                    <p>Usage: <code>Paths.VariableName</code></p>
+                    <p>Example usage: <code><span class="clas">Paths</span>.<span class="func">font</span>(<span class="str">"vcr.ttf"</span>);</code></p>
+                    <p>Usage: <pre>Paths.VariableName</pre></p>
                     <h3>Functions</h3>
                     <ul>
                         <li>font(name:String) - Returns font from yourmod/data/font/ folder.</li>
@@ -455,26 +550,26 @@
                     <h2>Note</h2>
                     <hr>
                     <p>Note.hx class.</p>
-                    <p>Usage: <code>Note.VariableName</code></p>
+                    <p>Usage: <pre>Note.VariableName</pre></p>
                     <ul>
-                        <li><code>noteType</code> - The Note's Type. (String, Read only)</li>
-                        <li><code>strumTime</code> - The note's strum time. (Float)</li>
-                        <li><code>mustPress</code> - Tells you if is it a player note or not. (Bool)</li>
-                        <li><code>noteData</code> - Note's Column (0-4). (Int)</li>
-                        <li><code>canBeHit</code> - Tells you if the note is hitable. (Bool)</li>
-                        <li><code>tooLate</code> - Tells you if you missed the note. (Bool)</li>
-                        <li><code>wasGoodHit</code> - Tells you if you hitted the note. (Bool)</li>
-                        <li><code>prevNote</code> - Another Note before This Note. (Note)</li>
-                        <li><code>isSustainNote</code> - Tells you if it's a sustain note. (Bool)</li>
-                        <li><code>noteType</code> - The Note's Type. (String)</li>
-                        <li><code>xAdd</code> and <code>yAdd</code> - X and Y addition position of the note. (Float)</li>
-                        <li><code>offsetX</code> and <code>offsetY</code> - X and Y offset position of the note. (Float)</li>
-                        <li><code>offsetAngle</code> - Angle offset of the note. (Float)</li>
-                        <li><code>multAlpha</code> - Alpha multiplier of the note. (Note)</li>
-                        <li><code>followX</code> and <code>followY</code> - Whether to follow the X of the note receptors, and to follow the Y of the song position. (Bool)</li>
-                        <li><code>followAngle</code> and <code>followAlpha</code> - Whether to follow the Angle / Alpha of the note receptors. (Bool)</li>
-                        <li><code>rating</code> - The note's rating (the default is "shit", changed after the player hits the note). (String)</li>
-                        <li><code>strumParent</code> - This note's note receptor. (StrumArrow)</li>
+                        <li><pre>noteType</pre> - The Note's Type. (String, Read only)</li>
+                        <li><pre>strumTime</pre> - The note's strum time. (Float)</li>
+                        <li><pre>mustPress</pre> - Tells you if is it a player note or not. (Bool)</li>
+                        <li><pre>noteData</pre> - Note's Column (0-4). (Int)</li>
+                        <li><pre>canBeHit</pre> - Tells you if the note is hitable. (Bool)</li>
+                        <li><pre>tooLate</pre> - Tells you if you missed the note. (Bool)</li>
+                        <li><pre>wasGoodHit</pre> - Tells you if you hitted the note. (Bool)</li>
+                        <li><pre>prevNote</pre> - Another Note before This Note. (Note)</li>
+                        <li><pre>isSustainNote</pre> - Tells you if it's a sustain note. (Bool)</li>
+                        <li><pre>noteType</pre> - The Note's Type. (String)</li>
+                        <li><pre>xAdd</pre> and <pre>yAdd</pre> - X and Y addition position of the note. (Float)</li>
+                        <li><pre>offsetX</pre> and <pre>offsetY</pre> - X and Y offset position of the note. (Float)</li>
+                        <li><pre>offsetAngle</pre> - Angle offset of the note. (Float)</li>
+                        <li><pre>multAlpha</pre> - Alpha multiplier of the note. (Note)</li>
+                        <li><pre>followX</pre> and <pre>followY</pre> - Whether to follow the X of the note receptors, and to follow the Y of the song position. (Bool)</li>
+                        <li><pre>followAngle</pre> and <pre>followAlpha</pre> - Whether to follow the Angle / Alpha of the note receptors. (Bool)</li>
+                        <li><pre>rating</pre> - The note's rating (the default is "shit", changed after the player hits the note). (String)</li>
+                        <li><pre>strumParent</pre> - This note's note receptor. (StrumArrow)</li>
                     </ul>
                 </div>
 
@@ -482,7 +577,7 @@
                     <h2>Character</h2>
                     <hr>
                     <p>Character is a class that handles characters like BF, and GF.</p>
-                    <p>Usage: <code>Character.VariableName</code></p>
+                    <p>Usage: <pre>Character.VariableName</pre></p>
                     <ul>
                         <li>objects</li>
                     </ul>
@@ -492,7 +587,7 @@
                     <h2>ClassName</h2>
                     <hr>
                     <p>Class Description</p>
-                    <p>Usage: <code>ClassName.VariableName</code></p>
+                    <p>Usage: <pre>ClassName.VariableName</pre></p>
                     <ul>
                         <li>objects</li>
                     </ul>

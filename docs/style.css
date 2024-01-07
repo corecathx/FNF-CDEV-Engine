@@ -1,6 +1,6 @@
 @font-face {
     font-family: funkinFont;
-    src: url(assets/pmf.ttf);
+    src: url(https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic,700italic);;
 }
 @font-face {
     font-family: funkinDiff;
@@ -21,8 +21,9 @@ body, html {
 
 .tab-content {
     display: none;
-    font-family: funkinFont;
+    font-family: "Ubuntu";
     max-width: 85%;
+    font-size: 14px;
 }
 
 .active-tab {
@@ -41,12 +42,16 @@ td {
     text-align: left;
 }
 
-code {
-    font-family: Consolas,"courier new";
-    background-color: black;
+pre {
+    display: block;
+    overflow-x: auto;
+    font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+    font-size: 14px;
+    color: #FFFFFF
 }
 
 #sidebar {
+    position: sticky;
     background-color: #111111;
     padding: 20px;
     min-height: 100vh;
@@ -65,18 +70,19 @@ code {
 #sidebar ul li a {
     text-decoration: none;
     color: #a1a1a1;
-    font-family: funkinFont;
+    font-family: "Ubuntu";
     display: block;
     letter-spacing: 0.5px;
 }
 
 #content {
-    background-color: #000000;
-    color: #FFFFFF;
+    background-color: #161616;
+    color: #e4e4e4;
     padding: 20px;
-    font-family: funkinFont;
+    font-family: "Ubuntu";
+    font-size: 14px;
     letter-spacing: 0.5px;
-    line-height: 120%;
+    line-height: 140%;
 }
 
 #sidebar ul li a:hover {
@@ -84,14 +90,60 @@ code {
 }
 
 .titlestuffs{
-    color: white; 
-    font-family: funkinDiff;
+    color: #e4e4e4; 
+    font-family: "Ubuntu";
     font-size: 24px;
     letter-spacing: 2px;
 }
 
 .titlestuffsD{
-    color: white; 
-    font-family: funkinFont;
+    color: #e4e4e4; 
+    font-family: "Ubuntu";
     font-size: 34px;
+}
+
+/*Function*/
+.func {
+    color:#DCDCAA;
+}
+
+/*Variable - name*/
+.vari {
+    color:#9CDCFE;
+}
+
+/*Class*/
+.clas {
+    color:#4EC9B0;
+}
+
+/*Parameter / ()*/
+.param {
+    color:#FFFFFF;
+}
+
+/*values*/
+.val {
+    color:#569CD6;
+}
+
+/*comment*/
+.com {
+    color:#608B4E;
+}
+
+/*string*/
+.str {
+    color:#CE9178;
+}
+
+.codeblock {
+    padding: 10px;
+    white-space:pre-line;
+    background-color: #1E1E1E;
+    display: block;
+    overflow-x: auto;
+    font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+    font-size: 14px;
+    color: #FFFFFF
 }
