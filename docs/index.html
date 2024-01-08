@@ -607,7 +607,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', (e) => {
-            const links = document.querySelectorAll("#sidebar > ul > li")
+            const links = document.querySelectorAll("#sidebar > ul > li > a")
             for (let i of links) {
                 let target = i.href.split('#')[1]
                 i.addEventListener('click', (e) => {
