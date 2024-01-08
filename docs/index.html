@@ -605,6 +605,16 @@
             }
             document.getElementById(tabId).classList.add("active-tab");
         }
+
+        document.addEventListener('DOMContentLoaded', (e) => {
+            const links = document.querySelectorAll("#sidebar > ul > li")
+            for (let i of links) {
+                let target = i.href.split('#')[1]
+                i.addEventListener('click', (e) => {
+                    showTab(target)
+                })
+            }
+        })
     </script>
 </body>
 
