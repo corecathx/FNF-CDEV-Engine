@@ -63,10 +63,7 @@ class StoryMenuState extends MusicBeatState
 
 	override function create()
 	{
-		#if ALLOW_MODS
-		Paths.destroyLoadedImages();
-		#end
-
+		Paths.destroyLoadedImages(false);
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
 

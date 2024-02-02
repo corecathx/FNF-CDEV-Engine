@@ -2,3 +2,5 @@
 --Credits should be on this format: Name::Desc::Color::Link
 --Credits title should be on this format: Name
 --"Color" should be on hex format (ex: 0xFF000000, rgba)
+Funkin Mod
+core5570r::Composer of "game-test"::0xFF1090FF::https://youtube.com/c/@core5570r

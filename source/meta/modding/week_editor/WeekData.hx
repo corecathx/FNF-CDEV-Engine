@@ -2,8 +2,11 @@ package meta.modding.week_editor;
 
 import game.cdev.CDevMods.ModFile;
 import game.Paths;
+
+import openfl.utils.Assets as OFLAssets;
+
 import haxe.Json;
-import lime.utils.Assets;
+
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -46,6 +49,10 @@ class WeekData
 {
 	public static var loadedWeeks:Array<Dynamic> = []; // weekFile, modName
 
+	#if !desktop
+	public static var weekCount:Int = 8; //dumb way to do this but whatever
+	#end
+
 	public function new()
 	{
 	}
@@ -67,14 +74,14 @@ class WeekData
 				}
 			}
 		}
-		var pathraw = "assets/data/weeks/";
+		#if desktop
+		var pathraw = "./assets/data/weeks/";
 		var direct:Array<String> = FileSystem.readDirectory(pathraw);
 
 		if (allowDefSongs) for (i in 0...direct.length)
 		{
 			if (direct[i].endsWith(".json")){
 				var pathJson:String = pathraw+direct[i];
-				trace(pathraw + " - " + i);
 
 				var crapJSON = null;
 				if (FileSystem.exists(pathJson))
@@ -86,17 +93,37 @@ class WeekData
 				if (json != null) loadedWeeks.push([json, 'BASEFNF']);
 			}
 		}
+		#else
+		if (allowDefSongs) for (i in 0...weekCount){
+			var path:String = Paths.week("week"+i);
+			trace("Mobile - Week Path: "+path);
+			if (OFLAssets.exists(path, TEXT)){
+				trace("Mobile - Found week.");
+
+				var crapJSON = null;
+				try{
+					crapJSON = OFLAssets.getText(path);		
+				} catch(e){
+					trace("Mobile - Failed to getText using OFL, reason: " + e.toString());
+					continue;
+				}
+				var json:WeekFile = cast Json.parse(crapJSON);
+				loadedWeeks.push([json, 'BASEFNF']);
+			} else{
+				trace("Mobile - Week not found: " + path);
+				continue;
+			}
+		}
+		#end
 
 		for (mod in 0...Paths.curModDir.length)
 		{
 			var path:String = Paths.mods(Paths.curModDir[mod] + '/data/weeks/');
-			trace(path);
 			var weekFiles:Array<String> = [];
 
 			if (FileSystem.isDirectory(path))
 			{
 				weekFiles = FileSystem.readDirectory(path);
-				trace(weekFiles);
 				var crapJSON = null;
 
 				for (json in 0...weekFiles.length)

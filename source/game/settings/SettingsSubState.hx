@@ -122,7 +122,7 @@ class SettingsSubState extends MusicBeatSubstate
 			{
 				changeSelection(1);
 			}
-			if (FlxG.keys.justPressed.ESCAPE)
+			if (controls.BACK)
 			{
 				close();
 			}

@@ -1,5 +1,6 @@
 package meta.states;
 
+import game.cdev.log.GameLog;
 import game.cdev.CDevMods.ModFile;
 import openfl.display.Stage;
 import flixel.util.FlxAxes;
@@ -67,16 +68,18 @@ class TitleState extends MusicBeatState
 	var checker:FlxBackdrop;
 	var speed:Float = 1;
 
+	var lol:Bool = false;
+
 	override public function create():Void
 	{
 		FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
 		FlxG.sound.volumeDownKeys = [MINUS, NUMPADMINUS];
 		FlxG.sound.volumeUpKeys = [PLUS, NUMPADPLUS];
 
-		checkGitHubVersion();
-
 		if (!loadedSaves)
 			CDevConfig.initSaves();
+
+		//checkGitHubVersion();
 
 		PlayerSettings.init();
 
@@ -88,6 +91,14 @@ class TitleState extends MusicBeatState
 
 		FlxG.save.bind('cdev_engine', 'EngineData');
 
+		if (FlxG.save.data.lastVolume != null){
+			FlxG.sound.volume = FlxG.save.data.lastVolume;
+			trace("updated default volume: "+FlxG.sound.volume);
+		} else{
+			FlxG.save.data.lastVolume = FlxG.sound.volume;
+			trace("created new save for volume");
+		}
+
 		game.cdev.engineutils.Highscore.load();
 
 		loadedSaves = true;
@@ -95,6 +106,9 @@ class TitleState extends MusicBeatState
 		#if debug
 		CDevConfig.debug = true;
 		#end
+
+		lol = FlxG.random.bool(0.3);
+		if (lol) trace("nahh :skull:");
 
 		FlxG.fixedTimestep = false;
 
@@ -118,6 +132,7 @@ class TitleState extends MusicBeatState
 			transOut = FlxTransitionableState.defaultTransOut;
 		}
 
+		#if windows
 		if (Paths.curModDir.length == 1)
 		{
 			if (!loadMod)
@@ -140,6 +155,9 @@ class TitleState extends MusicBeatState
 			CDevConfig.setWindowProperty(false, Reflect.getProperty(d, "window_title"), Paths.modFolders("winicon.png"));
 		}
 		CDevConfig.utils.getStateScript("TitleState", false);
+		#end
+
+		isLoaded = false; // DIE
 		new FlxTimer().start(1, function(tmr:FlxTimer)
 		{
 			startIntro();
@@ -150,7 +168,6 @@ class TitleState extends MusicBeatState
 		else
 			DiscordClient.initialize();
 		#end
-		isLoaded = false; // DIE
 	}
 
 	var logoBl:FlxSprite;
@@ -161,7 +178,7 @@ class TitleState extends MusicBeatState
 
 	function startIntro()
 	{
-		Main.fps_mem.visible = (CDevConfig.saveData.performTxt != "hide");
+		Main.fpsCounter.visible = (CDevConfig.saveData.performTxt != "hide");
 
 		bg = FlxGradient.createGradientFlxSprite(FlxG.width, FlxG.height, [FlxColor.BLACK, FlxColor.BLUE], 1, 90, true);
 		bg.antialiasing = CDevConfig.saveData.antialiasing;
@@ -210,7 +227,7 @@ class TitleState extends MusicBeatState
 		gfY = gfDance.y;
 		tTextY = titleText.y;
 
-		blackScreen = new FlxSprite(-1000, -1000).makeGraphic(2500, 2500, FlxColor.BLACK);
+		blackScreen = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		add(blackScreen);
 		credGroup = new FlxTypedGroup<Alphabet>();
 		add(credGroup);
@@ -228,10 +245,13 @@ class TitleState extends MusicBeatState
 		}
 		else
 		{
-			ngSpr = new FlxSprite(0, FlxG.height * 0.52 + 70).loadGraphic(Paths.image('core5570r'));
+			if (!lol)
+				ngSpr = new FlxSprite(0, FlxG.height * 0.52 + 70).loadGraphic(Paths.image('core5570r'));
+			else
+				ngSpr = new FlxSprite(0, FlxG.height * 0.52 + 70).loadGraphic(Paths.image('normaldifficulty', "shared"));
 			add(ngSpr);
 			ngSpr.visible = false;
-			ngSpr.setGraphicSize(Std.int(ngSpr.width * 0.1));
+			ngSpr.setGraphicSize(Std.int(ngSpr.width * (!lol ? 0.1 : 0.5)));
 			ngSpr.updateHitbox();
 			ngSpr.screenCenter(X);
 			ngSpr.antialiasing = CDevConfig.saveData.antialiasing;
@@ -247,7 +267,6 @@ class TitleState extends MusicBeatState
 		if (!isLoaded)
 		{
 			// used this code to avoid the song from skipping some beats
-
 			if (!closedState)
 			{
 				Conductor.changeBPM(102);
@@ -284,6 +303,7 @@ class TitleState extends MusicBeatState
 	{
 		if (isLoaded)
 		{
+			if (blackScreen != null) blackScreen.scale.set(1/FlxG.camera.zoom, 1/FlxG.camera.zoom);
 			bg.alpha = FlxMath.lerp(0.2, bg.alpha, CDevConfig.utils.bound(1 - (elapsed * 7), 0, 1));
 			if (FlxG.sound.music != null)
 				Conductor.songPosition = FlxG.sound.music.time;
@@ -461,12 +481,12 @@ class TitleState extends MusicBeatState
 				case 5:
 					yOffset = 10;
 					if (CDevConfig.saveData.engineWM)
-						createCoolText(['CDEV Engine', 'By']);
+						createCoolText((!lol ? ['CDEV Engine', 'By'] : []));
 					else
 						createCoolText(['Not Associated', 'With']);
 				case 7:
 					if (CDevConfig.saveData.engineWM)
-						addMoreText('CoreDev');
+						addMoreText((!lol?'CoreDev' : ""));
 					else
 						addMoreText('Newgrounds');
 					ngSpr.visible = true;

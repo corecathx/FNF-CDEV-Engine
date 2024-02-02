@@ -88,7 +88,7 @@ class InstallModState extends meta.states.MusicBeatState
 			noMods = true;
 		}
 
-		menuBG = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		menuBG = new FlxSprite().loadGraphic(Paths.image('aboutMenu'));
 		menuBG.color = 0xff0088ff;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
@@ -202,7 +202,7 @@ class InstallModState extends meta.states.MusicBeatState
 			else
 			{
 				Paths.currentMod = Paths.curModDir[0];
-				if (!lastModRequireRestart) TitleState.loadMod = true; else TitleState.loadMod = false;
+				TitleState.loadMod = !lastModRequireRestart;
 				if (FlxG.sound.music != null) FlxTween.tween(FlxG.sound.music, {volume: 0}, 1);
 				FlxTween.tween(FlxG.camera, {alpha: 0}, 1, {
 					onComplete: function(e:FlxTween)

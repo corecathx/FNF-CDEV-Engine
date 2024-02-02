@@ -1,5 +1,7 @@
 package game.cdev.engineutils;
 
+import game.cdev.log.GameLog;
+import game.system.FunkinSystem;
 import lime.app.Application;
 import openfl.display.IBitmapDrawable;
 import openfl.geom.Matrix;
@@ -27,18 +29,20 @@ class CDevFPSMem extends TextField
 {
 	public var times:Array<Float>;
 	//public var bitmap:Bitmap;
+	public var highestMemory:Float = 0;
 	public function new(inX:Float = 10.0, inY:Float = 10.0, inCol:Int = 0x000000, bold:Bool = false)
 	{
 		super();
 		x = inX;
 		y = inY;
 		selectable = false;
-		defaultTextFormat = new TextFormat("VCR OSD Mono", 14, inCol, false);
+		var mobileMulti:Float = #if mobile 1.5; #else 1; #end
+		defaultTextFormat = new TextFormat("VCR OSD Mono", Std.int(14*mobileMulti), inCol, false);
 		text = "FPS: ";
 		times = [];
 	    addEventListener(Event.ENTER_FRAME, onEnter);
-		width = 170;
-		height = 70;
+		width = 350*mobileMulti;
+		height = 70*mobileMulti;
 
 		/*bitmap = ImageOutline.renderImage(this, 1, 0x000000, 1, true);
 		(cast(Lib.current.getChildAt(0), Main)).addChild(bitmap);*/
@@ -53,22 +57,17 @@ class CDevFPSMem extends TextField
 		while (times[0] < now - 1)
 			times.shift();
 
-		var mem:Float = Math.round(System.totalMemory / 1024 / 1024 * 100) / 100;
-		var ramStr:String = '';
-		if (mem >= 1024)
-			ramStr = Math.round(mem / 1024) + ' GB';
-		else
-			ramStr = mem + ' MB';
+		var mem:Float = System.totalMemory;
+		if (mem > highestMemory) highestMemory = mem;
+		var ramStr:String = CDevConfig.utils.convert_size(Std.int(mem));
 		
-		if (mem >= 2048){
+		if (Math.round(mem / 1024 / 1024 * 100) / 100 >= 2048){
 			openfl.Assets.cache.clear();
 			FlxG.save.flush();
 			CDevConfig.storeSaveData();
 			game.Paths.destroyLoadedImages();
 		}
-
-		var engineText:String = "";//(CDevConfig.saveData.engineWM ? "CDEV FNF v"+CDevConfig.engineVersion: "");
-		var debugText:String = (CDevConfig.debug ? "[Debug]" : "");
+		var debugText:String = (CDevConfig.debug ? "\n[Debug Build]" : "");
 
 		var s:String = "";
 		
@@ -84,7 +83,11 @@ class CDevFPSMem extends TextField
 				default:
 					s = "";
 			}
-			text = s + '\n$engineText\n$debugText';
+			var convertedShit = CDevConfig.utils.convert_size(Std.int(highestMemory));
+			var memoryPeak = (GameLog.isVisible
+				&& (CDevConfig.saveData.performTxt == "fps-mem" 
+				|| CDevConfig.saveData.performTxt == "mem") ? " // RAM Peak: " + convertedShit : "");
+			text = s +""+memoryPeak+'$debugText';
 		}
 
 		if (times.length < CDevConfig.saveData.fpscap/2){

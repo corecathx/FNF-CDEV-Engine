@@ -1,4 +1,8 @@
 package meta.states;
+
+#if android
+import game.system.native.Android;
+#end
 import game.settings.SettingsSubState;
 import game.settings.data.SettingsProperties;
 import game.cdev.CDevConfig;
@@ -20,9 +24,9 @@ import game.cdev.engineutils.Discord.DiscordClient;
 
 class OptionsState extends MusicBeatState
 {
-	var currentStatus:String = "main"; //main, category
+	var currentStatus:String = "main"; // main, category
 	var curSelected:Int = 0;
-	//var options:Array<String> = ['Controls' , 'Gameplay', 'Appearance', 'Misc'];
+	// var options:Array<String> = ['Controls' , 'Gameplay', 'Appearance', 'Misc'];
 	var grpOptions:FlxTypedGroup<FlxText>;
 	var menuBG:FlxSprite;
 
@@ -45,22 +49,24 @@ class OptionsState extends MusicBeatState
 
 		grpOptions = new FlxTypedGroup<FlxText>();
 		add(grpOptions);
-		var lengthy:Float = (FlxG.height / 2) - (((SettingsProperties.CURRENT_SETTINGS.length) * 66) / 2);
+		var textSize:Int = #if desktop 66 #else 72 #end;
+		var lengthy:Float = (FlxG.height / 2) - (((SettingsProperties.CURRENT_SETTINGS.length) * textSize) / 2);
 		for (i in 0...SettingsProperties.CURRENT_SETTINGS.length)
 		{
-			var text:FlxText = new FlxText(0,0,0, SettingsProperties.CURRENT_SETTINGS[i].name,38);
-			text.setFormat("wendy", 66, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-			text.y = lengthy + ((66) * i) + 5;
+			var text:FlxText = new FlxText(0, 0, 0, SettingsProperties.CURRENT_SETTINGS[i].name, 38);
+			text.setFormat("wendy", textSize, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+			text.y = lengthy + ((textSize) * i) + 5;
 			text.screenCenter(X);
 			text.ID = i;
 			grpOptions.add(text);
 		}
 		changeSelection();
 
-		var versionShit:FlxText = new FlxText(10, FlxG.height - 20, 1000, "CDEV Engine v"+CDevConfig.engineVersion, 16);
+		var versionShit:FlxText = new FlxText(10, FlxG.height - 20, 1000, "CDEV Engine v" + CDevConfig.engineVersion, 16);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		if (CDevConfig.saveData.engineWM) add(versionShit);
+		if (CDevConfig.saveData.engineWM)
+			add(versionShit);
 		super.create();
 	}
 
@@ -73,6 +79,23 @@ class OptionsState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		#if android
+		grpOptions.forEach(function(spr:FlxText)
+		{
+			Android.touchJustPressed(spr, function()
+			{
+				if (spr.ID != curSelected)
+				{
+					changeSelection(spr.ID, true);
+				}
+				else
+				{
+					onSelected();
+				}
+			});
+		});
+		#end
 
 		if (controls.UI_UP_P)
 		{
@@ -93,24 +116,32 @@ class OptionsState extends MusicBeatState
 
 		if (controls.ACCEPT)
 		{
-			for (item in grpOptions.members)
-			{
-				item.alpha = 0;
-			}
-			switch (SettingsProperties.CURRENT_SETTINGS[curSelected].name)
-			{
-				case 'Controls':
-					openSubState(new game.settings.keybinds.RebindControls(false));
-				default:
-					openSubState(new SettingsSubState(SettingsProperties.CURRENT_SETTINGS[curSelected]));
-			}
+			onSelected();
 		}
 	}
 
-	function changeSelection(change:Int = 0)
+	function onSelected()
+	{
+		for (item in grpOptions.members)
+		{
+			item.alpha = 0;
+		}
+		switch (SettingsProperties.CURRENT_SETTINGS[curSelected].name)
+		{
+			case 'Controls':
+				openSubState(new game.settings.keybinds.RebindControls(false));
+			default:
+				openSubState(new SettingsSubState(SettingsProperties.CURRENT_SETTINGS[curSelected]));
+		}
+	}
+
+	function changeSelection(change:Int = 0, force:Bool = false)
 	{
 		FlxG.sound.play(game.Paths.sound('scrollMenu'), 0.4);
-		curSelected += change;
+		if (force)
+			curSelected = change;
+		else
+			curSelected += change;
 
 		if (curSelected < 0)
 			curSelected = SettingsProperties.CURRENT_SETTINGS.length - 1;

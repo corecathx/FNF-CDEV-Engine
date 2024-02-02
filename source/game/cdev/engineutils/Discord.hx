@@ -10,6 +10,7 @@ using StringTools;
 
 class DiscordClient
 {
+	public static var initialized:Bool = false;
 	#if DISCORD_RPC
 	public function new()
 	{
@@ -59,11 +60,13 @@ class DiscordClient
 
 	public static function initialize()
 	{
+		if (initialized) return;
 		var DiscordDaemon = sys.thread.Thread.create(() ->
 		{
 			new DiscordClient();
 		});
 		trace("Discord Client initialized");
+		initialized = true;
 	}
 
 	public static function changePresence(details:String, state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float)
@@ -82,7 +85,7 @@ class DiscordClient
 			largeImageKey: 'icon',
 			largeImageText: largeImgtxt,
 			smallImageKey: smallImageKey,
-			// Obtained times are in milliseconds so they are divided so Discord can use it
+			// Obtained times are in milliseconds so Discord can use it
 			startTimestamp: Std.int(startTimestamp / 1000),
 			endTimestamp: Std.int(endTimestamp / 1000)
 		});

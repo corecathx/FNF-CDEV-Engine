@@ -128,27 +128,27 @@ function beatHit(curBeat) {
         case 64:
             PlayState.camHUD.flash(0xffffffff, 0.5);
             for (i in 0...PlayState.p2Strums.members.length){
-                var xPos:Float = PlayState.p2Strums.members[i].x + 350;
-                FlxTween.tween(PlayState.p2Strums.members[i], {x: xPos}, 2, {ease: FlxEase.cubeOut});
+                var xPos:Float = PlayState.p2Strums.members[i].x + 320;
+                FlxTween.tween(PlayState.p2Strums.members[i], {x: xPos, angle:360}, 2, {ease: FlxEase.cubeOut});
                 FlxTween.tween(PlayState.playerStrums.members[i], {alpha: 0}, 1, {ease: FlxEase.cubeOut});
             }
         case 71: 
             for (i in 0...PlayState.p2Strums.members.length){
-                var xPos:Float = PlayState.p2Strums.members[i].x - 350;
-                FlxTween.tween(PlayState.p2Strums.members[i], {x: xPos}, 0.5, {ease: FlxEase.cubeOut});
+                var xPos:Float = PlayState.p2Strums.members[i].x - 320;
+                FlxTween.tween(PlayState.p2Strums.members[i], {x: xPos, angle:0}, 0.5, {ease: FlxEase.cubeOut});
                 FlxTween.tween(PlayState.playerStrums.members[i], {alpha: 1}, 0.5, {ease: FlxEase.cubeOut});
             }
         case 72:
             PlayState.camHUD.flash(0xffffffff, 0.5);
             for (i in 0...PlayState.playerStrums.members.length){
-                var xPos:Float = PlayState.playerStrums.members[i].x - 350;
-                FlxTween.tween(PlayState.playerStrums.members[i], {x: xPos}, 2, {ease: FlxEase.cubeOut});
+                var xPos:Float = PlayState.playerStrums.members[i].x - 320;
+                FlxTween.tween(PlayState.playerStrums.members[i], {x: xPos, angle:-360}, 2, {ease: FlxEase.cubeOut});
                 FlxTween.tween(PlayState.p2Strums.members[i], {alpha: 0}, 1, {ease: FlxEase.cubeOut});
             }
         case 79:
             for (i in 0...PlayState.playerStrums.members.length){
-                var xPos:Float = PlayState.playerStrums.members[i].x + 350;
-                FlxTween.tween(PlayState.playerStrums.members[i], {x: xPos}, 0.5, {ease: FlxEase.cubeOut});
+                var xPos:Float = PlayState.playerStrums.members[i].x + 320;
+                FlxTween.tween(PlayState.playerStrums.members[i], {x: xPos, angle:0}, 0.5, {ease: FlxEase.cubeOut});
                 FlxTween.tween(PlayState.p2Strums.members[i], {alpha: 1}, 0.5, {ease: FlxEase.cubeOut});
             }
         //case 

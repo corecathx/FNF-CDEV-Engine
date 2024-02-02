@@ -1,7 +1,8 @@
 package meta.states;
 
+import game.cdev.log.GameLog;
+import flixel.addons.display.FlxRuntimeShader;
 import meta.modding.ModdingState;
-import game.cdev.engineutils.TraceLog;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxState;
 import game.cdev.script.CDevScript;
@@ -54,9 +55,6 @@ class CustomState extends MusicBeatState
 
 	// trace window stuffs
 	public var camGame:FlxCamera;
-
-	var traceWindow:TraceLog;
-	var traceCam:FlxCamera;
 
 	var script:CDevScript = null;
 	var gotScript = false;
@@ -127,7 +125,6 @@ class CustomState extends MusicBeatState
 			try
 			{
 				script.trace(text);
-				if (traceWindow != null) traceWindow._addData(text);
 			}
 			catch (e)
 			{
@@ -185,6 +182,7 @@ class CustomState extends MusicBeatState
 		script.setVariable("CDevConfig", CDevConfig);
 		script.setVariable("GraphicsShader", GraphicsShader);
 		script.setVariable("FlxGraphicsShader", FlxGraphicsShader);
+		script.setVariable("FlxRuntimeShader", FlxRuntimeShader);
 		script.setVariable("ShaderFilter", ShaderFilter);
 		script.setVariable("FlxCamera", FlxCamera);
 
@@ -214,22 +212,7 @@ class CustomState extends MusicBeatState
 	override function create()
 	{
 		super.create();
-		
-		camGame = new FlxCamera();
-		traceCam = new FlxCamera();
-		traceCam.bgColor.alpha = 0;
-		FlxG.cameras.reset(camGame);
-		FlxG.cameras.add(traceCam);
-		FlxCamera.defaultCameras = [camGame];
 
-		if (CDevConfig.saveData.showTraceLogAt == 1)
-		{
-			traceWindow = new TraceLog(10, 60, 600, 250);
-			add(traceWindow);
-			traceWindow.cameras = [traceCam];
-			traceWindow.mainCameraObject = traceCam;
-			FlxG.mouse.visible = true;
-		}
 		if (state != "")
 		{
 			if (Paths.curModDir.length == 1)
@@ -265,40 +248,10 @@ class CustomState extends MusicBeatState
 			script.executeFunc("update", [e]);
 		super.update(e);
 
-		if (CDevConfig.saveData.showTraceLogAt == 1)
-		{
-			if (traceWindow != null)
-			{
-				if (FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x > traceWindow.PANEL_BG.x
-					&& FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x < traceWindow.PANEL_BG.x + traceWindow.PANEL_BG.width
-					&& FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).y > traceWindow.PANEL_BG.y
-					&& FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).y < traceWindow.PANEL_BG.y + 20)
-				{
-					if (FlxG.mouse.justPressed)
-					{
-						offsetX = traceWindow.PANEL_BG.x - FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x;
-						pressed = true;
-					}
-				}
-
-				if (pressed)
-				{
-					traceWindow.PANEL_BG.setPosition(FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).x + offsetX,
-						FlxG.mouse.getScreenPosition(traceWindow.mainCameraObject).y - 5);
-
-					if (FlxG.mouse.justReleased)
-					{
-						pressed = false;
-					}
-				}
-			}
-		}
-
 		if (gotScript && script.error){
 			if (isErrorBefore != script.error){
-				if (traceWindow != null) traceWindow.visible = true;
 				FlxG.sound.play(Paths.sound("cancelMenu"));
-				if (traceWindow != null) traceWindow._addData("ERROR: An error occured on the script. If you're stuck on this Custom State, press Shift + Escape.");
+				GameLog.error("An error occured on the script. If you're stuck on this Custom State, press Shift + Escape.");
 				isErrorBefore = script.error;
 			}
 		}

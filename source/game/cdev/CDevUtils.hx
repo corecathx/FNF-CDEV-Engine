@@ -1,5 +1,6 @@
 package game.cdev;
 
+import game.song.Song.SwagSong;
 import meta.substates.CustomSubstate;
 import meta.states.MusicBeatState;
 import flixel.sound.FlxSound;
@@ -28,42 +29,75 @@ import game.Paths;
 
 using StringTools;
 
+enum TemplateData {
+	CHART;
+}
+
+/**
+ * Utilization class for CDEV Engine.
+ */
 class CDevUtils
 {
+	public var CHART_TEMPLATE:SwagSong = {
+		song: 'Your Song',
+		notes: [],
+		songEvents: [],
+		bpm: 150,
+		needsVoices: true,
+		player1: 'bf',
+		player2: 'dad',
+		gfVersion: 'gf',
+		stage: 'stage',
+		speed: 1,
+		offset: 0,
+		validScore: false
+	};
+
+	public function getTemplate(type:TemplateData):Dynamic {
+		switch (type){
+			case CHART:
+				return CHART_TEMPLATE;
+		}
+		return null;
+	}
+
 	/**
-	 * boundshit
+	 * New Class instance.
 	 */
 	public function new()
 	{
 	}
 
-	public function readChartJsons(songname:String, mod:Bool = false)
+	/**
+	 * Reads the `songname`'s JSON files and returns the Difficulty names.
+	 * @param songname 	The song's name.
+	 * @param mod 		Whether if it's a mod or not.
+	 * @return Array<String> 
+	 */
+	public function readChartJsons(songname:String, mod:Bool = false):Array<String>
 	{
 		// difficulties are created based on the file's filename, ex: tutorial-hard.json , the difficulty is "hard";
 		var diffs:Array<String> = [];
-		var f:Array<String> = [];
+		var fe:Array<String> = [];
 		var p:String = "";
 		if (!mod)
 		{
 			p = Paths.chartPath(songname);
-			f = FileSystem.readDirectory(Paths.chartPath(songname));
+			fe = FileSystem.readDirectory(Paths.chartPath(songname));
 		}
 		else
 		{
 			p = Paths.modChartPath(songname);
-			f = FileSystem.readDirectory(Paths.modChartPath(songname));
+			fe = FileSystem.readDirectory(Paths.modChartPath(songname));
 		}
-
-		trace(p);
-		trace(f);
-
-		if (f.length >= 0)
+		if (fe == null) return diffs;
+		if (fe.length > 0) //my stupid ass put ">=" on the older version of the engine.
 		{
-			for (i in 0...f.length)
+			for (i in 0...fe.length)
 			{
-				if (f[i].endsWith(".json"))
+				if (fe[i].endsWith(".json"))
 				{
-					var a:String = f[i].replace(songname, "");
+					var a:String = fe[i].replace(songname, "");
 					if (a.contains("-"))
 					{
 						var splittedName:Array<String> = a.replace(".json", "").split("-");
@@ -84,25 +118,36 @@ class CDevUtils
 
 	/**
 	 * Sets `object` pitch to `pitch`
-	 * @param object 
-	 * @param pitch
+	 * @param object	FlxSound object.
+	 * @param pitch		Pitch value for `object`.
 	 */
 	public function setSoundPitch(object:FlxSound, pitch:Float)
 	{
 		object.pitch = pitch;
 	}
 
+	/**
+	 * Bounds `toConvert` to `min` and `max`, shortcut to `FlxMath.bound`
+	 * @param toConvert 
+	 * @param min 
+	 * @param max 
+	 * @return Float
+	 */
 	public function bound(toConvert:Float, min:Float, max:Float):Float
 	{
 		return FlxMath.bound(toConvert, min, max); // ye
 	}
 
+	/**
+	 * Removes Symbols from a string.
+	 * @param input		String that will be used for filtering.
+	 * @return String	New string without the symbols.
+	 */
 	public function removeSymbols(input:String):String
 	{
 		var result:String = "";
 		for (i in 0...input.length)
 		{
-			// Memeriksa apakah karakter adalah huruf atau angka
 			if ((input >= "0" && input <= "9") || (input >= "a" && input <= "z") || (input >= "A" && input <= "Z"))
 			{
 				result += input.charAt(i);
@@ -111,9 +156,16 @@ class CDevUtils
 		return result;
 	}
 
+
+	/**
+	 * Checks if `defaultState` is exists on the priority mod, if it exists, then it will open
+	 * CustomState.hx with the state script.
+	 * @param defaultState		State's name
+	 * @param enableTransit 	Whether to enable the transition between states.
+	 */
 	public function getStateScript(defaultState:String, ?enableTransit:Bool = true)
 	{
-		if (Paths.curModDir.length >= 1 && Paths.currentMod != "BASEFNF")
+		if (Paths.curModDir.length == 1 && Paths.currentMod != "BASEFNF")
 		{
 			var tempCurMod = Paths.currentMod;
 			Paths.currentMod = Paths.curModDir[0];
@@ -123,16 +175,23 @@ class CDevUtils
 			{
 				FlxTransitionableState.skipNextTransIn = enableTransit;
 				FlxTransitionableState.skipNextTransOut = true;
-				trace("existed, switching to custom state for " + defaultState);
+				trace("Switching to custom state for " + defaultState);
 				FlxG.switchState(new CustomState(defaultState));
 			}
 			Paths.currentMod = tempCurMod;
 		}
 	}
 
+	/**
+	 * Checks if `defaultState` is exists on the priority mod, if it exists, then it will open
+	 * CustomSubstate.hx with the substate script.
+	 * @param currentState		Current MusicBeatState that calls this function.
+	 * @param defaultState		State's name
+	 * @param arguments			Arguments that will be passed to the custom substate.
+	 */
 	public function getSubStateScript(currentState:MusicBeatState, defaultState:String, ?arguments:Array<Any>)
 	{
-		if (Paths.curModDir.length >= 1 && Paths.currentMod != "BASEFNF")
+		if (Paths.curModDir.length == 1 && Paths.currentMod != "BASEFNF")
 		{
 			var tempCurMod = Paths.currentMod;
 			Paths.currentMod = Paths.curModDir[0];
@@ -140,16 +199,38 @@ class CDevUtils
 			trace(scriptPath);
 			if (FileSystem.exists(scriptPath))
 			{
-				trace("existed, switching to custom SUBstate for " + defaultState);
-				currentState.openSubState(new CustomSubstate(defaultState,arguments));
+				trace("Switching to custom substate for " + defaultState);
+				currentState.openSubState(new CustomSubstate(defaultState, arguments));
 			}
 			Paths.currentMod = tempCurMod;
 		}
 	}
 
-	public function hasStateScript(stateName:String):Bool{
+	/**
+	 * Converts bytes int to formatted sizes. (ex: 10 MB, 100 GB, 1000 TB, etc)
+	 * @param bytes		Bytes number that will be converted
+	 * @return String	Formatted size of the bytes
+	 */
+	public function convert_size(bytes:Int):String
+	{
+		if (bytes == 0)
+			return "0 B";
+
+		var size_name:Array<String> = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+		var digit:Int = Std.int(Math.log(bytes) / Math.log(1024));
+		return FlxMath.roundDecimal(bytes / Math.pow(1024, digit), 2) + " " + size_name[digit];
+	}
+
+	/**
+	 * Checks if current priority mod has a state script.
+	 * @param stateName 	State's name that will be checked
+	 * @return Bool			Is it exists?
+	 */
+	public function hasStateScript(stateName:String):Bool
+	{
 		var ret = false;
-		if (Paths.curModDir.length >= 1 && Paths.currentMod != "BASEFNF"){
+		if (Paths.curModDir.length == 1 && Paths.currentMod != "BASEFNF")
+		{
 			var tempCurMod = Paths.currentMod;
 			Paths.currentMod = Paths.curModDir[0];
 			var scriptPath:String = Paths.modFolders("ui/" + stateName + ".hx");
@@ -160,6 +241,9 @@ class CDevUtils
 		return ret;
 	}
 
+	/**
+	 * Call this to fully restart the game.
+	 */
 	public function restartGame()
 	{
 		CDevConfig.storeSaveData();
@@ -173,6 +257,11 @@ class CDevUtils
 		FlxG.resetGame();
 	}
 
+	/**
+	 * checks WIP. might break?
+	 * @param returnMod 
+	 * @return Dynamic
+	 */
 	public function isPriorityMod(returnMod:Bool = false):Dynamic
 	{
 		if (Paths.curModDir.length == 1)
@@ -182,6 +271,11 @@ class CDevUtils
 		return (returnMod ? "" : false);
 	}
 
+	/**
+	 * CTRL + V thing, idk lol
+	 * @param prefix 
+	 * @return String
+	 */
 	public function pasteFunction(prefix:String = ''):String
 	{
 		if (prefix.toLowerCase().endsWith('v'))
@@ -247,15 +341,9 @@ class CDevUtils
 	// hi :) credit: Shadow Mario#9396
 	public function fileIsExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
 	{
-		#if ALLOW_MODS
-		if (FileSystem.exists(Paths.mods(Paths.currentMod + '/' + key)) || FileSystem.exists(Paths.mods(key)))
+		if (FileSystem.exists(Paths.mods(Paths.currentMod+"/"+key)) || OpenFlAssets.exists(Paths.getPath(key, type)))
 			return true;
-		#end
-
-		if (OpenFlAssets.exists(Paths.getPath(key, type)))
-		{
-			return true;
-		}
+		
 		return false;
 	}
 
@@ -343,5 +431,14 @@ class CDevUtils
 		{
 			FlxG.sound.cache(Paths.inst(musicPath));
 		}
+	}
+
+	/**
+	 * Sets your `sprite` object to fit the screen.
+	 * @param sprite 
+	 */
+	public function setFitScale(sprite:FlxSprite, xAdd:Float = 0, yAdd:Float = 0){
+		sprite.scale.x = (FlxG.width / sprite.width) + xAdd;
+        sprite.scale.y = (FlxG.height / sprite.height) + yAdd;
 	}
 }

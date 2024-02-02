@@ -60,7 +60,6 @@ class LoadingState extends MusicBeatState
 			if (PlayState.SONG.needsVoices)
 			{
 				checkLoadSong(getVocalPath());
-				checkLoadSong(getOpponentVocalPath());
 			}
 
 			checkLibrary("shared");
@@ -150,11 +149,6 @@ class LoadingState extends MusicBeatState
 		return Paths.voices(PlayState.SONG.song);
 	}
 
-	static function getOpponentVocalPath()
-	{
-		return Paths.voice_opponent(PlayState.SONG.song);
-	}
-
 	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false)
 	{
 		FlxG.switchState(getNextState(target, stopMusic));
@@ -180,7 +174,7 @@ class LoadingState extends MusicBeatState
 				FlxG.sound.cache(Paths.voice_opponent(PlayState.SONG.song));
 		}
 		var loaded = isSoundLoaded(getSongPath())
-			&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()) || isSoundLoaded(getOpponentVocalPath()))
+			&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
 			&& isLibraryLoaded("shared");
 
 		if (!loaded)

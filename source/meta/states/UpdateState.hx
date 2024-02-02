@@ -139,13 +139,13 @@ class UpdateState extends MusicBeatState
 				if (downloadedSize != lastVare)
 				{
 					lastVare = downloadedSize;
-					download_info.text = convert_size(Std.int(downloadedSize)) + " / " + convert_size(Std.int(maxFileSize));
+					download_info.text = CDevConfig.utils.convert_size(Std.int(downloadedSize)) + " / " + CDevConfig.utils.convert_size(Std.int(maxFileSize));
 					download_info.x = (progBar_bg.x + progBar_bg.width) - download_info.width;
 
 					entire_progress = (downloadedSize / maxFileSize) * 100;
 				}
 
-				progressText.text = FlxMath.roundDecimal(entire_progress, 2) + "%" + " - " + convert_size(Std.int(speed)) + "/s" + " - "
+				progressText.text = FlxMath.roundDecimal(entire_progress, 2) + "%" + " - " + CDevConfig.utils.convert_size(Std.int(speed)) + "/s" + " - "
 					+ convert_time(downloadTime);
 			case "install_update":
 				entire_progress = (downloadedSize / maxFileSize) * 100;
@@ -229,18 +229,6 @@ class UpdateState extends MusicBeatState
 		}
 		httpHandler.request(false);
 		return r;
-	}
-
-	function convert_size(bytes:Int)
-	{
-		if (bytes == 0)
-		{
-			return "0B";
-		}
-
-		var size_name:Array<String> = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-		var digit:Int = Std.int(Math.log(bytes) / Math.log(1024));
-		return FlxMath.roundDecimal(bytes / Math.pow(1024, digit), 2) + " " + size_name[digit];
 	}
 
 	function convert_time(time:Float)

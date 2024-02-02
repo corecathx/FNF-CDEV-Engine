@@ -1,5 +1,7 @@
 package meta.states;
 
+
+#if android import game.system.native.Android; #end
 import game.settings.data.SettingsProperties;
 import meta.modding.week_editor.WeekData;
 import meta.modding.ModPaths;
@@ -107,7 +109,7 @@ class MainMenuState extends MusicBeatState
 		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuBG'));
 		bg.scrollFactor.x = 0;
 		bg.scrollFactor.y = 0.18;
-		bg.setGraphicSize(Std.int(bg.width * 1.1));
+		CDevConfig.utils.setFitScale(bg, 0.1, 0.1);
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.alpha = 0.7;
@@ -123,7 +125,7 @@ class MainMenuState extends MusicBeatState
 		magenta = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
 		magenta.scrollFactor.x = 0;
 		magenta.scrollFactor.y = 0.18;
-		magenta.setGraphicSize(Std.int(magenta.width * 1.1));
+		CDevConfig.utils.setFitScale(magenta, 0.1, 0.1);
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		magenta.visible = false;
@@ -228,19 +230,30 @@ class MainMenuState extends MusicBeatState
 				shitHold += elapsed;
 
 				if (shitHold >= 3)
-					{
-						shitHold = 0;
-						CDevConfig.saveData.testMode = !CDevConfig.saveData.testMode;
-						engineText.text = coreEngineText  + (CDevConfig.saveData.testMode ? ' - [TESTMODE]' : '');
-
-						if (CDevConfig.saveData.testMode)
-								FlxG.sound.play(Paths.sound('confirmMenu'));
-							else
-								FlxG.sound.play(Paths.sound('cancelMenu'));
-					}
+				{
+					shitHold = 0;
+					CDevConfig.saveData.testMode = !CDevConfig.saveData.testMode;
+					engineText.text = coreEngineText  + (CDevConfig.saveData.testMode ? ' - [TESTMODE]' : '');
+					
+					FlxG.sound.play(Paths.sound((CDevConfig.saveData.testMode ? 'confirmMenu' : 'cancelMenu')));
+				}
 			} else {
 				shitHold = 0;
 			}
+
+			#if android
+			menuItems.forEach(function(spr:FlxSprite)
+			{
+				Android.touchJustPressed(spr, function (){
+					if (selectedSomethin) return;
+					if (spr.ID != curSelected){
+						changeItem(spr.ID, true);
+					} else{
+						confirmShit();
+					}
+				});
+			});
+			#end
 
 		if (CDevConfig.saveData.testMode){
 			if (FlxG.keys.pressed.CONTROL && FlxG.keys.pressed.ALT && FlxG.keys.justPressed.R){
@@ -248,8 +261,8 @@ class MainMenuState extends MusicBeatState
 					TitleState.initialized = false;
 					TitleState.closedState = false;
 				}
+
 				FlxG.sound.music.stop();
-				//FlxG.sound.music.destroy();
 				FlxG.resetGame();
 			}
 		}
@@ -286,12 +299,11 @@ class MainMenuState extends MusicBeatState
 			});
 			
 			if (controls.UI_UP_P){
-				FlxG.sound.play(Paths.sound('scrollMenu'));
 				changeItem(-1);
 			}
 
 			if (controls.UI_DOWN_P){
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+
 				changeItem(1);
 			}
 
@@ -299,60 +311,67 @@ class MainMenuState extends MusicBeatState
 				FlxG.switchState(new TitleState());
 
 			if (controls.ACCEPT){
-				switch(optionShit[curSelected]){
-					case 'donate':
-						CDevConfig.utils.openURL('https://ninja-muffin24.itch.io/funkin');
-					default:
-						selectedSomethin = true;
-						FlxG.sound.play(Paths.sound('confirmMenu'));
-	
-						if (CDevConfig.saveData.flashing)
-							FlxFlicker.flicker(magenta, 1.1, 0.15, false);
-	
-						grpIcons.forEach(function(da:FlxSprite){
-							FlxTween.tween(da, {alpha: 0}, 0.4, {
-								ease: FlxEase.quadOut,
-								onComplete: function(bruh:FlxTween)
-								{
-									da.kill();
-								}
-							});
-						});
-						menuItems.forEach(function(spr:FlxSprite)
-						{
-							if (curSelected != spr.ID){
-								FlxTween.tween(spr, {alpha: 0}, 0.4, {
-									ease: FlxEase.quadOut,
-									onComplete: function(twn:FlxTween)
-									{
-										spr.kill();
-									}
-								});
-							}else{
-								//spr.screenCenter();
-								if (CDevConfig.saveData.flashing)
-								{
-									FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
-									{
-										openState();
-									});
-								}
-								else
-								{
-									new FlxTimer().start(1, function(urmom:FlxTimer)
-									{
-										openState();
-									});
-								}
-							}
-						});
-				}
+				confirmShit();
 			}
 		}
 
 		super.update(elapsed);
 	}
 
+	function confirmShit(){
+		switch(optionShit[curSelected]){
+			case 'donate':
+				CDevConfig.utils.openURL('https://ninja-muffin24.itch.io/funkin');
+			default:
+				selectedSomethin = true;
+				FlxG.sound.play(Paths.sound('confirmMenu'));
+
+				if (CDevConfig.saveData.flashing)
+					FlxFlicker.flicker(magenta, 1.1, 0.15, false);
+
+				grpIcons.forEach(function(da:FlxSprite){
+					FlxTween.tween(da, {alpha: 0}, 0.4, {
+						ease: FlxEase.quadOut,
+						onComplete: function(bruh:FlxTween)
+						{
+							da.kill();
+						}
+					});
+				});
+				menuItems.forEach(function(spr:FlxSprite)
+				{
+					if (curSelected != spr.ID){
+						FlxTween.tween(spr, {alpha: 0}, 0.4, {
+							ease: FlxEase.quadOut,
+							onComplete: function(twn:FlxTween)
+							{
+								spr.kill();
+							}
+						});
+					}else{
+						//spr.screenCenter();
+						if (CDevConfig.saveData.flashing)
+						{
+							FlxFlicker.flicker(spr, 1, 0.06, true, false, function(flick:FlxFlicker)
+							{
+								FlxTween.tween(spr,{x:-spr.width}, 1, {ease:FlxEase.backInOut});
+								openState();
+							});
+						}
+						else
+						{
+							new FlxTimer().start(1, function(urmom:FlxTimer)
+							{
+								FlxTween.tween(spr,{x:-spr.width}, 1, {ease:FlxEase.backInOut});
+								openState();
+							});
+						}
+					}
+				});
+		}
+	}
+
+	static var alreadyTriggered:Bool = false;
 	function updateGameInfo()
 	{
 		var hours:String = '' + Date.now().getHours();
@@ -370,6 +389,7 @@ class MainMenuState extends MusicBeatState
 		+ '\nIt is currently '
 		+ formattedTime;
 
+		//speed up time
 		if (CDevConfig.saveData.testMode){
 			if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.T){
 				game.cdev.CDevConfig.elapsedGameTime += 4000*1000;
@@ -377,6 +397,12 @@ class MainMenuState extends MusicBeatState
 		}
 
 		gameTimeElasped.x = (FlxG.width - gameTimeElasped.width) - 20;
+
+		// hehe
+		if ((CDevConfig.elapsedGameTime/1000) / 3600 >= 2 && !alreadyTriggered){
+			alreadyTriggered = true;
+			CDevConfig.utils.openURL("https://www.google.com/search?q=grass");
+		}
 	}
 
 	function openState()
@@ -453,9 +479,13 @@ class MainMenuState extends MusicBeatState
 
 	var alphaTween:FlxTween;
 
-	function changeItem(huh:Int = 0)
+	function changeItem(huh:Int = 0, force:Bool = false)
 	{
-		curSelected += huh;
+		FlxG.sound.play(Paths.sound('scrollMenu'));
+		if (!force)
+			curSelected += huh;
+		else
+			curSelected = huh;
 
 		if (curSelected >= menuItems.length)
 			curSelected = 0;

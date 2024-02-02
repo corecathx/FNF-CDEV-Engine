@@ -1,5 +1,7 @@
 package game.objects;
 
+import game.cdev.script.ScriptSupport;
+import game.cdev.script.CDevScript;
 import game.Stage.SpriteStage;
 import meta.states.PlayState;
 import game.cdev.engineutils.Highscore;
@@ -23,6 +25,9 @@ class Character extends SpriteStage
 {
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
+
+	public var script:CDevScript;
+	public var gotScript:Bool = false;
 
 	var charLists:Array<String> = [];
 
@@ -58,31 +63,15 @@ class Character extends SpriteStage
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?usedForStoryChar:Bool = false)
 	{
 		super(x, y);
-
-		/*
-			var charList:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
-			var miscCharList:Array<String> = CoolUtil.coolTextFile(Paths.txt('miscCharacterList'));
-			var gfList:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfList'));
-			for (i in 0...charList.length)
-			{
-				charLists.push(charList[i]);
-			}
-
-			for (i in 0...miscCharList.length)
-			{
-				charLists.push(miscCharList[i]);
-			}
-
-			for (i in 0...gfList.length)
-			{
-				charLists.push(gfList[i]);
-		}*/
-
+	
 		animOffsets = new Map<String, Array<Dynamic>>();
 		curCharacter = character;
 		this.isPlayer = isPlayer;
 
-		var tex:FlxAtlasFrames;
+		if (!debugMode) initScript();
+
+		executeFunc("create", []);
+
 		antialiasing = CDevConfig.saveData.antialiasing;
 
 		switch (curCharacter)
@@ -138,77 +127,36 @@ class Character extends SpriteStage
 				{
 					for (anim in animArray)
 					{
-						if (usedForStoryChar)
-						{ // a really bad code
-							var shouldshit:Array<String> = ['idle', 'danceLeft', 'danceRight',];
-							if (shouldshit.contains(anim.animPrefix))
-							{
-								var animPrefix:String = '' + anim.animPrefix;
-								var animName:String = '' + anim.animName;
-								var animFpsVal:Int = anim.fpsValue;
-								var animLooping:Bool = !!anim.looping;
-								var animIndices:Array<Int> = anim.indices;
-								if (animIndices != null && animIndices.length > 0)
-								{
-									animation.addByIndices(animPrefix, animName, animIndices, "", animFpsVal, animLooping);
-								}
-								else
-								{
-									animation.addByPrefix(animPrefix, animName, animFpsVal, animLooping);
-								}
+						var animPrefix:String = '' + anim.animPrefix;
+						var animName:String = '' + anim.animName;
+						var animFpsVal:Int = anim.fpsValue;
+						var animLooping:Bool = !!anim.looping;
+						var animIndices:Array<Int> = anim.indices;
+						var shouldshit:Array<String> = ['idle', 'danceLeft', 'danceRight'];
 
-								if (anim.offset != null && anim.offset.length > 1)
-									addOffset(anim.animPrefix, anim.offset[0], anim.offset[1]);
-							}
-						}
+						if (usedForStoryChar && !shouldshit.contains(anim.animPrefix)) 
+							continue;
+
+						if (animIndices != null && animIndices.length > 0)
+							animation.addByIndices(animPrefix, animName, animIndices, "", animFpsVal, animLooping);
 						else
-						{
-							var animPrefix:String = '' + anim.animPrefix;
-							var animName:String = '' + anim.animName;
-							var animFpsVal:Int = anim.fpsValue;
-							var animLooping:Bool = !!anim.looping;
-							var animIndices:Array<Int> = anim.indices;
-							if (animIndices != null && animIndices.length > 0)
-							{
-								animation.addByIndices(animPrefix, animName, animIndices, "", animFpsVal, animLooping);
-							}
-							else
-							{
-								animation.addByPrefix(animPrefix, animName, animFpsVal, animLooping);
-							}
+							animation.addByPrefix(animPrefix, animName, animFpsVal, animLooping);
 
-							if (anim.offset != null && anim.offset.length > 1)
-								addOffset(anim.animPrefix, anim.offset[0], anim.offset[1]);
-						}
+						if (anim.offset != null && anim.offset.length > 1) 
+							addOffset(anim.animPrefix, anim.offset[0], anim.offset[1]);
 					}
 				}
 		}
+
 		previousFlipX = flipX;
 
 		if (isPlayer)
 		{
 			flipX = !flipX;
-
-			/*// Doesn't flip for BF, since his are already in the right place???
-				if (!curCharacter.startsWith('bf'))
-				{
-					// var animArray
-					var oldRight = animation.getByName('singRIGHT').frames;
-					animation.getByName('singRIGHT').frames = animation.getByName('singLEFT').frames;
-					animation.getByName('singLEFT').frames = oldRight;
-
-					// IF THEY HAVE MISS ANIMATIONS??
-					if (animation.getByName('singRIGHTmiss') != null)
-					{
-						var oldMiss = animation.getByName('singRIGHTmiss').frames;
-						animation.getByName('singRIGHTmiss').frames = animation.getByName('singLEFTmiss').frames;
-						animation.getByName('singLEFTmiss').frames = oldMiss;
-					}
-			}*/
 		}
 
 		defineIdleDance();
-		dance();
+		dance(false, 1);
 
 		if (!usedForStoryChar)
 		{
@@ -220,6 +168,20 @@ class Character extends SpriteStage
 					playAnim("shoot1");
 			}
 		}
+
+		executeFunc("postCreate", []);
+	}
+
+	public function initScript(){
+		if (debugMode) return;
+		var scriptPath:String = Paths.modFolders("data/characters/"+curCharacter+".hx");
+		if (!FileSystem.exists(scriptPath)) return;
+
+		script = CDevScript.create(scriptPath);
+		gotScript = true;
+		script.setVariable("current", this);
+		ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.song);
+		script.loadFile(scriptPath);
 	}
 
 	public var animNotes:Array<Dynamic> = []; // used for pico-speaker
@@ -232,6 +194,13 @@ class Character extends SpriteStage
 
 	override function update(elapsed:Float)
 	{
+		executeFunc("update", [elapsed]);
+		if (debugMode) {
+			if (gotScript){
+				gotScript = false;
+				script.destroy();
+			}
+		}
 		if (!debugMode && animation.curAnim != null)
 		{
 			/*if(heyTimer > 0)
@@ -298,6 +267,7 @@ class Character extends SpriteStage
 		}
 
 		super.update(elapsed);
+		executeFunc("postUpdate", [elapsed]);
 	}
 
 	private var danced:Bool = false;
@@ -311,52 +281,34 @@ class Character extends SpriteStage
 
 	public function dance(?alt:Bool = false, ?beat:Int = 1)
 	{
+		executeFunc("onDance", [alt, beat]);
 		if (!canDance)
 			return;
 		if (debugMode)
 			return;
 		if (specialAnim)
 			return;
+		if (forceDance && beat % idleSpeed == 0)
+			return;
 
-		/*if (!gfTestBop)
+		var dRight:String = "danceRight"+(alt?idleAltPrefix:"");
+		var dLeft:String = "danceLeft"+(alt?idleAltPrefix:"");
+		var aIdle:String = "idle"+(alt?idleAltPrefix:"");
+
+		if ((animation.getByName(dLeft) != null && animation.getByName(dRight) != null))
 		{
-			if (idleDance)
-			{
-				danced = !danced;
+			danced = !danced;
 
-				if (danced)
-					playAnim('danceRight');
-				else
-					playAnim('danceLeft');
-			}
-			else if (animation.getByName('idle') != null)
-			{
-				playAnim('idle');
-			}
+			if (danced)
+				playAnim(dRight,forceDance);
+			else
+				playAnim(dLeft,forceDance);
 		}
-		else*/
+		else if (animation.getByName(aIdle) != null)
 		{
-			//if (beat % idleSpeed == 0)
-			//{
-				var dRight:String = "danceRight"+(alt?idleAltPrefix:"");
-				var dLeft:String = "danceLeft"+(alt?idleAltPrefix:"");
-				var aIdle:String = "idle"+(alt?idleAltPrefix:"");
-
-				if ((animation.getByName(dLeft) != null && animation.getByName(dRight) != null))
-				{
-					danced = !danced;
-	
-					if (danced)
-						playAnim(dRight,forceDance);
-					else
-						playAnim(dLeft,forceDance);
-				}
-				else if (animation.getByName(aIdle) != null)
-				{
-					playAnim(aIdle, forceDance);
-				}
-			//s}
+			playAnim(aIdle, forceDance);
 		}
+		executeFunc("onPostDance", [alt, beat]);
 	}
 
 	public function defineIdleDance()
@@ -366,6 +318,7 @@ class Character extends SpriteStage
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
+		executeFunc("onPlayAnim", [AnimName, Force, Reversed, Frame]);
 		specialAnim = false;
 
 		animation.play(AnimName, Force, Reversed, Frame);
@@ -394,6 +347,7 @@ class Character extends SpriteStage
 				danced = !danced;
 			}
 		}
+		executeFunc("onPostPlayAnim", [AnimName, Force, Reversed, Frame]);
 	}
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)
@@ -418,5 +372,10 @@ class Character extends SpriteStage
 	function sortByValue(Obj1:Array<Dynamic>, Obj2:Array<Dynamic>):Int
 	{
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1[0], Obj2[0]);
+	}
+
+	public function executeFunc(name,data){
+		if (!gotScript) return;
+		script.executeFunc(name, data);
 	}
 }

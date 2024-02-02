@@ -1,5 +1,6 @@
 package game.cdev.script;
 
+import hscript.Interp;
 import haxe.Exception;
 import sys.FileSystem;
 import haxe.io.Path;
@@ -14,7 +15,9 @@ typedef CDevModScript =
 
 class CDevScript
 {
+	public var hscript:Interp;
     public var fileName:String = "";
+	public var fileAsClass:String = ""; //similiar to fileName, except without the extension.
 	public var daScript:CDevModScript;
     public var mod:String = null;
 	public var error:Bool = false;
@@ -72,6 +75,11 @@ class CDevScript
 		trace(text);
 	}
 
+	public function errorLog(text:String)
+	{
+		game.cdev.log.GameLog.error(text);
+	}
+
 	public function loadFile(path:String)
 	{
 		throw new Exception("Not Implemented!!");
@@ -79,5 +87,6 @@ class CDevScript
 
 	public function destroy()
 	{
+		throw new Exception("Not Implemented!!");
 	}
 }

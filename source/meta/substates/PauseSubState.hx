@@ -1,6 +1,5 @@
 package meta.substates;
 
-import game.cdev.engineutils.TraceLog;
 import meta.states.PlayState;
 import game.Controls.Control;
 import flixel.FlxG;
@@ -26,7 +25,6 @@ class PauseSubState extends MusicBeatSubstate
 	var curSelected:Int = 0;
 
 	var pauseMusic:FlxSound;
-	var traceWindow:TraceLog;
 	public function new(x:Float, y:Float)
 	{
 		super();
@@ -55,6 +53,7 @@ class PauseSubState extends MusicBeatSubstate
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0;
 		bg.scrollFactor.set();
+		bg.scale.set(1/PlayState.camHUD.zoom, 1/PlayState.camHUD.zoom);
 		add(bg);
 
 		var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
@@ -139,7 +138,6 @@ class PauseSubState extends MusicBeatSubstate
 				case "Restart Song":
 					GameOverSubstate.resetDeathStatus();
 					FlxG.resetState();
-					if (CDevConfig.saveData.showTraceLogAt == 1) TraceLog.clearLog();
 				case "Options":
 					for (item in grpMenuShit.members)
 						{
@@ -163,8 +161,6 @@ class PauseSubState extends MusicBeatSubstate
 					else{
 						FlxG.switchState(new meta.states.FreeplayState());
 					}
-						
-					if (CDevConfig.saveData.showTraceLogAt == 1) TraceLog.clearLog();
 			}
 		}
 

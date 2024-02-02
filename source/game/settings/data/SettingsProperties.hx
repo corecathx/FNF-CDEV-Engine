@@ -200,12 +200,12 @@ class SettingsProperties
 						curIndex = 0;
 					CDevConfig.saveData.performTxt = things[curIndex];
 					trace("after: " + CDevConfig.saveData.performTxt);
-					Main.fps_mem.visible = (CDevConfig.saveData.performTxt=="hide" ? false : true);
+					Main.fpsCounter.visible = (CDevConfig.saveData.performTxt=="hide" ? false : true);
 				}
 
 				bs.value_name[0] = CDevConfig.saveData.performTxt;
 			}, function(){}, ""),
-			new BaseSettings("Trace Log Window", ["", ""], "Whether to show / hide Trace Log Window.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
+			new BaseSettings("Game Log Window", ["", ""], "Whether to show / hide TGame Log Window.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
 				if (FlxG.keys.justPressed.ENTER){
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 					CDevConfig.saveData.showTraceLogAt += 1;
@@ -221,7 +221,7 @@ class SettingsProperties
 				else
 					bs.value_name[0] = "Undefined";
 			}, function(){}, "", false),
-			new BaseSettings("Trace Log Main Message", ["Hide", "Show"], "Whether to show the tips text in the Trace Log Window.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "traceLogMessage", false),	
+			new BaseSettings("Game Log Main Message", ["Hide", "Show"], "Whether to show the tips text in the Game Log Window.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "traceLogMessage", false),	
 			new BaseSettings("Check For Updates", ["Disable", "Enabled"], "If enabled, the game will check for updates.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "checkNewVersion", false),
 			new BaseSettings("Autosave Chart File", ["", ""], "If enabled, the game will autosave the chart as a file. (Press SHIFT for more options)", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
 				if (FlxG.keys.justPressed.ENTER){

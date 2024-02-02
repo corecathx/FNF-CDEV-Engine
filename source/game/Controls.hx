@@ -1,5 +1,8 @@
 package game;
 
+#if android
+import flixel.input.android.FlxAndroidKey;
+#end
 import flixel.FlxG;
 import flixel.input.FlxInput;
 import flixel.input.actions.FlxAction;
@@ -246,7 +249,6 @@ class Controls extends FlxActionSet
 		return _downR.check();
 
 	// UI CONTROLS DANG IT //
-	
 	public var UI_UP(get, never):Bool;
 
 	inline function get_UI_UP()
@@ -308,7 +310,6 @@ class Controls extends FlxActionSet
 		return _ui_downR.check();
 
 	/////////////////////////////////////
-
 	public var ACCEPT(get, never):Bool;
 
 	inline function get_ACCEPT()
@@ -635,6 +636,17 @@ class Controls extends FlxActionSet
 		#end
 	}
 
+	#if android
+	public function bindAndroidKey(control:Control, keys:Array<FlxAndroidKey>)
+	{
+		#if (haxe >= "4.0.0")
+		inline forEachBound(control, (action, state) -> addAndroidKeys(action, keys, state));
+		#else
+		forEachBound(control, function(action, state) addAndroidKeys(action, keys, state));
+		#end
+	}
+	#end
+
 	/**
 	 * Sets all actions that pertain to the binder to trigger when the supplied keys are used.
 	 * If binder is a literal you can inline this
@@ -653,6 +665,13 @@ class Controls extends FlxActionSet
 		for (key in keys)
 			action.addKey(key, state);
 	}
+	#if android
+	inline static function addAndroidKeys(action:FlxActionDigital, keys:Array<FlxAndroidKey>, state:FlxInputState)
+	{
+		for (key in keys)
+			action.addAndroidKey(key, state);
+	}
+	#end
 
 	static function removeKeys(action:FlxActionDigital, keys:Array<FlxKey>)
 	{
@@ -677,19 +696,12 @@ class Controls extends FlxActionSet
 		removeKeyboard();
 
 		var save:Dynamic = game.cdev.CDevConfig.saveData;
-		var traceThis = [
-			save.upBind, save.downBind, save.leftBind, save.rightBind,
-			save.ui_upBind, save.ui_downBind, save.ui_leftBind, save.ui_rightBind,
-			save.acceptBind, save.backBind, save.pauseBind, save.resetBind
-		];
-		for (i in traceThis)
-			trace(i);
 
 		inline bindKeys(Control.UP, [FlxKey.fromString(save.upBind), FlxKey.UP]);
 		inline bindKeys(Control.DOWN, [FlxKey.fromString(save.downBind), FlxKey.DOWN]);
 		inline bindKeys(Control.LEFT, [FlxKey.fromString(save.leftBind), FlxKey.LEFT]);
 		inline bindKeys(Control.RIGHT, [FlxKey.fromString(save.rightBind), FlxKey.RIGHT]);
-		
+
 		inline bindKeys(Control.UI_UP, [FlxKey.fromString(save.ui_upBind[0]), FlxKey.UP]);
 		inline bindKeys(Control.UI_DOWN, [FlxKey.fromString(save.ui_downBind[0]), FlxKey.DOWN]);
 		inline bindKeys(Control.UI_LEFT, [FlxKey.fromString(save.ui_leftBind[0]), FlxKey.LEFT]);
@@ -699,6 +711,10 @@ class Controls extends FlxActionSet
 		inline bindKeys(Control.BACK, [FlxKey.fromString(save.backBind[0]), FlxKey.fromString(save.backBind[1])]);
 		inline bindKeys(Control.PAUSE, [FlxKey.fromString(save.pauseBind[0]), FlxKey.fromString(save.pauseBind[1])]);
 		inline bindKeys(Control.RESET, [FlxKey.fromString(save.resetBind[0])]);
+
+		#if mobile
+		inline bindAndroidKey(Control.BACK, [FlxAndroidKey.BACK]);
+		#end
 	}
 
 	function removeKeyboard()

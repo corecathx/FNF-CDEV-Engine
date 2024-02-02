@@ -1,21 +1,24 @@
 package game.cdev;
 
+import haxe.io.Path;
 import haxe.Constraints.Function;
-import sys.io.Process;
 import game.cdev.engineutils.Discord.DiscordClient;
 import lime.graphics.Image;
 import lime.app.Application;
 import haxe.io.Bytes;
 import haxe.Unserializer;
 import haxe.Serializer;
-import sys.io.File;
 import haxe.Json;
-import sys.FileSystem;
 import game.Paths;
 import flixel.math.FlxMath;
 import flixel.FlxG;
 import game.Controls.KeyboardScheme;
 import openfl.Lib;
+
+#if sys
+import sys.io.File;
+import sys.FileSystem;
+#end
 
 using StringTools;
 
@@ -28,7 +31,7 @@ class CDevConfig
 	public static var window_icon_custom:Bool = false;
 	public static var debug:Bool = false;
 	public static var elapsedGameTime:Float;
-	public static var engineVersion:String = "1.6.1h";
+	public static var engineVersion:String = "1.6.2";
 	public static var utils(default, null):CDevUtils = new CDevUtils();
 
 	public static var DEPRECATED_STUFFS:Map<String, String>;
@@ -58,14 +61,21 @@ class CDevConfig
 	 */
 	public static function initSaves()
 	{
+		#if windows
 		savePath = Sys.getEnv("AppData") + saveFolder;
-		trace(savePath);
-		saveData = getSaveData();
+		#else #if android
+		savePath = Path.normalize(Sys.getCwd()+saveFolder);
+		#end #end
+
+		saveData = #if !mobile getSaveData(); #else FlxG.save.data;
+		saveData = getDefaultSaves();
+		#end
 
 		for (i in Reflect.fields(getDefaultSaves())){
 			checkDataField(i);
 		}
 
+		#if !mobile loadForcedMods(); #end
 		updateSettingsOnSaves();
 
 		DEPRECATED_STUFFS = new Map<String, String>();
@@ -75,10 +85,11 @@ class CDevConfig
 
 	public static function updateSettingsOnSaves()
 	{
+		trace("called!");
 		FlxG.autoPause = saveData.autoPause;
 		setFPS(CDevConfig.saveData.fpscap);
 
-		Main.discordRPC = saveData.discordRpc;
+		#if DISCORD_RPC Main.discordRPC = saveData.discordRpc; #end
 
 		checkLoadedMods();
 		saveCurrentKeyBinds();
@@ -86,6 +97,9 @@ class CDevConfig
 
 	public static function storeSaveData()
 	{
+		FlxG.save.data.lastVolume = FlxG.sound.volume;
+
+		#if windows
 		var data:String = Serializer.run(Json.stringify(saveData, "\t"));
 		//var conv_data:Bytes = Bytes.ofString(data); nah
 		var fullPath:String = savePath + saveFileName;
@@ -94,12 +108,16 @@ class CDevConfig
 		}
 		if (data.length > 0)
 			File.saveContent(fullPath, data);
-		trace("saved");
+		#else
+		trace("This is not a windows target, could not store save data.");
+		#end
+
 	}
 
 	public static function getSaveData():Dynamic
 	{
 		var toReturn = getDefaultSaves();
+		#if windows
 		var fullPath:String = savePath + saveFileName;
 		if (FileSystem.exists(fullPath))
 		{
@@ -118,6 +136,9 @@ class CDevConfig
 
 			toReturn = json;
 		}
+		#else
+		trace("This is not a windows target, could not load save data.");
+		#end
 		return toReturn;
 	}
 
@@ -137,6 +158,55 @@ class CDevConfig
 			Reflect.setProperty(saveData, name, data);
 		else
 			trace("Save Data has no \""+name+"\" field.");
+	}
+
+	public static function loadForcedMods(){
+		var fullText:String = File.getContent(Paths.txt('modsEnabled')).trim();
+		var splitted:Array<String> = fullText.split("\n");
+		var mods:Array<String> = [];
+		var overrideAll:Bool = false;
+
+		var flags:Array<{line:String, funk:Void->Void}> = [
+			{
+				line: "OVERRIDE_MOD_LIST",
+				funk: function() {
+					overrideAll = true;
+				}
+			}
+		];
+		
+		for (line in splitted) {
+			var gotIt:Bool = false;
+		
+			for (flag in flags) {
+				if (line == flag.line) {
+					trace("Got flag: " + flag.line);
+					flag.funk();
+					gotIt = true;
+					break;
+				}
+			}
+		
+			if (!line.startsWith("--") && !gotIt) mods.push(line);
+		}
+		
+		if (overrideAll) {
+			saveData.loadedMods = [];
+			Paths.curModDir = [];
+			Paths.currentMod = null;
+		}
+		
+		if (mods.length > 0) {
+			for (mod in mods) {
+				if (!saveData.loadedMods.contains(mod)) {
+					trace("Forced mod, loaded: " + mod);
+					saveData.loadedMods.push(mod);
+				}
+			}
+		}
+		
+		Paths.curModDir = saveData.loadedMods;
+		if (Paths.curModDir.length != 0) Paths.currentMod = Paths.curModDir[0];
 	}
 
 	public static function checkDataField(name:String) {
@@ -159,9 +229,7 @@ class CDevConfig
 		// is this actually working??
 
 		Paths.curModDir = saveData.loadedMods;
-		trace(Paths.curModDir);
-		var dirs:Array<String> = FileSystem.readDirectory('cdev-mods/');
-		trace(dirs);
+		var dirs:Array<String> = #if sys FileSystem.readDirectory('cdev-mods/'); #else []; #end
 		for (i in 0...saveData.loadedMods.length)
 		{
 			//if ()
@@ -189,7 +257,7 @@ class CDevConfig
 		window_title = (reset ? Lib.application.meta["name"] : title);
 		Application.current.window.title = window_title;
 
-		window_icon_custom = (FileSystem.exists(icon) && !reset);
+		window_icon_custom = #if sys (FileSystem.exists(icon) && !reset); #else false; #end
 		var iconAsset = (window_icon_custom ? icon : "assets/shared/images/icon16.png");
 		var f = File.getBytes(iconAsset);
 		var i:Image = Image.fromBytes(f);
@@ -303,8 +371,8 @@ class CDevConfig
 			cameraStartFocus: 0,
 			showTraceLogAt: 0,
 
-			autosaveChart: false,
-			autosaveChart_interval: 0,
+			autosaveChart: true,
+			autosaveChart_interval: 30,
 
 			traceLogMessage: true,
 

@@ -8,3 +8,4 @@ vscode-project.hxml
 hxformat.json
 crash_handler/src
 CHANGELOG.md
+build-tools/

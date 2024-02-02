@@ -1,5 +1,6 @@
 package meta.modding.char_editor;
 
+import flixel.input.keyboard.FlxKey;
 import lime.utils.Assets;
 #if sys
 import sys.io.File;

@@ -35,8 +35,6 @@ class AboutState extends MusicBeatState
 
 	var mainCredits:Array<CreditsInfo> = [];
 
-	var customCredits:Array<Dynamic> = [];
-
 	// used for mod credits.
 	var grpCredit:FlxTypedGroup<Alphabet>;
 
@@ -93,22 +91,13 @@ class AboutState extends MusicBeatState
 
 			if (isSelectable)
 			{
-				if (mainCredits[i].modName == "FNF"){
-					var icon:AttachedSprite = new AttachedSprite('credits/' + mainCredits[i].name);
-					icon.xAdd = creditText.width + 10;
-					icon.sprTracker = creditText;
-					icon.yAdd = -30;
-	
-					add(icon);
-				} else{
-					Paths.currentMod = mainCredits[i].modName;
-					var icon:AttachedSprite = new AttachedSprite('credits/' + mainCredits[i].name);
-					icon.xAdd = creditText.width + 10;
-					icon.sprTracker = creditText;
-					icon.yAdd = -30;
-	
-					add(icon);
-				}
+				if (mainCredits[i].modName != "FNF") Paths.currentMod = mainCredits[i].modName;
+				var icon:AttachedSprite = new AttachedSprite('credits/' + mainCredits[i].name);
+				icon.xAdd = creditText.width + 10;
+				icon.sprTracker = creditText;
+				icon.yAdd = -30;
+
+				add(icon);
 			}
 		}
 		bg.color = mainCredits[curSelected].color;
@@ -243,19 +232,15 @@ class AboutState extends MusicBeatState
 						}else{
 							data = [actualText.trim()];
 						}
-
-						trace(data);
-
 						bro = {
 							title: !actualText.contains("::"),
 							name: data[0],
 							description: data[1],
 							color: Std.parseInt(data[2]),
 							link: data[3],
-							modName: data[4]
+							modName: Paths.curModDir[s] //:mad:
 						};
-						trace(bro);
-		
+
 						textData.push(bro);
 					}
 				}

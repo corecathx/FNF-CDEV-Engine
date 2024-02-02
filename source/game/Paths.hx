@@ -1,22 +1,27 @@
 package game;
 
-import game.system.FunkinBitmap;
-import lime.graphics.Image;
-import game.cdev.CDevMods.ModFile;
-import haxe.Json;
-import haxe.io.Bytes;
-import meta.modding.ModPaths;
-import sys.io.File;
-import openfl.display.BitmapData;
 import flixel.graphics.FlxGraphic;
 import flixel.FlxG;
 import flixel.graphics.frames.FlxAtlasFrames;
+
+import lime.graphics.Image;
+
+import game.system.FunkinBitmap;
+import game.cdev.CDevMods.ModFile;
+
+import haxe.Json;
+
+import meta.modding.ModPaths;
+
+import openfl.display.BitmapData;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
-// import sys.io.File;
+
 #if sys
+import sys.io.File;
 import sys.FileSystem;
 #end
+
 import flash.media.Sound;
 
 // Used Psych Engine's mods folder framework code.
@@ -228,18 +233,6 @@ class Paths
 		return 'songs:assets/songs/${song.toLowerCase().replace(' ', '-')}/Voices.$SOUND_EXT';
 	}
 
-	inline static public function voice_opponent(song:String):Any
-	{
-		#if sys
-		var file:Sound = returnSongFile(modSongs(song.toLowerCase().replace(' ', '-') + '/Voices_opponent'));
-		if (file != null)
-		{
-			return file;
-		}
-		#end
-		return 'songs:assets/songs/${song.toLowerCase().replace(' ', '-')}/Voices_opponent.$SOUND_EXT';
-	}
-
 	inline static public function inst(song:String):Any
 	{
 		#if sys
@@ -353,17 +346,13 @@ class Paths
 		{
 			if (!customImagesLoaded.exists(key))
 			{
-				var data:Image = Image.fromBytes(File.getBytes(modImages(key)));
-				var newBitmap:BitmapData = null; // BitmapData.fromImage(data);
+				var data = Image.fromFile(modImages(key));
+				var newBitmap:BitmapData = BitmapData.fromImage(data);
 
 				if (CDevConfig.saveData.gpuBitmap)
 				{
 					newBitmap = new FunkinBitmap(0, 0, true, 0);
 					@:privateAccess newBitmap.__fromImage(data);
-				}
-				else
-				{
-					newBitmap = BitmapData.fromImage(data);
 				}
 
 				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
@@ -463,7 +452,7 @@ class Paths
 
 	inline static public function modChartPath(key:String)
 	{
-		// key is "folder"
+		// "key" is folder
 		return modFolders('data/' + CHARTS_PATH + key);
 	}
 

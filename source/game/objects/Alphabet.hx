@@ -19,21 +19,38 @@ class Alphabet extends FlxSpriteGroup
 	public var delay:Float = 0.05;
 	public var paused:Bool = false;
 
-	// for menu shit
+	/**Whether to force the X Position to a certain point.**/
 	public var forceX:Float = Math.NEGATIVE_INFINITY;
+	/**If this was set to true, it will do a smooth positioning effect to the forceX variable.**/
 	public var lerpOnForceX:Bool = true;
+	/**Current target counter, usually used for scrolling UIs**/
 	public var targetY:Float = 0;
+	/**If it's true, then positioning will be automatically handled like menus (FreeplayState, for example)**/
 	public var isMenuItem:Bool = false;
+	/**Whether to set if this Alphabet object is an option item**/
 	public var isOptionItem:Bool = false;
+	/**Whether to set if this Alphabet object is used for Freeplay as it's songs items**/
 	public var isFreeplay:Bool = false;
+	/**Used in FreeplayState, centers the text screen's center**/
 	public var wasChoosed:Bool = false;
+	/**Used in FreeplayState, centers the text screen's center**/
 	public var selected:Bool = false;
+	/**Kinda like offset, or addition to the x position of this Alphabet object**/
 	public var xAdd:Float = 0;
+	/**Kinda like offset, or addition to the y position of this Alphabet object**/
 	public var yAdd:Float = 0;
+	/**Whether to limit amount of texts to screen, default is true (Used for Menus)**/
+	public var forcePositionToScreen:Bool = true;
+	/**Like the name, the height offset if forcePositionToScreen is false**/
+	public var heightOffset:Float = 0;
 
+	public var innerX:Float = 0;
+
+	/**Current text size**/
 	public var size:Float = 42;
 
-	public var text:String='';
+	/**Current text**/
+	public var text:String = '';
 
 	var _finalText:String = "";
 	var _curText:String = "";
@@ -59,6 +76,7 @@ class Alphabet extends FlxSpriteGroup
 	{
 		super(x, y);
 		this.size = size;
+		innerX = x;
 		forceX = Math.NEGATIVE_INFINITY;
 
 		_finalText = text;
@@ -83,7 +101,7 @@ class Alphabet extends FlxSpriteGroup
 		doSplitWords();
 
 		var xPos:Float = 0;
-		for (character in splitWords)
+		for (index => character in splitWords)
 		{
 			// if (character.fastCodeAt() == " ")
 			// {
@@ -110,6 +128,7 @@ class Alphabet extends FlxSpriteGroup
 					else
 					{
 						xPos = lastSprite.x + lastSprite.width;
+						//trace(text + ": x" + lastSprite.x + ", width" + lastSprite.width);
 					}
 				}
 
@@ -131,9 +150,12 @@ class Alphabet extends FlxSpriteGroup
 					yPos += 15;
 				}
 
-				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0);
-				var letter:AlphaCharacter = new AlphaCharacter(xPos, yPos, this);
+				if (xPos != 0) xPos -= x;
 
+				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0);
+				//trace(text + " === "+ index +" === " +xPos);
+				var letter:AlphaCharacter = new AlphaCharacter(xPos, yPos, this);
+				letter.updateSize(size);
 				if (isBold)
 				{
 					if (isNumber)
@@ -208,7 +230,6 @@ class Alphabet extends FlxSpriteGroup
 
 			if (AlphaCharacter.alphabet.indexOf(splitWords[loopNum].toLowerCase()) != -1 || isNumber || isSymbol)
 				// if (AlphaCharacter.alphabet.contains(splitWords[loopNum].toLowerCase()) || isNumber || isSymbol)
-
 			{
 				if (lastSprite != null && !xPosResetted)
 				{
@@ -273,50 +294,157 @@ class Alphabet extends FlxSpriteGroup
 
 	override function update(elapsed:Float)
 	{
-		if (isMenuItem)
-		{
-			var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, 1.3);
+		updatePosition(elapsed);
+		super.update(elapsed);
+	}
 
+	//..reworking this... thing.
+	private function updatePosition(elapsed:Float):Void
+	{
+		if (!isMenuItem)
+			return;
+
+		var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, 1.3);
+		if (FlxG.keys.justPressed.TAB && CDevConfig.saveData.testMode){
+			trace(text + ": "+x+" , "+y);
+		}
+		if (forcePositionToScreen)
+		{
 			if (forceX == Math.NEGATIVE_INFINITY)
 			{
-				if (!isFreeplay)
-				{
-					if (!isOptionItem)
-						y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-					else
-						y = FlxMath.lerp(y, (scaledY * 100) + (FlxG.height * 0.48) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-					if (!isOptionItem)
-						x = FlxMath.lerp(x, (targetY * 20) + 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-					else
-						screenCenter(X);
-				}
-				else
-				{
-					y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-					if (!wasChoosed)
-					{
-						if (!selected)
-							x = FlxMath.lerp(x, 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-						else
-							x = FlxMath.lerp(x, 200 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-					}
-					else
-					{
-						x = FlxMath.lerp(x, (FlxG.width / 2) - (width / 2) + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-					}
-				}
+				y = FlxMath.lerp(y, (scaledY * 120) + getYOffset(), CDevConfig.utils.bound(elapsed * 6, 0, 1));
+				x = (isFreeplay) ? getFreeplayX(elapsed) : FlxMath.lerp(x, (targetY * 20) + 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
 			}
 			else
 			{
-				if (lerpOnForceX)
-					x = FlxMath.lerp(x, forceX, CDevConfig.utils.bound(elapsed * 6, 0, 1));
-				else
-					x = forceX;
+				y = FlxMath.lerp(y, (scaledY * 120) + getYOffset(), CDevConfig.utils.bound(elapsed * 6, 0, 1));
+				x = (lerpOnForceX) ? FlxMath.lerp(x, forceX, CDevConfig.utils.bound(elapsed * 6, 0, 1)) : forceX;
+			}
+		}
+		else
+		{
+			y = FlxMath.lerp(y, (targetY * (size+heightOffset)) + getYOffset(), CDevConfig.utils.bound(elapsed * 6, 0, 1));
+			x = (isFreeplay) ? getFreeplayX(elapsed) : FlxMath.lerp(x, (targetY * 20) + 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+
+			if (forceX != Math.NEGATIVE_INFINITY)
+			{
+				x = (lerpOnForceX) ? FlxMath.lerp(x, forceX, CDevConfig.utils.bound(elapsed * 6, 0, 1)) : forceX;
 			}
 		}
 
-		super.update(elapsed);
+		if (isOptionItem) {
+			screenCenter(X);
+			x += xAdd;
+		}
 	}
+
+	private function getYOffset():Float
+	{
+		return (FlxG.height * 0.48) + ((!isOptionItem) ? yAdd : 0);
+	}
+	var targetX:Float;
+	private function getFreeplayX(elapsed:Float):Float
+	{
+		if (!isFreeplay)
+			return innerX;
+
+		if (!wasChoosed)
+		{
+			targetX = (!selected) ? 120 : 200 + xAdd;
+		}
+		else
+		{
+			targetX = (FlxG.width / 2) - (width / 2) + xAdd;
+		}
+
+		return FlxMath.lerp(x, targetX, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+	}
+	/*override function update(elapsed:Float)
+		{
+			if (isMenuItem)
+			{
+				var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, 1.3);
+				if (forcePositionToScreen)
+				{
+					if (forceX == Math.NEGATIVE_INFINITY)
+					{
+						if (!isFreeplay)
+						{
+							if (!isOptionItem)
+								y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							else
+								y = FlxMath.lerp(y, (scaledY * 100) + (FlxG.height * 0.48) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							if (!isOptionItem)
+								x = FlxMath.lerp(x, (targetY * 20) + 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							else
+								screenCenter(X);
+						}
+						else
+						{
+							y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							if (!wasChoosed)
+							{
+								if (!selected)
+									x = FlxMath.lerp(x, 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+								else
+									x = FlxMath.lerp(x, 200 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							}
+							else
+							{
+								x = FlxMath.lerp(x, (FlxG.width / 2) - (width / 2) + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							}
+						}
+					}
+					else
+					{
+						if (lerpOnForceX)
+							x = FlxMath.lerp(x, forceX, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+						else
+							x = forceX;
+					}
+				}
+				else
+				{
+					if (forceX == Math.NEGATIVE_INFINITY)
+					{
+						if (!isFreeplay)
+						{
+							if (!isOptionItem)
+								y = FlxMath.lerp(y, (scaledY * 120) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							else
+								y = FlxMath.lerp(y, (scaledY * 100) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							if (!isOptionItem)
+								x = FlxMath.lerp(x, (targetY * 20) + 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							else
+								screenCenter(X);
+						}
+						else
+						{
+							y = FlxMath.lerp(y, (scaledY * 120) + yAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							if (!wasChoosed)
+							{
+								if (!selected)
+									x = FlxMath.lerp(x, 120 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+								else
+									x = FlxMath.lerp(x, 200 + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							}
+							else
+							{
+								x = FlxMath.lerp(x, (FlxG.width / 2) - (width / 2) + xAdd, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+							}
+						}
+					}
+					else
+					{
+						if (lerpOnForceX)
+							x = FlxMath.lerp(x, forceX, CDevConfig.utils.bound(elapsed * 6, 0, 1));
+						else
+							x = forceX;
+					}
+				}
+			}
+			super.update(elapsed);
+	}*/
 }
 
 class AlphaCharacter extends FlxSprite
@@ -337,9 +465,6 @@ class AlphaCharacter extends FlxSprite
 		this.currentState = current;
 		var tex = Paths.getSparrowAtlas('alphabet');
 		frames = tex;
-
-		setGraphicSize(-1, Std.int(currentState.size));
-
 		antialiasing = CDevConfig.saveData.antialiasing;
 	}
 
@@ -429,5 +554,10 @@ class AlphaCharacter extends FlxSprite
 			color = FlxColor.WHITE;
 		else
 			color = FlxColor.BLACK;
+	}
+
+	public function updateSize(size)
+	{
+		setGraphicSize(-1, Std.int(size));
 	}
 }

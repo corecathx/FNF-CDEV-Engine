@@ -48,16 +48,19 @@
 	<define name="PRELOAD_ALL" unless="web" />
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
 
+	<!--bruh-->
+	<error value="lmao no mac support" if="mac"/>
+
 	<!--CDEV Engine's define names-->
 	<define name="ALLOW_MODS"/><!-- if="desktop"-->
-	<define name="CRASH_HANDLER" if="desktop"/>
+	<define name="CRASH_HANDLER" if="windows || android"/>
 	<define name="USE_VIDEOS" if="cpp"/>
-	<haxelib name="DISCORD_RPC" if="cpp"/>
+	<haxelib name="DISCORD_RPC" if="desktop"/>
 
 	<section if="USE_VIDEOS">
 		<haxelib name="hxCodec"/>
 	</section>
-
+	
 	<section if="PRELOAD_ALL">
 		<library name="songs"    preload="true" />
 		<library name="shared"   preload="true" />
@@ -83,7 +86,7 @@
 		<library name="week6"    preload="false" />
 		<library name="week7"    preload="false" />
 	</section>
-	
+
 	<assets path="assets/songs"    library="songs"    exclude="*.ogg" if="web"/>
 	<assets path="assets/songs"    library="songs"    exclude="*.mp3" unless="web"/>
 	<assets path="assets/shared"   library="shared"   exclude="*.ogg" if="web"/>
@@ -118,6 +121,7 @@
 		NOT USING A DIRECT THING TO THE ASSET!!!
 	-->
 	<assets path="assets/fonts" embed='true'/>
+
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" />
@@ -131,6 +135,7 @@
 	<haxelib name="flixel-ui" />
 	<haxelib name="faxe" if='switch'/>
 	<haxelib name="polymod"/>
+	<haxelib name="extension-androidtools" if="android"/>
 	<!--<haxelib name="linc_luajit" if="ALLOW_LUA"/>-->
 	<haxelib name="discord_rpc" if="desktop"/>
 	<!--<haxelib name="linc_luajit" if="windows"/>-->

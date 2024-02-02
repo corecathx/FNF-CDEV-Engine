@@ -604,17 +604,21 @@
                 tabs[i].classList.remove("active-tab");
             }
             document.getElementById(tabId).classList.add("active-tab");
+            document.documentElement.scrollTop = 0;
         }
+
 
         document.addEventListener('DOMContentLoaded', (e) => {
             const links = document.querySelectorAll("#sidebar > ul > li > a")
             for (let i of links) {
                 let target = i.href.split('#')[1]
                 i.addEventListener('click', (e) => {
-                    showTab(target)
+                    e.preventDefault();
+                    showTab(target);
                 })
             }
         })
+
     </script>
 </body>
 

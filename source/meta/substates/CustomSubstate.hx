@@ -1,8 +1,9 @@
 package meta.substates;
 
+import game.cdev.log.GameLog;
+import flixel.addons.display.FlxRuntimeShader;
 import meta.states.*;
 import meta.modding.ModdingState;
-import game.cdev.engineutils.TraceLog;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxState;
 import game.cdev.script.CDevScript;
@@ -56,7 +57,6 @@ class CustomSubstate extends MusicBeatSubstate
 	// trace window stuffs
 	public var camGame:FlxCamera;
 
-	var traceWindow:TraceLog;
 	var traceCam:FlxCamera;
 
 	var script:CDevScript = null;
@@ -124,7 +124,6 @@ class CustomSubstate extends MusicBeatSubstate
 			{
 				trace(text);
 				script.trace(text);
-				TraceLog.addLog(text);
 			}
 			catch (e)
 			{
@@ -145,7 +144,6 @@ class CustomSubstate extends MusicBeatSubstate
 		});
 		script.setVariable("close", function(){
 			close();
-			this.destroy();
 		});
 		script.setVariable("Alphabet", Alphabet);
 		script.setVariable("controls", current.controls);
@@ -186,6 +184,7 @@ class CustomSubstate extends MusicBeatSubstate
 		script.setVariable("CDevConfig", CDevConfig);
 		script.setVariable("GraphicsShader", GraphicsShader);
 		script.setVariable("FlxGraphicsShader", FlxGraphicsShader);
+		script.setVariable("FlxRuntimeShader", FlxRuntimeShader);
 		script.setVariable("ShaderFilter", ShaderFilter);
 		script.setVariable("FlxCamera", FlxCamera);
 
@@ -216,14 +215,6 @@ class CustomSubstate extends MusicBeatSubstate
 
 	function initSub()
 	{
-		/*if (CDevConfig.saveData.showTraceLogAt == 1)
-		{
-			traceWindow = new TraceLog(10, 60, 600, 250);
-			add(traceWindow);
-			traceWindow.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
-			traceWindow.mainCameraObject = FlxG.cameras.list[FlxG.cameras.list.length - 1];
-			FlxG.mouse.visible = true;
-		}*/
 		if (state != "")
 		{
 			if (Paths.curModDir.length == 1)
@@ -263,7 +254,7 @@ class CustomSubstate extends MusicBeatSubstate
 		if (gotScript && script.error){
 			if (isErrorBefore != script.error){
 				FlxG.sound.play(Paths.sound("cancelMenu"));
-				TraceLog.addLog("ERROR: An error occured on the script. If you're stuck on this Custom Substate, press Shift + Escape.");
+				GameLog.error("An error occured on the script. If you're stuck on this Custom Substate, press Shift + Escape.");
 				isErrorBefore = script.error;
 			}
 		}
@@ -278,15 +269,15 @@ class CustomSubstate extends MusicBeatSubstate
 	}
 
 	override function closeSubState() {
-		super.closeSubState();
 		if (gotScript)
 			script.executeFunc("onCloseSubState", []);
+		super.closeSubState();
 	}
 
 	override function destroy() {
-		super.destroy();
 		if (gotScript)
 			script.executeFunc("onDestroy", []);	
+		super.destroy();
 	}
 
 	override function onFocus()

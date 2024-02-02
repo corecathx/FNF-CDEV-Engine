@@ -1,5 +1,6 @@
 
 package game.cdev;
+import game.cdev.script.CDevScript;
 import flixel.util.FlxAxes;
 import openfl.display.BlendMode;
 import flixel.text.FlxText.FlxTextBorderStyle;
@@ -22,10 +23,19 @@ typedef ModFile =
 	var modVer:String;
 }
 
+//actually using this class lol
 class CDevMods
-{}
-
-
+{
+	public static var script_instances:Array<CDevScript> = [];
+	public static function script_clearAll(){
+		//uh
+		while (script_instances.length != 0){
+			for (script in script_instances){
+				script_instances.remove(script);
+			}
+		}
+	}
+}
 
 //FlxColor
 class CDEV_FlxColor

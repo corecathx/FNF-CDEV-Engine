@@ -8,9 +8,11 @@ function introStart() {
     video.onEndReached.add(function()
     {
         video.dispose();
+        video = null;
         startSong();
         return;
     }, true);
+    public["cutscene_video"] = video;
 }
 
 function update(e) {
@@ -18,6 +20,7 @@ function update(e) {
         //startSong();
         video.stop();
         video.dispose();
+        video = null;
         startSong();
     }
 }

@@ -21,13 +21,15 @@ body, html {
 
 .tab-content {
     display: none;
-    font-family: "Ubuntu";
-    max-width: 85%;
-    font-size: 14px;
+    height: 0%;
 }
 
 .active-tab {
+    height: 100%;
     display: block;
+    font-family: "Ubuntu";
+    max-width: 85%;
+    font-size: 14px;
 }
 
 table {

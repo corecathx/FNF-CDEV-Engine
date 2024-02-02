@@ -122,10 +122,12 @@ class Stage
 			script.executeFunc("beatHitPost", [b]);
 	}
 	var jsonWasNull:Bool = false;
-	public function new(stage:String, pla:PlayState)
+	var ignoreScript:Bool = false;
+	public function new(stage:String, pla:PlayState, ?ignoreScript:Bool = false)
 	{
 		this.stage = stage;
 		this.play = pla;
+		this.ignoreScript = ignoreScript;
 		BFPOS = [770, 100];
 		GFPOS = [400, 130];
 		DADPOS = [100, 100];
@@ -165,7 +167,6 @@ class Stage
 				jsonWasNull = false;
 				json = cast Json.parse(crapJSON);
 				stageJSON = json;
-				loadStageScript(stage);
 			}
 			else
 			{
@@ -176,16 +177,18 @@ class Stage
 
 	//haha
 	public function loadStageScript(name:String){
+		if (ignoreScript) return;
+		if (jsonWasNull) return;
 		var apa:String = Paths.modStageScript(name);
 		if (FileSystem.exists(apa))
 		{
 			trace("script "+name+" exists.");
 			script = CDevScript.create(apa);
-			gotScript = true;
-			script.loadFile(apa);
-
 			script.setVariable("getObject", getObject);
 			ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.song);
+
+			gotScript = true;
+			script.loadFile(apa);
 			
 			if (gotScript)
 				script.executeFunc("create", []);
@@ -317,6 +320,8 @@ class Stage
 					play.add(PlayState.dad);
 			}
 		}
+
+		loadStageScript(stage);
 	}
 
 	var cool:Array<String> = ["bf", "gf", "dad"];

@@ -1,5 +1,6 @@
 import("game.objects.Alphabet");
 import("meta.substates.OptionsSubState");
+import("game.cdev.engineutils.DiscordClient");
 
 var menuItems:Array<String> = ['Resume', 'Restart Song', 'Options', 'Exit to menu'];
 var grpMenuShit:Array<Alphabet> = [];
@@ -73,6 +74,11 @@ function create(x, y)
 	}
 
 	changeSelection(0);
+
+}
+
+function changePres(idk, stat){
+	DiscordClient.changePresence(idk, stat);
 }
 
 function onDestroy(){
@@ -82,9 +88,22 @@ function onDestroy(){
 function onCloseSubState(){
     changeSelection(0);
 }
-
+var waitTimer = 0;
+var alreadyTriggered:Bool = false;
+function onPauseStarted(e){
+	waitTimer += e;
+	if (waitTimer >= 0.2 && !alreadyTriggered){
+		changePres("Paused on my face", "Bruh.");
+		alreadyTriggered = true;
+	}
+}
 function update(e)
 {
+	onPauseStarted(e);
+	if (FlxG.keys.justPressed.CONTROL){
+		trace("Called");
+		changePres("Stop", "Stop that thing, dang it. AAAAAAAAAAAAAAAAAAAAAAA");
+	}
 	if (pauseMusic.volume < 0.5)
 		pauseMusic.volume += 0.01 * e;
 

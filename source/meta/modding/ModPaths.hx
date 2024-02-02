@@ -1,8 +1,8 @@
 package meta.modding;
 
+import game.cdev.log.GameLog;
 import game.system.FunkinBitmap;
 import lime.graphics.Image;
-import game.cdev.engineutils.TraceLog;
 import meta.states.PlayState;
 import openfl.utils.Assets;
 import openfl.display.Bitmap;
@@ -22,7 +22,7 @@ using StringTools;
 
 class ModPaths
 {
-	private var mod:String;
+	public var mod:String; //my dumbass sets this to private
 	var cantFind:Array<String> = [];
 
 	#if (haxe >= "4.0.0")
@@ -115,7 +115,7 @@ class ModPaths
 		if (snd != null) return snd;
 		
 		if (!cantFind.contains(ogAssetPath)){
-			TraceLog.addLog("Can't find audio (sound) asset: " + ogAssetPath);
+			GameLog.warn("Can't find audio (sound) asset: " + ogAssetPath);
 			cantFind.push(ogAssetPath);
 		}
 		return null;
@@ -134,7 +134,7 @@ class ModPaths
 		if (snd != null) return snd;
 		
 		if (!cantFind.contains(ogAssetPath)){
-			TraceLog.addLog("Can't find audio (music) asset: " + ogAssetPath);
+			GameLog.warn("Can't find audio (music) asset: " + ogAssetPath);
 			cantFind.push(ogAssetPath);
 		}
 		return null;
@@ -148,7 +148,7 @@ class ModPaths
 		imageToReturn = Paths.image(key);
 		if (imageToReturn != null) return imageToReturn;
 
-		TraceLog.addLog('Error while loading "$key" image asset, returning null value.');
+		GameLog.warn('Error while loading "$key" image asset, returning null value.');
 		return currentModFolder('images/$key.png');
 	}
 
@@ -205,7 +205,7 @@ class ModPaths
 			case "music":
 				return Paths.music(key, lib);
 			default:
-				TraceLog.addLog('getFromAssets($key,$type,$fromPreload): Your "AssetType" should be "sound" / "image" / "music". $type is invalid.');
+				GameLog.warn('getFromAssets($key,$type,$fromPreload): Your "AssetType" should be "sound" / "image" / "music". $type is invalid.');
 				return null;
 		}
 		return null;

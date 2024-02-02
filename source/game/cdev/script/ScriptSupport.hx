@@ -1,5 +1,7 @@
 package game.cdev.script;
 
+import game.cdev.log.GameLog;
+import flixel.addons.display.FlxRuntimeShader;
 #if USE_VIDEOS
 import hxcodec.flixel.FlxVideo;
 import hxcodec.flixel.FlxVideoSprite;
@@ -156,6 +158,7 @@ class ScriptSupport
 		script.setVariable("BitmapData", BitmapData);
 		script.setVariable("FlxG", FlxG);
 		script.setVariable("Paths", new ModPaths(mod));
+		script.setVariable("BasePaths", Paths);
 		script.setVariable("Std", Std);
 		script.setVariable("Math", Math);
 		script.setVariable("FlxMath", FlxMath);
@@ -194,12 +197,40 @@ class ScriptSupport
 		});//CDevConfig.saveData);
 		script.setVariable("GraphicsShader", GraphicsShader);
 		script.setVariable("FlxGraphicsShader", FlxGraphicsShader);
+		script.setVariable("FlxRuntimeShader", FlxRuntimeShader);
 		script.setVariable("ShaderFilter", ShaderFilter);
 		script.setVariable("FlxCamera", FlxCamera);
 		#if USE_VIDEOS 
 		script.setVariable("FlxVideo", FlxVideo);
 		script.setVariable("FlxVideoSprite", FlxVideoSprite);
 		#end
+
+		script.setVariable("importScript", function(name:String){
+			var exists:Bool = false;
+			for (scr in CDevMods.script_instances){
+				if (scr.fileAsClass == name){
+					exists = true;
+					var object = {};
+					var kys:Array<String> = [];
+					for (key in scr.hscript.variables.keys()) {
+						kys.push(key);
+					}
+
+					for (stuff in kys){
+						Reflect.setField(object, stuff, scr.hscript.variables.get(stuff));
+					}
+
+					script.setVariable(scr.fileAsClass, object);
+					script.trace("Imported script: " + name);
+					break;
+				}
+			}
+
+			if (!exists)
+				script.errorLog("Could not find script to import: " + name);
+
+			return;
+		});
 		script.mod = mod;
 		//trace('init script finished');
 	}
@@ -219,13 +250,13 @@ class ScriptSupport
 		}
 		catch (ex)
 		{
-			trace(ex);
+			GameLog.error(ex);
 			var ext = Std.string(ex);
 			var line = parser.line;
 			var gay:String = 'An error occured while parsing the file located at "$path".\r\n$ext at $line';
 			if (!openfl.Lib.application.window.fullscreen)
 				openfl.Lib.application.window.alert(gay);
-			trace(gay);
+			GameLog.error(gay);
 			ea.error = true;
 		}
 		return ast;

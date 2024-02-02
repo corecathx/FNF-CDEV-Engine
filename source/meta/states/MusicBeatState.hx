@@ -1,5 +1,6 @@
 package meta.states;
 
+import game.cdev.log.GameLog;
 import flixel.FlxCamera;
 import flixel.system.scaleModes.StageSizeScaleMode;
 import flixel.system.scaleModes.BaseScaleMode;
@@ -26,16 +27,19 @@ class MusicBeatState extends FlxUIState
 	public var controls(get, never):game.Controls;
 
 	// my attempt of preventing repeating beats
-	var hitBeats:Int = 0;
-	var hitSteps:Int = 0;
+	var _highestPassedBeats:Int = -1;
+	var passedBeats:Array<Int> = [];
+	var _highestPassedSteps:Int = -1;
+	var passedSteps:Array<Int> = [];
+	var syncingSensitivity:Int = 2;
 
 	inline function get_controls():game.Controls
 		return game.cdev.engineutils.PlayerSettings.player1.controls;
 
 	override function create()
 	{
-		if (transIn != null)
-			trace('reg ' + transIn.region);
+		//if (transIn != null)
+		//	trace('reg ' + transIn.region);
 
 		super.create();
 	}
@@ -60,11 +64,15 @@ class MusicBeatState extends FlxUIState
 		if (FlxG.keys.justPressed.F11)
 			FlxG.fullscreen = !FlxG.fullscreen;
 
-		// fix stuff where the beat & step counter didn't refreshed after the song finished.
-		if (FlxG.sound.music != null && FlxG.sound.music.time > FlxG.sound.music.length - 10)
-		{
-			curBeat = hitBeats;
-			curStep = hitSteps;
+		//this is awfully ass
+		if (Math.abs(curStep - _highestPassedSteps) >= syncingSensitivity){
+			if (CDevConfig.saveData.testMode) GameLog.warn("Game desynced! Trying to sync the _highestPassedSteps with curStep...");
+			_highestPassedSteps = curStep;
+			passedSteps = [];
+			for (i in 0..._highestPassedSteps){
+				passedSteps[i] = i;
+			}
+			if (CDevConfig.saveData.testMode) GameLog.warn("Game synced, current values: "  + curStep + " // " + _highestPassedSteps +".");
 		}
 		super.update(elapsed);
 	}
@@ -76,11 +84,22 @@ class MusicBeatState extends FlxUIState
 
 	private function updateBeat():Void
 	{
-		hitBeats = Math.floor(curStep / 4);
-		if (hitBeats > curBeat)
-		{
-			curBeat = hitBeats;
+		var newBeats:Int = Math.floor(curStep / 4);
+		if (!passedBeats.contains(newBeats)){
+			curBeat = newBeats;
+			passedBeats.push(newBeats);
+			_highestPassedBeats = getLargerInt(passedBeats);
 		}
+	}
+
+	function getLargerInt(array:Array<Int>):Int {
+		var get:Int = -1000;
+		for (i in array){
+			if (i > get){
+				get = i;
+			}
+		}
+		return get;
 	}
 
 	private function updateCurStep():Void
@@ -95,12 +114,12 @@ class MusicBeatState extends FlxUIState
 			if (Conductor.songPosition + Conductor.offset >= Conductor.bpmChangeMap[i].songTime)
 				lastChange = Conductor.bpmChangeMap[i];
 		}
-		hitSteps = lastChange.stepTime + Math.floor((Conductor.songPosition + Conductor.offset - lastChange.songTime) / Conductor.stepCrochet);
-		if (hitSteps > curStep)
-		{
-			curStep = hitSteps;
+		var newSteps:Int = lastChange.stepTime + Math.floor((Conductor.songPosition + Conductor.offset - lastChange.songTime) / Conductor.stepCrochet);
+		if (!passedSteps.contains(newSteps)){
+			curStep = newSteps;
+			passedSteps.push(newSteps);
+			_highestPassedSteps = getLargerInt(passedSteps);
 		}
-		// }
 	}
 
 	public function stepHit():Void

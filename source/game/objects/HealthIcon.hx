@@ -1,5 +1,6 @@
 package game.objects;
 
+import flixel.animation.FlxAnimationController;
 import sys.FileSystem;
 import lime.utils.Assets;
 import flixel.util.FlxColor;
@@ -15,9 +16,6 @@ class HealthIcon extends FlxSprite
 	 */
 	public var sprTracker:FlxSprite;
 
-	var charList:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
-
-	public var charColorArray:Array<FlxColor> = [];
 	private var char:String;
 	private var iconOffset:Array<Float> = [0, 0];
 	private var isPlayer:Bool = false;
@@ -28,43 +26,37 @@ class HealthIcon extends FlxSprite
 	public var add_y:Float = 0;
 	public var add_x:Float = 0;
 
-	public function new(char:String = 'bf', isPlayer:Bool = false)
+	public function new(char:String = 'bf', isPlayer:Bool = false, ?updateNow:Bool = true)
 	{
-		this.char = char;
 		this.isPlayer = isPlayer;
 		super();
 
-		changeDaIcon(char);
+		if (updateNow){
+			changeDaIcon(char);
+		}
+
 		scrollFactor.set();
 	}
 
 	public function changeDaIcon(char:String) {
+		if (this.char == char) return;
+
 		//bruh.
+		this.char = char;
 		var name:String = 'icons/' + char;
-		if(!game.cdev.CDevConfig.utils.fileIsExists('images/' + name + '.png', IMAGE))
+		if(!CDevConfig.utils.fileIsExists('images/' + name + '.png', IMAGE))
 			name = 'icons/'+char+'-icon';
-		if(!game.cdev.CDevConfig.utils.fileIsExists('images/' + name + '.png', IMAGE))
-			name = 'icons/face-icon'; //to prevent crashing while loading an not existed character icon
+		if(!CDevConfig.utils.fileIsExists('images/' + name + '.png', IMAGE))
+			name = 'icons/face-icon';
 		
-
 		var file:Dynamic = Paths.image(name);
-		//trace(file);
-
 		var testSprite:FlxSprite = new FlxSprite().loadGraphic(file);
 		
 		loadGraphic(file, true, 150, 150);
 
-		//winning icon
-		if (testSprite.width > 300 && testSprite.width <= 450) {
-			animation.add(char, [0, 1, 2], 0, false, isPlayer);
-			hasWinningIcon = true;
-		} else{
-			animation.add(char, [0, 1], 0, false, isPlayer);
-			hasWinningIcon = false;
-		}
-		
+		hasWinningIcon = (testSprite.width > 300 && testSprite.width <= 450);
+		animation.add(char, (hasWinningIcon ? [0,1,2] : [0,1]), 0, false, isPlayer);
 		animation.play(char);
-		this.char = char;
 
 		iconOffset[0] = (width - 150) / 2;
 		iconOffset[1] = (height - 150) / 2;
@@ -77,6 +69,12 @@ class HealthIcon extends FlxSprite
 		super.updateHitbox();
 		offset.x = iconOffset[0];
 		offset.y = iconOffset[1];
+	}
+	
+	public function changeFrame(frameNum:Int){
+		if (animation.curAnim == null) return;
+
+		animation.curAnim.curFrame = frameNum;
 	}
 
 	public function getChar():String{

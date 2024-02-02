@@ -176,20 +176,7 @@ class ChartingState extends MusicBeatState
 			_song = PlayState.SONG;
 		else
 		{
-			_song = {
-				song: 'Test',
-				notes: [],
-				songEvents: [],
-				bpm: 150,
-				needsVoices: true,
-				player1: 'bf',
-				player2: 'dad',
-				gfVersion: 'gf',
-				stage: 'stage',
-				speed: 1,
-				offset: 0,
-				validScore: false
-			};
+			_song = CDevConfig.utils.CHART_TEMPLATE;
 		}
 
 		if (_song.song != curSong)
@@ -1111,7 +1098,7 @@ class ChartingState extends MusicBeatState
 
 		if (FlxG.sound.music != null
 			&& FlxG.sound.music.playing
-			&& FlxG.sound.music.time >= (FlxG.sound.music.length-10))
+			&& FlxG.sound.music.time >= (FlxG.sound.music.length-1))
 		{
 			vocals.pause();
 			vocals.time = 0;
@@ -1770,7 +1757,6 @@ class ChartingState extends MusicBeatState
 		{
 			curSection = sec;
 
-			updateGrid();
 			if (updateMusic)
 			{
 				FlxG.sound.music.pause();
@@ -1781,6 +1767,7 @@ class ChartingState extends MusicBeatState
 				updateCurStep();
 			}
 
+			updateGrid();
 			updateSectionUI();
 		}
 	}
@@ -2231,10 +2218,11 @@ class ChartingState extends MusicBeatState
 		lastNote = note;
 		for (i in _song.notes[curSection].sectionNotes)
 		{
-			if (i[0] == note.strumTime && i[1] % 4 == note.noteData)
+			if (i[0] == note.strumTime && i[1] == note.noteData + (note.mustPress != _song.notes[curSection].mustHitSection ? 0 : 4))
 			{
+				if(i == curSelectedNote) curSelectedNote = null;
 				_song.notes[curSection].sectionNotes.remove(i);
-				curSelectedNote = null;
+				break;
 			}
 		}
 

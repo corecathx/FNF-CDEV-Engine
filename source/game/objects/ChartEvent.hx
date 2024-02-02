@@ -1,6 +1,5 @@
 package game.objects;
 
-import sys.io.File;
 import lime.app.Application;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
@@ -19,7 +18,6 @@ import meta.modding.ModPaths;
 import flixel.FlxG;
 import openfl.display.BitmapData;
 import meta.states.PlayState;
-import sys.FileSystem;
 import haxe.io.Path;
 import game.cdev.script.HScript;
 import game.cdev.CDevConfig;
@@ -28,6 +26,11 @@ import flixel.util.FlxColor;
 import flixel.text.FlxText;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
+
+#if sys
+import sys.io.File;
+import sys.FileSystem;
+#end
 
 using StringTools;
 
@@ -80,6 +83,7 @@ class ChartEvent extends FlxSprite
 	public static function getEventNames():Array<String>
 	{
 		var eventNames:Array<String> = [];
+		#if sys
 		var path:Array<String> = [];
 		var canDoShit = false;
 		if (FileSystem.exists(Paths.modFolders("events/"))){ //support for older cdev engine version
@@ -107,7 +111,10 @@ class ChartEvent extends FlxSprite
 		} else{
 			return ["No Events Found."];
 		}
-
+		#else
+		trace("This is not a sys target, could not get event names.");
+		return ["No Events Found."];
+		#end
 
 		return eventNames;
 	}
@@ -116,6 +123,7 @@ class ChartEvent extends FlxSprite
 	public static function getEventDescription(event:String = ""):String
 	{
 		var eventDescription:String = "";
+		#if sys
 		var path:Array<String> = [];
 		var canDoShit = false;
 		if (FileSystem.exists(Paths.modFolders("events/"))){ //support for older cdev engine version
@@ -141,7 +149,9 @@ class ChartEvent extends FlxSprite
 				}
 			}
 		}
-
+		#else
+		trace("This is not a sys target, could not get event description for "+event+".");
+		#end
 		return eventDescription;
 	}
 }

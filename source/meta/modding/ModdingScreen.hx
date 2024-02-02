@@ -1,5 +1,9 @@
 package meta.modding;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import meta.modding.song_editor.SongEditor;
+import meta.modding.freeplay_editor.SongListEditor;
 import flixel.FlxState;
 import flixel.ui.FlxButton;
 import openfl.Lib;
@@ -23,11 +27,19 @@ import game.*;
 
 class ModdingScreen extends meta.states.MusicBeatState
 {
-	var options:Array<String> = ["Add a new song" ,'Character Editor', 'Stage Editor', 'Week Editor'/*, 'Add Event Script' no*/];
+	var options:Array<Dynamic> = [
+		/*["Add Song Chart", "Add your song's .json / .ogg file to your mod."],HEHEH FORGOT TO FINISH THISS*/
+		["Freeplay Editor", "Add a new song to / edit a song in the Freeplay Song list."],
+		['Character Editor', "Create a new character / edit an existing character."], 
+		['Stage Editor', "Edit the appearance of your mod's stage(s)."], 
+		['Week Editor', "Create / edit Story Mode week files."]
+	];
+	
 	var curSelected:Int = 0;
 	var grpMenu:FlxTypedGroup<Alphabet>;
 	var menuBG:FlxSprite;
-
+	var descText:FlxText;
+	var bgCont:FlxSprite;
 	override function create()
 	{
 		Paths.currentMod = Paths.curModDir[0];
@@ -53,23 +65,43 @@ class ModdingScreen extends meta.states.MusicBeatState
 
 		for (i in 0...options.length)
 		{
-			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, options[i], true, false);
+			var size:Int = 34;
+			var offset:Float = 40;
+			var songText:Alphabet = new Alphabet(120, ((i - curSelected) * (size + offset)) + (FlxG.height * 0.48), options[i][0], true, false, size);
 			songText.isMenuItem = true;
 			songText.isFreeplay = true;
+			songText.forcePositionToScreen = false;
+			songText.heightOffset = offset;
 			songText.targetY = i;
 			grpMenu.add(songText);
 		}
+
+		bgCont = new FlxSprite().makeGraphic(20,20, FlxColor.BLACK);
+		bgCont.scrollFactor.set();
+		bgCont.alpha = 0.7;
+		add(bgCont);
+		
+		descText = new FlxText(20, FlxG.height - 140, -1, '', 24);
+		descText.scrollFactor.set();
+		descText.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		descText.screenCenter(X);
+		add(descText);
+		descText.borderSize = 2;
+
+		bgCont.setGraphicSize(descText.width, descText.height);
+		bgCont.setPosition(descText.x, descText.y);
+		
 		changeSelection();
 
 		var bottomPanel:FlxSprite = new FlxSprite(0, FlxG.height - 70).makeGraphic(FlxG.width, 70, 0xFF000000);
 		bottomPanel.alpha = 0.8;
 		add(bottomPanel);
 
-		var scoreText:FlxText = new FlxText(50, bottomPanel.y + 20, FlxG.width, 'Current Mod: ' + Paths.currentMod, 28);
-		scoreText.setFormat(Paths.font("vcr.ttf"), 30, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+		var scoreText:FlxText = new FlxText(0, bottomPanel.y + 20, -1, 'Current Mod: ' + Paths.currentMod, 28);
+		scoreText.setFormat(Paths.font("vcr.ttf"), 30, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		scoreText.borderSize = 2;
-
 		add(scoreText);
+		scoreText.screenCenter(X);
 		super.create();
 	}
 
@@ -90,9 +122,12 @@ class ModdingScreen extends meta.states.MusicBeatState
 
 		if (controls.ACCEPT)
 		{
-			switch (options[curSelected])
+			switch (options[curSelected][0])
 			{
-				case "Add a new song":
+				case "Add Song Chart":
+					FlxG.switchState(new SongEditor());
+				case "Freeplay Editor":
+					FlxG.switchState(new SongListEditor());
 					//wip
 				case 'Character Editor':
 					var theState:meta.modding.char_editor.CharacterEditor = new meta.modding.char_editor.CharacterEditor(false,true,false);
@@ -103,13 +138,13 @@ class ModdingScreen extends meta.states.MusicBeatState
 				case 'Week Editor':
 					FlxG.sound.music.stop();
 					FlxG.switchState(new meta.modding.week_editor.WeekEditor(''));	
-				case 'Add Event Script':
-					FlxG.switchState(new meta.modding.event_editor.EventScriptEditor());
+				case 'Add Event Script': // Shhh
+					FlxG.switchState(new meta.modding.event_editor.EventScriptEditor()); 
 			}
 			FlxG.sound.play(Paths.sound('confirmMenu'), 0.4);
 		}
 	}
-
+	var textTween:FlxTween;
 	function changeSelection(change:Int = 0)
 	{
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
@@ -121,8 +156,23 @@ class ModdingScreen extends meta.states.MusicBeatState
 		if (curSelected >= options.length)
 			curSelected = 0;
 
-		var bullShit:Int = 0;
+		descText.text = options[curSelected][1];
+		descText.screenCenter(X);
+		descText.y = FlxG.height - 140;
 
+		bgCont.setGraphicSize(descText.width+75, descText.height+40);
+		bgCont.screenCenter(X);
+		descText.y = FlxG.height - 140;
+
+		if (textTween != null)
+			textTween.cancel();
+
+		descText.scale.y = 1.4;
+		textTween = FlxTween.tween(descText.scale, {y:1}, 0.5, {ease:FlxEase.expoOut, onComplete:function(e){
+			textTween = null;
+		}});
+		
+		var bullShit:Int = 0;
 		for (item in grpMenu.members)
 		{
 			item.targetY = bullShit - curSelected;

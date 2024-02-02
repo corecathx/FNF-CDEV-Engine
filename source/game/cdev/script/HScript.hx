@@ -1,7 +1,7 @@
 package game.cdev.script;
 
+import game.cdev.log.GameLog;
 import meta.states.PlayState;
-import game.cdev.engineutils.TraceLog;
 import flixel.FlxG;
 import sys.FileSystem;
 import haxe.io.Path;
@@ -12,7 +12,6 @@ using StringTools;
 
 class HScript extends CDevScript
 {
-	public var hscript:Interp;
 	public var fileNameShit:String = "";
 
 	public function new()
@@ -40,8 +39,7 @@ class HScript extends CDevScript
 				}
 				catch (e)
 				{
-					this.trace('$e');
-					TraceLog.addLog('$e');
+					errorLog('$e');
 					error = true;
 				}
 				return result;
@@ -55,14 +53,13 @@ class HScript extends CDevScript
 				}
 				catch (e)
 				{
-					this.trace('$e');
-					TraceLog.addLog('$e');
+					errorLog('$e');
 					error = true;
 				}
 				return result;
 			}
 			if (CDevConfig.DEPRECATED_STUFFS.exists(funcName)){
-				TraceLog.addLog('Function \"$funcName\" is deprecated since CDEV Engine v.${CDevConfig.DEPRECATED_STUFFS.get(funcName)}.');
+				GameLog.warn('Function \"$funcName\" is deprecated since CDEV Engine v.${CDevConfig.DEPRECATED_STUFFS.get(funcName)}.');
 			}
 		}
 		return null;
@@ -74,6 +71,7 @@ class HScript extends CDevScript
 			return;
 		fileName = Path.withoutDirectory(path);
 		fileName = fileName.substr(0, fileName.length-3);
+		fileAsClass = fileName; //dumbshit
 		fileNameShit = fileName;
 		var paath = path;
 		//trace(paath);
@@ -96,9 +94,11 @@ class HScript extends CDevScript
 		}
 		catch (e)
 		{
-			this.trace('${e.message}');
-			//TraceLog.addLog('${e.message}');
+			return;
+			//already traced before
+			//errorLog('${e.message}');
 		}
+		CDevMods.script_instances.push(this);
 	}
 
 	public override function trace(text:String)
@@ -110,10 +110,21 @@ class HScript extends CDevScript
 		var methodName = posInfo.methodName;
 		var className = posInfo.className;
 		//trace('$fileName:$methodName:$lineNumber: $text');
-		TraceLog.addLog('$fileName:$methodName:$lineNumber: $text');
+		GameLog.log('$fileName:$methodName:$lineNumber: $text');
 
 		if (!CDevConfig.saveData.testMode)
 			return;
+	}
+
+	public override function errorLog(text:String){
+		var posInfo = hscript.posInfos();
+
+		// var fileName = posInfo.fileName;
+		var lineNumber = Std.string(posInfo.lineNumber);
+		var methodName = posInfo.methodName;
+		var className = posInfo.className;
+		//trace('$fileName:$methodName:$lineNumber: $text');
+		GameLog.error('$fileName:$methodName:$lineNumber: $text');
 	}
 
 	public override function setVariable(name:String, val:Dynamic)

@@ -1,6 +1,6 @@
 package game.objects;
 
-import game.cdev.engineutils.TraceLog;
+import game.cdev.log.GameLog;
 import game.cdev.script.ScriptSupport;
 import game.cdev.script.CDevScript;
 import sys.FileSystem;
@@ -113,12 +113,13 @@ class Note extends FlxSprite
 			{
 				script = CDevScript.create(scriptPath);
 				gotScript = true;
-				script.loadFile(scriptPath);
-
+				
 				script.setVariable("initialize", initialize);
 				script.setVariable("loadTexture", loadTexture);
 				script.setVariable("current", this);
 				ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.song);
+				
+				script.loadFile(scriptPath);
 				
 				if (gotScript)
 					script.executeFunc("create", []);
@@ -126,7 +127,7 @@ class Note extends FlxSprite
 				if (!noteTypeFail.contains(noteType))
 				{
 					noteTypeFail.push(noteType);
-					PlayState.addNewTraceKey("Note Type " + noteType + " doesn't exist on path " + scriptPath);
+					GameLog.warn("Note Type " + noteType + " doesn't exist on path " + scriptPath);
 				}
 				loadTexture("notes/NOTE_assets");
 				initialize();
@@ -262,7 +263,7 @@ class Note extends FlxSprite
 		{
 			frames = Paths.getSparrowAtlas(tex, "shared");
 			if (frames==null){
-				TraceLog.addLog("Note.hx:0: Texture asset \""+tex+"\" for note type \""+noteType+"\" doesn't exist!");
+				GameLog.warn("Note.hx:0: Texture asset \""+tex+"\" for note type \""+noteType+"\" doesn't exist!");
 				frames = Paths.getSparrowAtlas("notes/NOTE_assets", "shared");
 			}
 

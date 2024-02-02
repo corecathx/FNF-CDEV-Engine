@@ -1,7 +1,6 @@
 function create(){
     PlayState.boyfriend.charCamPos = [230,-50];
     PlayState.dad.charCamPos[0] += 200;
-    CDevConfig.offset = 0; // say goodbye to your offset
     trace("Loaded");
 }
 
@@ -17,7 +16,7 @@ function postCreate(){
     //text.cameras = [PlayState.camHUD];
     text.scrollFactor.set();
     text.screenCenter();
-    text.y += 250;
+    text.y += 200;
     add(text);
     text.borderSize = 4;
     text.visible = false;
@@ -31,18 +30,7 @@ function onNoteMiss(a){
     }
 }
 function update(b){
-    if (beat > 68 && beat < 100)
-    {
-        if (controls.LEFT_P || controls.DOWN_P){
-            FlxG.sound.play(Paths.sound("kick"), 0.7);
-            PlayState.boyfriend.playAnim((controls.LEFT_P ? "singLEFT" : "singDOWN"), true);
-        }
 
-        if (controls.UP_P || controls.RIGHT_P){
-            FlxG.sound.play(Paths.sound("snare"), 0.7);
-            PlayState.boyfriend.playAnim((controls.UP_P ? "singUP" : "singRIGHT"), true);
-        }
-    }
 }
 function beatHit(b){
     beat = b;
@@ -53,26 +41,42 @@ function beatHit(b){
         }
     }
     if (b == 68 || b == 100){
-        PlayState.camHUD.visible = !PlayState.camHUD.visible;
         text.visible = !text.visible;
-        if (PlayState.camHUD.visible){
+        if (b == 100){
+            PlayState.camHUD.alpha = 1;
             PlayState.defaultCamZoom -= 0.2;
         }else{
+            PlayState.camHUD.alpha = 0.7;
             PlayState.defaultCamZoom += 0.2;
+        }
+    }
+
+    if (b == 98){
+        var i = 0;
+        for (s in PlayState.playerStrums.members){
+            FlxTween.tween(s, {y:(CDevConfig.saveData.downscroll ? FlxG.height - 160 : 70), alpha:1}, 1,{startDelay:0.12*i, ease:FlxEase.backInOut});
+            i++;
         }
     }
 
     if (beat == 68){
         missed=false;
-        text.text = "Hidden mode! Follow the opponent's movement!";
+        text.text = "Hidden mode! Follow the opponent's arrows!";
         text.screenCenter();
         text.y += 250;
+
+        var i = 0;
+        for (s in PlayState.playerStrums.members){
+            FlxTween.tween(s, {y:(CDevConfig.saveData.downscroll ? FlxG.height+100 : -100), alpha:0.0001}, 1,{startDelay:0.12*i, ease:FlxEase.backInOut});
+            i++;
+        }
     }
     if (beat == 84){
         missed=false;
-        text.text = "Hidden mode! Follow the opponent's movement!";
+        text.text = "Hidden mode! Follow the opponent's arrows!";
         text.screenCenter();
         text.y += 250;
+
     }
 
     if (beat == 83){
@@ -92,6 +96,11 @@ function beatHit(b){
     }
 
     if (b == 172){
+        var i = 0;
+        for (s in PlayState.p2Strums.members){
+            FlxTween.tween(s, {y:(CDevConfig.saveData.downscroll ? FlxG.height+100 : -100), alpha:0.0001}, 1,{startDelay:0.12*i, ease:FlxEase.backInOut});
+            i++;
+        }
         FlxTween.tween(PlayState.dad,{alpha:0}, (Conductor.crochet)/1000, {ease:FlxEase.circInOut});
         FlxTween.tween(PlayState.dad.scale,{x:0,y:0}, (Conductor.crochet)/1000, {ease:FlxEase.circInOut});
         FlxG.sound.play(Paths.sound("gone.ogg"), 0.6);
