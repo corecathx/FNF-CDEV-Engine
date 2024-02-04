@@ -48,9 +48,6 @@
 	<define name="PRELOAD_ALL" unless="web" />
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
 
-	<!--bruh-->
-	<error value="lmao no mac support" if="mac"/>
-
 	<!--CDEV Engine's define names-->
 	<define name="ALLOW_MODS"/><!-- if="desktop"-->
 	<define name="CRASH_HANDLER" if="windows || android"/>
