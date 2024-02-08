@@ -1537,13 +1537,13 @@ class PlayState extends MusicBeatState
 				tankmanSprite.animation.addByPrefix("talkk", "TANK TALK 1 P2", 24, false);
 				add(tankmanSprite);
 
-				tankmanTalk1Audio = FlxG.sound.play(Paths.sound("wellWellWell", 'week7'));
+				tankmanTalk1Audio = FlxG.sound.play(Paths.sound("wellWellWell", 'week7'),1,false,null, true);
 				tankmanTalk1Audio.pause();
 
-				tankmanTalk2Audio = FlxG.sound.play(Paths.sound("killYou", 'week7'));
+				tankmanTalk2Audio = FlxG.sound.play(Paths.sound("killYou", 'week7'),1,false,null, true);
 				tankmanTalk2Audio.pause();
 
-				bfBeep = FlxG.sound.play(Paths.sound("bfBeep", 'week7'));
+				bfBeep = FlxG.sound.play(Paths.sound("bfBeep", 'week7'),1,false,null, true);
 				bfBeep.pause();
 
 				distorto.fadeIn(5, 0, 0.4);
@@ -1557,7 +1557,7 @@ class PlayState extends MusicBeatState
 				distorto = FlxG.sound.play(Paths.music("DISTORTO", 'week7'), 0.6);
 				distorto.pause();
 
-				tankmanTalkAudio = FlxG.sound.play(Paths.sound("tankSong2", 'week7'));
+				tankmanTalkAudio = FlxG.sound.play(Paths.sound("tankSong2", 'week7'),1,false,null, true);
 				tankmanTalkAudio.pause();
 
 				tankmanSprite = new FlxSprite(dad.x, dad.y);
@@ -2748,7 +2748,7 @@ class PlayState extends MusicBeatState
 		{
 			if (songStarted && !endingSong)
 			{
-				if (unspawnNotes.length == 0 && FlxG.sound.music.time > FlxG.sound.music.length - 100) // <= 100)
+				if (/*unspawnNotes.length == 0 && */FlxG.sound.music.time > FlxG.sound.music.length - 100) // <= 100)
 				{
 					endSong();
 				}
@@ -2847,6 +2847,7 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.SEVEN && enableEditors)
 		{
+			canPause = false;
 			scripts.executeFunc('onStateLeaved', []);
 			songSpeed = 1.0;
 			FlxG.sound.music.pause();
@@ -3223,6 +3224,7 @@ class PlayState extends MusicBeatState
 									distorto.fadeOut(0.5, 0, function(aa:FlxTween)
 									{
 										distorto.stop();
+										distorto.destroy();
 									});
 									defaultCamZoom = prevCamZoom;
 
@@ -3253,6 +3255,7 @@ class PlayState extends MusicBeatState
 							distorto.fadeOut(0.5, 0, function(aa:FlxTween)
 							{
 								distorto.stop();
+								distorto.destroy();
 							});
 							defaultCamZoom = prevCamZoom;
 							dad.visible = true;
@@ -3429,6 +3432,7 @@ class PlayState extends MusicBeatState
 
 						if (!audio.playing)
 						{
+							audio.destroy();
 							gf.visible = true;
 							dad.visible = true;
 
