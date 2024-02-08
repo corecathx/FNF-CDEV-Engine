@@ -581,7 +581,7 @@ class FreeplayState extends MusicBeatState
 								if (!FileSystem.exists(Paths.modJson(songs[curSelected].songName.toLowerCase() + '/' + sel))
 									&& !FileSystem.exists(Paths.json(songs[curSelected].songName.toLowerCase() + '/' + sel)))
 								{
-									FlxG.sound.music.pause();
+									if (FlxG.sound.music != null) FlxG.sound.music.pause();
 									openSubState(new MissingFileSubstate(sel));
 								}
 								else
@@ -619,7 +619,7 @@ class FreeplayState extends MusicBeatState
 					readDiff(true);
 				}
 
-				if (!FlxG.sound.music.playing)
+				if (FlxG.sound.music != null && !FlxG.sound.music.playing)
 				{
 					curPlayedSong = '';
 				}
@@ -650,7 +650,7 @@ class FreeplayState extends MusicBeatState
 					if (!FileSystem.exists(Paths.modJson(songs[curSelected].songName.toLowerCase() + '/' + sel))
 						&& !FileSystem.exists(Paths.json(songs[curSelected].songName.toLowerCase() + '/' + sel)))
 					{
-						FlxG.sound.music.pause();
+						if (FlxG.sound.music != null) FlxG.sound.music.pause();
 						openSubState(new MissingFileSubstate(sel));
 					}
 					else
@@ -911,7 +911,7 @@ class FreeplayState extends MusicBeatState
 		}
 		new FlxTimer().start(1, function(hasd:FlxTimer)
 		{
-			FlxG.sound.music.fadeOut(0.2, 0);
+			if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
 			if (CDevConfig.saveData.smoothAF)
 			{
 				FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
@@ -968,7 +968,7 @@ class FreeplayState extends MusicBeatState
 		trace('CUR WEEK' + PlayState.storyWeek);
 
 		selectedThing = true;
-		FlxG.sound.music.fadeOut(0.3, 0.4);
+		if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.3, 0.4);
 		FlxG.sound.play(Paths.sound('confirmMenu'), 0.6);
 		for (i in 0...iconArray.length)
 		{
@@ -1117,7 +1117,7 @@ class FreeplayState extends MusicBeatState
 	{
 		super.closeSubState();
 		changeSelection();
-		FlxG.sound.music.play();
+		if (FlxG.sound.music != null) FlxG.sound.music.play();
 	}
 
 	function changeDiff(change:Int = 0):Void
