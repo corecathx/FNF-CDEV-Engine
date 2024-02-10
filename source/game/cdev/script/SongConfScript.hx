@@ -58,7 +58,7 @@ class SongConfScript
 		};
 	}
 
-	public static function getScript(folder:String, mod:String, ?isScripts:Bool = false){
+	public static function getScript(folder:String, mod:String){
 		var scripts:Array<CDevModScript> = [];
 		var insideTheThing:Array<String> = FileSystem.readDirectory(folder);
 
@@ -68,7 +68,8 @@ class SongConfScript
 		{
 			for (object in insideTheThing)
 			{
-				if (!FileSystem.isDirectory(folder + object))
+				var joint:String = folder + object;
+				if (!FileSystem.isDirectory(joint))
 				{
 					if (object.endsWith('.hx'))
 					{
@@ -84,8 +85,15 @@ class SongConfScript
 							trace("found " + object);
 							scripts.push({
 								daMod: mod,
-								daPath: folder + object
+								daPath: joint
 							});
+						}
+					}
+				} else{
+					if (object != "modules" && FileSystem.isDirectory(joint)){
+						var addScr:Array<CDevModScript> = getScript(joint, mod);
+						for (i in addScr){
+							scripts.push(i);
 						}
 					}
 				}

@@ -1,5 +1,6 @@
 package game.cdev.script;
 
+import lime.system.CFFI;
 import game.cdev.log.GameLog;
 import flixel.addons.display.FlxRuntimeShader;
 #if USE_VIDEOS

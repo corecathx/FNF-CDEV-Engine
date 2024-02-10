@@ -1,8 +1,7 @@
 package meta.states;
 
-import game.cdev.log.GameLog;
+import lime.system.System;
 import game.cdev.CDevMods.ModFile;
-import openfl.display.Stage;
 import flixel.util.FlxAxes;
 import openfl.display.BlendMode;
 import flixel.addons.display.FlxBackdrop;
@@ -11,29 +10,21 @@ import flixel.math.FlxMath;
 import flixel.util.FlxGradient;
 #if desktop
 import game.cdev.engineutils.Discord.DiscordClient;
-import sys.thread.Thread;
 #end
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.FlxState;
-import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.transition.TransitionData;
 import flixel.graphics.FlxGraphic;
-import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-import flixel.system.FlxSound;
-import flixel.system.ui.FlxSoundTray;
-import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-import lime.app.Application;
 import openfl.Assets;
 import game.cdev.engineutils.PlayerSettings;
 import game.Paths;

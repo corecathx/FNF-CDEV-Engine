@@ -398,6 +398,7 @@ class Paths
 			'events',
 			'notes',
 			'scripts',
+			'scripts/modules',
 			'shaders',
 			#if USE_VIDEOS 'videos', #end
 			'sounds',
