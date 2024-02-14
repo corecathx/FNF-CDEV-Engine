@@ -62,6 +62,7 @@ class DropFileSubstate extends MusicBeatSubstate {
             close();
         } catch (e){
             success = false;
+            close();
             gError("Failed to set field from state, " + e.toString());
         }
     }

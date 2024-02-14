@@ -28,7 +28,8 @@ import game.*;
 class ModdingScreen extends meta.states.MusicBeatState
 {
 	var options:Array<Dynamic> = [
-		/*["Add Song Chart", "Add your song's .json / .ogg file to your mod."],HEHEH FORGOT TO FINISH THISS*/
+		["Add Song Chart", "Add your song's .json / .ogg file to your mod."],
+		["Open in Explorer", "Opens this mod's directory in Windows Explorer."],
 		["Freeplay Editor", "Add a new song to / edit a song in the Freeplay Song list."],
 		['Character Editor', "Create a new character / edit an existing character."], 
 		['Stage Editor', "Edit the appearance of your mod's stage(s)."], 
@@ -124,6 +125,8 @@ class ModdingScreen extends meta.states.MusicBeatState
 		{
 			switch (options[curSelected][0])
 			{
+				case "Open in Explorer":
+					CDevConfig.utils.openFolder("./cdev-mods/"+Paths.currentMod+"/", true);
 				case "Add Song Chart":
 					FlxG.switchState(new SongEditor());
 				case "Freeplay Editor":

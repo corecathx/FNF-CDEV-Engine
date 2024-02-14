@@ -1,5 +1,8 @@
 package meta.modding.song_editor;
 
+import flixel.addons.ui.FlxUICheckBox;
+import flixel.util.FlxTimer;
+import flixel.addons.display.FlxBackdrop;
 import game.song.Song.SwagSong;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -28,11 +31,25 @@ class SongEditor extends MusicBeatState
 	var menuBG:FlxSprite;
 
 	var currentData:SwagSong;
+	var checker:FlxBackdrop;
 
 	public function new()
 	{
 		super();
-
+		/*
+		song: 'Your Song',
+		notes: [],
+		songEvents: [],
+		bpm: 150,
+		needsVoices: true,
+		player1: 'bf',
+		player2: 'dad',
+		gfVersion: 'gf',
+		stage: 'stage',
+		speed: 1,
+		offset: 0,
+		validScore: false
+		*/
 		currentData = CDevConfig.utils.getTemplate(CHART);
 
 		FlxG.mouse.visible = true;
@@ -46,6 +63,15 @@ class SongEditor extends MusicBeatState
 		menuBG.alpha = 0.5;
 		menuBG.antialiasing = CDevConfig.saveData.antialiasing;
 		add(menuBG);
+
+		checker = new FlxBackdrop(Paths.image('checker', 'preload'), XY);
+		checker.scale.set(1.5, 1.5);
+		checker.color = 0xFF006AFF;
+		checker.blend = LAYER;
+		add(checker);
+		checker.scrollFactor.set(0, 0.07);
+		checker.alpha = 0.4;
+		checker.updateHitbox();
 
 		bgB = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
 		bgB.alpha = 0.1;
@@ -77,6 +103,8 @@ class SongEditor extends MusicBeatState
 	var input_songName:FlxUIInputText;
 	var label_songName:FlxText;
 
+	var check_useVocal:FlxUICheckBox;
+
 	var buttn_songInst:FlxUIButton;
 	var label_songInst:FlxText;
 	var fname_songInst:FlxText;
@@ -101,16 +129,29 @@ class SongEditor extends MusicBeatState
 
 		input_songName = new FlxUIInputText(title.x + 40, title.y + 68, 200, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
 		input_songName.font = "VCR OSD Mono";
+		input_songName.text = currentData.song;
 		add(input_songName);
 		label_songName = new FlxText(input_songName.x, input_songName.y - 25, 200, "Song Name", 20);
 		label_songName.font = "VCR OSD Mono";
 		add(label_songName);
+		check_useVocal = new FlxUICheckBox(input_songName.x + input_songName.width + 20, input_songName.y,null,null,"Use Vocals?", 150, [], ()->{
+			for (i in [buttn_songVoic, label_songVoic, fname_songVoic, sound_songVoic, splay_songVoic]){
+				i.visible =	i.active = check_useVocal.checked;
+			}
+		});
+		check_useVocal.button.label.setFormat("VCR OSD Mono", 14, FlxColor.WHITE, LEFT, OUTLINE,FlxColor.BLACK);
+		check_useVocal.checked = currentData.needsVoices;
+		add(check_useVocal);
 
-		stepr_songBPM = new FlxUINumericStepper(10, 80, 1, 120, 0, 999, 0);
+		stepr_songBPM = new FlxUINumericStepper(input_songName.x, input_songName.y+input_songName.height+36, 1, 120, 0, 999, 0);
 		stepr_songBPM.value = currentData.bpm;
 		stepr_songBPM.name = 'section_bpm';
+		add(stepr_songBPM);
+		label_songBPM = new FlxText(stepr_songBPM.x, stepr_songBPM.y - 25, 200, "Song BPM", 20);
+		label_songBPM.font = "VCR OSD Mono";
+		add(label_songBPM);
 
-		buttn_songInst = new FlxUIButton(input_songName.x, input_songName.y + input_songName.height + 66, "Select File", function()
+		buttn_songInst = new FlxUIButton(input_songName.x, input_songName.y + input_songName.height + 126, "Select File", function()
 		{
 			stopPreviews();
 			openSubState(new DropFileSubstate(this, "paths_songInst", "ogg", function()
@@ -202,17 +243,26 @@ class SongEditor extends MusicBeatState
 
 	function resetPreviews(){
 		tapeCancelAll();
-		sound_songInst.pitch = 1;
-		sound_songVoic.pitch = 1;
+		sound_songInst.pitch = sound_songInst.volume = 1;
+		sound_songVoic.pitch = sound_songVoic.volume = 1;
 	}
 
+	var exit:Bool = false;
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.ESCAPE)
+		checker.x -= elapsed * 20;
+		checker.y += elapsed * 20;
+
+		if (FlxG.keys.justPressed.ESCAPE && !exit)
 		{
-			FlxG.switchState(new ModdingScreen());
+			FlxTween.tween(FlxG.camera, {zoom: 0.9, alpha:0}, 1, {ease:FlxEase.sineInOut});
+			stopPreviews();
+			exit = true;
+			new FlxTimer().start(1.1, (t:FlxTimer) -> {
+				FlxG.switchState(new ModdingScreen());
+			});
 
 			FlxG.mouse.visible = false;
 		}
