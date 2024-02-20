@@ -148,7 +148,6 @@ class FlxSoundTray extends Sprite
                     tween = null;
                 }});
             }
-
         }
 
 		/* backup

@@ -84,7 +84,7 @@ class CDevPopUp extends MusicBeatSubstate
 		header.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(header);
         header.scrollFactor.set();
-		bodyText = new FlxText(box.x+30, box.y + 40, 550, bodyT, 20);
+		bodyText = new FlxText(box.x+30, box.y + 40, 680, bodyT, 18);
 		bodyText.font = "VCR OSD Mono";
 		add(bodyText);
         bodyText.scrollFactor.set();

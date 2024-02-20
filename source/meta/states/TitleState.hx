@@ -70,7 +70,7 @@ class TitleState extends MusicBeatState
 		if (!loadedSaves)
 			CDevConfig.initSaves();
 
-		//checkGitHubVersion();
+		checkGitHubVersion();
 
 		PlayerSettings.init();
 

@@ -1,5 +1,7 @@
-package meta.states.charter;
+package meta.modding.chart_editor;
 
+import game.cdev.log.GameLog;
+import meta.states.*;
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxTween;
 import lime.media.openal.AL;
@@ -141,6 +143,13 @@ class ChartingState extends MusicBeatState
 	var tempLoaded:Array<String> = [];
 	var noteNames:Array<String> = [];
 
+	public function new(?chart:SwagSong){
+		super();
+		if (chart != null) {
+			_song = chart;
+		}
+	}
+
 	override function create()
 	{
 		CDevConfig.setExitHandler(warningNotSaved);
@@ -172,10 +181,9 @@ class ChartingState extends MusicBeatState
 		curRenderedEvents = new FlxTypedGroup<ChartEvent>();
 		renderedNotesLabel = new FlxTypedGroup<FlxText>();
 
-		if (PlayState.SONG != null)
+		if (_song == null && PlayState.SONG != null) {
 			_song = PlayState.SONG;
-		else
-		{
+		} else if (_song == null && PlayState.SONG == null) {
 			_song = CDevConfig.utils.CHART_TEMPLATE;
 		}
 
@@ -676,6 +684,9 @@ class ChartingState extends MusicBeatState
 	var selectedNoteType:String = "Default Note";
 	var selectedNotePos:Int = -1;
 
+	var noteParam1:FlxUIInputText;
+	var noteParam2:FlxUIInputText;
+
 	function addNoteUI():Void
 	{
 		var tab_group_note = new FlxUI(null, UI_box);
@@ -691,10 +702,17 @@ class ChartingState extends MusicBeatState
 			selectedNoteType = noteNames[Std.parseInt(mNote)];
 			selectedNotePos = Std.parseInt(mNote);
 		});
-
 		var ivText:FlxText = new FlxText(10, noteDropDown.y - 15, FlxG.width, "Note Types", 8);
-		tab_group_note.add(ivText);
 
+		noteParam1 = new FlxUIInputText(10, noteDropDown.y + 70, 200, "");
+		noteParam2 = new FlxUIInputText(10, noteDropDown.y + 100, 200, "");
+		tab_group_note.add(noteParam1);
+		tab_group_note.add(noteParam2);
+		tab_group_note.add(new FlxText(10, noteParam1.y - 15, UI_box.width - 20, 'Value 1', 8));
+		tab_group_note.add(new FlxText(10, noteParam2.y - 15, UI_box.width - 20, 'Value 2', 8));
+		tab_group_note.add(new FlxText(10, noteParam1.y - 30, UI_box.width - 20, '===Parameters===', 8).setFormat(null, 8, FlxColor.WHITE, CENTER));
+
+		tab_group_note.add(ivText);
 		tab_group_note.add(steppersusTxt);
 		tab_group_note.add(stepperSusLength);
 		tab_group_note.add(noteDropDown);
@@ -1925,7 +1943,13 @@ class ChartingState extends MusicBeatState
 		});
 
 		remove(gridBG);
-		gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * _song.notes[curSection].lengthInSteps);
+		var lis:Dynamic = _song.notes[curSection].lengthInSteps;
+		//On static platforms, null can't be used as basic type Int
+		if (lis == null)
+			lis = 16;
+		else
+			GameLog.warn("JSON of this chart doesn't have lengthInSteps.");
+		gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * Std.parseInt(lis));
 		gridBG.alpha = 0.7;
 		add(gridBG);
 
@@ -2286,18 +2310,17 @@ class ChartingState extends MusicBeatState
 		var noteData = Math.floor(FlxG.mouse.x / GRID_SIZE);
 		var noteSus = 0;
 		var noteType = selectedNoteType;
+		var noteParams = [noteParam1.text, noteParam2.text];
 
-		if (n != null)
-			_song.notes[curSection].sectionNotes.push([n.strumTime, n.noteData, n.sustainLength, n.noteType]);
-		else
-			_song.notes[curSection].sectionNotes.push([noteStrum, noteData, noteSus, noteType]);
+		var data:Array<Dynamic> = [noteStrum, noteData, noteSus, noteType, noteParams];
+		if (n != null) data = [n.strumTime, n.noteData, n.sustainLength, n.noteType, noteParams];
+
+		_song.notes[curSection].sectionNotes.push(data);
 
 		curSelectedNote = _song.notes[curSection].sectionNotes[_song.notes[curSection].sectionNotes.length - 1];
 
 		if (FlxG.keys.pressed.CONTROL)
-		{
 			_song.notes[curSection].sectionNotes.push([noteStrum, (noteData + 4) % 8, noteSus]);
-		}
 
 		trace(noteStrum);
 		trace(curSection);

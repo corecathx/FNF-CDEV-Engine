@@ -64,7 +64,7 @@ class InstallModState extends meta.states.MusicBeatState
 				if (FileSystem.exists(file))
 					crapJSON = File.getContent(file);
 				#end
-
+				if (crapJSON == null) continue;
 				var json:ModFile = cast Json.parse(crapJSON);
 
 				if (crapJSON != null)

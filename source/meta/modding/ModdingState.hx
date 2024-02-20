@@ -1,5 +1,6 @@
 package meta.modding;
 
+import meta.substates.WebviewSubstate;
 import openfl.Lib;
 import game.Controls.Control;
 import flash.text.TextField;
@@ -21,7 +22,7 @@ import game.objects.*;
 class ModdingState extends meta.states.MusicBeatState
 {
 	var curSelected:Int = 0;
-	var options:Array<String> = ['Create a new mod', 'Open an existing mod', 'Install a mod'];
+	var options:Array<String> = ['Create a new mod', 'Open an existing mod', 'Install a mod', "Read the Docs"];
 	var grpOptions:FlxTypedGroup<Alphabet>;
 	var menuBG:FlxSprite;
 
@@ -119,6 +120,8 @@ class ModdingState extends meta.states.MusicBeatState
 					FlxG.switchState(new InstallModState());
 					//FlxG.switchState(new ());
 					//FlxG.switchState(new CreateCharacterBETATEST());
+				case "Read the Docs":
+					openSubState(new WebviewSubstate("https://core5570ryt.github.io/FNF-CDEV-Engine/"));
 			}
 		}
 	}

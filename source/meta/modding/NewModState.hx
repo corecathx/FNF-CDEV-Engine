@@ -249,40 +249,34 @@ class NewModState extends meta.states.MusicBeatState
 
 			if (FlxG.mouse.justPressed)
 			{
-				var allow = true;
+				var modNameTrimmed:String = input_modName.text.trim();
+				var winTitleTrimmed:String = label_windowTitle.text.trim();
 
-				if (input_modName.text.trim() == "")
-				{
-					allow = false;
+				var blocked:Bool = CDevConfig.utils.containsBlockedSymbol(modNameTrimmed) || CDevConfig.utils.isBlockedWord(modNameTrimmed);
+				var modExists:Bool = FileSystem.exists(Paths.modsPath + "/" + modNameTrimmed) && FileSystem.isDirectory(Paths.modsPath + "/" + modNameTrimmed);
+				var others:Bool = modNameTrimmed == "" || modNameTrimmed.startsWith(".");
+				if (others || blocked) {
 					txtMn.color = FlxColor.RED;
+				} else {
+					txtMn.color = FlxColor.WHITE;
 				}
 
-				if (input_windowTitle.text.trim() == "")
-				{
-					allow = false;
+				if (winTitleTrimmed == "") {
 					label_windowTitle.color = FlxColor.RED;
+				} else {
+					label_windowTitle.color = FlxColor.WHITE;
 				}
 
-				var path:String = Paths.modsPath + "/"+input_modName.text.trim();
-				if (FileSystem.exists(path) && FileSystem.isDirectory(path)){
-					allow = false;
-
-					var butt:Array<PopUpButton> = [];
-					var text:String = "Failed to create \"" + input_modName.text.trim() + "\": a mod with the same name already exists." +
-					"\n\nIf you wanted to update the mod's directories, press \"Update\"; This action will reset your mod.json, songList.txt, and credits.txt.";
-					butt = [
-						{text: "Update", callback: createMod},
-						{text: "Cancel", callback: function(){}},
-					];
-					openSubState(new CDevPopUp("Error", text, butt,false, true));
-				}
-
-				if (allow)
-				{
+				if (!modExists && !blocked && !others) {
 					createMod();
-				}
-				else
-				{
+				} else if (modExists && !blocked && !others) {
+					var butt:Array<PopUpButton> = [
+						{text: "Update", callback: createMod},
+						{text: "Cancel", callback: closeSubState}
+					];
+					var text:String = "Failed to create \"" + modNameTrimmed + "\": a mod with the same name already exists." +
+									"\n\nIf you wanted to update the mod's directories, press \"Update\"; This action will reset your mod.json, songList.txt, and credits.txt.";
+					openSubState(new CDevPopUp("Error", text, butt, false, true));
 					FlxG.sound.play(game.Paths.sound('cancelMenu'));
 				}
 			}

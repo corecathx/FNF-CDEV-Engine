@@ -63,7 +63,6 @@ Special Thanks
 Engines that inspired CDEV Engine & Codes used in this engine
 - [Codename Engine](https://github.com/FNF-CNE-Devs/CodenameEngine) - GPU Bitmap code.
 - [Psych Engine](https://github.com/ShadowMario/FNF-PsychEngine) - Literally inspired CDEV Engine to have Modding Supports.
-- [Kade Engine](https://github.com/Kade-github/Kade-Engine) - Song Speed modifier code.
 
 Friday Night Funkin'
 - [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programmer

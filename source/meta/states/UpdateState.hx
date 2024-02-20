@@ -1,5 +1,7 @@
 package meta.states;
 
+import sys.thread.Thread;
+import game.cdev.SongPosition;
 import openfl.display.BlendMode;
 import flixel.util.FlxAxes;
 import flixel.addons.display.FlxBackdrop;
@@ -72,7 +74,7 @@ class UpdateState extends MusicBeatState
 		checker.alpha = 0.2;
 		checker.updateHitbox();
 
-		text = new FlxText(0, 0, 0, "Please wait while we downloading the new update of CDEV Engine...", 18);
+		text = new FlxText(0, 0, 0, "Downloading update...", 18);
 		text.setFormat("VCR OSD Mono", 18, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(text);
 		text.screenCenter(X);
@@ -133,7 +135,7 @@ class UpdateState extends MusicBeatState
 					time = 0;
 
 					// Divide file size by data speed to obtain download time.
-					downloadTime = ((maxFileSize-downloadedSize) / (speed));
+					downloadTime = ((maxFileSize - downloadedSize) / speed) * 1000;
 				}
 
 				if (downloadedSize != lastVare)
@@ -146,7 +148,7 @@ class UpdateState extends MusicBeatState
 				}
 
 				progressText.text = FlxMath.roundDecimal(entire_progress, 2) + "%" + " - " + CDevConfig.utils.convert_size(Std.int(speed)) + "/s" + " - "
-					+ convert_time(downloadTime);
+					+ convert_time(downloadTime) + " remaining";
 			case "install_update":
 				entire_progress = (downloadedSize / maxFileSize) * 100;
 				progressText.text = FlxMath.roundDecimal(entire_progress, 2) + "%";
@@ -202,17 +204,6 @@ class UpdateState extends MusicBeatState
 		trace("starting download process...");
 
 		zip.load(new URLRequest(online_url));
-
-		/*var aa = new Http(online_url);
-			aa.request();
-			trace(aa.responseHeaders);
-			trace(aa.responseHeaders.get("size"));
-
-			maxFileSize = Std.parseInt(aa.responseHeaders.get("size")); 
-
-			content = requestUrl(online_url);
-			sys.io.File.write(path, true).writeString(content);
-			trace(content.length + " bytes downloaded"); */
 	}
 
 	public function requestUrl(url:String):String
@@ -233,31 +224,7 @@ class UpdateState extends MusicBeatState
 
 	function convert_time(time:Float)
 	{
-		var seconds = Std.int((time / 1000) % 60);
-		var minutes = Std.int((time / (1000 * 60)) % 60);
-		var hours = Std.int((time / (1000 * 60 * 60)) % 24);
-
-		var secStr:String = '' + seconds;
-		var minStr:String = '' + minutes;
-		var hoeStr:String = '' + hours;
-
-		var string:String = "";
-
-		if (secStr.length < 2)
-		{
-			secStr = "0" + seconds;
-		}
-		if (minStr.length < 2 && hours != 0)
-		{
-			minStr = "0" + minutes;
-		}
-		if (hoeStr.length < 2)
-		{
-			hoeStr = "0" + hours;
-		}
-
-		string = '$hoeStr:$minStr:$secStr';
-		return string;
+		return SongPosition.getCurrentDuration(time);
 	}
 
 	function onDownloadProgress(result:ProgressEvent)
@@ -271,14 +238,10 @@ class UpdateState extends MusicBeatState
 		var path:String = './update/temp/'; // cdev-engine_' + TitleState.onlineVer + ".rar";
 
 		if (!FileSystem.exists(path))
-		{
 			FileSystem.createDirectory(path);
-		}
 
 		if (!FileSystem.exists("./update/raw/"))
-		{
 			FileSystem.createDirectory("./update/raw/");
-		}
 
 		var fileBytes:Bytes = cast(zip.data, ByteArray);
 		text.text = "Update downloaded successfully, saving update file...";
@@ -286,17 +249,22 @@ class UpdateState extends MusicBeatState
 		File.saveBytes(path + "cdev-" + TitleState.onlineVer + ".zip", fileBytes);
 		text.text = "Unpacking update file...";
 		text.screenCenter(X);
-		// Uncompress.run(File.getBytes(path + "cdev-" + TitleState.onlineVer + ".zip"))
-		CDevZip.unzip(path + "cdev-" + TitleState.onlineVer + ".zip", "./update/raw/");
-		text.text = "Update file has unpacked, installing update...";
-		text.screenCenter(X);
-
-		FlxG.sound.play(Paths.sound('confirmMenu'));
-
-		new FlxTimer().start(1, function(e:FlxTimer)
-		{
-			installUpdate("./update/raw/");
+		download_info.text = "Running...";
+		new FlxTimer().start(1, (t) -> {
+			CDevZip.unzip(path + "cdev-" + TitleState.onlineVer + ".zip", "./update/raw/", () -> {
+				text.text = "Update file has unpacked, installing update...";
+				text.screenCenter(X);
+		
+				FlxG.sound.play(Paths.sound('confirmMenu'));
+		
+				new FlxTimer().start(1, function(e:FlxTimer)
+				{
+					installUpdate("./update/raw/");
+				});
+			});
 		});
+
+
 	}
 
 	function installUpdate(updateFolder:String)

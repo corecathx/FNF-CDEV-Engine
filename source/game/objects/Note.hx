@@ -24,6 +24,7 @@ class Note extends FlxSprite
 
 	public var script:CDevScript = null;
 	var gotScript:Bool = false;
+	public var noteArgs:Array<String> = ["",""];
 
 	public var noteType:String = "Default Note";
 
@@ -88,12 +89,16 @@ class Note extends FlxSprite
 	public var strumParent:StrumArrow;
 	var calcStepH:Bool = true;
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?MustCalcStepHeight:Bool = true, ?noteTyp:String = "Default Note")
+	// hell of arguments
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?MustCalcStepHeight:Bool = true, ?noteTyp:String = "Default Note", ?noteArg:Array<String>)
 	{
 		super();
 
 		if (prevNote == null)
 			prevNote = this;
+
+		if (noteArg != null)
+			noteArgs = noteArg;
 
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
@@ -122,7 +127,7 @@ class Note extends FlxSprite
 				script.loadFile(scriptPath);
 				
 				if (gotScript)
-					script.executeFunc("create", []);
+					script.executeFunc("create", noteArgs);
 			} else{
 				if (!noteTypeFail.contains(noteType))
 				{

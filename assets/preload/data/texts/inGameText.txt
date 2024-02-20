@@ -3,7 +3,7 @@ Friday Night Funkin'--The full ass game.
 Press F11 to enable fullscreen mode!
 If you find a bug in this engine, please report--the bug on my discord or my twitter (x) dm!
 Funkin Forever.
-You're currently playing--CDEV Engine v1.6.2
+You're currently playing--CDEV Engine v1.6.3
 Does anyone actually read this?
 DARK MODE.--YES.
 Rewritten Inputs!

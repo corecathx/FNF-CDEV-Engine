@@ -106,7 +106,8 @@ class MainMenuState extends MusicBeatState
 
 		persistentUpdate = persistentDraw = true;
 
-		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuBG'));
+		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('aboutMenu'));
+		bg.color = 0xff0088ff;
 		bg.scrollFactor.x = 0;
 		bg.scrollFactor.y = 0.18;
 		CDevConfig.utils.setFitScale(bg, 0.1, 0.1);
@@ -122,7 +123,7 @@ class MainMenuState extends MusicBeatState
 		daCFPos = new FlxObject(0, 0, 1, 1);
 		add(daCFPos);
 
-		magenta = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
+		magenta = new FlxSprite(-80).loadGraphic(Paths.image('aboutMenu'));
 		magenta.scrollFactor.x = 0;
 		magenta.scrollFactor.y = 0.18;
 		CDevConfig.utils.setFitScale(magenta, 0.1, 0.1);

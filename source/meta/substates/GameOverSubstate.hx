@@ -46,6 +46,7 @@ class GameOverSubstate extends MusicBeatSubstate
 
 		game.Conductor.songPosition = 0;
 
+		PlayState.boyfriend.visible = false;
 		bf = new game.objects.Boyfriend(x, y, daBf);
 		if (disableFlipX) bf.flipX = false;
 		add(bf);
@@ -138,6 +139,7 @@ class GameOverSubstate extends MusicBeatSubstate
 			bf.playAnim("deathConfirm", true);
 			GameOverSubstate.resetDeathStatus();
 			FlxG.sound.music.stop();
+			FlxG.sound.music.destroy();
 			FlxG.sound.play(game.Paths.music('gameOverEnd' + stageSuffix, "shared"));
 			new FlxTimer().start(0.7, function(tmr:FlxTimer)
 			{

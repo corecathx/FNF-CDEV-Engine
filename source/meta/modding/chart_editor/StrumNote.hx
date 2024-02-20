@@ -1,4 +1,4 @@
-package meta.states.charter;
+package meta.modding.chart_editor;
 
 import flixel.FlxG;
 import game.Paths;

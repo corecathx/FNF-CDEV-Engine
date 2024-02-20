@@ -38,6 +38,9 @@ enum TemplateData {
  */
 class CDevUtils
 {
+	/**
+	 * Chart Template, like, just a template.
+	 */
 	public var CHART_TEMPLATE:SwagSong = {
 		song: 'Your Song',
 		notes: [],
@@ -52,6 +55,27 @@ class CDevUtils
 		offset: 0,
 		validScore: false
 	};
+
+	/**
+	 * Contains bunch of blacklisted names for a folder / file in Windows.
+	 */
+	public var BLACKLISTED_NAMES:Array<String> = [
+		"CON", "PRN", "AUX", "NUL",
+		"COM1", "COM2", "COM3", "COM4",
+		"COM5", "COM6", "COM7", "COM8",
+		"COM9", "LPT1", "LPT2", "LPT3",
+		"LPT4", "LPT5", "LPT6", "LPT7",
+		"LPT8", "LPT9"
+	];
+
+	
+	/**
+	 * Contains bunch of blacklisted names for a folder / file in Windows.
+	 */
+	public var BLACKLISTED_SYMBOLS:Array<String> = [
+		"<",">",":","\"","/","\\","|","?","*"
+	];
+	
 
 	public function getTemplate(type:TemplateData):Dynamic {
 		switch (type){
@@ -124,6 +148,44 @@ class CDevUtils
 	public function setSoundPitch(object:FlxSound, pitch:Float)
 	{
 		object.pitch = pitch;
+	}
+
+	/**
+	 * Checks if `str` contains anything inside `CDevUtils.BLACKLISTED_SYMBOLS` array.
+	 * @param str String to check. 
+	 * @return Result.
+	 */
+	public function containsBlockedSymbol(str:String):Bool{
+		for (i in BLACKLISTED_SYMBOLS){
+			if (str.contains(i)) return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Auto-Capitalizing every words in a string.
+	 * @param str Your String.
+	 * @return Capitalized string.
+	 */
+	public function capitalize(str:String):String {
+		var words = str.split(" ");
+		for (i in 0...words.length) {
+			var word = words[i];
+			words[i] = word.substring(0, 1).toUpperCase() + word.substring(1);
+		}
+		return words.join(" ");
+	}
+
+	/**
+	 * Checks if `str` matches anything inside `CDevUtils.BLACKLISTED_NAMES` array.
+	 * @param str String to check. 
+	 * @return Result.
+	 */
+	public function isBlockedWord(str:String):Bool{
+		for (i in BLACKLISTED_NAMES){
+			if (i.toLowerCase() == str.toLowerCase()) return true;
+		}
+		return false;
 	}
 
 	/**
@@ -409,6 +471,21 @@ class CDevUtils
 		#else
 		FlxG.openURL(url);
 		#end
+	}
+
+	public function openFolder(folder:String, useAbsolutePath:Bool = false) {
+		var path:String = folder;
+		if (!useAbsolutePath) 
+			path =  Sys.getCwd() + '$folder';
+
+		path = Path.normalize(path);
+		path = path.replace('/', '\\');
+		
+		if (path.endsWith('/')) 
+			path.substr(0, path.length - 1);
+
+		Sys.command("explorer.exe", [path]);
+		trace('Execute: explorer.exe $path');
 	}
 
 	/**
