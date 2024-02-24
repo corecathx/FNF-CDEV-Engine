@@ -1,5 +1,6 @@
 package game.cdev.engineutils;
 
+import game.cdev.CDevUtils.DiscordJson;
 import game.cdev.CDevConfig;
 import Sys.sleep;
 #if DISCORD_RPC
@@ -11,12 +12,14 @@ using StringTools;
 class DiscordClient
 {
 	public static var initialized:Bool = false;
+	public static var RPC_DATA:DiscordJson = null;
 	#if DISCORD_RPC
 	public function new()
 	{
+		RPC_DATA = CDevConfig.utils.getRpcJSON();
 		trace("Discord Client starting...");
 		DiscordRpc.start({
-			clientID: "947735855672475679",
+			clientID: (RPC_DATA != null ? RPC_DATA.clientID : CDevConfig.RPC_ID),
 			onReady: onReady,
 			onError: onError,
 			onDisconnected: onDisconnected
@@ -43,8 +46,8 @@ class DiscordClient
 		DiscordRpc.presence({
 			details: "In the Menus",
 			state: null,
-			largeImageKey: 'icon',
-			largeImageText: 'CDEV Engine v.' + CDevConfig.engineVersion
+			largeImageKey: RPC_DATA.imageKey,
+			largeImageText: RPC_DATA.imageTxt
 		});
 	}
 

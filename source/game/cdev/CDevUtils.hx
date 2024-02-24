@@ -1,5 +1,7 @@
 package game.cdev;
 
+import sys.io.File;
+import haxe.Json;
 import game.song.Song.SwagSong;
 import meta.substates.CustomSubstate;
 import meta.states.MusicBeatState;
@@ -31,6 +33,13 @@ using StringTools;
 
 enum TemplateData {
 	CHART;
+	DISCORD;
+}
+
+typedef DiscordJson = {
+	var clientID:String; //client id, take it from discord developer portal
+	var imageKey:String; //big image
+	var imageTxt:String; //idk
 }
 
 /**
@@ -54,6 +63,15 @@ class CDevUtils
 		speed: 1,
 		offset: 0,
 		validScore: false
+	};
+
+	/**
+	 * Discord RPC Template
+	 */
+	public var RPC_TEMPLATE:DiscordJson = {
+		clientID: CDevConfig.RPC_ID,
+		imageKey: 'icon',
+		imageTxt: 'CDEV Engine v.' + CDevConfig.engineVersion
 	};
 
 	/**
@@ -81,6 +99,8 @@ class CDevUtils
 		switch (type){
 			case CHART:
 				return CHART_TEMPLATE;
+			case DISCORD:
+				return RPC_TEMPLATE;
 		}
 		return null;
 	}
@@ -198,6 +218,23 @@ class CDevUtils
 	public function bound(toConvert:Float, min:Float, max:Float):Float
 	{
 		return FlxMath.bound(toConvert, min, max); // ye
+	}
+
+	/**
+	 * Custom RPC ID based on `mod`
+	 * @return DiscordJson
+	 */
+	public function getRpcJSON():DiscordJson
+	{
+		var path:String = Paths.modsPath + "/" + Paths.currentMod +"/data/game/Discord.json";
+		trace("Looking for Discord.json in: " + path);
+		if (FileSystem.exists(path)){
+			trace("File Exists!");
+			var a:DiscordJson = cast Json.parse(File.getContent(path));
+			return a;
+		}
+		trace("Couldn't find any.");
+		return getTemplate(DISCORD);
 	}
 
 	/**
