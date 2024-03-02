@@ -152,6 +152,7 @@ class ChartingState extends MusicBeatState
 
 	override function create()
 	{
+		Paths.destroyLoadedImages(false);
 		CDevConfig.setExitHandler(warningNotSaved);
 		crapFollow = new FlxObject(0, 0, 1, 1);
 		add(crapFollow);
@@ -1536,6 +1537,7 @@ class ChartingState extends MusicBeatState
 				else
 				{
 					// vocals.play();
+					resyncVocals();
 					FlxG.sound.music.play();
 				}
 			}
@@ -1913,8 +1915,9 @@ class ChartingState extends MusicBeatState
 	function destroyThis(note:FlxSprite){
 		//note.graphic.bitmap.dispose(); uhh
 		//note.graphic.destroy();
-		note.destroy();
+		note.kill();
 	}
+	var warnOnce:Bool = false;
 	function updateGrid(?justUpdateTheNotes:Bool = false):Void
 	{
 		curRenderedNotes.forEach(function(note:Note)
@@ -1944,11 +1947,15 @@ class ChartingState extends MusicBeatState
 
 		remove(gridBG);
 		var lis:Dynamic = _song.notes[curSection].lengthInSteps;
-		//On static platforms, null can't be used as basic type Int
-		if (lis == null)
+		if (lis == null){
 			lis = 16;
-		else
-			GameLog.warn("JSON of this chart doesn't have lengthInSteps.");
+			if (!warnOnce)
+				GameLog.warn("JSON of this chart doesn't have lengthInSteps.");
+			warnOnce = true;
+		} else if (lis == 0){
+			lis = 16;
+		}
+
 		gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * Std.parseInt(lis));
 		gridBG.alpha = 0.7;
 		add(gridBG);
@@ -1988,9 +1995,11 @@ class ChartingState extends MusicBeatState
 
 			var note:Note = new Note(daStrumTime, daNoteInfo % 4);
 			note.noteType = daType;
+			note.rawNoteData = daNoteInfo;
 			note.sustainLength = daSus;
 			note.setGraphicSize(GRID_SIZE, GRID_SIZE);
 			note.updateHitbox();
+			note.disableScript();
 			note.x = Math.floor(daNoteInfo * GRID_SIZE);
 			note.y = Math.floor(getYfromStrum((daStrumTime - sectionStartTime()) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps)));
 			curRenderedNotes.add(note);
@@ -2240,16 +2249,16 @@ class ChartingState extends MusicBeatState
 	function deleteNote(note:Note):Void
 	{
 		lastNote = note;
-		for (i in _song.notes[curSection].sectionNotes)
-		{
-			if (i[0] == note.strumTime && i[1] == note.noteData + (note.mustPress != _song.notes[curSection].mustHitSection ? 0 : 4))
-			{
-				if(i == curSelectedNote) curSelectedNote = null;
-				_song.notes[curSection].sectionNotes.remove(i);
+
+		var nCheck:Int = note.rawNoteData;
+
+		for (nData in _song.notes[curSection].sectionNotes){
+			if (nData[0] == note.strumTime && nData[1] == nCheck){
+				if (nData == curSelectedNote) curSelectedNote = null;
+				_song.notes[curSection].sectionNotes.remove(nData);
 				break;
 			}
 		}
-
 		updateGrid();
 	}
 
