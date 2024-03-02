@@ -127,7 +127,7 @@ class PlayState extends MusicBeatState
 	var isDownscroll:Bool = false;
 
 	public static var healthBarBG:FlxSprite;
-	public static var healthBar:FlxBar;
+	public static var healthBar:FunkinBar;
 
 	// the mods
 	public static var randomNote:Bool = false;
@@ -1100,21 +1100,16 @@ class PlayState extends MusicBeatState
 		bgNoteLane.screenCenter(X);
 		bgNoteLane.alpha = 0;
 
-		// Health Bars
-		healthBarBG = new FlxSprite(0, (FlxG.height * 0.85) + 20).loadGraphic(Paths.image('healthBar'));
-		if (CDevConfig.saveData.downscroll)
-			healthBarBG.y = 80;
-		healthBarBG.screenCenter(X);
-		healthBarBG.scrollFactor.set();
-		healthBarBG.scale.x = 1;
-
-		healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int((healthBarBG.width * healthBarBG.scale.x) - 8),
-			Std.int(healthBarBG.height - 8), this, 'healthLerp', 0, 2);
-		healthBar.scrollFactor.set();
-		healthBar.numDivisions = 3000;
-		healthBar.createFilledBar(FlxColor.fromRGB(dad.healthBarColors[0], dad.healthBarColors[1], dad.healthBarColors[2]),
-			FlxColor.fromRGB(boyfriend.healthBarColors[0], boyfriend.healthBarColors[1], boyfriend.healthBarColors[2]));
+		// Health bar
+		healthBar = new FunkinBar(0, (!CDevConfig.saveData.downscroll ? (FlxG.height * 0.85) + 20 : 80), 'healthBar', () -> {return healthLerp;}, 0, 2);
 		healthBar.screenCenter(X);
+		healthBar.leftToRight = false;
+		healthBar.scrollFactor.set();
+		healthBar.setColors(FlxColor.fromRGB(dad.healthBarColors[0], dad.healthBarColors[1], dad.healthBarColors[2]),
+				FlxColor.fromRGB(boyfriend.healthBarColors[0], boyfriend.healthBarColors[1], boyfriend.healthBarColors[2]));
+
+		// Health Bar BG (Backwards compability??)
+		healthBarBG = healthBar.bgSprite;
 
 		// Health Icons
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
@@ -1200,7 +1195,7 @@ class PlayState extends MusicBeatState
 		engineWM.antialiasing = CDevConfig.saveData.antialiasing;
 
 		// Adding the UI objects to this state and assign them to camHUD.
-		for (element in [bgNoteLane, healthBarBG, healthBar, songPosBG, songPosBGspr, songPosBar,
+		for (element in [bgNoteLane, healthBar, songPosBG, songPosBGspr, songPosBar,
 						 songName, iconP2, iconP1, bgScore, scoreTxt, botplayTxt, judgementText]){
 			add(element);
 			element.cameras = [camHUD];
@@ -2600,14 +2595,17 @@ class PlayState extends MusicBeatState
 			}
 		}
 	}
-
+	public var isDead:Bool = false;
 	/**Function that handles the death of your character (evil)**/
 	public function deathHandler(){
+		if (movingEditor) return;
+
 		if (!inCutscene && controls.RESET && CDevConfig.saveData.resetButton)
 			health = (playingLeftSide ? 2 : 0);
 
 		if ((playingLeftSide ? (health >= 2) : (health <= 0)))
 		{
+			isDead = true;
 			scripts.executeFunc("onGameOver", []);
 			boyfriend.stunned = true;
 
@@ -2636,8 +2634,10 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+	public var movingEditor:Bool = false;
 	/**Used for In-Game Editors, like switching the state to the Editor.**/
 	public function editorsHandler() {
+		if (isDead) return;
 		if (enableEditors) {
 			var pressingStuff:Array<Bool> = [FlxG.keys.justPressed.SIX, FlxG.keys.justPressed.EIGHT];
 			var indexSONG:Array<String> = [SONG.player1, SONG.player2];
@@ -2653,6 +2653,7 @@ class PlayState extends MusicBeatState
 			}
 			if (pressingStuff.contains(true))
 			{
+				movingEditor = true;
 				scripts.executeFunc('onStateLeaved', []);
 				persistentUpdate = false;
 				persistentDraw = true;
@@ -2678,6 +2679,7 @@ class PlayState extends MusicBeatState
 			}
 			if (FlxG.keys.justPressed.SEVEN)
 			{
+				movingEditor = true;
 				canPause = false;
 				scripts.executeFunc('onStateLeaved', []);
 				songSpeed = 1.0;
@@ -2773,9 +2775,10 @@ class PlayState extends MusicBeatState
 	/**Icons update function, positioning and scaling**/
 	function iconUpdateFunction(elapsed:Float)
 	{
-		var lerpTime:Float = CDevConfig.utils.bound(1 - (elapsed * 18) * songSpeed, 0, 1);
-		p1Lerp = FlxMath.roundDecimal(FlxMath.lerp(1, iconP1.scale.x, lerpTime), 2);
-		p2Lerp = FlxMath.roundDecimal(FlxMath.lerp(1, iconP2.scale.x, lerpTime), 2);
+		var lerpTime:Float = CDevConfig.utils.bound(1 - (elapsed * 9) * songSpeed, 0, 1);
+
+		p1Lerp = FlxMath.roundDecimal(FlxMath.lerp(1, iconP1.scale.x, lerpTime), 3);
+		p2Lerp = FlxMath.roundDecimal(FlxMath.lerp(1, iconP2.scale.x, lerpTime), 3);
 
 		iconP1.scale.set(p1Lerp, p1Lerp);
 		iconP2.scale.set(p2Lerp, p2Lerp);
@@ -2795,28 +2798,13 @@ class PlayState extends MusicBeatState
 		healthLerp = FlxMath.lerp(health, healthLerp, CDevConfig.utils.bound(1 - (elapsed * 15), 0, 1));
 
 		if ((!playingLeftSide ? health > 2 : health < 0)) health = (!playingLeftSide ? 2 : 0);
+		
+		var hbp = healthBarPercent; //short
+		var curP1Icon:Int = (hbp > 80 ? (iconP1.hasWinningIcon ? 2 : 0) : (hbp < 20 ? 1 : 0));
+		var curP2Icon:Int = (hbp < 20 ? (iconP2.hasWinningIcon ? 2 : 0) : (hbp > 80 ? 1 : 0));
 
-		if (healthBarPercent < 20)
-		{
-			if (iconP2.hasWinningIcon)
-				iconP2.changeFrame(2);
-
-			iconP1.changeFrame(1);
-		}
-
-		if (healthBarPercent > 80)
-		{
-			if (iconP1.hasWinningIcon)
-				iconP1.changeFrame(2);
-
-			iconP2.changeFrame(1);
-		}
-
-		if (healthBarPercent > 20 && healthBarPercent < 80)
-		{
-			iconP1.changeFrame(0);
-			iconP2.changeFrame(0);
-		}
+		iconP1.changeFrame(curP1Icon);
+		iconP2.changeFrame(curP2Icon);
 	}
 
 	/**Base Game Cutscene's update function.**/
@@ -4882,10 +4870,6 @@ class PlayState extends MusicBeatState
 			resyncVocals();
 		}
 
-		if (dad.curCharacter == 'spooky' && curStep % 4 == 2)
-		{
-			// dad.dance();
-		}
 		switch (curSong.toLowerCase())
 		{
 			case 'stress':
@@ -4933,8 +4917,6 @@ class PlayState extends MusicBeatState
 			if (SONG.notes[Math.floor(curStep / 16)].changeBPM)
 			{
 				Conductor.changeBPM(SONG.notes[Math.floor(curStep / 16)].bpm);
-				// if (songSpeed != 1)
-				//	Conductor.updateBPMBasedOnSongSpeed(SONG.notes[Math.floor(curStep / 16)].bpm, songSpeed);
 				FlxG.log.add('CHANGED BPM!');
 			}
 		}
@@ -4976,12 +4958,12 @@ class PlayState extends MusicBeatState
 
 		zoomIcon();
 
-		if (!gf.animation.curAnim.name.startsWith('sing'))
+		if (!gf.curAnimStartsWith("sing"))
 		{
 			gf.dance();
 		}
 
-		if (!dad.animation.curAnim.name.startsWith('sing'))
+		if (!dad.curAnimStartsWith("sing"))
 		{
 			var altIdle:Bool = false;
 			if (SONG.notes[Math.floor(curStep / 16)] != null)
@@ -4990,7 +4972,7 @@ class PlayState extends MusicBeatState
 			}
 			dad.dance(altIdle, curBeat);
 		}
-		if (!boyfriend.animation.curAnim.name.startsWith("sing"))
+		if (!boyfriend.curAnimStartsWith("sing"))
 		{
 			var altIdle:Bool = false;
 			if (SONG.notes[Math.floor(curStep / 16)] != null)

@@ -270,6 +270,11 @@ class Character extends SpriteStage
 		executeFunc("postUpdate", [elapsed]);
 	}
 
+	public function curAnimStartsWith(prefix:String):Bool {
+		if (animation.curAnim == null) return false;
+		return animation.curAnim.name.startsWith(prefix);
+	}
+
 	private var danced:Bool = false;
 
 	/**

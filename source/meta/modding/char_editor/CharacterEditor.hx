@@ -68,6 +68,7 @@ class CharacterEditor extends meta.states.MusicBeatState
 	var fromPlayState:Bool = false;
 	var camFollow:FlxObject;
 
+	var healthBar:FlxSprite;
 	var healthBarBG:FlxSprite;
 	var healthIcon:HealthIcon;
 
@@ -448,6 +449,10 @@ class CharacterEditor extends meta.states.MusicBeatState
 		healthBarBG.antialiasing = CDevConfig.saveData.antialiasing;
 		add(healthBarBG);
 
+		healthBar = new FlxSprite(healthBarBG.x+2, healthBarBG.y+2).makeGraphic(Std.int(healthBarBG.width-4), Std.int(healthBarBG.height-4),FlxColor.WHITE);
+		healthBar.antialiasing = CDevConfig.saveData.antialiasing;
+		add(healthBar);
+
 		healthIcon = new HealthIcon(charJSON.iconName, false);
 		add(healthIcon);
 
@@ -456,14 +461,15 @@ class CharacterEditor extends meta.states.MusicBeatState
 		updateHealthBarDisplay();
 
 		healthBarBG.cameras = [camHUD];
+		healthBar.cameras = [camHUD];
 		healthIcon.cameras = [camHUD];
 	}
 
 	function updateHealthBarDisplay(updateHealthIconToo:Bool = false)
 	{
-		if (healthBarBG != null && healthIcon != null)
+		if (healthBar != null && healthIcon != null)
 		{
-			healthBarBG.color = FlxColor.fromRGB(charJSON.healthBarColor[0], charJSON.healthBarColor[1], charJSON.healthBarColor[2]);
+			healthBar.color = FlxColor.fromRGB(charJSON.healthBarColor[0], charJSON.healthBarColor[1], charJSON.healthBarColor[2]);
 			if (updateHealthIconToo)
 				healthIcon.changeDaIcon(charJSON.iconName);
 		}

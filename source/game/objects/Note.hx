@@ -31,6 +31,7 @@ class Note extends FlxSprite
 	public var strumTime:Float = 0;
 
 	public var mustPress:Bool = false;
+	public var rawNoteData:Int = 0; //used in chart editor
 	public var noteData:Int = 0;
 	public var canBeHit:Bool = false;
 	public var tooLate:Bool = false;
@@ -143,6 +144,13 @@ class Note extends FlxSprite
 			if (noteType == "No Animation")
 				noAnim = true;
 		}
+	}
+
+	public function disableScript(){
+		if (script == null) return;
+		script.destroy();
+		script = null;
+		gotScript = false;
 	}
 
 	public function initialize(){
@@ -304,7 +312,7 @@ class Note extends FlxSprite
 	function calculateNoteStepHeight()
 	{
 		if (!isTesting)
-			noteStepHeight = (((0.45 * Conductor.stepCrochet)) * FlxMath.roundDecimal(CDevConfig.saveData.scrollSpeed == 1 ? PlayState.SONG.speed : CDevConfig.saveData.scrollSpeed,
+			noteStepHeight = (((0.45 * Conductor.stepCrochet)) * FlxMath.roundDecimal(CDevConfig.saveData.scrollSpeed == 1 && PlayState.SONG != null ? PlayState.SONG.speed : CDevConfig.saveData.scrollSpeed,
 				2));
 	}
 

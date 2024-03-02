@@ -13,6 +13,7 @@ class DiscordClient
 {
 	public static var initialized:Bool = false;
 	public static var RPC_DATA:DiscordJson = null;
+	public static var error:Bool = false;
 	#if DISCORD_RPC
 	public function new()
 	{
@@ -28,6 +29,7 @@ class DiscordClient
 
 		while (true)
 		{
+			if (error) return;
 			DiscordRpc.process();
 			sleep(2);
 			// trace("Discord Client Update");
@@ -53,6 +55,7 @@ class DiscordClient
 
 	static function onError(_code:Int, _message:String)
 	{
+		error = true;
 		trace('Error! $_code : $_message');
 	}
 

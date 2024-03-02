@@ -387,6 +387,7 @@ class Paths
 			'data/stages',
 			'data/weeks',
 			'data/fonts',
+			'data/game',
 			'images', // IMAGES FOLDER
 			'images/characters',
 			'images/icons/',
@@ -398,21 +399,30 @@ class Paths
 			'events',
 			'notes',
 			'scripts',
-			'scripts/modules',
+			'scripts/modules', //wip
 			'shaders',
 			#if USE_VIDEOS 'videos', #end
 			'sounds',
 			'music',
 			'songs'
 		];
-
+		
 		// path, filename, data
-		// might finish this later.
 		var txtFiles:Array<Dynamic> = [
 			[
 				'',
 				'credits.txt',
 				'--Put your custom credits here\n--Credits should be on this format: Name::Desc::Color::Link\n--Credits title should be on this format: Name\n--"Color" should be on hex format (ex: 0xFF000000, rgba)'
+			], 
+			[
+				"data/game/",
+				"Discord.json",
+				Json.stringify(CDevConfig.utils.getTemplate(DISCORD))
+			],
+			[
+				'',
+				'songList.txt',
+				''
 			]
 		];
 		for (n in dumbFolders)
@@ -423,10 +433,10 @@ class Paths
 
 		for (content in txtFiles)
 		{
-			File.saveContent(path + content[0] + content[1], content[2]);
+			var paeaeath:String = path + content[0] + content[1];
+			if (FileSystem.exists(paeaeath)) continue;
+			File.saveContent(paeaeath, content[2]);
 		}
-
-		File.saveContent(path + 'songList.txt', ''); // prevents crash when installing a mod
 	}
 
 	inline static public function modData()

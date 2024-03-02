@@ -1,5 +1,7 @@
 package meta.modding.song_editor;
 
+import meta.states.LoadingState;
+import meta.states.PlayState;
 import meta.modding.chart_editor.ChartingState;
 import haxe.Json;
 import game.cdev.CDevPopUp;
@@ -277,64 +279,86 @@ class SongEditor extends MusicBeatState
 		{
 			var allow:Bool = true;
 			var errors:String = "";
-
+			
+			function addError(errorMessage:String):Void {
+				allow = false;
+				errors += "\n- " + errorMessage;
+			}
+			
 			if (check_useVocal.checked && paths_songVoic == "") {
-				allow = false;
+				addError("Using voices, but no voices path were provided.");
 				label_songVoic.color = FlxColor.RED;
-				errors += "\n- Using voices, but no voices path were provided.";
 			}
-
+			
 			if (!FileSystem.exists(paths_songInst)) {
-				allow = false;
-				errors += "\n- Inst file doesn't exist from the provided path.";
+				addError("Inst file doesn't exist from the provided path.");
 			}
-
-			if (!FileSystem.exists(paths_songVoic)) {
-				allow = false;
-				errors += "\n- Voice file doesn't exist from the provided path.";
+			
+			if (check_useVocal.checked && !FileSystem.exists(paths_songVoic)) {
+				addError("Voice file doesn't exist from the provided path.");
 			}
-
+			
 			if (CDevConfig.utils.containsBlockedSymbol(input_songName.text) 
 				|| CDevConfig.utils.isBlockedWord(input_songName.text)) {
-				allow = false;
-				errors += "\n- Used a blocked symbol / blocked word that's reserved by Windows.";
+				addError("Used a blocked symbol / blocked word that's reserved by Windows.");
 			}
-
+			
 			if (allow){
 				var songsfolder:String = Paths.modsPath + "/" + Paths.currentMod + "/songs/";
 				var chartfolder:String = Paths.modsPath + "/" + Paths.currentMod + "/data/charts/";
-				var curSong:String = songsfolder + input_songName.text+"/";
-				var curSongChart:String = chartfolder + input_songName.text+"/";
-				File.copy(paths_songInst, curSong + "Inst.ogg");
-				File.copy(paths_songVoic, curSong + "Voices.ogg");
-
+				var curSong:String = songsfolder + input_songName.text + "/";
+				var curSongChart:String = chartfolder + input_songName.text + "/";
+			
+				var filePaths = {
+					inst: Path.normalize(paths_songInst),
+					voices: Path.normalize(paths_songVoic),
+					instMod: Path.normalize(Sys.getCwd() + curSong + "Inst.ogg"),
+					voicesMod: Path.normalize(Sys.getCwd() + curSong + "Voices.ogg"),
+				};
+			
+				if (!FileSystem.exists(curSong))
+					FileSystem.createDirectory(curSong);
+			
+				if (!FileSystem.exists(curSongChart))
+					FileSystem.createDirectory(curSongChart);
+			
+				File.copy(filePaths.inst, filePaths.instMod);
+				if (check_useVocal.checked) File.copy(filePaths.voices, filePaths.voicesMod);
+			
 				var json = {
 					"song": currentData
 				};
-		
+			
 				var data:String = Json.stringify(json, "\t");
-				File.saveContent(curSongChart,data);
-
+				File.saveContent(curSongChart + "/" + input_songName.text + ".json", data);
+			
 				if (check_openEditor.checked) {
-					FlxG.switchState(new ChartingState(currentData));
+					PlayState.isStoryMode = false;
+					PlayState.storyPlaylist = [input_songName.text];
+					PlayState.storyDifficulty = 1;
+					PlayState.storyWeek = 1;
+					PlayState.fromMod = Paths.currentMod;
+					PlayState.difficultyName = "hard";
+					leave(new ChartingState(currentData), true);
 				} else {
 					CDevConfig.utils.openFolder(songsfolder, true);
 					leave();
 				}
 			} else {
 				var butt:Array<PopUpButton> = [
-					{text: "OK", callback: closeSubState}
+					{ text: "OK", callback: closeSubState }
 				];
-				var text:String = "An error has occured, try fixing these errors:" + errors;
+				var text:String = "An error has occurred, try fixing these errors:" + errors;
 				openSubState(new CDevPopUp("Error", text, butt, false, true));
 				FlxG.sound.play(Paths.sound("cancelMenu"));
 			}
+			
 		}, true, false, 0xFF004DC0);
 		createAll.resize(150, 25);
 		createAll.setLabelFormat(null, 10, FlxColor.WHITE);
 		add(createAll);
 
-		check_openEditor = new FlxUICheckBox(createAll.x, createAll.y - 18,null,null,"Open Chart Editor", 150, [], ()->{
+		check_openEditor = new FlxUICheckBox(createAll.x, createAll.y - 22,null,null,"Open Chart Editor", 150, [], ()->{
 
 		});
 		add(check_openEditor);
@@ -389,12 +413,20 @@ class SongEditor extends MusicBeatState
 		}
 	}
 
-	function leave() {
+	function leave(?State:Dynamic, ?special:Bool = false) {
+		var e:Dynamic = State;
+		if (e == null){
+			e = new ModdingScreen();
+		}
 		FlxTween.tween(FlxG.camera, {zoom: 0.9, alpha:0}, 1, {ease:FlxEase.sineInOut});
 		stopPreviews();
 		exit = true;
 		new FlxTimer().start(1.1, (t:FlxTimer) -> {
-			FlxG.switchState(new ModdingScreen());
+			if (special){
+				LoadingState.loadAndSwitchState(State, false);
+			} else{ 
+				FlxG.switchState(State);
+			}
 		});
 
 		FlxG.mouse.visible = false;

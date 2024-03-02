@@ -275,7 +275,7 @@ class NewModState extends meta.states.MusicBeatState
 						{text: "Cancel", callback: closeSubState}
 					];
 					var text:String = "Failed to create \"" + modNameTrimmed + "\": a mod with the same name already exists." +
-									"\n\nIf you wanted to update the mod's directories, press \"Update\"; This action will reset your mod.json, songList.txt, and credits.txt.";
+									"\n\nIf you wanted to update the mod's directories, press \"Update\".";
 					openSubState(new CDevPopUp("Error", text, butt, false, true));
 					FlxG.sound.play(game.Paths.sound('cancelMenu'));
 				}
@@ -292,7 +292,6 @@ class NewModState extends meta.states.MusicBeatState
 
 	function createMod(){
 		modFile = {
-						
 			modName: input_modName.text.trim(),
 			modDesc: input_modDesc.text.trim(),
 			modVer: CDevConfig.engineVersion,

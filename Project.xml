@@ -52,6 +52,8 @@
 	<define name="ALLOW_MODS"/><!-- if="desktop"-->
 	<define name="CRASH_HANDLER" if="windows || android"/>
 	<define name="USE_VIDEOS" if="cpp"/>
+	<define name="DARK_MODE_WINDOW"/>
+	
 	<haxelib name="DISCORD_RPC" if="desktop"/>
 
 	<section if="USE_VIDEOS">
