@@ -2687,11 +2687,14 @@ class PlayState extends MusicBeatState
 				vocals.pause();
 
 				chartingMode = true;
-				FlxG.switchState(new meta.modding.chart_editor.ChartingState());
+				if (FlxG.keys.pressed.SHIFT)
+					FlxG.switchState(new meta.modding.chart_editor.ChartEditor(SONG));
+				else
+					FlxG.switchState(new meta.modding.chart_editor.ChartingState());
 
 				#if desktop
 				if (Main.discordRPC)
-					DiscordClient.changePresence("Charting Screen", null, null, true);
+					DiscordClient.changePresence("Chart Editor", null, null, true);
 				#end
 			}
 		}

@@ -98,10 +98,10 @@ class CDevFPSMem extends TextField
 
 		game.cdev.CDevConfig.elapsedGameTime += FlxG.elapsed * 1000;
 
-		/*if (bitmap != null)
+			/*if (bitmap != null)
 			Main.instance.removeChild(bitmap);
 
-		bitmap = ImageOutline.renderImage(this, 1, 0x000000, 1, true);
+	bitmap = ImageOutline.renderImage(this, 1, 0x000000, 1, true);
 		if (bitmap == null)
 			return;
 

@@ -447,12 +447,12 @@ class CharacterEditor extends meta.states.MusicBeatState
 	{
 		healthBarBG = new FlxSprite(30, FlxG.height - 78).loadGraphic(Paths.image("healthBar", 'shared'));
 		healthBarBG.antialiasing = CDevConfig.saveData.antialiasing;
-		add(healthBarBG);
-
+		
 		healthBar = new FlxSprite(healthBarBG.x+2, healthBarBG.y+2).makeGraphic(Std.int(healthBarBG.width-4), Std.int(healthBarBG.height-4),FlxColor.WHITE);
 		healthBar.antialiasing = CDevConfig.saveData.antialiasing;
 		add(healthBar);
-
+		add(healthBarBG);
+		
 		healthIcon = new HealthIcon(charJSON.iconName, false);
 		add(healthIcon);
 
