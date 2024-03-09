@@ -31,12 +31,15 @@ class Note extends FlxSprite
 	public var strumTime:Float = 0;
 
 	public var mustPress:Bool = false;
-	public var rawNoteData:Int = 0; //used in chart editor
 	public var noteData:Int = 0;
 	public var canBeHit:Bool = false;
 	public var tooLate:Bool = false;
 	public var wasGoodHit:Bool = false;
 	public var prevNote:Note;
+
+	//chart editor stuffs
+	public var rawNoteData:Int = 0;
+	public var noteStep:Int = 0;
 
 	public var isPixelSkinNote:Bool = false;
 

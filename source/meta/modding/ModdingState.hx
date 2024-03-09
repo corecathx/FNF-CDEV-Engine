@@ -1,5 +1,7 @@
 package meta.modding;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import meta.substates.WebviewSubstate;
 import openfl.Lib;
 import game.Controls.Control;

@@ -1,5 +1,8 @@
 package meta.modding.chart_editor;
 
+import lime.media.AudioBuffer;
+import haxe.io.Bytes;
+import openfl.geom.Rectangle;
 import flixel.addons.display.FlxSliceSprite;
 import game.cdev.engineutils.Discord.DiscordClient;
 import flixel.group.FlxSpriteGroup;
@@ -150,6 +153,7 @@ class ChartingState extends MusicBeatState
 	var selectingSprite:FlxUI9SliceSprite;
 
 	var gridGroups:FlxSpriteGroup;
+	var waveformSprite:FlxSprite;
 
 	public function new(?chart:SwagSong){
 		super();
@@ -177,6 +181,9 @@ class ChartingState extends MusicBeatState
 		gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * 16);
 		gridBG.alpha = 0.7;
 		add(gridBG);
+
+		waveformSprite = new FlxSprite().makeGraphic(1,1,0xFFFFFFFF);
+		add(waveformSprite);
 
         /*gridGroups = new FlxSpriteGroup();
         gridGroups.alpha = 0.7;
@@ -809,6 +816,9 @@ class ChartingState extends MusicBeatState
 	var metronomeActive:Bool = false;
 	var speedMod:Float = 1;
 
+	var usingInstWave:Bool = false;
+	var usingVoicWave:Bool = false;
+
 	function addChartingUI():Void
 	{
 		var tab_group_charting = new FlxUI(null, UI_box);
@@ -902,6 +912,33 @@ class ChartingState extends MusicBeatState
 			rightStrum.visible = check_show_strum.checked;
 		};
 
+		var check_enableInstWave = new FlxUICheckBox(10, 230+80, null, null, "Instrumental Waveform", 100);
+		check_enableInstWave.checked = false;
+
+
+		var check_enableVoicWave = new FlxUICheckBox(140, 230+80, null, null, "Vocals Waveform", 100);
+		check_enableVoicWave.checked = false;
+
+		check_enableInstWave.callback = function()
+		{
+			usingInstWave = check_enableInstWave.checked;
+
+			usingVoicWave = false;
+			check_enableVoicWave.checked = false;
+			updateWaveform();
+		};
+
+		check_enableVoicWave.callback = function()
+		{
+			usingVoicWave = check_enableVoicWave.checked;
+
+			usingInstWave = false;
+			check_enableInstWave.checked = false;
+			updateWaveform();
+		};
+
+		
+
 		tab_group_charting.add(check_mute_inst);
 		tab_group_charting.add(check_mute_vocal);
 		tab_group_charting.add(sliderSpeed);
@@ -910,6 +947,8 @@ class ChartingState extends MusicBeatState
 		tab_group_charting.add(check_mute_hitsound);
 		tab_group_charting.add(check_downscroll);
 		tab_group_charting.add(check_metro);
+		tab_group_charting.add(check_enableInstWave);
+		tab_group_charting.add(check_enableVoicWave);
 		tab_group_charting.add(stepperInstVol);
 		tab_group_charting.add(stepperVoicesVol);
 		tab_group_charting.add(vvText);
@@ -1439,14 +1478,17 @@ class ChartingState extends MusicBeatState
 					{
 						if (FlxG.mouse.overlaps(note))
 						{
-							if (FlxG.keys.pressed.CONTROL)
-							{
-								selectNote(note);
+							if (!selectedNotes.contains(note)){
+								if (FlxG.keys.pressed.CONTROL)
+									{
+										selectNote(note);
+									}
+									else
+									{
+										deleteNote(note);
+									}
 							}
-							else
-							{
-								deleteNote(note);
-							}
+
 						}
 					});
 				}
@@ -1691,14 +1733,9 @@ class ChartingState extends MusicBeatState
 		handleNoteSelections(elapsed);
 	}
 	var dragStartPos:FlxPoint = new FlxPoint();
+	var overlavvin:Bool = false;
 	function handleNoteSelections(elapsed:Float){
-		if (FlxG.mouse.justPressed){
-			selectedNotes = [];
-			for (note in curRenderedNotes.members){
-				if (note == null) continue;
-				note.color = 0xFFFFFFFF;
-			}
-		}
+		if (editingEvents) return;
 		var mousePos = FlxG.mouse.getWorldPosition();
 		if (FlxG.mouse.justPressed && FlxG.keys.pressed.CONTROL){
 			selectedNotes = [];
@@ -1740,8 +1777,40 @@ class ChartingState extends MusicBeatState
 				note.color = 0xFFFFFFFF;
 				if (!selectedNotes.contains(note)) continue;
 				note.color = 0xFF3F3F3F;
-			}
 
+				overlavvin = ((FlxG.mouse.overlaps(gridBG) || FlxG.mouse.overlaps(note)) && !FlxG.keys.pressed.CONTROL);
+			}
+			if (overlavvin){
+				if (FlxG.mouse.justPressed){
+					dragStartPos.set(mousePos.x,mousePos.y);
+				}
+				if (FlxG.mouse.pressed){
+					for (i in selectedNotes){
+						i.setPosition(i.rawNoteData * GRID_SIZE + (mousePos.x-dragStartPos.x),((i.strumTime-sectionStartTime())/Conductor.stepCrochet) * GRID_SIZE + (mousePos.y - dragStartPos.y));
+						i.x = FlxMath.bound(i.x, 0, (GRID_SIZE * 8));
+					}
+				}
+				if (FlxG.mouse.justReleased){
+					var newNotes:Array<Dynamic> = [];
+					for (i in selectedNotes){
+						var newNoteData:Int = Math.floor(i.x / GRID_SIZE) % 8;
+						var newStrumTime:Float = getStrumTime(((Math.floor(i.y/GRID_SIZE)*GRID_SIZE) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps)))+sectionStartTime();
+						var newLength:Float = i.sustainLength; //bruh
+						var noteType:String = i.noteType;
+						var noteArgs:Array<String> = i.noteArgs;
+						var boo:Array<Dynamic> = [newStrumTime, newNoteData, newLength, noteType,noteArgs];
+						trace(boo);
+						newNotes.push(boo);
+						deleteNote(i, false);
+					}
+					selectedNotes = [];
+					for (i in newNotes){
+						_song.notes[curSection].sectionNotes.push(i);
+					}
+					updateGrid(true);
+				}
+			}
+	
 			if (FlxG.keys.justPressed.DELETE){
 				for (note in curRenderedNotes.members){
 					if (note == null) continue;
@@ -1752,6 +1821,208 @@ class ChartingState extends MusicBeatState
 				updateGrid(true);
 			}
 		}
+
+		if (!FlxG.mouse.overlaps(gridBG) && FlxG.mouse.justPressed){
+			selectedNotes = [];
+			for (note in curRenderedNotes.members){
+				if (note == null) continue;
+				note.color = 0xFFFFFFFF;
+			}
+		}
+	}
+
+	// CODE ORIGINALLY MADE BY PSYCH ENGINE DEVS... i borrowed it for a bit
+	var waveformPrinted:Bool = true;
+	var wavData:Array<Array<Array<Float>>> = [[[0], [0]], [[0], [0]]];
+
+	var lastWaveformHeight:Int = 0;
+	function updateWaveform() {
+		#if desktop
+		if(waveformPrinted) {
+			var width:Int = Std.int(GRID_SIZE * 8);
+			var height:Int = Std.int(gridBG.height);
+			if(lastWaveformHeight != height && waveformSprite.pixels != null)
+			{
+				waveformSprite.pixels.dispose();
+				waveformSprite.pixels.disposeImage();
+				waveformSprite.makeGraphic(width, height, 0x00FFFFFF);
+				lastWaveformHeight = height;
+			}
+			waveformSprite.pixels.fillRect(new Rectangle(0, 0, width, height), 0x00FFFFFF);
+		}
+		waveformPrinted = false;
+
+		if (!usingInstWave && !usingVoicWave) {
+			//trace('Epic fail on the waveform lol');
+			return;
+		}
+
+		wavData[0][0] = [];
+		wavData[0][1] = [];
+		wavData[1][0] = [];
+		wavData[1][1] = [];
+
+		var steps:Int = Math.round(_song.notes[curSection].lengthInSteps);
+		var st:Float = sectionStartTime();
+		var et:Float = st + (Conductor.stepCrochet * steps);
+
+		var sound:FlxSound = FlxG.sound.music;
+		if (usingVoicWave)
+			sound = vocals;
+		
+		@:privateAccess{
+			if (sound != null && sound._sound != null && sound._sound.__buffer != null) {
+				var bytes:Bytes = sound._sound.__buffer.data.toBytes();
+	
+				wavData = waveformData(
+					sound._sound.__buffer,
+					bytes,
+					st,
+					et,
+					1,
+					wavData,
+					Std.int(gridBG.height)
+				);
+			}
+		}
+
+		// Draws
+		var gSize:Int = Std.int(GRID_SIZE * 8);
+		var hSize:Int = Std.int(gSize / 2);
+		var size:Float = 1;
+
+		var leftLength:Int = (wavData[0][0].length > wavData[0][1].length ? wavData[0][0].length : wavData[0][1].length);
+		var rightLength:Int = (wavData[1][0].length > wavData[1][1].length ? wavData[1][0].length : wavData[1][1].length);
+
+		var length:Int = leftLength > rightLength ? leftLength : rightLength;
+
+		for (index in 0...length)
+		{
+			var lmin:Float = FlxMath.bound(((index < wavData[0][0].length && index >= 0) ? wavData[0][0][index] : 0) * (gSize / 1.12), -hSize, hSize) / 2;
+			var lmax:Float = FlxMath.bound(((index < wavData[0][1].length && index >= 0) ? wavData[0][1][index] : 0) * (gSize / 1.12), -hSize, hSize) / 2;
+
+			var rmin:Float = FlxMath.bound(((index < wavData[1][0].length && index >= 0) ? wavData[1][0][index] : 0) * (gSize / 1.12), -hSize, hSize) / 2;
+			var rmax:Float = FlxMath.bound(((index < wavData[1][1].length && index >= 0) ? wavData[1][1][index] : 0) * (gSize / 1.12), -hSize, hSize) / 2;
+
+			waveformSprite.pixels.fillRect(new Rectangle(hSize - (lmin + rmin), index * size, (lmin + rmin) + (lmax + rmax), size), 0xFF003DE4);
+		}
+
+		waveformPrinted = true;
+		#end
+	}
+
+	function waveformData(buffer:AudioBuffer, bytes:Bytes, time:Float, endTime:Float, multiply:Float = 1, ?array:Array<Array<Array<Float>>>, ?steps:Float):Array<Array<Array<Float>>>
+	{
+		#if (lime_cffi && !macro)
+		if (buffer == null || buffer.data == null) return [[[0], [0]], [[0], [0]]];
+
+		var khz:Float = (buffer.sampleRate / 1000);
+		var channels:Int = buffer.channels;
+
+		var index:Int = Std.int(time * khz);
+
+		var samples:Float = ((endTime - time) * khz);
+
+		if (steps == null) steps = 1280;
+
+		var samplesPerRow:Float = samples / steps;
+		var samplesPerRowI:Int = Std.int(samplesPerRow);
+
+		var gotIndex:Int = 0;
+
+		var lmin:Float = 0;
+		var lmax:Float = 0;
+
+		var rmin:Float = 0;
+		var rmax:Float = 0;
+
+		var rows:Float = 0;
+
+		var simpleSample:Bool = true;//samples > 17200;
+		var v1:Bool = false;
+
+		if (array == null) array = [[[0], [0]], [[0], [0]]];
+
+		while (index < (bytes.length - 1)) {
+			if (index >= 0) {
+				var byte:Int = bytes.getUInt16(index * channels * 2);
+
+				if (byte > 65535 / 2) byte -= 65535;
+
+				var sample:Float = (byte / 65535);
+
+				if (sample > 0)
+					if (sample > lmax) lmax = sample;
+				else if (sample < 0)
+					if (sample < lmin) lmin = sample;
+
+				if (channels >= 2) {
+					byte = bytes.getUInt16((index * channels * 2) + 2);
+
+					if (byte > 65535 / 2) byte -= 65535;
+
+					sample = (byte / 65535);
+
+					if (sample > 0) {
+						if (sample > rmax) rmax = sample;
+					} else if (sample < 0) {
+						if (sample < rmin) rmin = sample;
+					}
+				}
+			}
+
+			v1 = samplesPerRowI > 0 ? (index % samplesPerRowI == 0) : false;
+			while (simpleSample ? v1 : rows >= samplesPerRow) {
+				v1 = false;
+				rows -= samplesPerRow;
+
+				gotIndex++;
+
+				var lRMin:Float = Math.abs(lmin) * multiply;
+				var lRMax:Float = lmax * multiply;
+
+				var rRMin:Float = Math.abs(rmin) * multiply;
+				var rRMax:Float = rmax * multiply;
+
+				if (gotIndex > array[0][0].length) array[0][0].push(lRMin);
+					else array[0][0][gotIndex - 1] = array[0][0][gotIndex - 1] + lRMin;
+
+				if (gotIndex > array[0][1].length) array[0][1].push(lRMax);
+					else array[0][1][gotIndex - 1] = array[0][1][gotIndex - 1] + lRMax;
+
+				if (channels >= 2)
+				{
+					if (gotIndex > array[1][0].length) array[1][0].push(rRMin);
+						else array[1][0][gotIndex - 1] = array[1][0][gotIndex - 1] + rRMin;
+
+					if (gotIndex > array[1][1].length) array[1][1].push(rRMax);
+						else array[1][1][gotIndex - 1] = array[1][1][gotIndex - 1] + rRMax;
+				}
+				else
+				{
+					if (gotIndex > array[1][0].length) array[1][0].push(lRMin);
+						else array[1][0][gotIndex - 1] = array[1][0][gotIndex - 1] + lRMin;
+
+					if (gotIndex > array[1][1].length) array[1][1].push(lRMax);
+						else array[1][1][gotIndex - 1] = array[1][1][gotIndex - 1] + lRMax;
+				}
+
+				lmin = 0;
+				lmax = 0;
+
+				rmin = 0;
+				rmax = 0;
+			}
+
+			index++;
+			rows++;
+			if(gotIndex > steps) break;
+		}
+
+		return array;
+		#else
+		return [[[0], [0]], [[0], [0]]];
+		#end
 	}
 
 	function updateTheText()
@@ -2075,8 +2346,10 @@ class ChartingState extends MusicBeatState
 			remove(gridBlackLine);
 			gridBlackLine = new FlxSprite(gridBG.x + gridBG.width / 2).makeGraphic(2, Std.int(gridBG.height), FlxColor.BLACK);
 			add(gridBlackLine);
-		}
 
+
+		}
+		if (usingInstWave || usingVoicWave) updateWaveform();
 
 		var sectionInfo:Array<Dynamic> = _song.notes[curSection].sectionNotes;
 		var sectionEv:Array<Dynamic> = _song.notes[curSection].sectionEvents;
@@ -2115,6 +2388,7 @@ class ChartingState extends MusicBeatState
 			note.updateHitbox();
 			note.disableScript();
 			note.x = Math.floor(daNoteInfo * GRID_SIZE);
+			note.noteStep = Math.floor(Conductor.getStepByTime(daStrumTime));
 			note.y = Math.floor(getYfromStrum((daStrumTime - sectionStartTime()) % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps)));
 			curRenderedNotes.add(note);
 			//note.active = false;

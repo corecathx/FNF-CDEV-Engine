@@ -29,6 +29,8 @@ import flixel.text.FlxText;
 import meta.states.MusicBeatState;
 import meta.modding.ModdingScreen;
 
+using StringTools;
+
 class SongEditor extends MusicBeatState
 {
 	var bg:FlxSprite;
@@ -325,6 +327,11 @@ class SongEditor extends MusicBeatState
 				File.copy(filePaths.inst, filePaths.instMod);
 				if (check_useVocal.checked) File.copy(filePaths.voices, filePaths.voicesMod);
 			
+				currentData.bpm = stepr_songBPM.value;
+				currentData.speed = stepr_songSpeed.value;
+				currentData.song = input_songName.text.trim();
+				currentData.needsVoices = check_useVocal.checked;
+				
 				var json = {
 					"song": currentData
 				};

@@ -230,10 +230,15 @@ class RebindControls extends meta.substates.MusicBeatSubstate
 					}
 					if (FlxG.keys.justPressed.ESCAPE)
 					{
+						if (camTween != null) camTween.cancel();
 						var camHUD = FlxG.cameras.list[FlxG.cameras.list.length - 1];
 						camHUD.scroll.y = 0;
 						FlxG.sound.play(Paths.sound('cancelMenu'));
-						close();
+						tweenCam(false);
+						new FlxTimer().start(1, (ea)->{
+							close();
+						});
+
 					}
 				case 'input':
 					canNext = false;

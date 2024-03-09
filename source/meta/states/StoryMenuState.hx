@@ -79,7 +79,8 @@ class StoryMenuState extends MusicBeatState
 				Conductor.changeBPM(102);
 			}
 		}
-		persistentUpdate = persistentDraw = true;
+		persistentUpdate = false;
+		persistentDraw = true;
 
 		scoreText = new FlxText(10, 10, 0, "SCORE: 49324858", 36);
 		scoreText.setFormat("VCR OSD Mono", 32);
@@ -359,12 +360,15 @@ class StoryMenuState extends MusicBeatState
 	{
 		for (a in 0...grpWeekCharacters.members.length)
 		{
-			grpWeekCharacters.members[a].destroy();
-			grpWeekCharacters.members[a] = null;
-			//grpWeekCharacters.members[a].kill();
+			if (grpWeekCharacters.members[a] == null) continue;
+			grpWeekCharacters.members[a].kill();
+			grpWeekCharacters.remove(grpWeekCharacters.members[a]);
+			remove(grpWeekCharacters.members[a]);
 		}
 		for (b in 0...3)
 		{
+			trace("loading character " + b + "...\""+weekJSONs[curWeek][0].weekCharacters[b]+"\"");
+			if (weekJSONs[curWeek][0].weekCharacters[b] == "") continue;
 			var no:Bool = (b == 2);
 			grpWeekCharacters.add(new Character(weekJSONs[curWeek][0].charSetting[b].position[0], weekJSONs[curWeek][0].charSetting[b].position[1],
 				weekJSONs[curWeek][0].weekCharacters[b], no, true));

@@ -8,11 +8,12 @@ import lime.app.Application;
 import sys.thread.Thread;
 import webview.WebView;
 
-//todo: Fix game not responding after calling this substate
+//todo: Fix game not responding after calling this substatte
 class WebviewSubstate extends MusicBeatSubstate {
     var wv:WebView;
     var exit:Bool = false;
     public function new(url:String = "https://google.com/"){
+        FlxG.autoPause = true;
         super();
         var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
         bg.scale.set(1/FlxG.camera.zoom, 1/FlxG.camera.zoom);
@@ -32,9 +33,6 @@ class WebviewSubstate extends MusicBeatSubstate {
 
         Thread.createWithEventLoop(()->{
             if (exit) return;
-            if (FlxG.keys.justPressed.ESCAPE && !exit){
-                exit = true;
-            }
             wv.run();
         });
     }
@@ -54,5 +52,6 @@ class WebviewSubstate extends MusicBeatSubstate {
         wv.terminate();
         wv.destroy();
         exit = true;
+        FlxG.autoPause = CDevConfig.saveData.autoPause;
     }
 }

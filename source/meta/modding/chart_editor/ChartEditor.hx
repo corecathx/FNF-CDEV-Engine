@@ -48,6 +48,7 @@ import openfl.net.FileReference;
 using StringTools;
 
 // my attempt of making my own chart editor :))
+// corecat from the future: i hate this.
 class ChartEditor extends MusicBeatState {
     // Editor stuffs
     var grid_size:Int = 40;
