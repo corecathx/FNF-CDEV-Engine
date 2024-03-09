@@ -1,5 +1,6 @@
 package meta.states;
 
+import game.cdev.CDevPopUp.PopUpButton;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -424,6 +425,7 @@ class PlayState extends MusicBeatState
 			{
 				case 'stage':
 					{
+						Paths.setCurrentLevel("week1");
 						defaultCamZoom = 0.9;
 						curStage = 'stage';
 						var bg:FlxSprite = new FlxSprite(-600, -200).loadGraphic(Paths.image('stageback'));
@@ -451,6 +453,7 @@ class PlayState extends MusicBeatState
 					}
 				case 'spooky':
 					{
+						Paths.setCurrentLevel("week2");
 						curStage = 'spooky';
 						halloweenLevel = true;
 
@@ -472,6 +475,7 @@ class PlayState extends MusicBeatState
 					}
 				case 'philly':
 					{
+						Paths.setCurrentLevel("week3");
 						curStage = 'philly';
 
 						var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('philly/sky', 'week3'));
@@ -514,6 +518,7 @@ class PlayState extends MusicBeatState
 					}
 				case 'limo':
 					{
+						Paths.setCurrentLevel("week4");
 						curStage = 'limo';
 						defaultCamZoom = 0.90;
 
@@ -561,6 +566,7 @@ class PlayState extends MusicBeatState
 					}
 				case 'mall':
 					{
+						Paths.setCurrentLevel("week5");
 						curStage = 'mall';
 
 						defaultCamZoom = 0.80;
@@ -617,6 +623,7 @@ class PlayState extends MusicBeatState
 					}
 				case 'mallEvil':
 					{
+						Paths.setCurrentLevel("week5");
 						curStage = 'mallEvil';
 						var bg:FlxSprite = new FlxSprite(-400, -500).loadGraphic(Paths.image('christmas/evilBG', 'week5'));
 						bg.antialiasing = CDevConfig.saveData.antialiasing;
@@ -637,6 +644,7 @@ class PlayState extends MusicBeatState
 					}
 				case 'school':
 					{
+						Paths.setCurrentLevel("week6");
 						config.uiTextFont = 'Pixel Arial 11 Bold';
 						isPixel = true;
 						curStage = 'school';
@@ -706,6 +714,7 @@ class PlayState extends MusicBeatState
 					}
 				case 'schoolEvil':
 					{
+						Paths.setCurrentLevel("week6");
 						config.uiTextFont = 'Pixel Arial 11 Bold';
 						isPixel = true;
 						curStage = 'schoolEvil';
@@ -726,6 +735,7 @@ class PlayState extends MusicBeatState
 					}
 				case 'tank':
 					{
+						Paths.setCurrentLevel("week7");
 						curStage = 'tank';
 						defaultCamZoom = 0.9;
 						var sky:FlxSprite = new FlxSprite(-400, -400).loadGraphic(Paths.image('tankSky', 'week7'));
@@ -2658,16 +2668,25 @@ class PlayState extends MusicBeatState
 				persistentUpdate = false;
 				persistentDraw = true;
 				paused = true;
+				FlxG.camera.zoom = 1;
+				defaultCamZoom = 1;
 				#if sys
 				if (!FileSystem.exists(Paths.modChar(player)) && !FileSystem.exists(Paths.char(player)))
 				{
-					var mes = "Uh oh, we can't find a following character json: "
+					var butt:Array<PopUpButton> = [
+						{
+							text:"OK",
+							callback:()->{
+								FlxG.switchState(new CharacterEditor(true, true, playerIndex == 1));
+							}
+						}
+					];
+					var mes = "Can't find character json \""
 						+ player
-						+ ".json\nMake sure that the character json exists or create a new character on this engine's modding state!";
-					openSubState(new MissingFileMessage(mes, 'Error', function()
-					{
-						FlxG.switchState(new CharacterEditor(true, true, playerIndex == 1));
-					}));
+						+ ".json\"\nMake sure that the json file exists or create a new character on this engine's mod editor menu!";
+					var eak = new CDevPopUp("Character Not Found", mes, butt, false, true);
+					eak.cameras=[camHUD];
+					openSubState(eak);
 				}
 				else
 				{

@@ -230,15 +230,16 @@ class RebindControls extends meta.substates.MusicBeatSubstate
 					}
 					if (FlxG.keys.justPressed.ESCAPE)
 					{
-						if (camTween != null) camTween.cancel();
+						if (camTween != null)
+							camTween.cancel();
 						var camHUD = FlxG.cameras.list[FlxG.cameras.list.length - 1];
 						camHUD.scroll.y = 0;
 						FlxG.sound.play(Paths.sound('cancelMenu'));
 						tweenCam(false);
-						new FlxTimer().start(1, (ea)->{
+						new FlxTimer().start(1, (ea) ->
+						{
 							close();
 						});
-
 					}
 				case 'input':
 					canNext = false;
@@ -342,17 +343,25 @@ class RebindControls extends meta.substates.MusicBeatSubstate
 									FlxG.sound.play(Paths.sound('scrollMenu'));
 								}
 							}
-						} else{
+						}
+						else
+						{
 							n.alpha = 1;
 						}
 					});
 
 					if (FlxG.keys.justPressed.ESCAPE)
 					{
+						if (camTween != null)
+							camTween.cancel();
 						var camHUD = FlxG.cameras.list[FlxG.cameras.list.length - 1];
 						camHUD.scroll.y = 0;
 						FlxG.sound.play(Paths.sound('cancelMenu'));
-						close();
+						tweenCam(false);
+						new FlxTimer().start(1, (ea) ->
+						{
+							close();
+						});
 					}
 				case 'input':
 					canNext = false;
@@ -371,17 +380,6 @@ class RebindControls extends meta.substates.MusicBeatSubstate
 
 				case 'wait':
 					/*if (FlxG.keys.justPressed.ESCAPE)
-					{
-						status = "select";
-						FlxG.sound.play(Paths.sound('confirmMenu'));
-						for (i in otherUI.members)
-						{
-							i.changeSel(0);
-						}
-					}
-					else if (FlxG.keys.justPressed.ENTER)
-					{
-						if (allowedToPress)
 						{
 							status = "select";
 							FlxG.sound.play(Paths.sound('confirmMenu'));
@@ -390,8 +388,20 @@ class RebindControls extends meta.substates.MusicBeatSubstate
 								i.changeSel(0);
 							}
 						}
-					}
-					else */if (FlxG.keys.justPressed.ANY)
+						else if (FlxG.keys.justPressed.ENTER)
+						{
+							if (allowedToPress)
+							{
+								status = "select";
+								FlxG.sound.play(Paths.sound('confirmMenu'));
+								for (i in otherUI.members)
+								{
+									i.changeSel(0);
+								}
+							}
+						}
+						else */
+					if (FlxG.keys.justPressed.ANY)
 					{
 						FlxG.sound.play(Paths.sound('confirmMenu'));
 						addKey(FlxG.keys.getIsDown()[0].ID.toString(), true);
@@ -517,11 +527,14 @@ class RebindControls extends meta.substates.MusicBeatSubstate
 			var parent:RebindText = otherUI.members[curSelected];
 
 			if (allowBlackList)
-				for (x in blacklist) notAllowed.push(x);
+				for (x in blacklist)
+					notAllowed.push(x);
 
-			for (x in 0...dataList.length){
+			for (x in 0...dataList.length)
+			{
 				var oK = dataList[x];
-				if (oK == r){
+				if (oK == r)
+				{
 					swapKey = x;
 					dataList[x] = null;
 				}
@@ -534,19 +547,25 @@ class RebindControls extends meta.substates.MusicBeatSubstate
 				}
 			}
 
-			if (allowBlackList) if (notAllowed.contains(r)){
-				dataList[parent.curSelected] = tempBind;
-				lastKey = r;
-				return;
-			}
+			if (allowBlackList)
+				if (notAllowed.contains(r))
+				{
+					dataList[parent.curSelected] = tempBind;
+					lastKey = r;
+					return;
+				}
 
 			lastKey = "";
 
-			if (shouldReturn){
-				if (swapKey != -1) dataList[swapKey] = tempBind;
+			if (shouldReturn)
+			{
+				if (swapKey != -1)
+					dataList[swapKey] = tempBind;
 				dataList[parent.curSelected] = r;
 				FlxG.sound.play(Paths.sound('scrollMenu'));
-			} else{
+			}
+			else
+			{
 				dataList[parent.curSelected] = tempBind;
 				lastKey = r;
 			}
@@ -574,7 +593,8 @@ class RebindControls extends meta.substates.MusicBeatSubstate
 			if (curSelected >= otherKeyBinds.length)
 				curSelected = 0;
 
-			if (otherUI.members[curSelected].isTitle) {
+			if (otherUI.members[curSelected].isTitle)
+			{
 				changeItem(_amount);
 				trace("skipped " + curSelected);
 			}
@@ -715,7 +735,8 @@ class RebindText extends FlxSpriteGroup
 			t.kill();
 		});
 
-		if (isTitle) return;
+		if (isTitle)
+			return;
 
 		for (d in 0...data.length)
 		{
@@ -746,7 +767,8 @@ class RebindText extends FlxSpriteGroup
 
 	public function changeSel(add:Int = 0)
 	{
-		if (isTitle) return;
+		if (isTitle)
+			return;
 		curSelected += add;
 
 		if (curSelected < 0)

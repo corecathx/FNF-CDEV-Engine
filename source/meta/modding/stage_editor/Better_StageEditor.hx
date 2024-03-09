@@ -1298,7 +1298,7 @@ class Better_StageEditor extends MusicBeatState
 			try
 			{
 				File.saveContent('$path.json', Json.stringify(__STAGE_JSON));
-				var t = new CDevPopUp("Info", "File saved sucessfully on:\n" + path + ".json", [
+				var t = new CDevPopUp("Info", "File saved sucessfully under your mod's /data/stages/ folder.", [
 					{
 						text: "OK",
 						callback: function()

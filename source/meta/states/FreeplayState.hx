@@ -40,7 +40,6 @@ import game.*;
 import game.cdev.VCRGrpText;
 import game.cdev.engineutils.Highscore;
 import game.cdev.MissingFileSubstate;
-import meta.substates.ResetScoreSubstate;
 
 using StringTools;
 
@@ -498,7 +497,9 @@ class FreeplayState extends MusicBeatState
 				// doing this on a update function since changing FlxText text property
 				// on a new thread somehow messes with the openfl's text engine
 				if (daText.text != currentText){
-					daText.text = currentText;
+					var percent:Float = FlxMath.roundDecimal((barValueLRP/cachingAmount)*100, 2)+2;
+					percent = FlxMath.bound(percent, 0, 100);
+					daText.text = currentText + " // " + percent + "%";
 					daText.screenCenter(X);
 				}
 			}
@@ -879,46 +880,59 @@ class FreeplayState extends MusicBeatState
 	var currentText:String;
 	function __updTxt(toThis:String){
 		currentText = toThis;
+		trace(currentText);
 	}
 	var characters:Array<Character> = [];
 	function doThreading(){
-		trace("=== Song Loading Thread start ===");
+		try {
+			trace("=== Song Loading Thread start ===");
 
-		//Character Caching
-		for (chr in [PlayState.SONG.player2,PlayState.SONG.player1,PlayState.SONG.gfVersion]){
-			__updTxt("Loading: Character - "+chr+"");
-			var tempChar:Character = new Character(0,0,chr);
-			tempChar.alpha = 0.00001;
-			add(tempChar);
-			characters.push(tempChar);
-			barValue++;
-		}
-
-		//Stage Caching
-		__updTxt("Loading: Stage - "+PlayState.SONG.stage);
-		new Stage(PlayState.SONG.stage, new PlayState(), true).createDaStage();
-		barValue++;
-
-		for (msc in [Paths.inst(PlayState.SONG.song),Paths.voices(PlayState.SONG.song)]){
-			__updTxt("Loading: Song Files");
-			if (msc != null) FlxG.sound.cache(msc);
-			barValue++;
-		}
-
-		__updTxt("Finished! Please Wait...");
-		for (i in characters){
-			if (i != null) remove(i);
-		}
-		new FlxTimer().start(1, function(hasd:FlxTimer)
-		{
-			if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
-			if (CDevConfig.saveData.smoothAF)
-			{
-				FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
+			//Character Caching
+			for (chr in [PlayState.SONG.player2,PlayState.SONG.player1,PlayState.SONG.gfVersion]){
+				__updTxt("Loading: Character - "+chr+"");
+				var tempChar:Character = new Character(0,0,chr);
+				tempChar.alpha = 0.00001;
+				add(tempChar);
+				characters.push(tempChar);
+				barValue++;
 			}
-
-			playSong();
-		});
+	
+			//Stage Caching
+			__updTxt("Loading: Stage - "+PlayState.SONG.stage);
+			new Stage(PlayState.SONG.stage, new PlayState(), true).createDaStage();
+			barValue++;
+	
+			for (msc in [Paths.inst(PlayState.SONG.song),Paths.voices(PlayState.SONG.song)]){
+				__updTxt("Loading: Song Files");
+				if (msc != null) FlxG.sound.cache(msc);
+				barValue++;
+			}
+	
+			__updTxt("Finished! Please Wait...");
+			for (i in characters){
+				if (i != null) remove(i);
+			}
+			new FlxTimer().start(1, function(hasd:FlxTimer)
+			{
+				if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
+				if (CDevConfig.saveData.smoothAF)
+				{
+					FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
+				}
+	
+				playSong();
+			});
+		} catch(e){
+			trace("the hell happened? " + e.toString());
+			
+			var text:String = "Failed loading assets for this song! Error: \n\n"+e.toString();
+			var butt:Array<PopUpButton> = [
+				{text: "Ok", callback: function(){
+					FlxG.switchState(new FreeplayState());
+				}},
+			];
+			openSubState(new CDevPopUp("Error", text, butt,false, true));
+		}
 	}
 	function selectedSong() // look at how messy this function is
 	{
@@ -1028,19 +1042,7 @@ class FreeplayState extends MusicBeatState
 			});
 		});
 
-		try {
-			Thread.create(doThreading);
-		} catch(e){
-			trace("the hell happened? " + e.toString());
-			
-			var text:String = "Failed loading assets for this song! Error: \n\n"+e.toString();
-			var butt:Array<PopUpButton> = [
-				{text: "Ok", callback: function(){
-					FlxG.switchState(new MainMenuState());
-				}},
-			];
-			openSubState(new CDevPopUp("Error", text, butt,false, true));
-		}
+		Thread.create(doThreading);
 	}
 
 	function playSong()
@@ -1063,7 +1065,29 @@ class FreeplayState extends MusicBeatState
 
 	function resetScore()
 	{
-		openSubState(new ResetScoreSubstate(songs[curSelected].songName.toLowerCase(), CoolUtil.songDifficulties[curDifficulty - 1], curDifficulty));
+		var theSong:String = songs[curSelected].songName.toLowerCase();
+		var diffshit:Int = curDifficulty;
+		var theDiff:String = selectedDifficulty;
+		var weirdButt:Array<PopUpButton> = [
+			{
+				text:"Yes",
+				callback:()->{
+					game.cdev.engineutils.Highscore.resetSong(theSong, diffshit);
+					FlxG.sound.play(game.Paths.sound('confirmMenu'));
+					closeSubState();
+				}
+			},
+			{
+				text:"No",
+				callback:()->{
+					FlxG.sound.play(game.Paths.sound('cancelMenu'));
+					closeSubState();
+				}				
+			}
+		];
+		var watext:String = "You're about to reset your score on: " + theSong.toUpperCase() + " " + theDiff.toUpperCase() + ".\n" + "Confirm? (NOTE: THIS OPTION IS IRREVERSIBLE!)";
+		openSubState(new CDevPopUp("/!\\ Reset Score /!\\", watext, weirdButt,false, true));
+		//openSubState(new ResetScoreSubstate(, , curDifficulty));
 	}
 
 	function readDiff(clear:Bool = false)

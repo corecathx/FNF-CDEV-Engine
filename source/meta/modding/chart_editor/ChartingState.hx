@@ -289,14 +289,18 @@ class ChartingState extends MusicBeatState
 		\nCTRL + Left Click - Select an arrow.
 		\n[R] - Reset current section arrows.
 		\nALT + [R] - Clear all notes in this chart.
-		\nALT + SHIFT + [R] - Clear all events in this chart.";
+		\nALT + SHIFT + [R] - Clear all events in this chart.
+		\nHold CTRL + LMB - Toggle selection box
+		\nClick & Drag LMB - Change note sustain.
+		\n[DELETE] - Remove selected notes.
+		\nClick & Move Mouse - Rearrange selected notes.";
 
 		var splittedTextArray:Array<String> = daTipsText.split('\n');
 		for (i in 0...splittedTextArray.length)
 		{
 			var tipsTxt:FlxText = new FlxText(20, UI_box.y + UI_box.height + -30, 0, splittedTextArray[i], 16);
-			tipsTxt.y += i * 12;
-			tipsTxt.setFormat('VCR OSD Mono', 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+			tipsTxt.y += i * 8;
+			tipsTxt.setFormat('VCR OSD Mono', 12, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 			tipsTxt.scrollFactor.set();
 			tipsTxt.borderSize = 2;
 			add(tipsTxt);

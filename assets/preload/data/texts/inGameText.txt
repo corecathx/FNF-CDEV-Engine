@@ -12,7 +12,7 @@ An engine powered--by a cat
 pls don't crash again
 a--aa
 HAH--you looked.
-Trace Log is useful to--debug / test your mods!
+Game Log is useful to--debug / test your mods!
 it's stable now--hehe
 i woke up in the new bugatti--:fire: :fire:
 Press F5 in any song to open Trace Log Window
@@ -20,4 +20,4 @@ It is stable and less buggy :))
 boom--explode
 Don't forget to check the documentation--for more modding tips!
 burning sensation :fire:
-If the engine crashes and the Crash handler didn't show up--try to run the engine through your Terminal!
+https://discord.gg/w8sFmXsFpk
