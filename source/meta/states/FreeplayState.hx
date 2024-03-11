@@ -1,5 +1,6 @@
 package meta.states;
 
+import sys.thread.FixedThreadPool;
 import lime.media.openal.AL;
 import game.cdev.CDevPopUp;
 import sys.thread.Thread;
@@ -583,7 +584,20 @@ class FreeplayState extends MusicBeatState
 									&& !FileSystem.exists(Paths.json(songs[curSelected].songName.toLowerCase() + '/' + sel)))
 								{
 									if (FlxG.sound.music != null) FlxG.sound.music.pause();
-									openSubState(new MissingFileSubstate(sel));
+
+									var songName:String = "";
+									var f:Array<String> = sel.split("-");
+									trace(f);
+									songName = sel.toLowerCase().replace(f[f.length], "");
+
+									var detailText = 'Can\'t load this chart file: \"$sel.json\" because it doesn\'t exists.'
+										+ "\nWe can't find them under this folder path: "
+										+ (songs[curSelected].fromMod == "BASEFNF" ? 
+										   "\n- /assets/data/charts/" + songName + "/" :
+										   "\n- /cdev-mods/"+Paths.currentMod+"/data/charts/" + songName) 
+										+ "\n\nPlease make sure the .json chart file exists on that directory";
+									openSubState(new CDevPopUp("Error", detailText, [{text:"OK", callback:closeSubState}],false, true));
+									//openSubState(new MissingFileSubstate(sel));
 								}
 								else
 								{
@@ -652,7 +666,20 @@ class FreeplayState extends MusicBeatState
 						&& !FileSystem.exists(Paths.json(songs[curSelected].songName.toLowerCase() + '/' + sel)))
 					{
 						if (FlxG.sound.music != null) FlxG.sound.music.pause();
-						openSubState(new MissingFileSubstate(sel));
+
+						var songName:String = "";
+						var f:Array<String> = sel.split("-");
+						trace(f);
+						songName = sel.toLowerCase().replace(f[f.length], "");
+
+						var detailText = 'Can\'t load this chart file: \"$sel.json\", it doesn\'t exists.'
+							+ "\nWe can't find the file in this folder: "
+							+ (songs[curSelected].fromMod == "BASEFNF" ? 
+							   "\n- /assets/data/charts/" + songName + "/" :
+							   "\n- /cdev-mods/"+Paths.currentMod+"/data/charts/" + songName) 
+							+ "\n\nPlease make sure the .json chart file exists on that directory.";
+						openSubState(new CDevPopUp("Error", detailText, [{text:"OK", callback:closeSubState}],false, true));
+						//openSubState(new MissingFileSubstate(sel));
 					}
 					else
 					{
@@ -917,7 +944,7 @@ class FreeplayState extends MusicBeatState
 				if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
 				if (CDevConfig.saveData.smoothAF)
 				{
-					FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
+					FlxTween.tween(FlxG.camera, {zoom: 1.5, angle: 5}, 1, {ease: FlxEase.quadOut});
 				}
 	
 				playSong();
@@ -1042,7 +1069,9 @@ class FreeplayState extends MusicBeatState
 			});
 		});
 
-		Thread.create(doThreading);
+		//Thread.create(doThreading);
+		new FixedThreadPool(1).run(doThreading);
+		//new lime.app.Future(doThreading,true);
 	}
 
 	function playSong()

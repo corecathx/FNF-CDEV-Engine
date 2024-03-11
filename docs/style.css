@@ -1,35 +1,49 @@
+/* Fonts */
 @font-face {
     font-family: funkinFont;
     src: url(https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic,700italic);;
 }
+
 @font-face {
     font-family: funkinDiff;
     src: url(assets/pmf2.ttf);
 }
 
+/* General Styles */
 body {
     background-color: rgb(20, 20, 20);
-}
-body, html {
     margin: 0;
     padding: 0;
+    height: 100%;
+    font-family: "Ubuntu";
+    font-size: 14px;
 }
+
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
 .container {
-    display: grid;
-    grid-template-columns: 300px auto;
+    display: flex;
+    flex-direction: row;
+    min-height: 100%;
+    height: 100%;
 }
 
 .tab-content {
+    width: 100%;
     display: none;
     height: 0%;
 }
 
 .active-tab {
+    animation: fade_in 0.35s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
     height: 100%;
-    display: block;
-    font-family: "Ubuntu";
-    max-width: 85%;
-    font-size: 14px;
+    display: inline-block;
+    max-width: 100%;
+    width: 100%;
 }
 
 table {
@@ -49,15 +63,21 @@ pre {
     overflow-x: auto;
     font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
     font-size: 14px;
-    color: #FFFFFF
+    color: #FFFFFF;
 }
 
+/* Sidebar Styles */
 #sidebar {
-    position: sticky;
-    background-color: #111111;
+    border-right: 1px solid rgba(255, 255, 255, 0.363);
+    backdrop-filter: blur(5px);
+    position: fixed;
+    background-color: rgba(14, 14, 14, 0.6);
     padding: 20px;
-    min-height: 100vh;
     overflow-y: auto;
+    min-width: 240px;
+    min-height: 100%;
+    height: 100%;
+    padding-left: 60px;
 }
 
 #sidebar ul {
@@ -70,82 +90,138 @@ pre {
 }
 
 #sidebar ul li a {
+    margin: 0px;
+    display:inline-block; 
+    width: 80;
     text-decoration: none;
     color: #a1a1a1;
-    font-family: "Ubuntu";
-    display: block;
     letter-spacing: 0.5px;
-}
+    min-width: calc(100% - 20px);
 
-#content {
-    background-color: #161616;
-    color: #e4e4e4;
-    padding: 20px;
-    font-family: "Ubuntu";
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    line-height: 140%;
+    padding-left: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+
+    animation: text_normal 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
 }
 
 #sidebar ul li a:hover {
-    background-color: #353535;
+    backdrop-filter: blur(5px);
+    color: white;
+    animation: text_selected 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
 }
 
-.titlestuffs{
-    color: #e4e4e4; 
-    font-family: "Ubuntu";
+/* Content Styles */
+#content {
+    background-color: rgb(20, 20, 20);
+    color: #e4e4e4;
+    padding: 20px;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    line-height: 140%;
+    min-height: 100%;
+    padding-left: 60px;
+    width: 100%;
+    height: 100%;
+}
+
+/* Title Styles */
+.titlestuffs {
     font-size: 24px;
     letter-spacing: 2px;
+    color: white;
 }
 
-.titlestuffsD{
-    color: #e4e4e4; 
-    font-family: "Ubuntu";
+.titlestuffsD {
     font-size: 34px;
+    color: white;
 }
 
-/*Function*/
-.func {
-    color:#DCDCAA;
-}
+/* Syntax Highlighting */
+.func { color: #DCDCAA; }
+.vari { color: #9CDCFE; }
+.clas { color: #4EC9B0; }
+.param { color: #FFFFFF; }
+.val { color: #569CD6; }
+.com { color: #608B4E; }
+.str { color: #CE9178; }
 
-/*Variable - name*/
-.vari {
-    color:#9CDCFE;
-}
-
-/*Class*/
-.clas {
-    color:#4EC9B0;
-}
-
-/*Parameter / ()*/
-.param {
-    color:#FFFFFF;
-}
-
-/*values*/
-.val {
-    color:#569CD6;
-}
-
-/*comment*/
-.com {
-    color:#608B4E;
-}
-
-/*string*/
-.str {
-    color:#CE9178;
-}
-
+/* Code Block */
 .codeblock {
     padding: 10px;
-    white-space:pre-line;
+    white-space: pre-line;
     background-color: #1E1E1E;
     display: block;
     overflow-x: auto;
-    font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
-    font-size: 14px;
-    color: #FFFFFF
+}
+
+/* Sidebar Toggle */
+.sidebarclass { 
+    display: block; 
+    animation: sidebar_enter 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+}
+
+.hideThis{
+    animation: sidebar_leave 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+}
+
+.sideside { 
+    display: flex; flex-direction: row; 
+}
+
+/* Clickable Object */
+.clickableObject {
+    border-right: 1px solid rgba(255, 255, 255, 0.363);
+    backdrop-filter: blur(5px);
+    position: fixed;
+    background-color: rgba(11, 11, 11, 0.6);
+    cursor: pointer;
+    position: fixed;
+    height: 100%;
+    overflow: hidden;
+    opacity: 50%;
+}
+
+.clickableObject:active{
+    animation: sidebar_handleClick 0.2s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+}
+
+.clickableObject:hover {
+    opacity: 100%;
+}
+
+.clickActive {
+    color: white;
+}
+
+/* Animation Stuffs */
+@keyframes sidebar_enter {
+    from{left: -322px;}
+
+    to {left: 0px;}
+}
+@keyframes sidebar_leave {
+    from{left: 0px;}
+
+    to {left: -322px;}
+}
+
+@keyframes text_selected {
+    from {margin-left: 0px;border-top: 1px rgba(255, 255, 255, 0.0) solid;border-bottom: 1px rgba(255, 255, 255, 0.0) solid;}
+    to {margin-left: 10px;background-color: rgba(88, 88, 88, 0);border-top: 1px rgba(255, 255, 255, 0.37) solid; border-bottom: 1px rgba(255, 255, 255, 0.37) solid}
+}
+@keyframes text_normal {
+    from {margin-left: 10px;background-color: rgba(88, 88, 88, 0); border-top: 1px rgba(255, 255, 255, 0.37) solid; border-bottom: 1px rgba(255, 255, 255, 0.37) solid;}
+    to {margin-left: 0px;border-top: 1px rgba(255, 255, 255, 0.0) solid;border-bottom: 1px rgba(255, 255, 255, 0.0) solid;}
+}
+
+@keyframes fade_in {
+    from{padding-top: 10%;}
+    to{padding-top: 0%;}
+}
+
+@keyframes sidebar_handleClick {
+    from{left: -10px;}
+
+    to {left: 0px;}
 }

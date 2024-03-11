@@ -1,5 +1,6 @@
 package meta.modding.song_editor;
 
+import flixel.FlxState;
 import meta.states.LoadingState;
 import meta.states.PlayState;
 import meta.modding.chart_editor.ChartingState;
@@ -420,9 +421,9 @@ class SongEditor extends MusicBeatState
 		}
 	}
 
-	function leave(?State:Dynamic, ?special:Bool = false) {
-		var e:Dynamic = State;
-		if (e == null){
+	function leave(?State:FlxState, ?special:Bool = false) {
+		var e:FlxState = null;
+		if (State == null){
 			e = new ModdingScreen();
 		}
 		FlxTween.tween(FlxG.camera, {zoom: 0.9, alpha:0}, 1, {ease:FlxEase.sineInOut});
@@ -430,9 +431,9 @@ class SongEditor extends MusicBeatState
 		exit = true;
 		new FlxTimer().start(1.1, (t:FlxTimer) -> {
 			if (special){
-				LoadingState.loadAndSwitchState(State, false);
+				LoadingState.loadAndSwitchState(e, false);
 			} else{ 
-				FlxG.switchState(State);
+				FlxG.switchState(e);
 			}
 		});
 

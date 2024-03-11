@@ -153,6 +153,7 @@ class PauseSubState extends MusicBeatSubstate
 				case 'Exit Charting Mode':
 					PlayState.chartingMode = false;
 					FlxG.resetState();
+					//FlxG.switchState(new PlayState());
 				case "Exit to menu", "Exit to freeplay":
 					pauseMusic.stop();
 					pauseMusic.destroy();
@@ -166,12 +167,6 @@ class PauseSubState extends MusicBeatSubstate
 						FlxG.switchState(new meta.states.FreeplayState());
 					}
 			}
-		}
-
-		if (FlxG.keys.justPressed.J)
-		{
-			// for reference later!
-			// PlayerSettings.player1.controls.replaceBinding(Control.LEFT, Keys, FlxKey.J, null);
 		}
 	}
 

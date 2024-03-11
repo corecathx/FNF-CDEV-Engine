@@ -16,6 +16,7 @@ import flixel.group.FlxSpriteGroup;
 typedef PopUpButton = {
     var text:String;
     var callback:Void->Void;
+    @:optional var defaultOption:Bool;
 }
 class CDevPopUp extends MusicBeatSubstate
 {
@@ -53,9 +54,9 @@ class CDevPopUp extends MusicBeatSubstate
 
 		var tempbodyText = new FlxText(0,0, -1, bodyT, 18);
 		tempbodyText.font = "VCR OSD Mono";
-        tempbodyText.fieldWidth = FlxMath.bound(tempbodyText.fieldWidth,0,780);
         @:privateAccess tempbodyText.regenGraphic();
         tempbodyText.drawFrame(true);
+        tempbodyText.fieldWidth = FlxMath.bound(tempbodyText.fieldWidth,0,780);
         tempbodyText.scrollFactor.set();
 
         var wee:Int = Std.int(tempbodyText.width +70);
@@ -122,8 +123,8 @@ class CDevPopUp extends MusicBeatSubstate
         titleTextS.scrollFactor.set();
 
 		bodyText = new FlxText(box.x+30, box.y + 50, -1, bodyT, 18);
-        bodyText.fieldWidth = FlxMath.bound(bodyText.fieldWidth,0,780);
 		bodyText.font = "VCR OSD Mono";
+        bodyText.fieldWidth = FlxMath.bound(bodyText.fieldWidth,0,780);
 		add(bodyText);
         bodyText.scrollFactor.set();
 
@@ -142,6 +143,11 @@ class CDevPopUp extends MusicBeatSubstate
             var oldButtWidth = (buttonsCrap[i-1] == null ? 0 : buttonsCrap[i-1].bWidth);
             buttonsCrap[i].x = box.x + ((box.width-(buttonsCrap[i].bWidth + (oldButtWidth + 20))));
             buttonsCrap[i].y = (box.y+box.height - buttonsCrap[i].bHeight) - 20;
+        }
+        FlxTween.tween(titleS, {alpha: 0.9},0.15,{ease: FlxEase.linear});
+        for (tw in [iconS, titleTextS, bodyText]){
+            tw.alpha = 0;
+            FlxTween.tween(tw, {alpha:1}, 0.15, {ease: FlxEase.linear});
         }
 	}
 

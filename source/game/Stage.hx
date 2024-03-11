@@ -105,22 +105,6 @@ class Stage
 	public var beatHit_force_sprites:Array<BeatSprite> = [];
 
 	var play:PlayState;
-
-	public function beatHit(b:Int)
-	{
-		if (gotScript)
-			script.executeFunc("beatHit", [b]);
-		for (s in beatHit_sprites)
-		{
-			s.sprite.animation.play(s.anim);
-		}
-		for (s in beatHit_force_sprites)
-		{
-			s.sprite.animation.play(s.anim, true);
-		}
-		if (gotScript)
-			script.executeFunc("beatHitPost", [b]);
-	}
 	var jsonWasNull:Bool = false;
 	var ignoreScript:Bool = false;
 	public function new(stage:String, pla:PlayState, ?ignoreScript:Bool = false)
@@ -203,6 +187,22 @@ class Stage
 		if (gotScript)
 			script.executeFunc("update", [e]);
 	}
+	
+	public function beatHit(b:Int)
+		{
+			if (gotScript)
+				script.executeFunc("beatHit", [b]);
+			for (s in beatHit_sprites)
+			{
+				s.sprite.animation.play(s.anim);
+			}
+			for (s in beatHit_force_sprites)
+			{
+				s.sprite.animation.play(s.anim, true);
+			}
+			if (gotScript)
+				script.executeFunc("beatHitPost", [b]);
+		}
 
 	public function getObject(name:String):FlxSprite {
 		for (i in bitmap_sprites){

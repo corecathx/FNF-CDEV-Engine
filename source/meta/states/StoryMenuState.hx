@@ -362,6 +362,7 @@ class StoryMenuState extends MusicBeatState
 		{
 			if (grpWeekCharacters.members[a] == null) continue;
 			grpWeekCharacters.members[a].kill();
+			grpWeekCharacters.members[a].destroy();
 			grpWeekCharacters.remove(grpWeekCharacters.members[a]);
 			remove(grpWeekCharacters.members[a]);
 		}
