@@ -194,6 +194,12 @@ pre {
     color: white;
 }
 
+/* evil */
+.rotated{
+    width: 20%;
+    animation: plsrotate 3s infinite linear;
+}
+
 /* Animation Stuffs */
 @keyframes sidebar_enter {
     from{left: -322px;}
@@ -224,4 +230,9 @@ pre {
     from{left: -10px;}
 
     to {left: 0px;}
+}
+
+@keyframes plsrotate {
+    from{transform: rotate3d(1, 1, 1, 360deg);}
+    to{transform: rotate3d(0, 0, 0, 0deg);}
 }

@@ -41,6 +41,11 @@
                         <li><a href="#song-scripts">Song Scripts</a></li>
                         <li><a href="#stage-scripts">Stage Scripts</a></li>
                     </ul>
+
+                    <h2 class="titlestuffs">gaming</h2>
+                    <ul>
+                        <li><a href="#hidden-normal">normal</a></li>
+                    </ul>
                 </div>
                 <div class="clickableObject">
                     <img src="./assets/stuff/ThreeDots.svg" width="30px" height="100%" onclick="function a(){toggleSideBar();} a();">
@@ -58,9 +63,11 @@
                     <hr>
                     <p>This (simple) HTML Page contains the basics of modding in CDEV Engine, such as scripting, adding week, adding
                         stages, and more.</p>
-                    <p>The quickest way to get started is to check out the built-in mod which is the "Funkin Mod" and playing around with it.<br>The documentation is for reference if you want to know the specifics of everything. These are the categories on the left, check them out!<br><br>there's no "TL;DR" here.</p>
-                    <p><br>(Note: This documentation was made in CDEV Engine v.1.6.2, if you've downloaded an higher version
+                    <p>The quickest way to get started is to check out the built-in mod which is the "Funkin Mod" and playing around with it.<br>The documentation is for reference if you want to know the specifics of everything. These are the categories on the left, check them out!</p>
+                    <p>there's no "TL;DR" here.</p>
+                    <p>(Note: This documentation was made in CDEV Engine v.1.6.2, if you've downloaded an higher version
                         of CDEV Engine, expect some stuffs not included here.)</p>
+                    <p>Also, this documentation page is unfinished, it may lack some stuff.</p>
                     <a href="https://discord.gg/w8sFmXsFpk" style="color:#9CDCFE;">Join the Public Discord Server of CDEV Engine!</a>
                 </div>
 
@@ -537,16 +544,45 @@
                         <hr>
                         <p>Paths is useful for loading assets on your mod folder.</p>
                         <p>Example usage: <code><span class="clas">Paths</span>.<span class="func">font</span>(<span class="str">"vcr.ttf"</span>);</code></p>
-                        <p>Usage: <pre>Paths.VariableName</pre></p>
+                        <p><i>(Note: "yourmod" here is Your Current Mod.)</i></p>
                         <h3>Functions</h3>
                         <ul>
-                            <li>font(name:String) - Returns font from yourmod/data/font/ folder.</li>
-                            <li>sound(name:String) - Returns sound from yourmod/sounds/ folder.</li>
-                            <li>music(name:String) - Returns music from yourmod/music/ folder.</li>
-                            <li>image(name:String) - Returns image from yourmod/images/ folder.</li>
-                            <li>music(name:String) - Returns music from yourmod/music/ folder.</li>
-                            <li>getSparrowAtlas(name:String) - Returns SparrowAtlas from yourmod/images/ folder.</li>
-                            <li>currentModFolder(path:String) - Returns path from Your Mod folder.</li>
+                            <li><pre class="func">font<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>)</code></pre> - Returns font from <code>yourmod/data/font/</code> folder.</li>
+                            <ul>
+                                <li><code class="vari">name</code> - Your font's filename (without the extension)</li>
+                            </ul> 
+                            <li><pre class="func">sound<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>)</code></pre> - Returns sound from <code>yourmod/sound/</code> folder.</li>
+                            <ul>
+                                <li><code class="vari">name</code> - Your sound's filename (without the extension)</li>
+                            </ul> 
+                            <li><pre class="func">music<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>)</code></pre> - Returns music from <code>yourmod/music/</code> folder.</li>
+                            <ul>
+                                <li><code class="vari">name</code> - Your music's filename (without the extension)</li>
+                            </ul> 
+                            <li><pre class="func">image<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>)</code></pre> - Returns image from <code>yourmod/images/</code> folder.</li>
+                            <ul>
+                                <li><code class="vari">name</code> - Your image's filename (without the extension)</li>
+                            </ul> 
+                            <li><pre class="func">getSparrowAtlas<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>)</code></pre> - Returns FlxSparrowAtlas from <code>yourmod/images/</code> folder.</li>
+                            <ul>
+                                <li><code class="vari">name</code> - Your XML & PNG Sparrow image's filename (without the extension)</li>
+                            </ul> 
+                            <li><pre class="func">currentModFolder<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>)</code></pre> - Returns sound from <code>yourmod/sound/</code> folder.</li>
+                            <ul>
+                                <li><code class="vari">name</code> - Joins current mod folder path with this variable, example: <code class="vari">name</code> is <code>funny.txt</code>, this function will returns <code>cdev-mods/Funkin Mod/funny.txt</code></li>
+                            </ul> 
+                            <li><pre class="func">video<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>)</code></pre> - Returns video from <code>yourmod/videos/</code> folder.</li>
+                            <ul>
+                                <li><code class="vari">name</code> - Your video's filename (without the extension)</li>
+                            </ul> 
+                            <li><pre class="func">frag<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>)</code></pre> - Returns fragma shader file from <code>yourmod/shaders/</code> folder.</li>
+                            <ul>
+                                <li><code class="vari">name</code> - Your fragma shader filename (without the extension)</li>
+                            </ul> 
+                            <li><pre class="func">vert<code class="param">(<code class="vari">name</code>:<code class="clas">String</code>)</code></pre> - Returns vertex shader file from <code>yourmod/shaders/</code> folder.</li>
+                            <ul>
+                                <li><code class="vari">name</code> - Your vertex shader filename (without the extension)</li>
+                            </ul> 
                         </ul>
                     </div>
 
@@ -554,26 +590,32 @@
                         <h2>Note</h2>
                         <hr>
                         <p>Note.hx class.</p>
-                        <p>Usage: <pre>Note.VariableName</pre></p>
+                        <p><b>(Note: These variables are written in this format: "<code><span class="vari">variableName</span>:<span class="clas">Type</span></code>")</b></p>
                         <ul>
-                            <li><pre>noteType</pre> - The Note's Type. (String, Read only)</li>
-                            <li><pre>strumTime</pre> - The note's strum time. (Float)</li>
-                            <li><pre>mustPress</pre> - Tells you if is it a player note or not. (Bool)</li>
-                            <li><pre>noteData</pre> - Note's Column (0-4). (Int)</li>
-                            <li><pre>canBeHit</pre> - Tells you if the note is hitable. (Bool)</li>
-                            <li><pre>tooLate</pre> - Tells you if you missed the note. (Bool)</li>
-                            <li><pre>wasGoodHit</pre> - Tells you if you hitted the note. (Bool)</li>
-                            <li><pre>prevNote</pre> - Another Note before This Note. (Note)</li>
-                            <li><pre>isSustainNote</pre> - Tells you if it's a sustain note. (Bool)</li>
-                            <li><pre>noteType</pre> - The Note's Type. (String)</li>
-                            <li><pre>xAdd</pre> and <pre>yAdd</pre> - X and Y addition position of the note. (Float)</li>
-                            <li><pre>offsetX</pre> and <pre>offsetY</pre> - X and Y offset position of the note. (Float)</li>
-                            <li><pre>offsetAngle</pre> - Angle offset of the note. (Float)</li>
-                            <li><pre>multAlpha</pre> - Alpha multiplier of the note. (Note)</li>
-                            <li><pre>followX</pre> and <pre>followY</pre> - Whether to follow the X of the note receptors, and to follow the Y of the song position. (Bool)</li>
-                            <li><pre>followAngle</pre> and <pre>followAlpha</pre> - Whether to follow the Angle / Alpha of the note receptors. (Bool)</li>
-                            <li><pre>rating</pre> - The note's rating (the default is "shit", changed after the player hits the note). (String)</li>
-                            <li><pre>strumParent</pre> - This note's note receptor. (StrumArrow)</li>
+                            <li><pre><span class="vari">noteType</span>:<span class="clas">String</span></pre> - This note's type.</li>
+                            <li><pre><span class="vari">strumTime</span>:<span class="clas">Float</span></pre> - This note's strum time / position in miliseconds.</li>
+                            <li><pre><span class="vari">mustPress</span>:<span class="clas">Bool</span></pre> - Tells you if it's a player note, or not.</li>
+                            <li><pre><span class="vari">noteData</span>:<span class="clas">Int</span></pre> - This note's row in the playfield (from 0 to 3).</li>
+                            <li><pre><span class="vari">canBeHit</span>:<span class="clas">Bool</span></pre> - Tells you if this note is hitable (Usually determined by the game).</li>
+                            <li><pre><span class="vari">tooLate</span>:<span class="clas">Bool</span></pre> - Tells you if you missed this note.</li>
+                            <li><pre><span class="vari">wasGoodHit</span>:<span class="clas">Bool</span></pre> - Tells you if you hitted this note.</li>
+                            <li><pre><span class="vari">prevNote</span>:<span class="clas">Note</span></pre> - Another note object before this note object.</li>
+                            <li><pre><span class="vari">isSustainNote</span>:<span class="clas">Bool</span></pre> - Tells you if this is a sustain note.</li>
+                            <li><pre><span class="vari">xAdd</span>:<span class="clas">Float</span></pre> - X position addition of this note.</li>
+                            <li><pre><span class="vari">yAdd</span>:<span class="clas">Float</span></pre> - Y position addition of this note.</li>
+                            <li><pre><span class="vari">offsetX</span>:<span class="clas">Float</span></pre> - X position offset of this note (Determined by the game).</li>
+                            <li><pre><span class="vari">offsetY</span>:<span class="clas">Float</span></pre> - Y position offset of this note (Determined by the game).</li>
+                            <li><pre><span class="vari">offsetAngle</span>:<span class="clas">Float</span></pre> - Angle offset of this note (Determined by the game).</li>
+                            <li><pre><span class="vari">multAlpha</span>:<span class="clas">Float</span></pre> - Alpha multiplier of this note (Determined by the game).</li>
+                            <li><pre><span class="vari">followX</span>:<span class="clas">Bool</span></pre> - Whether to follow the X position of the parent note strum.</li>
+                            <li><pre><span class="vari">followY</span>:<span class="clas">Bool</span></pre> - Whether to follow the Y position of the parent note strum.</li>
+                            <li><pre><span class="vari">followAngle</span>:<span class="clas">Bool</span></pre> - Whether to follow the angle property of the parent note strum.</li>
+                            <li><pre><span class="vari">followAlpha</span>:<span class="clas">Bool</span></pre> - Whether to follow the alpha property of the parent note strum.</li>                      
+                            <li><pre><span class="vari">rating</span>:<span class="clas">String</span></pre> - This note's rating (the default is "shit", changed after the player hits the note).</li>                      
+                            <li><pre><span class="vari">strumParent</span>:<span class="clas">StrumArrow</span></pre> - This note's parent note strum.</li>
+                            <li><pre><span class="vari">noAnim</span>:<span class="clas">Bool</span></pre> - Whether to make this note trigger Opponent / Player singing animation.</li>
+                            <li><pre><span class="vari">canIgnore</span>:<span class="clas">Bool</span></pre> - Whether to allow this note to be not hit.</li>        
+                            <li><pre><span class="vari">noteArgs</span>:<span class="clas">Array</span><<span class="clas">String</span>></pre> - Note arguments from the Chart Editor.</li>
                         </ul>
                     </div>
 
@@ -602,6 +644,10 @@
                 </div>
                 <div class="tab-content" id="stage-scripts" style="min-width: 100%;height: 100%;">
                     <h1 style="text-align: center;">Still writing this page!! (again)</h1>
+                </div>
+                <div class="tab-content" id="hidden-normal">
+                    <img src="./assets/stuff/normaldifficulty.png" alt="bro" class="rotated">
+                    <h1>shut</h1>
                 </div>
             </div>
         </div>
