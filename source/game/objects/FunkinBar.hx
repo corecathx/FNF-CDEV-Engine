@@ -19,7 +19,6 @@ class FunkinBar extends FlxSpriteGroup
 	public var leftToRight(default, set):Bool = true;
 	public var barCenter(default, null):Float = 0;
 
-	// you might need to change this if you want to use a custom bar
 	public var barWidth(default, set):Int = 1;
 	public var barHeight(default, set):Int = 1;
 	public var barOffset:FlxPoint = new FlxPoint(3, 3);
@@ -31,7 +30,7 @@ class FunkinBar extends FlxSpriteGroup
 		this.valueFunction = valueFunction;
 		setBounds(boundX, boundY);
 
-		bgSprite = new FlxSprite().loadGraphic(Paths.image(image));
+		bgSprite = new FlxSprite().loadGraphic(Paths.image(image, "shared"));
 		bgSprite.antialiasing = CDevConfig.saveData.antialiasing;
 		barWidth = Std.int(bgSprite.width - 6);
 		barHeight = Std.int(bgSprite.height - 6);
@@ -109,7 +108,6 @@ class FunkinBar extends FlxSpriteGroup
 
 		barCenter = leftBar.x + leftSize + barOffset.x;
 
-		// flixel is retarded
 		leftBar.clipRect = leftBar.clipRect;
 		rightBar.clipRect = rightBar.clipRect;
 	}
