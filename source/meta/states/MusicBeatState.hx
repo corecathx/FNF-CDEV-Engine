@@ -74,6 +74,9 @@ class MusicBeatState extends FlxUIState
 			}
 			if (CDevConfig.saveData.testMode) GameLog.warn("Game synced, current values: "  + curStep + " // " + _highestPassedSteps +".");
 		}
+
+		Conductor.curBeat = this.curBeat;
+		Conductor.curStep = this.curStep;
 		super.update(elapsed);
 	}
 

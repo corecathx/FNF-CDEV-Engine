@@ -1,5 +1,6 @@
 package game.cdev;
 
+import meta.states.InitState;
 import sys.io.File;
 import haxe.Json;
 import game.song.Song.SwagSong;
@@ -310,7 +311,7 @@ class CDevUtils
 	 * @param bytes		Bytes number that will be converted
 	 * @return String	Formatted size of the bytes
 	 */
-	public function convert_size(bytes:Int):String
+	public function convert_size(bytes:Float):String
 	{
 		if (bytes == 0)
 			return "0 B";
@@ -323,7 +324,7 @@ class CDevUtils
 	/**
 	 * Checks if current priority mod has a state script.
 	 * @param stateName 	State's name that will be checked
-	 * @return Bool			Is it exists?
+	 * @return Bool			Does it exists?
 	 */
 	public function hasStateScript(stateName:String):Bool
 	{
@@ -350,7 +351,7 @@ class CDevUtils
 			TitleState.initialized = false;
 			TitleState.closedState = false;
 			TitleState.isLoaded = false;
-			TitleState.loadedSaves = false;
+			InitState.status.loadedSaves = false;
 		}
 		SettingsProperties.reset();
 		FlxG.resetGame();

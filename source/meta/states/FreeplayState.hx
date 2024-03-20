@@ -1,5 +1,7 @@
 package meta.states;
 
+import meta.substates.LoadingSubstate;
+import game.system.FunkinThread;
 import sys.thread.FixedThreadPool;
 import lime.media.openal.AL;
 import game.cdev.CDevPopUp;
@@ -12,7 +14,7 @@ import haxe.io.Path;
 import lime.app.Application;
 import openfl.utils.Future;
 import openfl.media.Sound;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import openfl.Assets as FLAssets;
 import openfl.utils.Assets as OpenFlAssets;
 import flixel.ui.FlxBar;
@@ -910,46 +912,41 @@ class FreeplayState extends MusicBeatState
 		trace(currentText);
 	}
 	var characters:Array<Character> = [];
-	function doThreading(){
-		try {
-			trace("=== Song Loading Thread start ===");
-
-			//Character Caching
-			for (chr in [PlayState.SONG.player2,PlayState.SONG.player1,PlayState.SONG.gfVersion]){
-				__updTxt("Loading: Character - "+chr+"");
-				var tempChar:Character = new Character(0,0,chr);
-				tempChar.alpha = 0.00001;
-				add(tempChar);
-				characters.push(tempChar);
-				barValue++;
-			}
-	
-			//Stage Caching
-			__updTxt("Loading: Stage - "+PlayState.SONG.stage);
-			new Stage(PlayState.SONG.stage, new PlayState(), true).createDaStage();
-			barValue++;
-	
-			for (msc in [Paths.inst(PlayState.SONG.song),Paths.voices(PlayState.SONG.song)]){
-				__updTxt("Loading: Song Files");
-				if (msc != null) FlxG.sound.cache(msc);
-				barValue++;
-			}
-	
-			__updTxt("Finished! Please Wait...");
-			for (i in characters){
-				if (i != null) remove(i);
-			}
-			new FlxTimer().start(1, function(hasd:FlxTimer)
-			{
-				if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
-				if (CDevConfig.saveData.smoothAF)
-				{
-					FlxTween.tween(FlxG.camera, {zoom: 1.5, angle: 5}, 1, {ease: FlxEase.quadOut});
+	/*function doThreading(){
+		trace("=== Song Loading Thread start ===");
+		__updTxt("Loading...");
+		try FunkinThread.doTask(
+			[
+				() -> {
+					//Character Caching
+					for (chr in [PlayState.SONG.player2,PlayState.SONG.player1,PlayState.SONG.gfVersion]){
+						var tempChar:Character = new Character(0,0,chr);
+						tempChar.alpha = 0.00001;
+						add(tempChar);
+						characters.push(tempChar);
+						barValue++;
+					}
+				},
+				() -> {
+					//Stage Caching
+					new Stage(PlayState.SONG.stage, new PlayState(), true).createDaStage();
+					barValue++;
+				},
+				() -> {
+					// Music caching
+					for (msc in [Paths.inst(PlayState.SONG.song),Paths.voices(PlayState.SONG.song)]){
+						if (msc != null) FlxG.sound.cache(msc);
+					}
 				}
-	
-				playSong();
-			});
-		} catch(e){
+			],
+			(value:Int) -> {
+				barValue = value;
+				__updTxt("Loading...");
+			},
+			() -> {
+				__updTxt("Finished! Please Wait...");
+			}
+		) catch(e){
 			trace("the hell happened? " + e.toString());
 			
 			var text:String = "Failed loading assets for this song! Error: \n\n"+e.toString();
@@ -960,13 +957,13 @@ class FreeplayState extends MusicBeatState
 			];
 			openSubState(new CDevPopUp("Error", text, butt,false, true));
 		}
-	}
+	}*/
 	function selectedSong() // look at how messy this function is
 	{
 		selectedBPMSONG = curSelected;
-		cachingAmount = 6;
+		cachingAmount = 3;
 		curPlayedSong = songs[curSelected].songName;
-		songBG = new FlxSprite(0, FlxG.height / 2 + 90).loadGraphic(Paths.image('healthBar', 'shared'));
+		/*songBG = new FlxSprite(0, FlxG.height / 2 + 90).loadGraphic(Paths.image('healthBar', 'shared'));
 		songBG.screenCenter(X);
 		songBG.antialiasing = true;
 		songBG.scrollFactor.set();
@@ -982,9 +979,8 @@ class FreeplayState extends MusicBeatState
 
 		daText = new FlxText(0, songBG.y + 30, "Getting ready to play the song...", 20);
 		daText.setFormat("VCR OSD Mono", 20, FlxColor.CYAN, CENTER, OUTLINE, FlxColor.BLACK);
-		daText.bold = true;
 		daText.screenCenter(X);
-		add(daText);
+		add(daText);*/
 
 		var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
 		var daSong:String = songs[curSelected].songName.toLowerCase().replace(" ", "-");
@@ -1069,8 +1065,42 @@ class FreeplayState extends MusicBeatState
 			});
 		});
 
+		persistentDraw = persistentUpdate = true;
+
 		//Thread.create(doThreading);
-		new FixedThreadPool(1).run(doThreading);
+		//doThreading();
+		LoadingSubstate.load(this,[
+			() -> {
+				//Character Caching
+				for (chr in [PlayState.SONG.player2,PlayState.SONG.player1,PlayState.SONG.gfVersion]){
+					var tempChar:Character = new Character(0,0,chr);
+					tempChar.alpha = 0.00001;
+					add(tempChar);
+					characters.push(tempChar);
+					barValue++;
+				}
+			},
+			() -> {
+				//Stage Caching
+				new Stage(PlayState.SONG.stage, new PlayState(), true).createDaStage();
+				barValue++;
+			},
+			() -> {
+				// Music caching
+				for (msc in [Paths.inst(PlayState.SONG.song),Paths.voices(PlayState.SONG.song)]){
+					if (msc != null) FlxG.sound.cache(msc);
+				}
+			}
+		],["Characters", "Stage", "Music Files"],()->{
+			for (i in characters){
+				if (i != null) remove(i);
+			}
+			new FlxTimer().start(0.2, function(hasd:FlxTimer)
+			{
+				if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
+				playSong();
+			});
+		});
 		//new lime.app.Future(doThreading,true);
 	}
 

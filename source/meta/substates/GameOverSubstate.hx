@@ -1,7 +1,7 @@
 package meta.substates;
 
 import game.Paths;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import meta.states.PlayState;
 import flixel.math.FlxMath;
 import flixel.FlxG;

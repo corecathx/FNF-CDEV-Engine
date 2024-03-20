@@ -10,7 +10,7 @@ import flixel.util.FlxTimer;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import game.cdev.script.ScriptSupport;
 import openfl.Assets;
 import flixel.system.FlxAssets;

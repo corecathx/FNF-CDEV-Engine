@@ -31,7 +31,7 @@ class CDevConfig
 	public static var window_icon_custom:Bool = false;
 	public static var debug:Bool = false;
 	public static var elapsedGameTime:Float;
-	public static var engineVersion:String = "1.6.3";
+	public static var engineVersion:String = "1.6.4";
 	public static var RPC_ID:String = "947735855672475679";
 	public static var utils(default, null):CDevUtils = new CDevUtils();
 

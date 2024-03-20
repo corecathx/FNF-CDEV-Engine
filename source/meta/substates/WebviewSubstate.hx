@@ -26,14 +26,42 @@ class WebviewSubstate extends MusicBeatSubstate {
         add(newText);
         newText.screenCenter();
 
-        wv = new WebView(false);
-        wv.setTitle("FunkinWebView");
-        wv.setSize(FlxG.width, FlxG.height, NONE);
-        wv.navigate(url);
+        sys.thread.Thread.createWithEventLoop(() ->
+		{
+            wv = new WebView(false);
+            wv.setTitle("FunkinWebView");
+            wv.setSize(FlxG.width, FlxG.height, NONE);
+            wv.navigate(url);
 
-        Thread.createWithEventLoop(()->{
-            if (exit) return;
-            wv.run();
+            Application.current.window.onClose.add(() ->
+			{
+				if (wv != null)
+				{
+					wv.destroy();
+					wv = null;
+				}
+			});
+
+            /*while (true)
+            {
+                if (wv.isOpen())
+                {
+                    // To keep the Main Thread active and never stop freezing (?)
+                    sys.thread.Thread.processEvents();
+                    if (wv.eventsPending())
+                        wv.process();
+                }
+                else
+                    break;
+            }*/
+
+            if (wv != null)
+            {
+                wv.destroy();
+                wv = null;
+            }
+
+            return;
         });
     }
 

@@ -3,7 +3,8 @@ package game.cdev.script;
 import lime.system.CFFI;
 import game.cdev.log.GameLog;
 import flixel.addons.display.FlxRuntimeShader;
-#if USE_VIDEOS
+
+#if !macro
 import hxcodec.flixel.FlxVideo;
 import hxcodec.flixel.FlxVideoSprite;
 #end
@@ -42,7 +43,7 @@ import flixel.util.FlxTimer;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import lime.utils.Assets;
 import flixel.system.FlxAssets;
 import flixel.math.FlxMath;

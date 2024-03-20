@@ -49,7 +49,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxSpriteButton;
@@ -1374,7 +1374,7 @@ class ChartingState extends MusicBeatState
 
 			if (_song.notes[curSection + 1] == null)
 			{
-				addSection();
+				addSection(16);
 			}
 
 			changeSection(curSection + 1, false);
@@ -2333,16 +2333,15 @@ class ChartingState extends MusicBeatState
 
 		if (!justUpdateTheNotes){
 			remove(gridBG);
-			var lis:Dynamic = _song.notes[curSection].lengthInSteps;
-			if (lis == null){
-				lis = 16;
+			var lis:Dynamic = 16;//_song.notes[curSection].lengthInSteps;
+			if (Reflect.getProperty(_song.notes[curSection],"lengthInSteps") != null && _song.notes[curSection].lengthInSteps != 0){
+				lis = _song.notes[curSection].lengthInSteps;
+			} else{
 				if (!warnOnce)
-					GameLog.warn("JSON of this chart doesn't have lengthInSteps.");
+					GameLog.warn("JSON of this chart have an invalid lengthInSteps field.");
 				warnOnce = true;
-			} else if (lis == 0){
-				lis = 16;
 			}
-	
+
 			gridBG = FlxGridOverlay.create(GRID_SIZE, GRID_SIZE, GRID_SIZE * 8, GRID_SIZE * Std.parseInt(lis));
 			gridBG.alpha = 0.7;
 			add(gridBG);
@@ -2350,8 +2349,6 @@ class ChartingState extends MusicBeatState
 			remove(gridBlackLine);
 			gridBlackLine = new FlxSprite(gridBG.x + gridBG.width / 2).makeGraphic(2, Std.int(gridBG.height), FlxColor.BLACK);
 			add(gridBlackLine);
-
-
 		}
 		if (usingInstWave || usingVoicWave) updateWaveform();
 

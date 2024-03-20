@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin' CDEV Engine" file="CDEV Engine" packageName="com.core5570r.cdevengine" package="com.core5570r.cdevengine" main="Main" version="0.2.8" company="CoreCat" />
+	<app title="Friday Night Funkin' CDEV Engine" file="CDEV Engine" packageName="com.core5570r.cdevengine" package="com.core5570r.cdevengine" main="game.system.FunkinMain" version="0.2.8" company="CoreCat" />
 
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
@@ -133,11 +133,11 @@
 	<!--In case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
 	<haxelib name="faxe" if='switch'/>
-	<haxelib name="polymod"/>
 	<haxelib name="extension-androidtools" if="android"/>
 	<!--<haxelib name="linc_luajit" if="ALLOW_LUA"/>-->
 	<haxelib name="discord_rpc" if="desktop"/>
 	<haxelib name="HxWebView" if="desktop"/>
+	<haxelib name="haxe-firebase" if="desktop"/>
 	<!--<haxelib name="linc_luajit" if="windows"/>-->
 	<!--<haxelib name="hxcpp-debug-server" if="desktop"/>-->
 

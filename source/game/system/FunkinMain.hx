@@ -1,5 +1,6 @@
 package game.system;
 
+import game.cdev.engineutils.CDevInfoTxt;
 import game.system.util.FunkinInit;
 #if android
 import flixel.input.android.FlxAndroidKey;
@@ -33,7 +34,8 @@ using StringTools;
 
 class FunkinMain extends Sprite
 {
-	/** CDEV Engine's Default Game Resolution, it's the best to keep the values the same as the one inside the `Project.xml`. 
+	/** 
+	 *  CDEV Engine's Default Game Resolution, it's the best to keep the values the same as the one inside the `Project.xml`. 
 	 *	(If you want to change the window size, go to `Project.xml` and edit the window properties there.) 
 	 */
     static var DEFAULT_DIMENSION = {
@@ -44,7 +46,7 @@ class FunkinMain extends Sprite
     var game = {
 		gameWidth: DEFAULT_DIMENSION.width,
 		gameHeight: DEFAULT_DIMENSION.height,
-		initialState: meta.states.TitleState,
+		initialState: meta.states.InitState,
         zoom: 1.0,
         framerate: 60,
         skipSplash: true,
@@ -166,6 +168,8 @@ class FunkinMain extends Sprite
 		fpsCounter = new CDevFPSMem(10, 10, 0xffffff, true);
 		addChild(fpsCounter);
 
+		addChild(new CDevInfoTxt(10,10,0xffffff));
+
 		FlxG.fixedTimestep = false;
 
 		#if android 
@@ -236,7 +240,7 @@ class FunkinMain extends Sprite
 		+ "Please report this error to CDEV Engine's GitHub page: \nhttps://github.com/Core5570RYT/FNF-CDEV-Engine";
 		
 		#if windows
-		var cdev_ch_path:String = "cdev-crash_handler.exe";
+		var cdev_ch_path:String = "./cdev-crash_handler.exe";
 		if (FileSystem.exists(cdev_ch_path))
 		{
 			new Process(cdev_ch_path, ["crash", filePath]);

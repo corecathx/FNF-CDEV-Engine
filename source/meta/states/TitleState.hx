@@ -1,5 +1,6 @@
 package meta.states;
 
+import game.system.FunkinThread;
 import lime.system.System;
 import game.cdev.CDevMods.ModFile;
 import flixel.util.FlxAxes;
@@ -43,8 +44,6 @@ class TitleState extends MusicBeatState
 
 	static var isLoaded:Bool = false;
 
-	static var loadedSaves:Bool = false;
-
 	static var initialized:Bool = false;
 
 	var blackScreen:FlxSprite;
@@ -63,36 +62,10 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
-		FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
-		FlxG.sound.volumeDownKeys = [MINUS, NUMPADMINUS];
-		FlxG.sound.volumeUpKeys = [PLUS, NUMPADPLUS];
-
-		if (!loadedSaves)
-			CDevConfig.initSaves();
-
 		checkGitHubVersion();
-
-		PlayerSettings.init();
-
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
-		// DEBUG BULLSHIT
-
 		super.create();
-
-		FlxG.save.bind('cdev_engine', 'EngineData');
-
-		if (FlxG.save.data.lastVolume != null){
-			FlxG.sound.volume = FlxG.save.data.lastVolume;
-			trace("updated default volume: "+FlxG.sound.volume);
-		} else{
-			FlxG.save.data.lastVolume = FlxG.sound.volume;
-			trace("created new save for volume");
-		}
-
-		game.cdev.engineutils.Highscore.load();
-
-		loadedSaves = true;
 
 		#if debug
 		CDevConfig.debug = true;
@@ -100,28 +73,6 @@ class TitleState extends MusicBeatState
 
 		lol = FlxG.random.bool(0.3);
 		if (lol) trace("nahh :skull:");
-
-		FlxG.fixedTimestep = false;
-
-		if (!initialized)
-		{
-			var diamond:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
-			diamond.persist = true;
-			diamond.destroyOnNoUse = false;
-
-			var transData:TransitionTileData = {
-				asset: diamond,
-				width: 32,
-				height: 32
-			}
-			FlxTransitionableState.defaultTransIn = new TransitionData(FADE, FlxColor.BLACK, 0.5, new FlxPoint(0, -1), transData,
-				new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
-			FlxTransitionableState.defaultTransOut = new TransitionData(FADE, FlxColor.BLACK, 0.5, new FlxPoint(0, 1), transData,
-				new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
-
-			transIn = FlxTransitionableState.defaultTransIn;
-			transOut = FlxTransitionableState.defaultTransOut;
-		}
 
 		#if windows
 		if (Paths.curModDir.length == 1)
@@ -149,16 +100,11 @@ class TitleState extends MusicBeatState
 		#end
 
 		isLoaded = false; // DIE
-		new FlxTimer().start(1, function(tmr:FlxTimer)
+
+		new FlxTimer().start(0.2, function(tmr:FlxTimer)
 		{
 			startIntro();
 		});
-		#if desktop
-		if (!CDevConfig.saveData.discordRpc)
-			DiscordClient.shutdown();
-		else
-			DiscordClient.initialize();
-		#end
 	}
 
 	var logoBl:FlxSprite;
@@ -270,6 +216,7 @@ class TitleState extends MusicBeatState
 		}
 
 		FlxG.camera.zoom = 0.9;
+		trace("okay");
 	}
 
 	function getIntroTextShit():Array<Array<String>>
