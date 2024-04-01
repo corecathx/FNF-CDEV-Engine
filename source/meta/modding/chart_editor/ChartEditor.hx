@@ -16,7 +16,7 @@ import game.objects.ChartEvent;
 import game.objects.Note;
 import game.Conductor;
 import game.song.Song.SwagSong;
-import game.cdev.log.GameLog;
+
 import game.CoolUtil;
 
 import flixel.ui.FlxButton;
@@ -36,7 +36,7 @@ import flixel.util.FlxColor;
 import flixel.FlxSprite;
 import flixel.addons.ui.FlxUI;
 
-import meta.states.MusicBeatState;
+
 import meta.states.PlayState;
 
 import sys.FileSystem;
@@ -85,7 +85,6 @@ class ChartEditor extends MusicBeatState {
     var strumLine:FlxSprite;
     var noteHighlight:FlxSprite;
     var uiBox:FlxUITabMenu;
-    var evntInf:EventInformation;
     var autoSaveText:FlxText;
 
     var tipTextList:Array<FlxText> = [];
@@ -268,21 +267,19 @@ class ChartEditor extends MusicBeatState {
         add(opStrumGroup);
         add(plStrumGroup);
 
-        evntInf = new EventInformation(0, 0, "", "", "");
-		evntInf.scrollFactor.set();
-        add(evntInf);
-
 		autoSaveText = new FlxText(10, FlxG.height - 25, -1, "Autosaving...", 22);
-		autoSaveText.setFormat("VCR OSD Mono", 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		autoSaveText.setFormat(FunkinFonts.VCR, 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		autoSaveText.alpha = 0;
 		autoSaveText.scrollFactor.set();
 		autoSaveText.borderSize = 2;
 		add(autoSaveText);
+
+		CDevPopUp.open(this,"Warning!","You're entering a whole different CDEV Engine Chart Editor, it is still unstable and buggy (as hell) so expect lots of stuff not working!!",[{text: "OK", callback:() -> {closeSubState();}}], false, true);
 	}
 
     function createSecUI(){
 		infoText = new FlxText(20, 50, -1, "", 16);
-		infoText.setFormat('VCR OSD Mono', 20, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+		infoText.setFormat(FunkinFonts.VCR, 20, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		infoText.borderSize = 1;
 		infoText.scrollFactor.set();
 		add(infoText);
@@ -322,7 +319,7 @@ class ChartEditor extends MusicBeatState {
 		{
 			var tipsTxt:FlxText = new FlxText(20, uiBox.y + uiBox.height + -30, 0, splittedTextArray[i], 16);
 			tipsTxt.y += i * 12;
-			tipsTxt.setFormat('VCR OSD Mono', 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+			tipsTxt.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 			tipsTxt.scrollFactor.set();
 			tipsTxt.borderSize = 2;
 			add(tipsTxt);
@@ -1071,7 +1068,7 @@ class ChartEditor extends MusicBeatState {
                 if (typePos != -1)
                 {
                     var newShit:FlxText = new FlxText(0, 0, 0, Std.string(typePos), 32);
-                    newShit.setFormat("VCR OSD Mono", 22, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+                    newShit.setFormat(FunkinFonts.VCR, 22, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
                     // newShit.setGraphicSize(GRID_SIZE);
                     newShit.borderSize = 1.5;
                     add(newShit);

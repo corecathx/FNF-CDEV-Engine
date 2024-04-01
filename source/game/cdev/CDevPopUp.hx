@@ -1,5 +1,6 @@
 package game.cdev;
 
+
 import flixel.addons.effects.chainable.FlxEffectSprite;
 import flixel.addons.effects.chainable.FlxOutlineEffect;
 import flixel.math.FlxMath;
@@ -53,7 +54,7 @@ class CDevPopUp extends MusicBeatSubstate
         }
 
 		var tempbodyText = new FlxText(0,0, -1, bodyT, 18);
-		tempbodyText.font = "VCR OSD Mono";
+		tempbodyText.font = FunkinFonts.VCR;
         @:privateAccess tempbodyText.regenGraphic();
         tempbodyText.drawFrame(true);
         tempbodyText.fieldWidth = FlxMath.bound(tempbodyText.fieldWidth,0,780);
@@ -114,7 +115,7 @@ class CDevPopUp extends MusicBeatSubstate
         add(iconS);
 
         titleTextS = new FlxText(iconS.x + iconS.width + 8, 0, -1, titleT, 14);
-        titleTextS.setFormat("VCR OSD Mono", 14, FlxColor.WHITE);
+        titleTextS.setFormat(FunkinFonts.VCR, 14, FlxColor.WHITE);
         titleTextS.y = iconS.y + ((iconS.width / 2) - (titleTextS.height / 2));
         add(titleTextS);
 
@@ -123,7 +124,7 @@ class CDevPopUp extends MusicBeatSubstate
         titleTextS.scrollFactor.set();
 
 		bodyText = new FlxText(box.x+30, box.y + 50, -1, bodyT, 18);
-		bodyText.font = "VCR OSD Mono";
+		bodyText.font = FunkinFonts.VCR;
         bodyText.fieldWidth = FlxMath.bound(bodyText.fieldWidth,0,780);
 		add(bodyText);
         bodyText.scrollFactor.set();
@@ -168,6 +169,10 @@ class CDevPopUp extends MusicBeatSubstate
         }
 		super.update(elapsed);
 	}
+
+    public static function open(cur:MusicBeatState, title:String, body:String, buttons:Array<PopUpButton>, ?hideBG:Bool = false,?hideCloseButton:Bool = false){
+        cur.openSubState(new CDevPopUp(title, body, buttons, hideBG, hideCloseButton));
+    }
 }
 
 class CDevPopUpButton extends FlxSpriteGroup{
@@ -184,7 +189,7 @@ class CDevPopUpButton extends FlxSpriteGroup{
 		add(buttBG);
 
 		txt = new FlxText(20,20, 0, text, 18);
-		txt.font = "VCR OSD Mono";
+		txt.font = FunkinFonts.VCR;
 		txt.alignment = CENTER;
 		add(txt);
         buttBG.setGraphicSize(Std.int(txt.width+20), Std.int(txt.height+12));

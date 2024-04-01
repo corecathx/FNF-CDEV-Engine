@@ -84,7 +84,7 @@ class ModdingScreen extends meta.states.MusicBeatState
 		
 		descText = new FlxText(20, FlxG.height - 140, -1, '', 24);
 		descText.scrollFactor.set();
-		descText.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		descText.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		descText.screenCenter(X);
 		add(descText);
 		descText.borderSize = 2;
@@ -99,7 +99,7 @@ class ModdingScreen extends meta.states.MusicBeatState
 		add(bottomPanel);
 
 		var scoreText:FlxText = new FlxText(0, bottomPanel.y + 20, -1, 'Current Mod: ' + Paths.currentMod, 28);
-		scoreText.setFormat(Paths.font("vcr.ttf"), 30, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		scoreText.setFormat(FunkinFonts.VCR, 30, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		scoreText.borderSize = 2;
 		add(scoreText);
 		scoreText.screenCenter(X);
@@ -137,7 +137,7 @@ class ModdingScreen extends meta.states.MusicBeatState
 					theState.moddingMode = true;
 					FlxG.switchState(theState);
 				case 'Stage Editor':
-					FlxG.switchState(new meta.modding.stage_editor.Better_StageEditor());
+					FlxG.switchState(new meta.modding.stage_editor.StageEditor());
 				case 'Week Editor':
 					FlxG.sound.music.stop();
 					FlxG.switchState(new meta.modding.week_editor.WeekEditor(''));	

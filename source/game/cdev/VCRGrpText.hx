@@ -16,7 +16,7 @@ class VCRGrpText extends FlxSpriteGroup {
     public function new(x:Float, y:Float, text:String = '', size:Int, color:FlxColor, alignment:FlxTextAlign) {
         super();
         theText = new FlxText(x,y,FlxG.width,text,size);
-        theText.setFormat('VCR OSD Mono', size,color,alignment,OUTLINE,FlxColor.BLACK);
+        theText.setFormat(FunkinFonts.VCR, size,color,alignment,OUTLINE,FlxColor.BLACK);
         theText.borderSize = 2;
         add(theText);
     }

@@ -90,7 +90,7 @@ class FlxSoundTray extends Sprite
 		text.gridFitType = GridFitType.PIXEL;
 		#else
 		#end
-		var dtf:TextFormat = new TextFormat("VCR OSD Mono", 10, 0xffffff);
+		var dtf:TextFormat = new TextFormat(FunkinFonts.VCR, 10, 0xffffff);
 		dtf.align = TextFormatAlign.CENTER;
 		text.defaultTextFormat = dtf;
 		addChild(text);

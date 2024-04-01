@@ -3,7 +3,7 @@ package meta.modding.week_editor;
 import game.objects.HealthIcon;
 import game.objects.Alphabet;
 import meta.states.FreeplayState.SongMetadata;
-import meta.states.MusicBeatState;
+
 import meta.modding.week_editor.WeekData.FreeplaySong;
 import openfl.events.IOErrorEvent;
 import openfl.events.Event;
@@ -84,12 +84,12 @@ class WeekEditor extends meta.states.MusicBeatState
 		FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.2);
 		loadWeekFile((privJson == null ? null : privJson));
 		txtWeekTitle = new FlxText(FlxG.width * 0.7, 10, 0, "", 32);
-		txtWeekTitle.setFormat("VCR OSD Mono", 32, FlxColor.WHITE, RIGHT);
+		txtWeekTitle.setFormat(FunkinFonts.VCR, 32, FlxColor.WHITE, RIGHT);
 		txtWeekTitle.alpha = 0.7;
 
 		var rankText:FlxText = new FlxText(0, 10);
 		rankText.text = 'RANK: GREAT';
-		rankText.setFormat(Paths.font("vcr.ttf"), 32);
+		rankText.setFormat(FunkinFonts.VCR, 32);
 		rankText.size = 32;
 		rankText.screenCenter(X);
 
@@ -137,7 +137,7 @@ class WeekEditor extends meta.states.MusicBeatState
 		add(txtWeekTitle);
 
 		charInfo = new FlxText(0, 0, FlxG.width, "", 20);
-		charInfo.setFormat("VCR OSD Mono", 20, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+		charInfo.setFormat(FunkinFonts.VCR, 20, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		add(charInfo);
 		charInfo.alpha = 0.8;
 
@@ -935,21 +935,21 @@ class WeekEditorSaveDialogue extends MusicBeatSubstate
 	function createBoxUI()
 	{
 		var header:FlxText = new FlxText(box.x, box.y + 10, 800, "Save Week File", 40);
-		header.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		header.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(header);
 
 		input_charName = new FlxUIInputText(box.x + 50, box.y + 100, 500, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_charName.font = "VCR OSD Mono";
+		input_charName.font = FunkinFonts.VCR;
 		add(input_charName);
 		txtCn = new FlxText(input_charName.x, input_charName.y - 25, 500, "Week File Name", 20);
-		txtCn.font = "VCR OSD Mono";
+		txtCn.font = FunkinFonts.VCR;
 		add(txtCn);
 
 		butt_saveChar = new FlxSprite(865, 510).makeGraphic(150, 32, FlxColor.fromRGB(70, 70, 70));
 		add(butt_saveChar);
 
 		txtBs = new FlxText(865, 515, 150, "Save", 18);
-		txtBs.font = "VCR OSD Mono";
+		txtBs.font = FunkinFonts.VCR;
 		txtBs.alignment = CENTER;
 		add(txtBs);
 	}

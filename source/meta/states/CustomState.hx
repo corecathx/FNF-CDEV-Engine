@@ -1,6 +1,6 @@
 package meta.states;
 
-import game.cdev.log.GameLog;
+
 import flixel.addons.display.FlxRuntimeShader;
 import meta.modding.ModdingState;
 import flixel.addons.transition.FlxTransitionableState;
@@ -10,7 +10,7 @@ import flixel.graphics.tile.FlxGraphicsShader;
 import flixel.FlxCamera;
 import openfl.filters.ShaderFilter;
 import openfl.display.GraphicsShader;
-import meta.states.MusicBeatState;
+
 import sys.FileSystem;
 import game.cdev.CDevMods.CDEV_FlxAxes;
 import flixel.addons.display.FlxBackdrop;

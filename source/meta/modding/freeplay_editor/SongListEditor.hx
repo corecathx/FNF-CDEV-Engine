@@ -17,7 +17,7 @@ import game.objects.Alphabet;
 import sys.io.File;
 import sys.FileSystem;
 import meta.states.FreeplayState.SongMetadata;
-import meta.states.MusicBeatState;
+
 import meta.modding.ModdingScreen;
 
 using StringTools;
@@ -452,7 +452,7 @@ class NewSongSubstate extends MusicBeatSubstate
 		add(icon);
 
 		titleText = new FlxText(icon.x + icon.width + 8, 0, -1, "CDEV Engine - New Song", 14);
-		titleText.setFormat("VCR OSD Mono", 14, FlxColor.WHITE);
+		titleText.setFormat(FunkinFonts.VCR, 14, FlxColor.WHITE);
 		titleText.y = icon.y + ((icon.width / 2) - (titleText.height / 2));
 		add(titleText);
 		loadUI();
@@ -469,17 +469,17 @@ class NewSongSubstate extends MusicBeatSubstate
 
 	function loadUI() {
 		input_songName = new FlxUIInputText(title.x+10, title.y+68, 300, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_songName.font = "VCR OSD Mono";
+		input_songName.font = FunkinFonts.VCR;
 		add(input_songName);
 		txtSn = new FlxText(input_songName.x, input_songName.y - 25, 300, "Song Name", 20);
-		txtSn.font = "VCR OSD Mono";
+		txtSn.font = FunkinFonts.VCR;
 		add(txtSn);
 
 		input_character = new FlxUIInputText(title.x+10, input_songName.y+input_songName.height+38, 200, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_character.font = "VCR OSD Mono";
+		input_character.font = FunkinFonts.VCR;
 		add(input_character);
 		txtC = new FlxText(input_character.x, input_character.y - 25, 200, "Character Icon", 20);
-		txtC.font = "VCR OSD Mono";
+		txtC.font = FunkinFonts.VCR;
 		add(txtC);
 
 		iconP = new HealthIcon("face", false, true);

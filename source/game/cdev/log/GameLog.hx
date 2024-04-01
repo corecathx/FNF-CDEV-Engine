@@ -153,24 +153,34 @@ class GameLog extends Sprite
             GameLog.current.addLog(data, GameLogType.ERROR);
 			GameLog.current.errorCounter++;
             GameLog.current.changeActive(true);
+			return;
         }
+		trace("[ERROR] "+data);
     }
 
     public static function warn(data:Dynamic){
         if (GameLog.current != null){
             GameLog.current.addLog(data, GameLogType.WARNING);
 			GameLog.current.warningCounter++;
+			return;
 		}
+		trace("[WARNING] "+data);
     }
 
     public static function log(data:Dynamic){
-        if (GameLog.current != null)
-            GameLog.current.addLog(data, GameLogType.LOG);
+        if (GameLog.current != null){
+			GameLog.current.addLog(data, GameLogType.LOG);
+			return;
+		}
+		trace("[LOG] "+data);
     }
 
 	public static function game(data:Dynamic){
-        if (GameLog.current != null)
-            GameLog.current.addLog(data, GameLogType.GAME);
+        if (GameLog.current != null){
+			GameLog.current.addLog(data, GameLogType.GAME);
+			return;
+		}
+		trace("[GAME] "+data);
     }
 
 	public function addLog(Data:Dynamic, ?logType:String)
@@ -298,7 +308,7 @@ class GameLog extends Sprite
 		object.gridFitType = GridFitType.PIXEL;
 		#end
 
-		var dtf:TextFormat = new TextFormat("VCR OSD Mono", _size, _color);
+		var dtf:TextFormat = new TextFormat(FunkinFonts.VCR, _size, _color);
 		dtf.align = _textAlign;
 		object.defaultTextFormat = dtf;
 		object.text = _text;
@@ -310,6 +320,6 @@ class GameLog extends Sprite
 	}
 
     public function createTextFormat(_color:Int = 0xFFFFFF, _size:Int = 10){
-        return new TextFormat("VCR OSD Mono", _size, _color);
+        return new TextFormat(FunkinFonts.VCR, _size, _color);
     }
 }

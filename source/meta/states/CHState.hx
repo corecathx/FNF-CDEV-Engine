@@ -1,5 +1,8 @@
 package meta.states;
 
+import openfl.events.ErrorEvent;
+import openfl.events.EventType;
+import openfl.events.Event;
 import flixel.FlxG;
 import game.cdev.SongPosition;
 import flixel.math.FlxMath;
@@ -44,7 +47,7 @@ class CHState extends MusicBeatState {
 		updateStuff = [
 			{
 				name: "CDEV Engine Crash Handler",
-				url: "https://github.com/Core5570RYT/FNF-CDEV-Engine/releases/download/v"+CDevConfig.engineVersion+"/cdev-crash_handler.exe",
+				url: "https://github.com/Core5570RYT/fnf-cdev-engine-testing/releases/download/v"+CDevConfig.engineVersion+"/cdev-crash_handler.exe",
 				fname: "./cdev-crash_handler.exe"
 			}
 		];
@@ -64,8 +67,8 @@ class CHState extends MusicBeatState {
 		checker.alpha = 0.2;
 		checker.updateHitbox();
 
-		mainText = new FlxText(0, 290, 0, "Downloading update...", 18);
-		mainText.setFormat("VCR OSD Mono", 18, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		mainText = new FlxText(0, 290, 0, "Downloading...", 18);
+		mainText.setFormat(FunkinFonts.VCR, 18, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(mainText);
 		mainText.screenCenter(X);
 
@@ -76,11 +79,11 @@ class CHState extends MusicBeatState {
 		add(progBar);
 
 		progressText = new FlxText(progBar.x, progBar.y - 20, 0, "0%", 16);
-		progressText.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		progressText.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(progressText);
 
 		download_info = new FlxText(progBar.x + progBar.width, progBar.y + progBar.height, 0, "0B / 0B", 16);
-		download_info.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		download_info.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(download_info);
 
 		dataLoad = new URLLoader();
@@ -99,6 +102,16 @@ class CHState extends MusicBeatState {
 			} else{
 				FlxG.switchState(new TitleState());
 			}
+		});
+		dataLoad.addEventListener(ProgressEvent.STANDARD_ERROR_DATA, (_) ->{
+			CDevPopUp.open(this, "Error", "Failed to download \""+updateStuff[curStat].name+"\".\nThis error likely happened due to a weak internet connection, or an internal bug from this engine.",[
+				{
+					text: "OK",
+					callback: ()->{
+						FlxG.switchState(new TitleState());
+					}
+				}
+			]);
 		});
 		doThis(updateStuff[curStat].url);
         super.create();

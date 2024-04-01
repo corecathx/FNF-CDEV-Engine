@@ -25,7 +25,7 @@ class DiscordClient
 			onError: onError,
 			onDisconnected: onDisconnected
 		});
-		trace("Discord Client started.");
+		trace("Discord Client started." + DiscordRpc.presence);
 
 		while (true)
 		{

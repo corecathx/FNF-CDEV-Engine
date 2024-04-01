@@ -56,7 +56,7 @@ class OffsetTest extends MusicBeatState
 		daOffset = 'Tap any keys to the beat!\nCurrent Offset: ' + offs + 'ms';
 
 		offsetText = new FlxText(20, 800, FlxG.width, daOffset, 20);
-		offsetText.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		offsetText.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		offsetText.screenCenter(X);
 		add(offsetText);
 		offsetText.borderSize = 2;
@@ -65,7 +65,7 @@ class OffsetTest extends MusicBeatState
 			+ CDevConfig.saveData.offset
 			+ 'ms';
 		infoTxt = new FlxText(0, 0, FlxG.width, daInf, 28);
-		infoTxt.setFormat("VCR OSD Mono", 28, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		infoTxt.setFormat(FunkinFonts.VCR, 28, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		infoTxt.screenCenter();
 		infoTxt.alpha = 0;
 		add(infoTxt);

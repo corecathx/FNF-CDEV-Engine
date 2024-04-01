@@ -106,7 +106,7 @@ class OpenExistingModState extends meta.states.MusicBeatState
 		var text = meta.states.MainMenuState.coreEngineText + ' - Open an existing mod.';
 		var versionShit:FlxText = new FlxText(20, FlxG.height - 30, 1000, text, 16);
 		versionShit.scrollFactor.set();
-		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
 		versionShit.alpha = 0.7;
 		super.create();

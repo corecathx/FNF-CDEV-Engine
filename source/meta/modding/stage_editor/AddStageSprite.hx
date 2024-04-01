@@ -24,7 +24,7 @@ using StringTools;
 // yet another copy of missingfilemessage, missingfilesubstate, and cdevpopup
 class AddStageSprite extends MusicBeatSubstate
 {
-	var state:Better_StageEditor;
+	var state:StageEditor;
 	var box:FlxSprite;
 	var exitButt:FlxSprite;
 	var bgBlack:FlxSprite;
@@ -43,7 +43,7 @@ class AddStageSprite extends MusicBeatSubstate
 
 	var highlightSprite:FlxSprite = new FlxSprite();
 
-	public function new(mainState:Better_StageEditor)
+	public function new(mainState:StageEditor)
 	{
 		super();
 		var button:Array<game.cdev.CDevPopUp.PopUpButton> = [
@@ -113,12 +113,12 @@ class AddStageSprite extends MusicBeatSubstate
 		}
 
 		header = new FlxText(box.x, box.y + 10, 400, "Bitmap", 40);
-		header.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		header.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(header);
 		header.scrollFactor.set();
 
 		header2 = new FlxText(box.x + 400, box.y + 10, 400, "Sparrow", 40);
-		header2.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		header2.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(header2);
 		header2.scrollFactor.set();
 
@@ -143,19 +143,19 @@ class AddStageSprite extends MusicBeatSubstate
 		var input_spriteName:FlxUIInputText;
 
 		input_spritePath = new FlxUIInputText(10, 25, 400, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_spritePath.setFormat("VCR OSD Mono", 16, FlxColor.WHITE);
+		input_spritePath.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE);
 		displayGroup.add(input_spritePath);
 
 		var txtMna = new FlxText(10, 5, 0, "Path to sprite bitmap", 16);
-		txtMna.font = "VCR OSD Mono";
+		txtMna.font = FunkinFonts.VCR;
 		displayGroup.add(txtMna);
 
 		input_spriteName = new FlxUIInputText(10, 75, 400, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_spriteName.setFormat("VCR OSD Mono", 16, FlxColor.WHITE);
+		input_spriteName.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE);
 		displayGroup.add(input_spriteName);
 
 		var txtMnae = new FlxText(10, 55, 0, "Sprite Bitmap Name", 16);
-		txtMnae.font = "VCR OSD Mono";
+		txtMnae.font = FunkinFonts.VCR;
 		displayGroup.add(txtMnae);
 
 		var button:Array<game.cdev.CDevPopUp.PopUpButton> = [
@@ -274,26 +274,26 @@ class AddStageSprite extends MusicBeatSubstate
 		var input_sparrowAnim:FlxUIInputText;
 
 		input_sparrowPath = new FlxUIInputText(10, 25, 400, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_sparrowPath.setFormat("VCR OSD Mono", 16, FlxColor.WHITE);
+		input_sparrowPath.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE);
 		displayGroup.add(input_sparrowPath);
 
 		var txtMna = new FlxText(10, 5, 0, "Path to sparrow file", 16);
-		txtMna.font = "VCR OSD Mono";
+		txtMna.font = FunkinFonts.VCR;
 		displayGroup.add(txtMna);
 
 		input_sparrowName = new FlxUIInputText(10, 75, 400, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_sparrowName.setFormat("VCR OSD Mono", 16, FlxColor.WHITE);
+		input_sparrowName.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE);
 		displayGroup.add(input_sparrowName);
 
 		var txtMnae = new FlxText(10, 55, 0, "Sparrow Sprite Name", 16);
-		txtMnae.font = "VCR OSD Mono";
+		txtMnae.font = FunkinFonts.VCR;
 		displayGroup.add(txtMnae);
 
 		stepper_sparrowFrameRate = new FlxUINumericStepper(10, 125, 1, 24, 1, 999, 0);
 		displayGroup.add(stepper_sparrowFrameRate);
 
 		var txtMnaae = new FlxText(10, 125-15, 0, "Animation Framerate", 14);
-		txtMnaae.font = "VCR OSD Mono";
+		txtMnaae.font = FunkinFonts.VCR;
 		displayGroup.add(txtMnaae);
 
 		var dops:Array<String> = ["beat-force", "beat", "normal"];
@@ -306,15 +306,15 @@ class AddStageSprite extends MusicBeatSubstate
 		displayGroup.add(drop_sparrowAnimType);
 
 		var txtMnaaee = new FlxText(210, 120-15, 0, "Animation Type", 14);
-		txtMnaaee.font = "VCR OSD Mono";
+		txtMnaaee.font = FunkinFonts.VCR;
 		displayGroup.add(txtMnaaee);
 
 		input_sparrowAnim = new FlxUIInputText(10, 165, 200, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_sparrowAnim.setFormat("VCR OSD Mono", 16, FlxColor.WHITE);
+		input_sparrowAnim.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE);
 		displayGroup.add(input_sparrowAnim);
 
 		var txtMnae = new FlxText(10, 145, 0, "Sparrow Animation (XML File Anim)", 16);
-		txtMnae.font = "VCR OSD Mono";
+		txtMnae.font = FunkinFonts.VCR;
 		displayGroup.add(txtMnae);
 
 		var button:Array<game.cdev.CDevPopUp.PopUpButton> = [

@@ -2,7 +2,7 @@ package meta.substates;
 
 import flixel.tweens.FlxEase;
 import sys.thread.Mutex;
-import game.cdev.log.GameLog;
+
 import flixel.tweens.FlxTween;
 import openfl.system.System;
 import flixel.util.FlxColor;
@@ -12,7 +12,7 @@ import game.system.FunkinThread;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import game.objects.FunkinBar;
-import meta.states.MusicBeatState;
+
 
 /**
  * A helper loading class for CDEV Engine.
@@ -44,7 +44,7 @@ class LoadingSubstate extends MusicBeatSubstate {
         add(_loadingBar);
 
         _loadingText = new FlxText(0, _loadingBar.y + 30, "Loading...", 20);
-		_loadingText.setFormat("VCR OSD Mono", 20, FlxColor.CYAN, CENTER, OUTLINE, FlxColor.BLACK);
+		_loadingText.setFormat(FunkinFonts.VCR, 20, FlxColor.CYAN, CENTER, OUTLINE, FlxColor.BLACK);
 		_loadingText.screenCenter(X);
 		add(_loadingText);
 

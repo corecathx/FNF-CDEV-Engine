@@ -3,7 +3,7 @@ package game.cdev.engineutils;
 import flixel.FlxSubState;
 import openfl.display3D.Context3D;
 import flixel.FlxG;
-import game.cdev.log.GameLog;
+
 import sys.io.Process;
 import lime.system.System as LSystem;
 import lime.app.Application;
@@ -28,7 +28,7 @@ class CDevInfoTxt extends TextField
 
 		selectable = false;
 		var mobileMulti:Float = #if mobile 1.5; #else 1; #end
-		defaultTextFormat = new TextFormat("VCR OSD Mono", Std.int(14*mobileMulti), inCol, false);
+		defaultTextFormat = new TextFormat(FunkinFonts.VCR, Std.int(14*mobileMulti), inCol, false);
         visible = false;
         background = true;
         backgroundColor = 0x69000000;
@@ -48,7 +48,17 @@ class CDevInfoTxt extends TextField
 	}
 
     public function getText(){
-        return '$wholeSystem\n\n${getConductor()}\n\n${getFlixel()}';
+        return getFormatted([wholeSystem,getConductor(),getFlixel(),getLibVersion()]);
+    }
+
+    public function getFormatted(array:Array<String>){
+        var out:String = "";
+        var l:Int = 0;
+        for (i in array){
+            out+='$i${l>array.length?"":"\n\n"}';
+            l++;
+        }
+        return out;
     }
 
     // i want to check how bad is my pc lmao
@@ -125,10 +135,23 @@ class CDevInfoTxt extends TextField
         return fli;
     }
 
+    public function getLibVersion():String {
+        var haxeVer = haxe.macro.Compiler.getDefine("haxe");
+        var flixVer = haxe.macro.Compiler.getDefine("flixel");
+        var limeVer = haxe.macro.Compiler.getDefine("lime");
+        var openVer = haxe.macro.Compiler.getDefine("openfl");
+        var lib:String = "// Versions //"
+            + '\n- Haxe     : ${haxeVer}'
+            + '\n- Flixel    : ${flixVer}'
+            + '\n- Lime     : ${limeVer}'
+            + '\n- OpenFL   : ${openVer}';
+        return lib;
+    }
+
     public function getSubstate(wa:FlxSubState):FlxSubState {
         if (wa != null && wa.subState != null){
             how++;
-            return getSubstate(wa);
+            return getSubstate(wa.subState);
         } else{
             return wa;
         }

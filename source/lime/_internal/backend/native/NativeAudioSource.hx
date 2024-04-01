@@ -1,5 +1,7 @@
 package lime._internal.backend.native;
 
+import cpp.vm.Gc;
+import game.system.FunkinThread;
 import haxe.Int64;
 import haxe.Timer;
 import lime.math.Vector4;
@@ -180,8 +182,11 @@ class NativeAudioSource
 		{
 			setCurrentTime(getCurrentTime());
 
-			streamTimer = new Timer(STREAM_TIMER_FREQUENCY);
-			streamTimer.run = streamTimer_onRun;
+			// will this work? idk
+			FunkinThread.doTask([()->{
+				streamTimer = new Timer(STREAM_TIMER_FREQUENCY);
+				streamTimer.run = streamTimer_onRun;
+			}],(_)->{}, ()->{});
 		}
 		else
 		{
@@ -253,6 +258,7 @@ class NativeAudioSource
 	private function refillBuffers(buffers:Array<ALBuffer> = null):Void
 	{
 		#if lime_vorbis
+		//Gc.run(true);
 		var vorbisFile = null;
 		var position = 0;
 
@@ -291,6 +297,7 @@ class NativeAudioSource
 					AL.bufferData(buffer, format, data, data.length, parent.buffer.sampleRate);
 					position += STREAM_BUFFER_SIZE;
 					numBuffers++;
+					//Sys.println("[NativeAudioSource] Position: " + position + " | BufferSize: " +STREAM_BUFFER_SIZE + " | DataLength: " + dataLength + " | NumBuffers: " + numBuffers);
 				}
 				else if (position < dataLength)
 				{

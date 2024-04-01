@@ -28,7 +28,7 @@ class MissingFileSubstate extends meta.substates.MusicBeatSubstate
 		add(bigText);
 
 		var detailText:FlxText = new FlxText(0, bigText.y + 100, FlxG.width, "", 24);
-		detailText.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		detailText.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(detailText);
 
 		detailText.borderSize = 2;

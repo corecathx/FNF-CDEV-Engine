@@ -8,7 +8,7 @@ import android.content.Context;
 import game.system.native.Android;
 #end
 
-import game.cdev.log.GameLog;
+
 
 import haxe.io.Path;
 #if CRASH_HANDLER

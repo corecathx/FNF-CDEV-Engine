@@ -75,7 +75,7 @@ class UpdateState extends MusicBeatState
 		checker.updateHitbox();
 
 		text = new FlxText(0, 0, 0, "Downloading update...", 18);
-		text.setFormat("VCR OSD Mono", 18, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		text.setFormat(FunkinFonts.VCR, 18, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(text);
 		text.screenCenter(X);
 		text.y = 290;
@@ -90,11 +90,11 @@ class UpdateState extends MusicBeatState
 		add(progressBar);
 
 		progressText = new FlxText(progressBar.x, progressBar.y - 20, 0, "0%", 16);
-		progressText.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		progressText.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(progressText);
 
 		download_info = new FlxText(progressBar.x + progBar_bg.width, progressBar.y + progBar_bg.height, 0, "0B / 0B", 16);
-		download_info.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		download_info.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(download_info);
 
 		zip = new URLLoader();

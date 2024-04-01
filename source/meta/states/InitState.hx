@@ -11,7 +11,7 @@ import flixel.addons.transition.TransitionData.TransitionTileData;
 import flixel.graphics.FlxGraphic;
 import game.cdev.engineutils.Highscore;
 import game.cdev.engineutils.PlayerSettings;
-import game.cdev.log.GameLog;
+
 import flixel.FlxG;
 import sys.FileSystem;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
@@ -74,25 +74,25 @@ class InitState extends MusicBeatState {
     }
 
     function init_transition(){
-        if (!status.transitionLoaded)
-        {
-            var diamond:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
-            diamond.persist = true;
-            diamond.destroyOnNoUse = false;
+        var diamond:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
+        diamond.persist = true;
+        diamond.destroyOnNoUse = false;
 
-            var transData:TransitionTileData = {
-                asset: diamond,
-                width: 32,
-                height: 32
-            }
-
-            var newTD:TransitionData = new TransitionData(FADE, FlxColor.BLACK, 0.5, new FlxPoint(0, -1), transData,
+        var transData:TransitionTileData = {
+            asset: diamond,
+            width: 32,
+            height: 32
+        }
+        inline function __createTransData(up:Bool = false){
+            var newTD:TransitionData = new TransitionData(FADE, FlxColor.BLACK, 0.5, new FlxPoint(0, up ? -1 : 1), transData,
             new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
             newTD.cameraMode = TransitionCameraMode.NEW;
-            FlxTransitionableState.defaultTransIn = newTD;
-
-            newTD.direction = new FlxPoint(0, 1);
-            FlxTransitionableState.defaultTransOut = newTD;
+            return newTD;
+        }
+        if (!status.transitionLoaded)
+        {
+            FlxTransitionableState.defaultTransIn = __createTransData(true);
+            FlxTransitionableState.defaultTransOut = __createTransData();
 
             transIn = FlxTransitionableState.defaultTransIn;
             transOut = FlxTransitionableState.defaultTransOut;

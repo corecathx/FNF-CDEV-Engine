@@ -292,7 +292,7 @@ class FreeplayState extends MusicBeatState
 		add(bottomPanel);
 
 		scoreText = new FlxText(50, bottomPanel.y + 18, FlxG.width, "", 28);
-		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+		scoreText.setFormat(FunkinFonts.VCR, 32, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		scoreText.borderSize = 2;
 
 		add(scoreText);
@@ -329,7 +329,7 @@ class FreeplayState extends MusicBeatState
 
 		songInfo = new FlxText(0, 15, 1000, '', 16);
 		songInfo.scrollFactor.set();
-		songInfo.setFormat("VCR OSD Mono", 18, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		songInfo.setFormat(FunkinFonts.VCR, 18, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(songInfo);
 		songInfo.x = (FlxG.width - songInfo.width) - 20;
 
@@ -342,7 +342,7 @@ class FreeplayState extends MusicBeatState
 			+ "] to reset this song's score & ratings. // Press [M] to open modifiers.";
 
 		tip = new FlxText(50, bottomPanel.y - 16, FlxG.width, daTipsTxt, 28);
-		tip.setFormat(Paths.font("vcr.ttf"), 15, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		tip.setFormat(FunkinFonts.VCR, 15, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		tip.borderSize = 2;
 		tip.screenCenter(X);
 		add(tip);
@@ -397,7 +397,7 @@ class FreeplayState extends MusicBeatState
 
 		versionSht = new FlxText(20, FlxG.height - 100, 1000, '', 24);
 		versionSht.scrollFactor.set();
-		versionSht.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionSht.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		versionSht.screenCenter(X);
 		add(versionSht);
 		versionSht.borderSize = 2;
@@ -978,7 +978,7 @@ class FreeplayState extends MusicBeatState
 		add(songBar);
 
 		daText = new FlxText(0, songBG.y + 30, "Getting ready to play the song...", 20);
-		daText.setFormat("VCR OSD Mono", 20, FlxColor.CYAN, CENTER, OUTLINE, FlxColor.BLACK);
+		daText.setFormat(FunkinFonts.VCR, 20, FlxColor.CYAN, CENTER, OUTLINE, FlxColor.BLACK);
 		daText.screenCenter(X);
 		add(daText);*/
 

@@ -1,6 +1,6 @@
 package game.cdev.script;
 
-import game.cdev.log.GameLog;
+
 import meta.states.PlayState;
 import flixel.FlxG;
 import sys.FileSystem;

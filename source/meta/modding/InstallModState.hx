@@ -125,7 +125,7 @@ class InstallModState extends meta.states.MusicBeatState
 
 			iconArray.push(iconShit);
 			var description:FlxText = new FlxText(optionText.x + 10, optionText.y + optionText.height + 10, (FlxG.width / 2)+100, modShits[i].modDesc, 14);
-			description.setFormat('VCR OSD Mono', 20, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+			description.setFormat(FunkinFonts.VCR, 20, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 			descArray.push(description);
 			add(description);
 		}
@@ -134,7 +134,7 @@ class InstallModState extends meta.states.MusicBeatState
 		var text = meta.states.MainMenuState.coreEngineText + ' - ';
 		var versionShit:FlxText = new FlxText(20, FlxG.height - 30, 1000, text, 16);
 		versionShit.scrollFactor.set();
-		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		//add(versionShit);
 		versionShit.alpha = 0.7;
 

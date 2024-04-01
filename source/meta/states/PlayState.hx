@@ -1,12 +1,8 @@
 package meta.states;
 
+import game.cdev.objects.CDevCamera;
 import game.cdev.engineutils.CDevFPSMem;
 import game.cdev.CDevPopUp.PopUpButton;
-import flixel.FlxCamera;
-import flixel.FlxG;
-import flixel.FlxObject;
-import flixel.FlxSprite;
-import flixel.FlxSubState;
 import flixel.animation.FlxAnimationController;
 import flixel.addons.effects.FlxTrail;
 import flixel.addons.effects.chainable.FlxWaveEffect;
@@ -25,7 +21,7 @@ import flixel.util.FlxTimer;
 import meta.substates.GameOverSubstate;
 import meta.modding.char_editor.CharacterEditor;
 import openfl.display.BitmapData;
-import game.cdev.log.GameLog;
+
 import game.cdev.script.CDevScript;
 import game.cdev.script.ScriptData;
 import game.cdev.script.ScriptSupport;
@@ -148,9 +144,10 @@ class PlayState extends MusicBeatState
 
 	public static var iconP1:HealthIcon;
 	public static var iconP2:HealthIcon;
-	public static var camHUD:FlxCamera;
 
-	public var camGame:FlxCamera;
+	public static var camHUD:CDevCamera;
+	public static var camSustain:CDevCamera;
+	public var camGame:CDevCamera;
 
 	public static var botplayTxt:FlxText;
 
@@ -350,10 +347,14 @@ class PlayState extends MusicBeatState
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
-		camGame = new FlxCamera();
-		camHUD = new FlxCamera();
-		camHUD.bgColor.alpha = 0;
+		camGame = new CDevCamera();
 		FlxG.cameras.reset(camGame);
+
+		camHUD = new CDevCamera();
+		camSustain = new CDevCamera(); // you might think that i'm stupid, but yeah you're right
+		camSustain.bgColor.alpha = camHUD.bgColor.alpha = 0;
+
+		FlxG.cameras.add(camSustain);
 		FlxG.cameras.add(camHUD);
 
 		config.noteImpactsCamera = camHUD;
@@ -362,8 +363,7 @@ class PlayState extends MusicBeatState
 		// How to
 		FlxCamera.defaultCameras = [camGame];
 
-		persistentUpdate = true;
-		persistentDraw = true;
+		persistentUpdate = persistentDraw = true;
 
 		initModifiers();
 
@@ -646,7 +646,7 @@ class PlayState extends MusicBeatState
 				case 'school':
 					{
 						Paths.setCurrentLevel("week6");
-						config.uiTextFont = 'Pixel Arial 11 Bold';
+						config.uiTextFont = FunkinFonts.PIXEL;
 						isPixel = true;
 						curStage = 'school';
 
@@ -716,7 +716,7 @@ class PlayState extends MusicBeatState
 				case 'schoolEvil':
 					{
 						Paths.setCurrentLevel("week6");
-						config.uiTextFont = 'Pixel Arial 11 Bold';
+						config.uiTextFont = FunkinFonts.PIXEL;
 						isPixel = true;
 						curStage = 'schoolEvil';
 
@@ -1811,11 +1811,11 @@ class PlayState extends MusicBeatState
 						var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0], libshit));
 						ready.scrollFactor.set();
 						ready.updateHitbox();
+						
+						ready.scale.set(1/FlxG.camera.zoom, 1/FlxG.camera.zoom);
 
 						if (isPixel)
 							ready.setGraphicSize(Std.int(ready.width * daPixelZoom));
-						
-						ready.scale.set(1/FlxG.camera.zoom, 1/FlxG.camera.zoom);
 
 						ready.screenCenter();
 						ready.y -= 50;
@@ -1832,10 +1832,10 @@ class PlayState extends MusicBeatState
 						var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1], libshit));
 						set.scrollFactor.set();
 
+						set.scale.set(1/FlxG.camera.zoom, 1/FlxG.camera.zoom);
+
 						if (isPixel)
 							set.setGraphicSize(Std.int(set.width * daPixelZoom));
-
-						set.scale.set(1/FlxG.camera.zoom, 1/FlxG.camera.zoom);
 						set.screenCenter();
 						set.y -= 50;
 						add(set);
@@ -1851,11 +1851,10 @@ class PlayState extends MusicBeatState
 						var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2], libshit));
 						go.scrollFactor.set();
 
-						if (isPixel)
-							go.setGraphicSize(Std.int(go.width * daPixelZoom));
-
 						go.updateHitbox();
 						go.scale.set(1/FlxG.camera.zoom, 1/FlxG.camera.zoom);
+						if (isPixel)
+							go.setGraphicSize(Std.int(go.width * daPixelZoom));
 						go.screenCenter();
 						go.y -= 50;
 						add(go);
@@ -2534,6 +2533,7 @@ class PlayState extends MusicBeatState
 			songEventHandler();
 			keyShit();
 		}
+		updateSusCam();
 
 		if (isModStage)
 			stageHandler.onUpdate(elapsed);
@@ -2548,7 +2548,7 @@ class PlayState extends MusicBeatState
 		{
 			if (startedCountdown)
 			{
-				Conductor.songPosition += (FlxG.elapsed * 1000) * songSpeed;
+				Conductor.songPosition += (elapsed * 1000) * songSpeed;
 				Conductor.rawTime = Conductor.songPosition;
 				if (Conductor.songPosition >= 0 + Conductor.offset)
 				{
@@ -2718,6 +2718,17 @@ class PlayState extends MusicBeatState
 				#end
 			}
 		}
+	}
+
+	/** Updates the `camSustain` property to be the same as `camHUD`.**/
+	public function updateSusCam(){
+		// is there's anything else to add here?
+		camSustain.setPosition(camHUD.x,camHUD.y);
+		camSustain.angle = camHUD.angle;
+		camSustain.alpha = camHUD.alpha;
+		camSustain.scroll.copyFrom(camHUD.scroll);
+		camSustain.zoom = camHUD.zoom;
+		camSustain.visible = camHUD.visible;
 	}
 
 	/**This function used to update texts such as scoreTxt and botplayTxt**/
@@ -3175,7 +3186,7 @@ class PlayState extends MusicBeatState
 
 		numGroup.forEachAlive(function(spr:FlxSprite)
 		{
-			spr.x = comboPosition.x + (43 * spr.ID);
+			spr.x = comboPosition.x + (26 * spr.ID);
 			spr.y = FlxMath.lerp(comboPosition.y, spr.y, CDevConfig.utils.bound(1 - (elapsed * 12), 0, 1));
 
 			if (timeS > Conductor.crochet * 0.001)
@@ -3357,6 +3368,9 @@ class PlayState extends MusicBeatState
 				&& unspawnNotes[0].strumTime - Conductor.songPosition < daTime * (songSpeed == 1 ? 1 : songSpeed))
 			{
 				var dunceNote:Note = unspawnNotes[0];
+				if (dunceNote.isSustainNote)
+					dunceNote.cameras = [camSustain];
+
 				notes.add(dunceNote);
 				dunceNote.onNoteSpawn();
 
@@ -3426,40 +3440,40 @@ class PlayState extends MusicBeatState
 				else if (checkStrumTime && CDevConfig.saveData.botplay)
 					goodNoteHit(daNote);
 
-				daNote.y = (strum.y + 0.45 * noteDiff * noteSpeed) - daNote.noteYOffset;
+				if (daNote.followY){
+					daNote.y = (strum.y + 0.45 * noteDiff * noteSpeed) - daNote.noteYOffset;
 
-				if (daNote.isSustainNote)
-				{
-					// you don't know how much i hate this line of codes.
-					// this took me AGES to finish.
-					if (strum.noteScroll > 0)
-						if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
-						{
-							daNote.y += (daNote.prevNote.height + (daNote.height / 2)) / 2;
-							daNote.y -= (daNote.prevNote.height / 2);
-							daNote.y += (daNote.prevNote.height) / noteSpeed;
-							daNote.y += (daNote.height) / noteSpeed;
-						}
+					if (daNote.isSustainNote)
+					{
+						// you don't know how much i hate this line of codes.
+						// this took me AGES to finish.
+						if (strum.noteScroll > 0)
+							if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
+							{
+								daNote.y += (daNote.prevNote.height + (daNote.height / 2)) / 2;
+								daNote.y -= (daNote.prevNote.height / 2);
+								daNote.y += (daNote.prevNote.height) / noteSpeed;
+								daNote.y += (daNote.height) / noteSpeed;
+							}
+							else
+							{
+								daNote.y -= (daNote.height / 2);
+								daNote.y += (daNote.height) / noteSpeed;
+							}
 						else
 						{
-							daNote.y -= (daNote.height / 2);
-							daNote.y += (daNote.height) / noteSpeed;
+							if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
+							{
+								daNote.y += (daNote.prevNote.height) - (daNote.height / 2);
+								daNote.y += (daNote.prevNote.height / 2);
+								daNote.y -= daNote.height / noteSpeed;
+							}
 						}
-					else
-					{
-						if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
-						{
-							daNote.y += (daNote.prevNote.height) - (daNote.height / 2);
-							daNote.y += (daNote.prevNote.height / 2);
-							daNote.y -= daNote.height / noteSpeed;
-						}
+	
+						daNote.flipY = (strum.noteScroll < 0);
+	
+						StrumArrow.checkRects(daNote, strum);
 					}
-
-					// this:
-					// https://cdn.discordapp.com/attachments/1172878696844111892/1187717373675974706/image.png?ex=6597e700&is=65857200&hm=9bc44e18aefffdeb9f4d3cc233b5b5c936ef4057a771750f1544d97648b77508&
-					daNote.flipY = (strum.noteScroll < 0);
-
-					StrumArrow.checkRects(daNote, strum);
 				}
 
 				if (!daNote.mustPress && daNote.wasGoodHit && !daNote.canIgnore)
@@ -4217,12 +4231,12 @@ class PlayState extends MusicBeatState
 
 		if (!isPixel)
 		{
-			rating.setGraphicSize(Std.int(rating.width * 0.6));
+			rating.setGraphicSize(Std.int(rating.width * 0.5));
 			rating.antialiasing = CDevConfig.saveData.antialiasing;
 		}
 		else
 		{
-			rating.setGraphicSize(Std.int(rating.width * daPixelZoom * 0.6));
+			rating.setGraphicSize(Std.int(rating.width * daPixelZoom * 0.5));
 		}
 		rating.updateHitbox();
 
@@ -4242,7 +4256,7 @@ class PlayState extends MusicBeatState
 		{
 			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2, sus));
 			numScore.screenCenter();
-			numScore.x = comboPosition.x + (36 * daLoop);
+			numScore.x = comboPosition.x + (26 * daLoop);
 			numScore.y = comboPosition.y;
 			numScore.ID = daLoop;
 
@@ -4251,11 +4265,11 @@ class PlayState extends MusicBeatState
 			if (!isPixel)
 			{
 				numScore.antialiasing = CDevConfig.saveData.antialiasing;
-				numScore.setGraphicSize(Std.int(numScore.width * 0.4));
+				numScore.setGraphicSize(Std.int(numScore.width * 0.3));
 			}
 			else
 			{
-				numScore.setGraphicSize(Std.int(numScore.width * daPixelZoom));
+				numScore.setGraphicSize(Std.int(numScore.width * daPixelZoom * 0.3));
 			}
 			numScore.updateHitbox();
 			if (setting)
@@ -5164,9 +5178,9 @@ class PlayStateConfig
 {
 	/**
 	 * Font that will be used for every text on playstate.
-	 * must be the font name "VCR OSD Mono"
+	 * must be the font name FunkinFonts.VCR
 	 */
-	public var uiTextFont:String = 'VCR OSD Mono';
+	public var uiTextFont:String = FunkinFonts.VCR;
 
 	/**
 	 * "Score: " text in PlayState.scoreTxt
@@ -5205,7 +5219,7 @@ class PlayStateConfig
 
 	public function resetConfig()
 	{
-		uiTextFont = 'VCR OSD Mono';
+		uiTextFont = FunkinFonts.VCR;
 		scoreText = 'Score';
 		missesText = 'Misses';
 		accuracyText = 'Accuracy';

@@ -10,7 +10,6 @@ package game.system.native;
 </target>
 ')
 
-// majority is taken from microsofts doc 
 @:cppFileCode('
 #include <iostream>
 #include <Windows.h>

@@ -64,7 +64,7 @@ class OptionsState extends MusicBeatState
 
 		var versionShit:FlxText = new FlxText(10, FlxG.height - 20, 1000, "CDEV Engine v" + CDevConfig.engineVersion, 16);
 		versionShit.scrollFactor.set();
-		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		if (CDevConfig.saveData.engineWM)
 			add(versionShit);
 		super.create();

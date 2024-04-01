@@ -4,7 +4,7 @@ import game.cdev.CDevPopUp;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.FlxSprite;
-import game.cdev.log.GameLog;
+
 import flixel.FlxG;
 
 using StringTools;
@@ -33,7 +33,7 @@ class DropFileSubstate extends MusicBeatSubstate {
         add(bg);
 
         var text:FlxText = new FlxText(0, 0, -1, 'DROP .$dataType FILE TO THIS WINDOW.', 24);
-		text.setFormat("VCR OSD Mono", 22, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		text.setFormat(FunkinFonts.VCR, 22, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		text.screenCenter();
 		add(text);
 		text.borderSize = 4;

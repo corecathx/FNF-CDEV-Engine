@@ -1,6 +1,6 @@
 package meta.modding.char_editor;
 
-import game.cdev.log.GameLog;
+
 import flixel.addons.ui.FlxUIButton;
 import flixel.addons.ui.FlxButtonPlus;
 import game.cdev.CDevPopUp;
@@ -170,7 +170,7 @@ class CharacterEditor extends meta.states.MusicBeatState
 		textAnim = new FlxText(300, 16);
 		textAnim.size = 26;
 		textAnim.scrollFactor.set();
-		textAnim.setFormat('VCR OSD Mono', 26, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+		textAnim.setFormat(FunkinFonts.VCR, 26, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		add(textAnim);
 
 		if (moddingMode)
@@ -1006,7 +1006,7 @@ class CharacterEditor extends meta.states.MusicBeatState
 			var text:FlxText = new FlxText(20, 65 + (18 * daLoop), 0, anim + ": " + offsets, 15);
 			text.scrollFactor.set();
 			text.color = FlxColor.WHITE;
-			text.setFormat('VCR OSD Mono', 15, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+			text.setFormat(FunkinFonts.VCR, 15, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 			dumbTexts.add(text);
 
 			daLoop++;
@@ -1018,7 +1018,7 @@ class CharacterEditor extends meta.states.MusicBeatState
 		{
 			var text:FlxText = new FlxText(10, 65, 0, "Error: Can't find any animations.", 15);
 			text.scrollFactor.set();
-			text.setFormat('VCR OSD Mono', 15, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+			text.setFormat(FunkinFonts.VCR, 15, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 			text.borderSize = 1;
 			dumbTexts.add(text);
 			textAnim.visible = false;
@@ -1294,21 +1294,21 @@ class CharacterEditorSaveDialog extends MusicBeatSubstate
 	function createBoxUI()
 	{
 		var header:FlxText = new FlxText(box.x, box.y + 10, 800, "Save Character", 40);
-		header.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		header.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(header);
 
 		input_charName = new FlxUIInputText(box.x + 50, box.y + 100, 500, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_charName.font = "VCR OSD Mono";
+		input_charName.font = FunkinFonts.VCR;
 		add(input_charName);
 		txtCn = new FlxText(input_charName.x, input_charName.y - 25, 500, "Character Name", 20);
-		txtCn.font = "VCR OSD Mono";
+		txtCn.font = FunkinFonts.VCR;
 		add(txtCn);
 
 		butt_saveChar = new FlxSprite(865, 510).makeGraphic(150, 32, FlxColor.fromRGB(70, 70, 70));
 		add(butt_saveChar);
 
 		txtBs = new FlxText(865, 515, 150, "Save", 18);
-		txtBs.font = "VCR OSD Mono";
+		txtBs.font = FunkinFonts.VCR;
 		txtBs.alignment = CENTER;
 		add(txtBs);
 

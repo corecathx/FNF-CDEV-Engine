@@ -98,85 +98,85 @@ class NewModState extends meta.states.MusicBeatState
 	function createBGUI()
 	{
 		var header:FlxText = new FlxText(25, 50, -1, "Create a new mod", 40);
-		header.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		header.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(header);
 
 		// MOD NAME
 		input_modName = new FlxUIInputText(50, 120, 500, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_modName.font = "VCR OSD Mono";
+		input_modName.font = FunkinFonts.VCR;
 		add(input_modName);
 		txtMn = new FlxText(input_modName.x, input_modName.y - 25, 500, "Mod Name", 20);
-		txtMn.font = "VCR OSD Mono";
+		txtMn.font = FunkinFonts.VCR;
 		add(txtMn);
 
 		// MOD DESC
 		input_modDesc = new FlxUIInputText(50, 180, 500, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_modDesc.font = "VCR OSD Mono";
+		input_modDesc.font = FunkinFonts.VCR;
 		add(input_modDesc);
 		txtMd = new FlxText(input_modDesc.x, input_modDesc.y - 25, 500, "Mod Description", 20);
-		txtMd.font = "VCR OSD Mono";
+		txtMd.font = FunkinFonts.VCR;
 		add(txtMd);
 
 		// MOD ANOTHER STUFF
 		var labelanother = new FlxText(input_modDesc.x, input_modDesc.y + 35, 500, "Mod Icon & Background", 20);
-		labelanother.font = "VCR OSD Mono";
+		labelanother.font = FunkinFonts.VCR;
 		add(labelanother);
 		var txt:String = ""
 		+ "\nTo set the mod icon, put a .png file on root of your mod folder"
 		+ "\nand rename it to \"icon.png\"."
 		+ "\nSame goes to background image, just rename it to \"background.png\"";
 		var wee = new FlxText(labelanother.x, labelanother.y + 15, -1, txt, 18);
-		wee.font = "VCR OSD Mono";
+		wee.font = FunkinFonts.VCR;
 		add(wee);
 
 
 		// ...Additional...//
 		var header:FlxText = new FlxText(25, 350, -1, "Additional Settings", 40);
-		header.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		header.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(header);
 
 		var ea:FlxText = new FlxText(header.x+header.width + 15, header.y + 5, -1, "(Will apply if it's a first enabled mod.)", 26);
-		ea.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		ea.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(ea);
 
 		// RESTART
 		check_restart = new FlxSprite(50, header.y + 45).makeGraphic(25, 25, 0xFFBFBFBF);
 		add(check_restart);
 		label_restart = new FlxText(check_restart.x + 30, check_restart.y, -1, "Restart Required", 20);
-		label_restart.font = "VCR OSD Mono";
+		label_restart.font = FunkinFonts.VCR;
 		add(label_restart);
 
 		// BASE GAME DISABLE
 		check_disable = new FlxSprite(50, check_restart.y + 50).makeGraphic(25, 25, 0xFFBFBFBF);
 		add(check_disable);
 		label_disable = new FlxText(check_disable.x + 30, check_disable.y, -1, "Disable base game songs & weeks", 20);
-		label_disable.font = "VCR OSD Mono";
+		label_disable.font = FunkinFonts.VCR;
 		add(label_disable);
 
 		// WINDOW TITLE
 		input_windowTitle = new FlxUIInputText(50, check_disable.y + 70, 500, "Friday Night Funkin' CDEV Engine", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_windowTitle.font = "VCR OSD Mono";
+		input_windowTitle.font = FunkinFonts.VCR;
 		add(input_windowTitle);
 		label_windowTitle = new FlxText(input_windowTitle.x, input_windowTitle.y - 25, 500, "Window Title", 20);
-		label_windowTitle.font = "VCR OSD Mono";
+		label_windowTitle.font = FunkinFonts.VCR;
 		add(label_windowTitle);
 
 		// WINDOW ICON
 		var label_windowIcon = new FlxText(input_windowTitle.x, input_windowTitle.y + 35, 500, "Window Icon", 20);
-		label_windowIcon.font = "VCR OSD Mono";
+		label_windowIcon.font = FunkinFonts.VCR;
 		add(label_windowIcon);
 		var txt:String = ""
 		+ "\nTo set a custom window icon, put a .png file on the root of your mod folder"
 		+ "\nand rename it to \"winicon.png\".";
 		var label_windowIco = new FlxText(label_windowIcon.x, label_windowIcon.y + 15, -1, txt, 18);
-		label_windowIco.font = "VCR OSD Mono";
+		label_windowIco.font = FunkinFonts.VCR;
 		add(label_windowIco);
 
 		// CREATE MOD BUTTON
 		butt_createMod = new FlxSprite(FlxG.width - 170, FlxG.height - 42).makeGraphic(150, 32, FlxColor.fromRGB(70, 70, 70));
 		add(butt_createMod);
 		txtbcm = new FlxText(butt_createMod.x + 5, butt_createMod.y + 5, 140, "Create Mod", 18);
-		txtbcm.font = "VCR OSD Mono";
+		txtbcm.font = FunkinFonts.VCR;
 		txtbcm.alignment = CENTER;
 		add(txtbcm);
 		butt_createMod.scrollFactor.set();

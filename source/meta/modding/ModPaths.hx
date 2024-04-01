@@ -1,6 +1,6 @@
 package meta.modding;
 
-import game.cdev.log.GameLog;
+
 import game.system.FunkinBitmap;
 import lime.graphics.Image;
 import meta.states.PlayState;

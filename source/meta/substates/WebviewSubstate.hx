@@ -21,7 +21,7 @@ class WebviewSubstate extends MusicBeatSubstate {
         add(bg);
 
         var newText:FlxText = new FlxText(0,0,-1, "A new webview window has opened\nPress ESCAPE to return.");
-        newText.setFormat("VCR OSD Mono", 22, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+        newText.setFormat(FunkinFonts.VCR, 22, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
         newText.borderSize = 3;
         add(newText);
         newText.screenCenter();

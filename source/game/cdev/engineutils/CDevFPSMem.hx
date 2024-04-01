@@ -1,7 +1,5 @@
 package game.cdev.engineutils;
 
-import game.cdev.log.GameLog;
-import game.system.FunkinSystem;
 import lime.app.Application;
 import openfl.display.IBitmapDrawable;
 import openfl.geom.Matrix;
@@ -41,7 +39,7 @@ class CDevFPSMem extends TextField
 
 		selectable = false;
 		var mobileMulti:Float = #if mobile 1.5; #else 1; #end
-		defaultTextFormat = new TextFormat("VCR OSD Mono", Std.int(14*mobileMulti), inCol, false);
+		defaultTextFormat = new TextFormat(FunkinFonts.VCR, Std.int(14*mobileMulti), inCol, false);
 		text = "FPS: ";
 		times = [];
 	    addEventListener(Event.ENTER_FRAME, onEnter);
@@ -68,16 +66,17 @@ class CDevFPSMem extends TextField
 		}
 
 		var debugText:String = (CDevConfig.debug ? "\n[Debug Build]" : "");
-
 		var s:String = "";
+
+		var lowFPS:Bool = (times.length < CDevConfig.saveData.fpscap / 2);
 		
 		if (visible)
 		{
 			switch (CDevConfig.saveData.performTxt){
 				case "fps":
-					s = "FPS: " + times.length;
+					s = "FPS: " + times.length + (lowFPS?" [!]":"");
 				case "fps-mem":
-					s = "FPS: " + times.length + "\nRAM: " + ramStr;
+					s = "FPS: " + times.length + (lowFPS?" [!]":"") + "\nRAM: " + ramStr;
 				case "mem":
 					s = "RAM: " + ramStr;
 				default:
@@ -91,7 +90,7 @@ class CDevFPSMem extends TextField
 			text = s + memoryPeak + debugText;
 		}
 	
-		textColor = (times.length < CDevConfig.saveData.fpscap / 2) ? 0xFF0000 : 0xFFFFFF;
+		textColor = lowFPS ? 0xFF0000 : 0xFFFFFF;
 
 		game.cdev.CDevConfig.elapsedGameTime += FlxG.elapsed * 1000;
 	}

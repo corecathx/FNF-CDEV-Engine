@@ -1,11 +1,12 @@
 package game.cdev;
 
+import flixel.input.FlxPointer;
 import meta.states.InitState;
 import sys.io.File;
 import haxe.Json;
 import game.song.Song.SwagSong;
 import meta.substates.CustomSubstate;
-import meta.states.MusicBeatState;
+
 import flixel.sound.FlxSound;
 import game.settings.data.SettingsProperties;
 import meta.states.TitleState;
@@ -524,6 +525,46 @@ class CDevUtils
 
 		Sys.command("explorer.exe", [path]);
 		trace('Execute: explorer.exe $path');
+	}
+
+	/**
+	 * Checks to see if a point in 2D world space overlaps this `FlxObject`.
+	 *
+	 * @param   point           The point in world space you want to check.
+	 * @param   inScreenSpace   Whether to take scroll factors into account when checking for overlap.
+	 * @param   camera          Specify which game camera you want.
+	 *                          If `null`, it will just grab the first global camera.
+	 * @return  Whether or not the point overlaps this object.
+
+	public function mouseOverlap(point:FlxPoint, inScreenSpace = false, ?camera:FlxCamera):Bool
+	{
+		if (camera == null)
+			camera = FlxG.camera;
+
+		var xPos:Float = point.x - camera.scroll.x;
+		var yPos:Float = point.y - camera.scroll.y;
+		FlxPointer.getScreenPosition(_point, camera);
+		point.putWeak();
+		return (xPos >= _point.x) && (xPos < _point.x + width) && (yPos >= _point.y) && (yPos < _point.y + height);
+	}	 */
+
+	public function mouseOverlap(obj:FlxSprite, ?camera:FlxCamera){
+		if (camera==null)camera=FlxG.camera;
+
+		var objX:Float = obj.x - camera.scroll.x;
+		var objY:Float = obj.y - camera.scroll.y;
+		var fpPoint:FlxPoint = new FlxPoint(0,0);
+		@:privateAccess {
+			fpPoint = FlxPointer._cachedPoint;
+		}
+		FlxG.mouse.getScreenPosition(camera, fpPoint);
+		fpPoint.putWeak();
+		return (
+			(fpPoint.x >= objX) && 
+			(fpPoint.x < objX + (obj.width * obj.scale.x)) && 
+			(fpPoint.y >= objY) && 
+			(fpPoint.y < objY + (obj.height * obj.scale.y))
+		);
 	}
 
 	/**

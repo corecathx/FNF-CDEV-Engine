@@ -63,7 +63,7 @@ function create(x, y)
 	bf.playAnim("firstDeath");
 
 	textTitle = new FlxText(0, 0, -1,  "", 30/PlayState.defaultCamZoom);
-	textTitle.setFormat("VCR OSD Mono", 22/PlayState.defaultCamZoom, FlxColor.WHITE, FlxTextAlign.LEFT, FlxTextBorderStyle.OUTLINE(), FlxColor.BLACK);
+	textTitle.setFormat(FunkinFonts.VCR, 22/PlayState.defaultCamZoom, FlxColor.WHITE, FlxTextAlign.LEFT, FlxTextBorderStyle.OUTLINE(), FlxColor.BLACK);
 	add(textTitle);
 	textTitle.scrollFactor.set();
 }

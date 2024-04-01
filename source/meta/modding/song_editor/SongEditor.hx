@@ -27,7 +27,7 @@ import flixel.util.FlxSpriteUtil;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
-import meta.states.MusicBeatState;
+
 import meta.modding.ModdingScreen;
 
 using StringTools;
@@ -107,7 +107,7 @@ class SongEditor extends MusicBeatState
 		add(icon);
 
 		titleText = new FlxText(icon.x + icon.width + 8, 0, -1, "CDEV Engine - Add New Song Chart", 14);
-		titleText.setFormat("VCR OSD Mono", 14, FlxColor.WHITE);
+		titleText.setFormat(FunkinFonts.VCR, 14, FlxColor.WHITE);
 		titleText.y = icon.y + ((icon.width / 2) - (titleText.height / 2));
 		add(titleText);
 
@@ -149,18 +149,18 @@ class SongEditor extends MusicBeatState
 		sound_songVoic = new FlxSound();
 
 		input_songName = new FlxUIInputText(title.x + 40, title.y + 68, 200, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_songName.font = "VCR OSD Mono";
+		input_songName.font = FunkinFonts.VCR;
 		input_songName.text = currentData.song;
 		add(input_songName);
 		label_songName = new FlxText(input_songName.x, input_songName.y - 25, 200, "Song Name", 20);
-		label_songName.font = "VCR OSD Mono";
+		label_songName.font = FunkinFonts.VCR;
 		add(label_songName);
 		check_useVocal = new FlxUICheckBox(input_songName.x + input_songName.width + 20, input_songName.y,null,null,"Use Vocals?", 150, [], ()->{
 			for (i in [buttn_songVoic, label_songVoic, fname_songVoic, sound_songVoic, splay_songVoic]){
 				i.visible =	i.active = check_useVocal.checked;
 			}
 		});
-		check_useVocal.button.label.setFormat("VCR OSD Mono", 14, FlxColor.WHITE, LEFT, OUTLINE,FlxColor.BLACK);
+		check_useVocal.button.label.setFormat(FunkinFonts.VCR, 14, FlxColor.WHITE, LEFT, OUTLINE,FlxColor.BLACK);
 		check_useVocal.checked = currentData.needsVoices;
 		add(check_useVocal);
 
@@ -168,14 +168,14 @@ class SongEditor extends MusicBeatState
 		stepr_songBPM.value = currentData.bpm;
 		add(stepr_songBPM);
 		label_songBPM = new FlxText(stepr_songBPM.x, stepr_songBPM.y - 25, 200, "Song BPM", 20);
-		label_songBPM.font = "VCR OSD Mono";
+		label_songBPM.font = FunkinFonts.VCR;
 		add(label_songBPM);
 
 		stepr_songSpeed = new FlxUINumericStepper(stepr_songBPM.x + stepr_songBPM.width + 80, input_songName.y+input_songName.height+36, 1, 120, 0, 999, 0);
 		stepr_songSpeed.value = currentData.speed;
 		add(stepr_songSpeed);
 		label_songSpeed = new FlxText(stepr_songSpeed.x, stepr_songSpeed.y - 25, 200, "Scroll Speed", 20);
-		label_songSpeed.font = "VCR OSD Mono";
+		label_songSpeed.font = FunkinFonts.VCR;
 		add(label_songSpeed);
 
 
@@ -211,10 +211,10 @@ class SongEditor extends MusicBeatState
 		splay_songInst.setLabelFormat(null, 16, FlxColor.WHITE);
 		add(splay_songInst);
 		label_songInst = new FlxText(buttn_songInst.x, buttn_songInst.y - 25, 300, "Instrumental", 20);
-		label_songInst.font = "VCR OSD Mono";
+		label_songInst.font = FunkinFonts.VCR;
 		add(label_songInst);
 		fname_songInst = new FlxText(buttn_songInst.x, buttn_songInst.y + buttn_songInst.height + 20, 300, "(No File Selected)", 16);
-		fname_songInst.font = "VCR OSD Mono";
+		fname_songInst.font = FunkinFonts.VCR;
 		add(fname_songInst);
 
 		buttn_playBoth = new FlxUIButton(splay_songInst.x + splay_songInst.width + 40, buttn_songInst.y, "PLAY ALL", function()
@@ -272,10 +272,10 @@ class SongEditor extends MusicBeatState
 		splay_songVoic.setLabelFormat(null, 16, FlxColor.WHITE);
 		add(splay_songVoic);
 		label_songVoic = new FlxText(buttn_songVoic.x, buttn_songVoic.y - 25, 300, "Voices", 20);
-		label_songVoic.font = "VCR OSD Mono";
+		label_songVoic.font = FunkinFonts.VCR;
 		add(label_songVoic);
 		fname_songVoic = new FlxText(buttn_songVoic.x, buttn_songVoic.y + buttn_songVoic.height + 20, 300, "(No File Selected)", 16);
-		fname_songVoic.font = "VCR OSD Mono";
+		fname_songVoic.font = FunkinFonts.VCR;
 		add(fname_songVoic);
 
 		var createAll:FlxUIButton = new FlxUIButton(bg.x + bg.width - 170, bg.y + bg.height - 45, "Add Song", function()

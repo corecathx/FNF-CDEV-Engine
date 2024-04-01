@@ -18,7 +18,7 @@ import flixel.text.FlxText;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.util.FlxColor;
-import meta.states.MusicBeatState;
+
 
 using StringTools;
 
@@ -68,7 +68,7 @@ class EventScriptEditor extends MusicBeatState
 		createTexts();
 
 		panelText = new FlxText(0, 20, FlxG.width / 3, 'Events', 18);
-		panelText.setFormat('VCR OSD Mono', 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		panelText.setFormat(FunkinFonts.VCR, 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(panelText);
 
 		newEvent = new FlxButtonPlus(10, FlxG.height - 30, function()
@@ -104,7 +104,7 @@ class EventScriptEditor extends MusicBeatState
 
 		for (i in 0...scriptList.length){
 			var daText:FlxText = new FlxText(20,60 + (40 * i),0, scriptList[i]);
-			daText.setFormat('VCR OSD Mono', 18, FlxColor.WHITE, LEFT);
+			daText.setFormat(FunkinFonts.VCR, 18, FlxColor.WHITE, LEFT);
 			daText.ID = i;
 			grpScriptList.add(daText);
 

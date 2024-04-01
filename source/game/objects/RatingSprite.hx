@@ -1,6 +1,6 @@
 package game.objects;
 
-import game.cdev.log.GameLog;
+
 import meta.states.PlayState;
 import flixel.graphics.FlxGraphic;
 import flixel.FlxSprite;

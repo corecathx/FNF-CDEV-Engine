@@ -1,6 +1,6 @@
 package meta.states;
 
-import game.cdev.log.GameLog;
+
 import flixel.FlxCamera;
 import flixel.system.scaleModes.StageSizeScaleMode;
 import flixel.system.scaleModes.BaseScaleMode;

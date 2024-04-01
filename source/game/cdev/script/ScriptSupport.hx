@@ -1,7 +1,7 @@
 package game.cdev.script;
 
 import lime.system.CFFI;
-import game.cdev.log.GameLog;
+
 import flixel.addons.display.FlxRuntimeShader;
 
 #if !macro
@@ -13,7 +13,7 @@ import flixel.graphics.tile.FlxGraphicsShader;
 import flixel.FlxCamera;
 import openfl.filters.ShaderFilter;
 import openfl.display.GraphicsShader;
-import meta.states.MusicBeatState;
+
 import sys.FileSystem;
 import game.cdev.CDevMods.CDEV_FlxAxes;
 import flixel.addons.display.FlxBackdrop;

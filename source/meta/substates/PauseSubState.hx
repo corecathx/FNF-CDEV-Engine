@@ -59,7 +59,7 @@ class PauseSubState extends MusicBeatSubstate
 		var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
 		levelInfo.text += meta.states.PlayState.SONG.song;
 		levelInfo.scrollFactor.set();
-		levelInfo.setFormat(Paths.font("vcr.ttf"), 32);
+		levelInfo.setFormat(FunkinFonts.VCR, 32);
 		levelInfo.updateHitbox();
 		add(levelInfo);
 
@@ -73,7 +73,7 @@ class PauseSubState extends MusicBeatSubstate
 		var chartingText:FlxText = new FlxText(20, 15 + 64, 0, "", 32);
 		chartingText.text = 'CHARTING MODE';
 		chartingText.scrollFactor.set();
-		chartingText.setFormat(Paths.font("vcr.ttf"), 32);
+		chartingText.setFormat(FunkinFonts.VCR, 32);
 		chartingText.updateHitbox();
 		add(chartingText);
 

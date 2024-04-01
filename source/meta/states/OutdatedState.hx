@@ -23,7 +23,7 @@ class OutdatedState extends MusicBeatState{
         + '\nWould you like to update CDEV Engine to the new version?';
 
         var daText:FlxText = new FlxText(0,180, FlxG.width, textShit,30);
-        daText.setFormat('VCR OSD Mono', 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+        daText.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
         daText.screenCenter(X);
         add(daText);
 
@@ -32,7 +32,7 @@ class OutdatedState extends MusicBeatState{
         + '[X] - No\n'
         + '[C] - No, and do not show this again';
         selectionText = new FlxText(0,0,FlxG.width,eeee,18);
-        selectionText.setFormat('VCR OSD Mono', 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+        selectionText.setFormat(FunkinFonts.VCR, 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
         selectionText.screenCenter(X);
         selectionText.y = daText.y + daText.height + 100;
         add(selectionText);

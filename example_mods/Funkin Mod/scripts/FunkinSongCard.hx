@@ -17,12 +17,12 @@ if (PlayState.SONG.song == "game-test"){
     
         var col = PlayState.dad.healthBarColors;
         textTitle = new FlxText(bg.x + 10, bg.y + 10, -1, PlayState.SONG.song, 30);
-        textTitle.setFormat("VCR OSD Mono", 22, FlxColor.CYAN, FlxTextAlign.LEFT, FlxTextBorderStyle.OUTLINE(), FlxColor.BLACK);
+        textTitle.setFormat(FunkinFonts.VCR, 22, FlxColor.CYAN, FlxTextAlign.LEFT, FlxTextBorderStyle.OUTLINE(), FlxColor.BLACK);
         add(textTitle);
         textTitle.cameras = [PlayState.camHUD];
     
         textComposer = new FlxText(textTitle.x, textTitle.y + textTitle.height, -1, "Composer: Core5570R / CoreDev", 30);
-        textComposer.setFormat("VCR OSD Mono", 18, FlxColor.WHITE, FlxTextAlign.LEFT, FlxTextBorderStyle.OUTLINE(), FlxColor.BLACK);
+        textComposer.setFormat(FunkinFonts.VCR, 18, FlxColor.WHITE, FlxTextAlign.LEFT, FlxTextBorderStyle.OUTLINE(), FlxColor.BLACK);
         add(textComposer);
         textComposer.cameras = [PlayState.camHUD];
 

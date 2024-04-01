@@ -54,20 +54,20 @@ class CreateEventScript extends meta.substates.MusicBeatSubstate
 	function createBoxUI()
 	{
 		var header:FlxText = new FlxText(box.x, box.y + 10, 800, "Create new Event Script", 40);
-		header.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		header.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(header);
 
 		input_modName = new FlxUIInputText(box.x + 50, box.y + 100, 500, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_modName.font = "VCR OSD Mono";
+		input_modName.font = FunkinFonts.VCR;
 		add(input_modName);
 		txtMn = new FlxText(input_modName.x, input_modName.y - 25, 500, "Event Name", 20);
-		txtMn.font = "VCR OSD Mono";
+		txtMn.font = FunkinFonts.VCR;
 		add(txtMn);
 
 		butt_createMod = new FlxSprite(865, 510).makeGraphic(150, 32, FlxColor.fromRGB(70, 70, 70));
 		add(butt_createMod);
 		txtbcm = new FlxText(870, 515, 140, "Create Event", 18);
-		txtbcm.font = "VCR OSD Mono";
+		txtbcm.font = FunkinFonts.VCR;
 		txtbcm.alignment = CENTER;
 		add(txtbcm);
 

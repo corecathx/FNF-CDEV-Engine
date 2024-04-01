@@ -3,7 +3,7 @@ package game.system;
 import sys.thread.Mutex;
 import flixel.math.FlxMath;
 import sys.thread.FixedThreadPool;
-import game.cdev.log.GameLog;
+
 
 class FunkinThread {
 

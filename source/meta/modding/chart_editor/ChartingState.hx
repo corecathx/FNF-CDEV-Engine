@@ -1,12 +1,13 @@
 package meta.modding.chart_editor;
 
+import game.cdev.objects.CDevTooltip;
 import lime.media.AudioBuffer;
 import haxe.io.Bytes;
 import openfl.geom.Rectangle;
 import flixel.addons.display.FlxSliceSprite;
 import game.cdev.engineutils.Discord.DiscordClient;
 import flixel.group.FlxSpriteGroup;
-import game.cdev.log.GameLog;
+
 import meta.states.*;
 import flixel.util.FlxTimer;
 import flixel.tweens.FlxTween;
@@ -15,7 +16,6 @@ import game.cdev.CDevPopUp;
 import flixel.addons.ui.FlxUIPopup;
 import game.cdev.script.HScript;
 import game.cdev.script.CDevScript;
-import game.objects.ChartEvent.EventInformation;
 import game.objects.ChartEvent.SongEvent;
 import lime.ui.Window;
 import lime.app.Application;
@@ -138,7 +138,7 @@ class ChartingState extends MusicBeatState
 
 	var eventsBackGround:FlxSprite;
 
-	var evntInf:EventInformation;
+	var tooltip:CDevTooltip;
 
 	var notSaved:Bool = false; // checking if the player has saved the chart or not
 	var autoSaveOnEveryAction:Bool = false;
@@ -154,6 +154,8 @@ class ChartingState extends MusicBeatState
 
 	var gridGroups:FlxSpriteGroup;
 	var waveformSprite:FlxSprite;
+
+	var tooltipObjects:Array<Dynamic> = [];
 
 	public function new(?chart:SwagSong){
 		super();
@@ -252,7 +254,7 @@ class ChartingState extends MusicBeatState
 		Conductor.mapBPMChanges(_song);
 
 		bpmTxt = new FlxText(20, 50, 1000, "", 16);
-		bpmTxt.setFormat('VCR OSD Mono', 20, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+		bpmTxt.setFormat(FunkinFonts.VCR, 20, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		bpmTxt.bold = true;
 		bpmTxt.borderSize = 2;
 		bpmTxt.scrollFactor.set();
@@ -300,9 +302,10 @@ class ChartingState extends MusicBeatState
 		{
 			var tipsTxt:FlxText = new FlxText(20, UI_box.y + UI_box.height + -30, 0, splittedTextArray[i], 16);
 			tipsTxt.y += i * 8;
-			tipsTxt.setFormat('VCR OSD Mono', 12, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
+			tipsTxt.setFormat(FunkinFonts.VCR, 12, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 			tipsTxt.scrollFactor.set();
 			tipsTxt.borderSize = 2;
+			tipsTxt.active = false;
 			add(tipsTxt);
 			tipTexts.push(tipsTxt);
 		}
@@ -373,12 +376,12 @@ class ChartingState extends MusicBeatState
 		rightStrum.visible = false;
 		checkSectionEvent(true);
 
-		evntInf = new EventInformation(0, 0, "", "", "");
-		add(evntInf);
-		evntInf.scrollFactor.set();
+		tooltip = new CDevTooltip();
+		add(tooltip);
+		tooltip.scrollFactor.set(1,1);
 
 		autoSaveText = new FlxText(10, FlxG.height - 25, -1, "Autosaving...", 22);
-		autoSaveText.setFormat("VCR OSD Mono", 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		autoSaveText.setFormat(FunkinFonts.VCR, 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		autoSaveText.alpha = 0;
 		autoSaveText.scrollFactor.set();
 		autoSaveText.borderSize = 2;
@@ -818,6 +821,7 @@ class ChartingState extends MusicBeatState
 	var muteHitsound:Bool = true;
 	var usingDownscroll:Bool = false;
 	var metronomeActive:Bool = false;
+	var disableScroll:Bool = false;
 	var speedMod:Float = 1;
 
 	var usingInstWave:Bool = false;
@@ -919,7 +923,6 @@ class ChartingState extends MusicBeatState
 		var check_enableInstWave = new FlxUICheckBox(10, 230+80, null, null, "Instrumental Waveform", 100);
 		check_enableInstWave.checked = false;
 
-
 		var check_enableVoicWave = new FlxUICheckBox(140, 230+80, null, null, "Vocals Waveform", 100);
 		check_enableVoicWave.checked = false;
 
@@ -941,7 +944,12 @@ class ChartingState extends MusicBeatState
 			updateWaveform();
 		};
 
-		
+		var check_disableCamScroll = new FlxUICheckBox(10, 230+80+80, null, null, "Disable Camera Scroll", 100);
+		check_disableCamScroll.checked = false;
+		check_disableCamScroll.callback = function()
+		{
+			disableScroll = check_disableCamScroll.checked;
+		};
 
 		tab_group_charting.add(check_mute_inst);
 		tab_group_charting.add(check_mute_vocal);
@@ -953,6 +961,7 @@ class ChartingState extends MusicBeatState
 		tab_group_charting.add(check_metro);
 		tab_group_charting.add(check_enableInstWave);
 		tab_group_charting.add(check_enableVoicWave);
+		tab_group_charting.add(check_disableCamScroll);
 		tab_group_charting.add(stepperInstVol);
 		tab_group_charting.add(stepperVoicesVol);
 		tab_group_charting.add(vvText);
@@ -1131,6 +1140,8 @@ class ChartingState extends MusicBeatState
 
 	var justAddedNote:Bool = false;
 	var lastAddition:Int = 0;
+
+	var scrollOffset:Float = 0;
 
 	override function update(elapsed:Float)
 	{
@@ -1324,7 +1335,12 @@ class ChartingState extends MusicBeatState
 			note.visible = !editingEvents;
 		});
 
-		crapFollow.setPosition((gridBG.x + gridBG.width) / 2, strumLine.y);
+		curRenderedEvents.forEach(function(note:ChartEvent)
+		{
+			note.visible = editingEvents;
+		});
+
+		crapFollow.setPosition((gridBG.x + gridBG.width) / 2, !disableScroll ? strumLine.y : ((gridBG.y + gridBG.height) / 2) + scrollOffset);
 
 		curRenderedNotes.forEach(function(note:Note)
 		{
@@ -1380,68 +1396,6 @@ class ChartingState extends MusicBeatState
 			changeSection(curSection + 1, false);
 		}
 
-		if (FlxG.mouse.getPositionInCameraView().y > FlxG.height / 2)
-		{
-			evntInf.setPosition(FlxG.mouse.getPositionInCameraView().x, FlxG.mouse.getPositionInCameraView().y - evntInf.height);
-		}
-		else
-		{
-			evntInf.setPosition(FlxG.mouse.getPositionInCameraView().x, FlxG.mouse.getPositionInCameraView().y);
-		}
-
-		evntInf.alpha = (shouldVisible ? 1 : 0);
-
-		if (overlaped)
-		{
-			shouldVisible = true;
-		}
-		else
-		{
-			shouldVisible = false;
-		}
-
-		curRenderedEvents.forEach(function(evnt:ChartEvent)
-		{
-			evnt.visible = editingEvents;
-
-			if (editingEvents)
-			{
-				FlxG.overlap(strumLine, evnt, function(_, _)
-				{
-					if (!claps2.contains(evnt))
-					{
-						claps2.push(evnt);
-						if (!muteHitsound)
-							FlxG.sound.play(Paths.sound('clapsfx'), 0.7);
-					}
-				});
-			}
-
-			if (FlxG.mouse.overlaps(evnt) && editingEvents)
-			{
-				if (evntInf.eventName != evnt.EVENT_NAME)
-					evntInf.eventName = evnt.EVENT_NAME;
-				if (evntInf.eventValue1 != evnt.value1)
-					evntInf.eventValue1 = evnt.value1;
-				if (evntInf.eventValue2 != evnt.value2)
-					evntInf.eventValue2 = evnt.value2;
-
-				if (curOverlappedEvent != evnt)
-					evntInf.updateInfo();
-				overlaped = true;
-				curOverlappedEvent = evnt;
-				uh = evnt;
-			}
-			else
-			{
-				if (curOverlappedEvent == evnt && evnt != null || uh == evnt && evnt != null)
-				{
-					curOverlappedEvent = null;
-					uh = null;
-					overlaped = false;
-				}
-			}
-		});
 		FlxG.watch.addQuick('daBeat', curBeat);
 		FlxG.watch.addQuick('daStep', curStep);
 
@@ -1647,7 +1601,7 @@ class ChartingState extends MusicBeatState
 			else
 				allowScrollSongPosition = false;
 
-			if (FlxG.mouse.wheel != 0 && allowScrollSongPosition)
+			if (FlxG.mouse.wheel != 0 && allowScrollSongPosition && !disableScroll)
 			{
 				FlxG.sound.music.pause();
 				vocals.pause();
@@ -1655,6 +1609,10 @@ class ChartingState extends MusicBeatState
 				FlxG.sound.music.time -= (FlxG.mouse.wheel * Conductor.stepCrochet * 0.4);
 				vocals.time = FlxG.sound.music.time;
 				updateTheText();
+			} 
+
+			if (disableScroll && FlxG.mouse.wheel != 0) {
+				scrollOffset += (10 * FlxG.mouse.wheel);
 			}
 
 			if (!FlxG.keys.pressed.SHIFT)
@@ -1735,6 +1693,39 @@ class ChartingState extends MusicBeatState
 			updateTheText();
 		}
 		handleNoteSelections(elapsed);
+
+		tooltipObjects = [];
+
+		if (editingEvents){
+			curRenderedEvents.forEachAlive((c:ChartEvent) -> {
+				tooltipObjects.push([c,"Event: "+c.EVENT_NAME,
+					"Value 1: " + c.value1 + 
+					"\nValue 2: "+c.value2+
+					"\nTime: " + c.time
+				]);
+			});
+		} else{
+			curRenderedNotes.forEachAlive((n:Note) -> {
+				var isHit:Bool = _song.notes[curSection].mustHitSection;
+				
+				if (n.noteData > 3)
+					isHit = !_song.notes[curSection].mustHitSection;
+
+				tooltipObjects.push([n,"Note: "+n.noteType,
+					"Data: " + n.noteData%4 + (isHit ? " (Player)" : " (Opponent)")+
+					"\nArguments: "+n.noteArgs+
+					"\nTime: " + n.strumTime +
+					(n.sustainLength != 0 ? "\nSustain Length: "+n.sustainLength:"")
+				]);
+			});
+		}
+
+		tooltip.hide();
+		for (stuff in tooltipObjects){
+			if (FlxG.mouse.overlaps(stuff[0])){
+				tooltip.show(stuff[0], stuff[1], stuff[2], true);
+			}
+		}
 	}
 	var dragStartPos:FlxPoint = new FlxPoint();
 	var overlavvin:Bool = false;
@@ -2399,7 +2390,7 @@ class ChartingState extends MusicBeatState
 			if (typePos != -1)
 			{
 				var newShit:FlxText = new FlxText(0, 0, 0, Std.string(typePos), 32);
-				newShit.setFormat("VCR OSD Mono", 22, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+				newShit.setFormat(FunkinFonts.VCR, 22, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 				// newShit.setGraphicSize(GRID_SIZE);
 				newShit.borderSize = 1.5;
 				add(newShit);

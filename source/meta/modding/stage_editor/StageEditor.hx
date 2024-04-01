@@ -1,5 +1,6 @@
 package meta.modding.stage_editor;
 
+import game.cdev.objects.CDevTooltip;
 import lime.system.Clipboard;
 import meta.substates.MusicBeatSubstate;
 import haxe.Json;
@@ -33,7 +34,7 @@ import game.objects.Character;
 import flixel.group.FlxSpriteGroup;
 import flixel.addons.ui.FlxUITabMenu;
 import flixel.FlxSprite;
-import meta.states.MusicBeatState;
+
 
 using StringTools;
 
@@ -50,7 +51,7 @@ typedef StageObject_Array =
 
 // A rewrited version of modding.stage_editor.StageEditor
 
-class Better_StageEditor extends MusicBeatState
+class StageEditor extends MusicBeatState
 {
 	public var __STAGE_JSON:StageJSONData;
 
@@ -65,6 +66,10 @@ class Better_StageEditor extends MusicBeatState
 	var mouseOffsetPos:FlxPoint = new FlxPoint(0, 0);
 	var mouseOffsetCam:FlxPoint = new FlxPoint(0, 0);
 	var _single_selectedObject(default, set):SpriteStage = null;
+
+	// STUFF //
+	var tooltipObjects:Array<Dynamic> = []; //[object:FlxObject, "title", "body"]
+	var mainTooltip:CDevTooltip;
 
 	function set__single_selectedObject(s:SpriteStage):SpriteStage
 	{
@@ -230,6 +235,10 @@ class Better_StageEditor extends MusicBeatState
 		saveButton.resize(50,20);
 		saveButton.addIcon(new FlxSprite().loadGraphic(Paths.image("ui/file","shared")));
 		saveButton.cameras = [camHUD];
+
+		mainTooltip = new CDevTooltip();
+		mainTooltip.cameras = [camHUD];
+		add(mainTooltip);
 	}
 
 	function __init_stageJson()
@@ -285,21 +294,18 @@ class Better_StageEditor extends MusicBeatState
 		//gf.gfTestBop = true;
 		gf.objectName = "Girlfriend";
 		gf.type = "gf";
-		// __OBJECT_LIST.push(_create_ObjectList_array(gf, "Girlfriend", false, false, 0xFFC00000));
 
 		dad = new Character(0, 0, "dad", false, true);
 		dad.setPosition(__STAGE_JSON.opponentPosition[0], __STAGE_JSON.opponentPosition[1]);
 		//dad.gfTestBop = true;
 		dad.objectName = "Opponent";
 		dad.type = "dad";
-		// __OBJECT_LIST.push(_create_ObjectList_array(dad, "Opponent", false, false, 0xFF7400CD));
 
 		bf = new Character(0, 0, "bf", true, true);
 		bf.setPosition(__STAGE_JSON.boyfriendPosition[0], __STAGE_JSON.boyfriendPosition[1]);
 		//bf.gfTestBop = true;
 		bf.objectName = "Boyfriend";
 		bf.type = "bf";
-		// __OBJECT_LIST.push(_create_ObjectList_array(bf, "Boyfriend", false, false, 0xFF0078BD));
 	}
 
 	function _create_ObjectList_array(obj:FlxSprite, obj_name:String, removableObj:Bool, locked:Bool, color:Int = -1):StageObject_Array
@@ -942,16 +948,38 @@ class Better_StageEditor extends MusicBeatState
 				}
 		}*/
 
-		if (show_uiBox)
-		{
-			_uiBox_Y = FlxG.height - 500 - 19;
-		}
-		else
-		{
-			_uiBox_Y = FlxG.height;
+		_uiBox_Y = FlxG.height - (show_uiBox ? 500 - 19 : 0);
+		uiBox.y = FlxMath.lerp(_uiBox_Y, uiBox.y, CDevConfig.utils.bound(1 - (elapsed * 12), 0, 1));
+
+		tooltipObjects = [];
+		for (obj in members){
+			if (Std.isOfType(obj, SpriteStage)){
+				var casted:SpriteStage = cast obj;
+				var dont:Array<String> = ["Opponent", "Girlfriend", "Boyfriend"];
+				tooltipObjects.push([casted, casted.objectName, 
+					(dont.contains(casted.objectName) ? "Character Object." : 
+						'Position: ${casted.x}, ${casted.y}'+
+						'\nScale: x${casted.scale.x}' + 
+						'\nScroll Factor: ${casted.scrollFactor.x}'+
+						'\nAntialiasing: ${casted.antialiasing}' +
+						'\nFlip X: ${casted.flipX}'+
+						'\nAlpha: ${casted.alpha}'
+					)
+				]);
+			}
 		}
 
-		uiBox.y = FlxMath.lerp(_uiBox_Y, uiBox.y, CDevConfig.utils.bound(1 - (elapsed * 12), 0, 1));
+		mainTooltip.hide();
+		for (i in tooltipObjects){
+			var t:Bool = !(FlxG.mouse.getScreenPosition(camHUD).x >= uiBox.x
+						&& FlxG.mouse.getScreenPosition(camHUD).x < uiBox.x + uiBox.width
+						&& FlxG.mouse.getScreenPosition(camHUD).y >= uiBox.y
+						&& FlxG.mouse.getScreenPosition(camHUD).y < uiBox.y + uiBox.height);
+			if (FlxG.mouse.overlaps(i[0], camGame)
+				&& t){
+				mainTooltip.show(i[0], i[1], i[2], true);
+			}
+		}
 	}
 
 	function _update_mouseControls(elapsed:Float)
@@ -1345,8 +1373,8 @@ class StageSaveDialog extends MusicBeatSubstate
 	var box:FlxSprite;
 	var exitButt:FlxSprite;
 	var daData:StageJSONData;
-	var sa:Better_StageEditor;
-	public function new(stage:StageJSONData, state:Better_StageEditor)
+	var sa:StageEditor;
+	public function new(stage:StageJSONData, state:StageEditor)
 	{
 		super();
 		sa = state;
@@ -1389,22 +1417,22 @@ class StageSaveDialog extends MusicBeatSubstate
 	function createBoxUI()
 	{
 		var header:FlxText = new FlxText(box.x, box.y + 10, 800, "Save Dialog", 40);
-		header.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		header.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		add(header);
 
 		input_stageBName = new FlxUIInputText(box.x + 50, box.y + 100, 500, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-		input_stageBName.font = "VCR OSD Mono";
+		input_stageBName.font = FunkinFonts.VCR;
 		add(input_stageBName);
 
 		txtCn = new FlxText(input_stageBName.x, input_stageBName.y - 25, 500, "Stage File Name", 20);
-		txtCn.font = "VCR OSD Mono";
+		txtCn.font = FunkinFonts.VCR;
 		add(txtCn);
 
 		butt_saveChar = new FlxSprite(865, 510).makeGraphic(150, 32, FlxColor.fromRGB(70, 70, 70));
 		add(butt_saveChar);
 
 		txtBs = new FlxText(865, 515, 150, "Save", 18);
-		txtBs.font = "VCR OSD Mono";
+		txtBs.font = FunkinFonts.VCR;
 		txtBs.alignment = CENTER;
 		add(txtBs);
 
@@ -1519,7 +1547,7 @@ class StageSaveDialog extends MusicBeatSubstate
 				FlxG.sound.play(game.Paths.sound('confirmMenu'));
 				close();
 				sa.stageDropDown.selectedLabel = input_stageBName.text;
-				Better_StageEditor.stageToLoad = input_stageBName.text;
+				StageEditor.stageToLoad = input_stageBName.text;
 			}
 		}
 	}

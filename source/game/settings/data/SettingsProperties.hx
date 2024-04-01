@@ -178,6 +178,7 @@ class SettingsProperties
 		], null);
 
 		create_category("Misc", [
+			new BaseSettings("Camera Fix", ["Disable", "Enabled"], "If enabled, this game will use CDEV Engine's custom camera that fixes some stuff.\n(Warning: Enabling this might have impact on the game's performance)", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "cameraFix", false),
 			new BaseSettings("Resources Info Mode", ["", ""], "Choose your preferred Resources Text Info Mode.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
 				if (FlxG.keys.justPressed.ENTER)
 				{
@@ -240,6 +241,18 @@ class SettingsProperties
 				
 			}, function(){},"", false),
 		], null);
+
+		if (CDevConfig.saveData.testMode) create_category("Debug", [
+			new BaseSettings("Audio Loading Test", ["", ""], "Audio loading time test state.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
+				if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new meta.debug.AudioLoadState());
+			}, function(){},"", false),
+			new BaseSettings("Display Framerate Information", ["", ""], "Just like the name, checks framerate information of this game.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
+				if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new meta.debug.DisplayInfoState());
+			}, function(){},"", false),
+			new BaseSettings("UI Debug State", ["", ""], "Testing state used for UI stuffs.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
+				if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new meta.debug.UIDebugState());
+			}, function(){},"", false),
+		]);
 	}
 
 	public static function create_category(name:String, child:Array<BaseSettings>, ?onPress:Dynamic):Void

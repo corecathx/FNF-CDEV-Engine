@@ -27,21 +27,21 @@ function create(x, y)
 	var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
 	levelInfo.text += PlayState.SONG.song;
 	levelInfo.scrollFactor.set();
-	levelInfo.setFormat("VCR OSD Mono", 32);
+	levelInfo.setFormat(FunkinFonts.VCR, 32);
 	levelInfo.updateHitbox();
 	add(levelInfo);
 
 	var levelDifficulty:FlxText = new FlxText(20, 15 + 32, 0, "", 32);
 	levelDifficulty.text += PlayState.difficultyName;
 	levelDifficulty.scrollFactor.set();
-	levelDifficulty.setFormat("VCR OSD Mono", 32);
+	levelDifficulty.setFormat(FunkinFonts.VCR, 32);
 	levelDifficulty.updateHitbox();
 	add(levelDifficulty);
 
 	var chartingText:FlxText = new FlxText(20, 15 + 64, 0, "", 32);
 	chartingText.text = 'CHARTING MODE';
 	chartingText.scrollFactor.set();
-	chartingText.setFormat("VCR OSD Mono", 32);
+	chartingText.setFormat(FunkinFonts.VCR, 32);
 	chartingText.updateHitbox();
 	add(chartingText);
 

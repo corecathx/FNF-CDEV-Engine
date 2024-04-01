@@ -35,7 +35,7 @@ using StringTools;
 class MainMenuState extends MusicBeatState
 {
 	public var disableSwitching:Bool = false; //fallback
-	var curSelected:Int = 0;
+	static var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
@@ -181,23 +181,23 @@ class MainMenuState extends MusicBeatState
 
 		var versionShit:FlxText = new FlxText(20, FlxG.height - 35, 1000, fnfVersionXD, 16);
 		versionShit.scrollFactor.set();
-		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
 
 		engineText = new FlxText(0, FlxG.height - 35, 1000, coreEngineText  + (CDevConfig.saveData.testMode ? ' - [TESTMODE]' : ''), 16);
 		engineText.scrollFactor.set();
-		engineText.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		engineText.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		if (CDevConfig.saveData.engineWM) add(engineText);
 		engineText.x = (FlxG.width - engineText.width) - 20;
 
 		randomTxt = new FlxText(20, FlxG.height - 80, 1000, "", 26);
 		randomTxt.scrollFactor.set();
-		randomTxt.setFormat("VCR OSD Mono", 26, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		randomTxt.setFormat(FunkinFonts.VCR, 26, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(randomTxt);
 
 		gameTimeElasped = new FlxText(0, 15, 1000, "", 16);
 		gameTimeElasped.scrollFactor.set();
-		gameTimeElasped.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		gameTimeElasped.setFormat(FunkinFonts.VCR, 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(gameTimeElasped);
 
 		changeItem();

@@ -1,6 +1,6 @@
 package game.objects;
 
-import game.cdev.log.GameLog;
+
 import game.cdev.script.ScriptSupport;
 import game.cdev.script.CDevScript;
 import sys.FileSystem;

@@ -47,7 +47,7 @@ class RatingPosition extends MusicBeatSubstate
 		// basically ripped off from playstate
 		// cuz' i'm lazy
 		rating = new FlxSprite().loadGraphic(Paths.image('sick', 'shared'));
-		rating.setGraphicSize(Std.int(rating.width * 0.6));
+		rating.setGraphicSize(Std.int(rating.width * 0.5));
 		rating.antialiasing = CDevConfig.saveData.antialiasing;
 		add(rating);
 
@@ -80,10 +80,10 @@ class RatingPosition extends MusicBeatSubstate
 		for (i in seperatedScore)
 		{
 			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image('num' + Std.int(i)));
-			numScore.x = 36 * daLoop;
+			numScore.x = 26 * daLoop;
 			numScore.ID = daLoop;
 			numScore.antialiasing = CDevConfig.saveData.antialiasing;
-			numScore.setGraphicSize(Std.int(numScore.width * 0.4));
+			numScore.setGraphicSize(Std.int(numScore.width * 0.3));
 			numScore.updateHitbox();
 			numScore.cameras = [camHUD];
 			numScore.scrollFactor.set();
@@ -108,7 +108,7 @@ class RatingPosition extends MusicBeatSubstate
 
 		var versionSht:FlxText = new FlxText(20, FlxG.height - 150, 1000, 'Drag the Rating sprite to change\nthe position.', 24);
 		versionSht.scrollFactor.set();
-		versionSht.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionSht.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		versionSht.screenCenter(X);
 		versionSht.borderSize = 2;
 		add(versionSht);
@@ -205,8 +205,8 @@ class RatingPosition extends MusicBeatSubstate
 					CDevConfig.saveData.rChanged = true;
 				case "combo":
 					trace([grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).x, grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).y]);
-					CDevConfig.saveData.cX = grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).x + (43 *2);
-					CDevConfig.saveData.cY = grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).y + 43;
+					CDevConfig.saveData.cX = grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).x + (26 *2);
+					CDevConfig.saveData.cY = grpCombo.members[0].getScreenPosition(FlxG.mouse.getPosition(), camHUD).y + 26;
 					CDevConfig.saveData.cChanged = true;
 			}
 			sel = "";

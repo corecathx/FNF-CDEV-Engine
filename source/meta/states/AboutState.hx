@@ -105,7 +105,7 @@ class AboutState extends MusicBeatState
 
 		versionSht = new FlxText(20, FlxG.height - 100, 1000, '', 24);
 		versionSht.scrollFactor.set();
-		versionSht.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionSht.setFormat(FunkinFonts.VCR, 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		versionSht.screenCenter(X);
 		add(versionSht);
 		versionSht.borderSize = 2;
