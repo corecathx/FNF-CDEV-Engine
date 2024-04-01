@@ -55,7 +55,7 @@ class ChartEvent extends FlxSprite
 	public static var builtInEvents:Array<Dynamic> = [
 		[
 			'Add Camera Zoom',
-			"Change how much does the camera zoom should be added (like M.I.L.F's \"banger\" part)\n\n Value 1: Camera to zoom (gameCam or hudCam)\nValue 2: Zoom to add to the camera (Float)"
+			"Change how much does the camera zoom should\nbe added (like M.I.L.F's \"banger\" part)\n\n Value 1: Camera to zoom (gameCam or hudCam)\nValue 2: Zoom to add to the camera (Float)"
 		],
 		[
 			'Force Camera Position',
@@ -68,6 +68,18 @@ class ChartEvent extends FlxSprite
 		[
 			'Change Scroll Speed',
 			"Change your song scroll speed\n\nValue 1: New Scroll Speed\nValue 2: Leave it blank"
+		],
+		[
+			'Screen Shake',
+			'Shaking a camera object for specific seconds.\n\nValue 1: Shake Properties\nValue 2: Camera Object (gameCam or hudCam)\n\nUsage Example:\nValue 1: 1, 0.05 (Duration, Intensity)\nValue 2: gameCam (this will shake the main camera)'
+		],
+		[
+			"Play Sound",
+			"Just like it's name, it plays a sound.\n\nValue 1: Sound File Name\nValue 2: Volume ranging from 0 to 1 (Default is 1)"
+		],
+		[
+			"Idle Suffix",
+			"Whether to set a specified suffix after the idle animation name.\nThe animation will be called when Alternate Animation is true.\n\nValue 1: Character to set the prefix (dad, bf, gf)\nValue 2: New Suffix (Default is \"-alt\")"
 		]
 	];
 

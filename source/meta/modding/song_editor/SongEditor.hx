@@ -347,10 +347,10 @@ class SongEditor extends MusicBeatState
 					PlayState.storyWeek = 1;
 					PlayState.fromMod = Paths.currentMod;
 					PlayState.difficultyName = "hard";
-					leave(new ChartingState(currentData), true);
+					leave(false);
 				} else {
 					CDevConfig.utils.openFolder(songsfolder, true);
-					leave();
+					leave(true);
 				}
 			} else {
 				var butt:Array<PopUpButton> = [
@@ -417,23 +417,19 @@ class SongEditor extends MusicBeatState
 
 		if (FlxG.keys.justPressed.ESCAPE && !exit)
 		{
-			leave();
+			leave(true);
 		}
 	}
 
-	function leave(?State:FlxState, ?special:Bool = false) {
-		var e:FlxState = null;
-		if (State == null){
-			e = new ModdingScreen();
-		}
+	function leave(menu:Bool = false) {
 		FlxTween.tween(FlxG.camera, {zoom: 0.9, alpha:0}, 1, {ease:FlxEase.sineInOut});
 		stopPreviews();
 		exit = true;
 		new FlxTimer().start(1.1, (t:FlxTimer) -> {
-			if (special){
-				LoadingState.loadAndSwitchState(e, false);
+			if (!menu){
+				LoadingState.loadAndSwitchState(new ChartingState(currentData), false);
 			} else{ 
-				FlxG.switchState(e);
+				FlxG.switchState(new ModdingScreen());
 			}
 		});
 

@@ -147,7 +147,7 @@ class PlayState extends MusicBeatState
 
 	public static var camHUD:CDevCamera;
 	public static var camSustain:CDevCamera;
-	public var camGame:CDevCamera;
+	public static var camGame:CDevCamera;
 
 	public static var botplayTxt:FlxText;
 
@@ -4132,6 +4132,19 @@ class PlayState extends MusicBeatState
 					}
 				case 'Change Scroll Speed':
 					scrSpd = Std.parseFloat(input1);
+				case "Screen Shake":
+					var stuff:Array<String> = input1.replace(" ","").split(",");
+					var cam:CDevCamera = (input2.trim().toLowerCase() == "hudcam" ? camHUD : camGame);
+					cam.shake(Std.parseFloat(stuff[1]),Std.parseFloat(stuff[0]));
+				case "Play Sound":
+					var filename:String = input1;
+					var vol:Float = Std.parseFloat(input2.trim());
+					vol = FlxMath.bound(vol,0,1);
+					FlxG.sound.play(Paths.sound(filename, "shared"), vol);
+				case "Idle Suffix":
+					var i1:String = input1.trim().toLowerCase();
+					var char:Character = (i1 == "bf" ? boyfriend : (i1 == "gf" ? gf : dad));
+					if (char != null) char.idleAltPrefix = input2;
 			}
 		}
 		else

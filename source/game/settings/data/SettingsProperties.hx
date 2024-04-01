@@ -252,6 +252,9 @@ class SettingsProperties
 			new BaseSettings("UI Debug State", ["", ""], "Testing state used for UI stuffs.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
 				if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new meta.debug.UIDebugState());
 			}, function(){},"", false),
+			new BaseSettings("Graphic Rendering Test", ["", ""], "Testing state used for Graphic stuffs.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
+				if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new meta.debug.NoMemLeakState());
+			}, function(){},"", false),
 		]);
 	}
 

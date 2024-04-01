@@ -1,14 +1,11 @@
 package game.system;
 
 import game.cdev.engineutils.CDevInfoTxt;
-import game.system.util.FunkinInit;
 #if android
 import flixel.input.android.FlxAndroidKey;
 import android.content.Context;
 import game.system.native.Android;
 #end
-
-
 
 import haxe.io.Path;
 #if CRASH_HANDLER

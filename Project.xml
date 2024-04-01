@@ -137,7 +137,6 @@
 	<!--<haxelib name="linc_luajit" if="ALLOW_LUA"/>-->
 	<haxelib name="discord_rpc" if="desktop"/>
 	<haxelib name="HxWebView" if="desktop"/>
-	<haxelib name="haxe-firebase" if="desktop"/>
 	<!--<haxelib name="linc_luajit" if="windows"/>-->
 	<!--<haxelib name="hxcpp-debug-server" if="desktop"/>-->
 
