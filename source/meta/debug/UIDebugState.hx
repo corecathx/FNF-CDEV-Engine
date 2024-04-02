@@ -1,5 +1,6 @@
 package meta.debug;
 
+import flixel.addons.ui.FlxUIList;
 import game.objects.HealthIcon;
 import game.cdev.objects.CDevTooltip;
 import openfl.text.TextFormat;
@@ -13,6 +14,7 @@ class UIDebugState extends MusicBeatState
     var curTooltip:CDevTooltip;
 	var displayText:FlxText;
 	var previewLogo:FlxSprite;
+	var list:FlxUIList;
 
 	var bruh:Array<Dynamic> = [];
 
@@ -41,6 +43,8 @@ class UIDebugState extends MusicBeatState
 		displayText.setPosition(FlxG.width-displayText.width-10, FlxG.height - displayText.height - 10);
         displayText.color = 0xFFFFFFFF;
         add(displayText);
+
+		list = new FlxUIList();
 
 		curTooltip = new CDevTooltip();
         add(curTooltip);

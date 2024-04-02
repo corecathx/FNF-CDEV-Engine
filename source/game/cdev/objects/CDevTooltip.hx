@@ -79,10 +79,10 @@ class CDevTooltip extends FlxSpriteGroup {
             height: Math.max((headText.y - y) + headText.height, (bodyText.y - y) + bodyText.height),
         }
 
-        bgImageOutline.setGraphicSize(Std.int(sizeStat.width+(borderSize)+(padding)), Std.int(sizeStat.height+(borderSize)+(padding)));
+        bgImageOutline.setGraphicSize(Std.int((sizeStat.width+(borderSize)+(padding))), Std.int((sizeStat.height+(borderSize)+(padding))));
         bgImageOutline.color = colors.outline;
 
-        bgImage.setGraphicSize(Std.int(sizeStat.width-(borderSize)+(padding)), Std.int(sizeStat.height-(borderSize)+(padding)));
+        bgImage.setGraphicSize(Std.int((sizeStat.width-(borderSize)+(padding))), Std.int((sizeStat.height-(borderSize)+(padding))));
         bgImage.color = colors.bg;
     }
     

@@ -237,41 +237,36 @@ class StageEditor extends MusicBeatState
 		saveButton.cameras = [camHUD];
 
 		mainTooltip = new CDevTooltip();
-		mainTooltip.cameras = [camHUD];
 		add(mainTooltip);
 	}
 
 	function __init_stageJson()
 	{
-		if (stageToLoad != '<NO STAGE>')
-		{
-			var crapJSON = null;
+		__STAGE_JSON = Stage.templateJSON;
+		if (stageToLoad == '<NO STAGE>') return;
+		var crapJSON = null;
 
+		#if ALLOW_MODS
+		var charFile:String = Paths.modStage(stageToLoad);
+		if (FileSystem.exists(charFile))
+			crapJSON = File.getContent(charFile);
+		#end
+
+		if (crapJSON == null)
+		{
+			var path:String = Paths.modStage(stageToLoad);
+			var exist:Bool = FileSystem.exists(path);
 			#if ALLOW_MODS
-			var charFile:String = Paths.modStage(stageToLoad);
-			if (FileSystem.exists(charFile))
-				crapJSON = File.getContent(charFile);
+			crapJSON = exist ? File.getContent(Paths.stage(stageToLoad)) : null;
+			#else
+			crapJSON = exist ? Assets.getText(Paths.stage(stageToLoad)) : null;
 			#end
-
-			if (crapJSON == null)
-			{
-				#if ALLOW_MODS
-				crapJSON = File.getContent(Paths.stage(stageToLoad));
-				#else
-				crapJSON = Assets.getText(Paths.stage(stageToLoad));
-				#end
-			}
-
-			var json:StageJSONData = cast Json.parse(crapJSON);
-
-			if (crapJSON != null)
-			{
-				__STAGE_JSON = json;
-			}
 		}
-		else
-		{
-			__STAGE_JSON = Stage.templateJSON;
+
+		if (crapJSON != null)
+		{	
+			var json:StageJSONData = cast Json.parse(crapJSON);
+			__STAGE_JSON = json;
 		}
 	}
 
@@ -971,12 +966,12 @@ class StageEditor extends MusicBeatState
 
 		mainTooltip.hide();
 		for (i in tooltipObjects){
+			var obj:SpriteStage = cast i[0];
 			var t:Bool = !(FlxG.mouse.getScreenPosition(camHUD).x >= uiBox.x
 						&& FlxG.mouse.getScreenPosition(camHUD).x < uiBox.x + uiBox.width
 						&& FlxG.mouse.getScreenPosition(camHUD).y >= uiBox.y
 						&& FlxG.mouse.getScreenPosition(camHUD).y < uiBox.y + uiBox.height);
-			if (FlxG.mouse.overlaps(i[0], camGame)
-				&& t){
+			if (FlxG.mouse.overlaps(obj) && t && !FlxG.mouse.pressed){
 				mainTooltip.show(i[0], i[1], i[2], true);
 			}
 		}
@@ -988,7 +983,7 @@ class StageEditor extends MusicBeatState
 
 		if (_objectMoved != null)
 		{
-			camHUD.alpha = FlxMath.lerp(camHUD.alpha, 0.5, CDevConfig.utils.bound(1 - (elapsed * 12), 0, 1));
+			camHUD.alpha = FlxMath.lerp(camHUD.alpha, 0.5, CDevConfig.utils.bound(1 - (elapsed * 5), 0, 1));
 			if (FlxG.mouse.pressed)
 			{
 				_objectMoved.x = mousePos.x + mouseOffsetPos.x;
@@ -1011,7 +1006,7 @@ class StageEditor extends MusicBeatState
 		}
 		else
 		{
-			camHUD.alpha = FlxMath.lerp(camHUD.alpha, 1, CDevConfig.utils.bound(1 - (elapsed * 12), 0, 1));
+			camHUD.alpha = FlxMath.lerp(camHUD.alpha, 1, CDevConfig.utils.bound(1 - (elapsed * 5), 0, 1));
 
 			if (!(FlxG.mouse.getScreenPosition(camHUD).x >= uiBox.x
 				&& FlxG.mouse.getScreenPosition(camHUD).x < uiBox.x + uiBox.width
@@ -1138,7 +1133,7 @@ class StageEditor extends MusicBeatState
 			}
 		}
 		if (sus)
-			camGame.zoom += 0.1 * FlxG.mouse.wheel;
+			camGame.zoom += (0.1*camGame.zoom) * FlxG.mouse.wheel;
 		if (camGame.zoom < 0.1)
 			camGame.zoom = 0.1;
 
