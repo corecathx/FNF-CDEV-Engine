@@ -209,7 +209,7 @@ class Note extends FlxSprite
 			if (PlayState.curStage.startsWith('school'))
 				x += 30;
 
-			var shit:Float = (CDevConfig.saveData.scrollSpeed == 1 ? PlayState.SONG.speed : CDevConfig.saveData.scrollSpeed);
+			var shit:Float = (CDevConfig.saveData.scrollSpeed == 1 && PlayState.SONG != null ? PlayState.SONG.speed : CDevConfig.saveData.scrollSpeed);
 			if (prevNote.isSustainNote)
 			{
 				switch (prevNote.noteData)

@@ -1,5 +1,6 @@
 package meta.modding.stage_editor;
 
+import game.cdev.engineutils.Discord.DiscordClient;
 import game.cdev.objects.CDevTooltip;
 import lime.system.Clipboard;
 import meta.substates.MusicBeatSubstate;
@@ -188,15 +189,20 @@ class StageEditor extends MusicBeatState
 	var unsaved:Bool = false;
 
 	public var stageDropDown:UIDropDown;
+	var toPlayState:Bool = false;
 
-	public function new()
+	public function new(?stage:String = "<NO STAGE>", ?backtoplaystate:Bool = false)
 	{
+		if (stage != null) stageToLoad = stage;
+		toPlayState = backtoplaystate;
 		super();
 	}
 
 	override function create()
 	{
 		super.create();
+		DiscordClient.changePresence("Stage Editor", null, null, true);
+
 		__init_cameras();
 		__init_stageJson();
 		_init_Characters();
@@ -943,7 +949,8 @@ class StageEditor extends MusicBeatState
 				}
 		}*/
 
-		_uiBox_Y = FlxG.height - (show_uiBox ? 500 - 19 : 0);
+		_uiBox_Y = FlxG.height - (show_uiBox ? uiBox.height : 0);
+		if (show_uiBox) _uiBox_Y -= 20;
 		uiBox.y = FlxMath.lerp(_uiBox_Y, uiBox.y, CDevConfig.utils.bound(1 - (elapsed * 12), 0, 1));
 
 		tooltipObjects = [];
@@ -1140,7 +1147,10 @@ class StageEditor extends MusicBeatState
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
 			FlxG.camera.bgColor = 0xFF000000;
-			FlxG.switchState(new meta.modding.ModdingScreen());
+			if (!toPlayState)
+				FlxG.switchState(new meta.modding.ModdingScreen());
+			else
+				FlxG.switchState(new meta.states.PlayState());
 		}
 	}
 

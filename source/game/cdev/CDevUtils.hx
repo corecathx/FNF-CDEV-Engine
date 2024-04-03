@@ -246,15 +246,15 @@ class CDevUtils
 	 */
 	public function removeSymbols(input:String):String
 	{
-		var result:String = "";
-		for (i in 0...input.length)
-		{
-			if ((input >= "0" && input <= "9") || (input >= "a" && input <= "z") || (input >= "A" && input <= "Z"))
-			{
-				result += input.charAt(i);
-			}
-		}
-		return result;
+        var symbolsToRemove = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+        var ee = '';
+        for (i in 0...input.length) {
+            var char = input.charAt(i);
+            if (symbolsToRemove.indexOf(char) == -1) {
+                ee += char;
+            }
+        }
+		return ee;
 	}
 
 

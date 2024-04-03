@@ -182,7 +182,10 @@ class ChartEditor extends MusicBeatState {
         loadDaNotes();
 
 		FlxG.camera.follow(camFollow);
-        super.create();
+		super.create();
+		new FlxTimer().start(1,(_)->{
+			CDevPopUp.open(this,"Warning!","You're entering a whole different CDEV Engine Chart Editor, it is still unstable and buggy (as hell) so expect lots of stuff not working!!",[{text: "OK", callback:() -> {closeSubState();}}], false, true);
+		});
     }
 
     var warnOnce:Bool = false;
@@ -273,8 +276,6 @@ class ChartEditor extends MusicBeatState {
 		autoSaveText.scrollFactor.set();
 		autoSaveText.borderSize = 2;
 		add(autoSaveText);
-
-		CDevPopUp.open(this,"Warning!","You're entering a whole different CDEV Engine Chart Editor, it is still unstable and buggy (as hell) so expect lots of stuff not working!!",[{text: "OK", callback:() -> {closeSubState();}}], false, true);
 	}
 
     function createSecUI(){

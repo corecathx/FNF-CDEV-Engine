@@ -115,10 +115,12 @@ class ScriptSupport
 						Reflect.setField(enumThingy, c, en.createByName(c));
 					}
 					script.setVariable(classname, enumThingy);
+					script.trace("Imported " + splitClassName[splitClassName.length - 1] + " as " + classname);
 				}
 				else
 				{
 					script.setVariable(classname, cl);
+					script.trace("Imported " + splitClassName[splitClassName.length - 1] + " as " + classname);
 				}
 			}
 		});

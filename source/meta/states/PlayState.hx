@@ -2649,74 +2649,88 @@ class PlayState extends MusicBeatState
 	/**Used for In-Game Editors, like switching the state to the Editor.**/
 	public function editorsHandler() {
 		if (isDead) return;
-		if (enableEditors) {
-			var pressingStuff:Array<Bool> = [FlxG.keys.justPressed.SIX, FlxG.keys.justPressed.EIGHT];
-			var indexSONG:Array<String> = [SONG.player1, SONG.player2];
-			var player:String = "bf";
-			var playerIndex:Int = 1;
-			for (index => press in pressingStuff)
+		if (!enableEditors) return;
+		var pressingStuff:Array<Bool> = [FlxG.keys.justPressed.SIX, FlxG.keys.justPressed.EIGHT];
+		var indexSONG:Array<String> = [SONG.player1, SONG.player2];
+		var player:String = "bf";
+		var playerIndex:Int = 1;
+		for (index => press in pressingStuff)
+		{
+			if (press)
 			{
-				if (press)
-				{
-					player = indexSONG[index];
-					playerIndex = index + 1;
-				}
+				player = indexSONG[index];
+				playerIndex = index + 1;
 			}
-			if (pressingStuff.contains(true))
+		}
+		if (pressingStuff.contains(true))
+		{
+			movingEditor = true;
+			scripts.executeFunc('onStateLeaved', []);
+			persistentUpdate = false;
+			persistentDraw = true;
+			paused = true;
+			FlxG.camera.zoom = 1;
+			defaultCamZoom = 1;
+			#if sys
+			if (!FileSystem.exists(Paths.modChar(player)) && !FileSystem.exists(Paths.char(player)))
 			{
-				movingEditor = true;
-				scripts.executeFunc('onStateLeaved', []);
-				persistentUpdate = false;
-				persistentDraw = true;
-				paused = true;
-				FlxG.camera.zoom = 1;
-				defaultCamZoom = 1;
-				#if sys
-				if (!FileSystem.exists(Paths.modChar(player)) && !FileSystem.exists(Paths.char(player)))
-				{
-					var butt:Array<PopUpButton> = [
-						{
-							text:"OK",
-							callback:()->{
-								FlxG.switchState(new CharacterEditor(true, true, playerIndex == 1));
-							}
+				var butt:Array<PopUpButton> = [
+					{
+						text:"OK",
+						callback:()->{
+							FlxG.switchState(new CharacterEditor(true, true, playerIndex == 1));
 						}
-					];
-					var mes = "Can't find character json \""
-						+ player
-						+ ".json\"\nMake sure that the json file exists or create a new character on this engine's mod editor menu!";
-					var eak = new CDevPopUp("Character Not Found", mes, butt, false, true);
-					eak.cameras=[camHUD];
-					openSubState(eak);
-				}
-				else
-				{
-				#end
-					FlxG.switchState(new CharacterEditor(true, false, playerIndex == 1));
-				#if sys
-				}
-				#end
+					}
+				];
+				var mes = "Can't find character json \""
+					+ player
+					+ ".json\"\nMake sure that the json file exists or create a new character on this engine's mod editor menu!";
+				var eak = new CDevPopUp("Character Not Found", mes, butt, false, true);
+				eak.cameras=[camHUD];
+				openSubState(eak);
 			}
-			if (FlxG.keys.justPressed.SEVEN)
+			else
 			{
-				movingEditor = true;
-				canPause = false;
-				scripts.executeFunc('onStateLeaved', []);
-				songSpeed = 1.0;
-				FlxG.sound.music.pause();
-				vocals.pause();
-
-				chartingMode = true;
-				if (FlxG.keys.pressed.SHIFT)
-					FlxG.switchState(new meta.modding.chart_editor.ChartEditor(SONG));
-				else
-					FlxG.switchState(new meta.modding.chart_editor.ChartingState());
-
-				#if desktop
-				if (Main.discordRPC)
-					DiscordClient.changePresence("Chart Editor", null, null, true);
-				#end
+			#end
+				FlxG.switchState(new CharacterEditor(true, false, playerIndex == 1));
+			#if sys
 			}
+			#end
+		}
+		if (FlxG.keys.justPressed.SEVEN)
+		{
+			movingEditor = true;
+			canPause = false;
+			scripts.executeFunc('onStateLeaved', []);
+			songSpeed = 1.0;
+			FlxG.sound.music.pause();
+			vocals.pause();
+
+			chartingMode = true;
+			if (FlxG.keys.pressed.SHIFT)
+				FlxG.switchState(new meta.modding.chart_editor.ChartEditor(SONG));
+			else
+				FlxG.switchState(new meta.modding.chart_editor.ChartingState());
+
+			#if desktop
+			if (Main.discordRPC)
+				DiscordClient.changePresence("Chart Editor", null, null, true);
+			#end
+		}
+		if (FlxG.keys.justPressed.ONE){
+			movingEditor = true;
+			canPause = false;
+			scripts.executeFunc('onStateLeaved', []);
+			songSpeed = 1.0;
+			FlxG.sound.music.pause();
+			vocals.pause();
+
+			FlxG.switchState(new meta.modding.stage_editor.StageEditor(SONG.stage));
+
+			#if desktop
+			if (Main.discordRPC)
+				DiscordClient.changePresence("Stage Editor", null, null, true);
+			#end
 		}
 	}
 

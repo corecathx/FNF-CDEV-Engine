@@ -1,23 +1,8 @@
 package game.cdev.engineutils;
 
-import lime.app.Application;
-import openfl.display.IBitmapDrawable;
-import openfl.geom.Matrix;
-import openfl.geom.Rectangle;
-import openfl.geom.Point;
 import game.cdev.CDevConfig;
-import flixel.util.FlxColor;
-import openfl.display.Stage;
-import flixel.system.scaleModes.BaseScaleMode;
-import flixel.system.scaleModes.StageSizeScaleMode;
-import openfl.Lib;
-import openfl.display.Bitmap;
-import openfl.display.BitmapData;
 import flixel.FlxG;
-import openfl.events.EventType;
-import openfl.display.DisplayObject;
 import haxe.Timer;
-import openfl.display.FPS;
 import openfl.events.Event;
 import openfl.system.System;
 import openfl.text.TextField;
@@ -69,16 +54,21 @@ class CDevFPSMem extends TextField
 		var s:String = "";
 
 		var lowFPS:Bool = (times.length < CDevConfig.saveData.fpscap / 2);
+
+		var c = {
+			fps: "FPS: " + times.length + (lowFPS?" [!]":""),
+			mem: "RAM: " + ramStr
+		}
 		
 		if (visible)
 		{
 			switch (CDevConfig.saveData.performTxt){
 				case "fps":
-					s = "FPS: " + times.length + (lowFPS?" [!]":"");
+					s = c.fps;
 				case "fps-mem":
-					s = "FPS: " + times.length + (lowFPS?" [!]":"") + "\nRAM: " + ramStr;
+					s = '${c.fps}\n${c.mem}';
 				case "mem":
-					s = "RAM: " + ramStr;
+					s = c.mem;
 				default:
 					s = "";
 			}
