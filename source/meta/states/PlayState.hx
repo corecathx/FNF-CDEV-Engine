@@ -1129,7 +1129,7 @@ class PlayState extends MusicBeatState
 		iconP2.y = healthBar.y - (iconP2.height / 2);
 
 		// Score Text
-		scoreTxt = new FlxText(0, healthBarBG.y + 36, FlxG.width, "", 18);
+		scoreTxt = new FlxText(0, healthBarBG.y + 36, -1, "", 18);
 		scoreTxt.setFormat(config.uiTextFont, 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		scoreTxt.borderSize = 1.1;
 		scoreTxt.scrollFactor.set();
@@ -1137,7 +1137,7 @@ class PlayState extends MusicBeatState
 			scoreTxt.y = healthBarBG.y + 43;
 
 		// Score Text's background.
-		bgScore = new FlxSprite(scoreTxt.x, scoreTxt.y).makeGraphic(500, 500, FlxColor.BLACK);
+		bgScore = new FlxSprite(scoreTxt.x, scoreTxt.y).makeGraphic(1, 1, FlxColor.BLACK);
 		bgScore.alpha = 0.3;
 
 		// Time Bar stuffs.
@@ -2765,13 +2765,14 @@ class PlayState extends MusicBeatState
 				(CDevConfig.saveData.healthCounter ? ' $scoreTxtDiv Health: ${Math.floor(healthBarPercent)}%' : ''); // HEALTH
 		}
 		scoreTxt.text = scoreText;
+		scoreTxt.screenCenter(X);
 
 		//RPC Related stuff
 		daRPCInfo = '${config.scoreText}: ' + songScore + " | " + '${config.missesText}: ' + misses + ' | ' + '${config.accuracyText}: '
 			+ RatingsCheck.fixFloat(accuracy, 2) + "% (" + ratingText + ')';
 		if (songStarted) DiscordClient.changePresence(detailsText, (CDevConfig.saveData.botplay ? "Botplay" : daRPCInfo), iconRPC, true, songLength - Conductor.songPosition);
 
-		bgScore.setGraphicSize(Std.int(((scoreTxt.size * 0.59) * scoreTxt.text.length) + 3), Std.int(scoreTxt.height + 3));
+		bgScore.setGraphicSize(Std.int(scoreTxt.width + 9), Std.int(scoreTxt.height + 3));
 		bgScore.screenCenter(X);
 		bgScore.y = scoreTxt.y - 2;
 		bgScore.alpha = scoreTxt.alpha * 0.3;
@@ -3208,6 +3209,7 @@ class PlayState extends MusicBeatState
 		});
 	}
 
+	var transparent:Bool = false;
 	/**This function used for CDEV Engine's Test Mode features.**/
 	function cdevTestMode(elapsed:Float)
 	{
@@ -3295,6 +3297,16 @@ class PlayState extends MusicBeatState
 				CDevConfig.saveData.botplay = !CDevConfig.saveData.botplay;
 			}
 
+			// Toggle Scroll Direction
+			if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.D){
+				CDevConfig.saveData.downscroll = !CDevConfig.saveData.downscroll;
+				FlxG.resetState();
+			}
+
+			if (FlxG.keys.pressed.CONTROL && (FlxG.keys.justPressed.Z || FlxG.keys.justPressed.X)){
+				songSpeed += (FlxG.keys.justPressed.Z ? -0.05 : 0.05);
+			}
+
 			// instant crash the game
 			if (FlxG.keys.pressed.CONTROL && FlxG.keys.pressed.ALT && FlxG.keys.justPressed.SPACE)
 			{
@@ -3379,11 +3391,11 @@ class PlayState extends MusicBeatState
 				daTime /= speed;
 
 			while (unspawnNotes.length > 0
-				&& unspawnNotes[0].strumTime - Conductor.songPosition < daTime * (songSpeed == 1 ? 1 : songSpeed))
+				&& unspawnNotes[0].strumTime - Conductor.songPosition < daTime)
 			{
 				var dunceNote:Note = unspawnNotes[0];
-				if (dunceNote.isSustainNote)
-					dunceNote.cameras = [camSustain];
+				//if (dunceNote.isSustainNote)
+				//	dunceNote.cameras = [camSustain]; //wip
 
 				notes.add(dunceNote);
 				dunceNote.onNoteSpawn();
@@ -3461,8 +3473,10 @@ class PlayState extends MusicBeatState
 					{
 						// you don't know how much i hate this line of codes.
 						// this took me AGES to finish.
-						if (strum.noteScroll > 0)
-							if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
+						var isHoldEnd:Bool = (daNote.animation.curAnim.name.endsWith('holdend'));
+						var prevNotNull:Bool = (daNote.prevNote != null);
+						if (strum.noteScroll > 0){
+							if (isHoldEnd && prevNotNull)
 							{
 								daNote.y += (daNote.prevNote.height + (daNote.height / 2)) / 2;
 								daNote.y -= (daNote.prevNote.height / 2);
@@ -3474,18 +3488,17 @@ class PlayState extends MusicBeatState
 								daNote.y -= (daNote.height / 2);
 								daNote.y += (daNote.height) / noteSpeed;
 							}
-						else
-						{
-							if ((daNote.animation.curAnim.name.endsWith('holdend')) && (daNote.prevNote != null))
+						} else {
+							if (isHoldEnd && prevNotNull)
 							{
 								daNote.y += (daNote.prevNote.height) - (daNote.height / 2);
 								daNote.y += (daNote.prevNote.height / 2);
 								daNote.y -= daNote.height / noteSpeed;
 							}
 						}
-	
+						
 						daNote.flipY = (strum.noteScroll < 0);
-	
+
 						StrumArrow.checkRects(daNote, strum);
 					}
 				}
@@ -4630,14 +4643,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	function noteCheck(keyP:Bool, note:Note):Void
-	{
-		if (keyP)
-			goodNoteHit(note);
-		else
-		{
-		}
-	}
+
 
 	function showNoteDiff(note:Note)
 	{
@@ -4973,7 +4979,8 @@ class PlayState extends MusicBeatState
 
 		if (generatedMusic)
 		{
-			notes.sort(FlxSort.byY, (CDevConfig.saveData.downscroll ? FlxSort.ASCENDING : FlxSort.DESCENDING));
+			if (curBeat % 2 == 0)
+				notes.sort(FlxSort.byY, (CDevConfig.saveData.downscroll ? FlxSort.ASCENDING : FlxSort.DESCENDING));
 		}
 
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
