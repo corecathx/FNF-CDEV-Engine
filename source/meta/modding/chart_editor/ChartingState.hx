@@ -1145,6 +1145,7 @@ class ChartingState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		curMouse = openfl.ui.MouseCursor.ARROW;
 		oldStep = curStep;
 		curStep = recalculateSteps();
 		curBeat = Math.floor(curStep / 4);
@@ -1159,7 +1160,6 @@ class ChartingState extends MusicBeatState
 			stepHitShit();
 		}
 
-		super.update(elapsed);
 		updateHeads();
 
 		if (FlxG.keys.justPressed.F1)
@@ -1169,9 +1169,6 @@ class ChartingState extends MusicBeatState
 				obj.visible = !obj.visible;
 			}
 		}
-
-		//p1Lerp = FlxMath.lerp(0.6, leftIcon.scale.x, CDevConfig.utils.bound(1 - (elapsed * 10), 0, 1));
-		//p2Lerp = FlxMath.lerp(0.6, rightIcon.scale.x, CDevConfig.utils.bound(1 - (elapsed * 10), 0, 1));
 
 		p1Lerp = 0.8-((Conductor.songPosition % (Conductor.crochet))/Conductor.crochet)*0.2;
 		p2Lerp = 0.8-((Conductor.songPosition % (Conductor.crochet))/Conductor.crochet)*0.2;
@@ -1384,15 +1381,7 @@ class ChartingState extends MusicBeatState
 
 		if (curBeat % 4 == 0 && curStep >= 16 * (curSection + 1))
 		{
-			// trace(curStep);
-			// trace((_song.notes[curSection].lengthInSteps) * (curSection + 1));
-			// trace('DUMBSHIT');
-
-			if (_song.notes[curSection + 1] == null)
-			{
-				addSection(16);
-			}
-
+			if (_song.notes[curSection + 1] == null) addSection(16);
 			changeSection(curSection + 1, false);
 		}
 
@@ -1723,10 +1712,15 @@ class ChartingState extends MusicBeatState
 		tooltip.hide();
 		for (stuff in tooltipObjects){
 			if (FlxG.mouse.overlaps(stuff[0])){
+				curMouse = openfl.ui.MouseCursor.BUTTON;
 				tooltip.show(stuff[0], stuff[1], stuff[2], true);
 			}
 		}
+
+		super.update(elapsed);
 	}
+
+	// this is some horrible logics i made, i'll clean it up later (again)
 	var dragStartPos:FlxPoint = new FlxPoint();
 	var overlavvin:Bool = false;
 	function handleNoteSelections(elapsed:Float){
@@ -1780,9 +1774,10 @@ class ChartingState extends MusicBeatState
 					dragStartPos.set(mousePos.x,mousePos.y);
 				}
 				if (FlxG.mouse.pressed){
+					curMouse = openfl.ui.MouseCursor.HAND;
 					for (i in selectedNotes){
 						i.setPosition(i.rawNoteData * GRID_SIZE + (mousePos.x-dragStartPos.x),((i.strumTime-sectionStartTime())/Conductor.stepCrochet) * GRID_SIZE + (mousePos.y - dragStartPos.y));
-						i.x = FlxMath.bound(i.x, 0, (GRID_SIZE * 8));
+						i.x = FlxMath.bound(i.x, 0, (GRID_SIZE * 7));
 					}
 				}
 				if (FlxG.mouse.justReleased){

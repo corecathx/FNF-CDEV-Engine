@@ -1,5 +1,7 @@
 package meta.states;
 
+import lime.app.Application;
+import openfl.display.Window;
 import flixel.math.FlxRect;
 import flixel.math.FlxPoint;
 import game.cdev.CDevMods.ModFile;
@@ -16,6 +18,9 @@ import flixel.FlxG;
 import sys.FileSystem;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
 
+/**
+ * Initialization Class for CDEV Engine.
+ */
 class InitState extends MusicBeatState {
     public static var status = {
         loadedSaves: false,
@@ -29,11 +34,8 @@ class InitState extends MusicBeatState {
         doInit();
 
         // when crash handler is missing
-        if (!FileSystem.exists("./cdev-crash_handler.exe")){
-            GameLog.warn("CDEV Crash Handler is missing.");
-            FlxG.switchState(new CHState());
-            return;
-        }
+        if (!FileSystem.exists("./cdev-crash_handler.exe"))
+            Application.current.window.alert("CDEV Engine Crash Handler is missing, some stuff might break without it.", "Warning");
 
         FlxG.switchState(nextState);
         super.create();
@@ -54,6 +56,8 @@ class InitState extends MusicBeatState {
 		else
 			DiscordClient.initialize();
 		#end
+
+        FlxG.mouse.useSystemCursor = true;
     }
 
     function init_flixel() {

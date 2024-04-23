@@ -111,6 +111,9 @@ class Stage
 	{
 		this.stage = stage;
 		this.play = pla;
+		if (play.stageGroup == null){
+			play.stageGroup = new FlxTypedGroup<SpriteStage>();
+		}
 		this.ignoreScript = ignoreScript;
 		BFPOS = [770, 100];
 		GFPOS = [400, 130];
@@ -232,9 +235,9 @@ class Stage
 		if (jsonWasNull)
 		{
 			trace("Unable to create the stage, can't find the JSON file");
-			play.add(PlayState.gf);
-			play.add(PlayState.dad);
-			play.add(PlayState.boyfriend);
+			play.stageGroup.add(PlayState.gf);
+			play.stageGroup.add(PlayState.dad);
+			play.stageGroup.add(PlayState.boyfriend);
 			return;
 		}
 
@@ -258,7 +261,7 @@ class Stage
 					daSprite.scrollFactor.set(stageJSON.sprites[i].imageSF, stageJSON.sprites[i].imageSF);
 					daSprite.alpha = stageJSON.sprites[i].imageAlpha;
 					daSprite.ID = i;
-					play.add(daSprite);
+					play.stageGroup.add(daSprite);
 					bitmap_sprites.push(daSprite);
 				case "sparrow":
 					var daSprite:SpriteStage = new SpriteStage();
@@ -309,15 +312,15 @@ class Stage
 							}
 						}
 					}
-					play.add(daSprite);
+					play.stageGroup.add(daSprite);
 					daSprite.scale.set(stageJSON.sprites[i].imageScale, stageJSON.sprites[i].imageScale);
 				// checkSprites(stageJSON.sprites[i], i, daSprite);
 				case "bf":
-					play.add(PlayState.boyfriend);
+					play.stageGroup.add(PlayState.boyfriend);
 				case "gf":
-					play.add(PlayState.gf);
+					play.stageGroup.add(PlayState.gf);
 				case "dad":
-					play.add(PlayState.dad);
+					play.stageGroup.add(PlayState.dad);
 			}
 		}
 
@@ -366,10 +369,21 @@ class Stage
 		}
 	}
 
+	/**
+	 * wawa a dumb cat wrote this code
+	 */
 	public function destroy()
 	{
+		for (i in play.stageGroup.members){
+			if (i == null) continue;
+			if (["bf","gf", "dad"].contains(i.type)) continue;
+			i.destroy();
+			play.stageGroup.remove(i);
+		}
 		beatHit_sprites = [];
 		beatHit_force_sprites = [];
+		bitmap_sprites = [];
+		normalAnim_sprites = [];
 	}
 }
 

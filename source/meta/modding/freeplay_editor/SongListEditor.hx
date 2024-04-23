@@ -48,7 +48,7 @@ class SongListEditor extends MusicBeatState
 		loadSongList();
 
 		menuBG = new FlxSprite().loadGraphic(Paths.image('menuDesat', 'preload'));
-		menuBG.color = 0xff0088ff;
+		menuBG.color = CDevConfig.utils.CDEV_ENGINE_BLUE;
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
 		menuBG.alpha = 0.5;

@@ -1,5 +1,7 @@
 package game.cdev;
 
+import game.cdev.song.CDevChart;
+import game.song.Song;
 import flixel.input.FlxPointer;
 import meta.states.InitState;
 import sys.io.File;
@@ -49,6 +51,7 @@ typedef DiscordJson = {
  */
 class CDevUtils
 {
+	public var CDEV_ENGINE_BLUE:Int = 0xff0088ff; //blueueue
 	/**
 	 * Chart Template, like, just a template.
 	 */
@@ -73,7 +76,7 @@ class CDevUtils
 	public var RPC_TEMPLATE:DiscordJson = {
 		clientID: CDevConfig.RPC_ID,
 		imageKey: 'icon',
-		imageTxt: 'CDEV Engine v.' + CDevConfig.engineVersion
+		imageTxt: 'CDEV Engine v' + CDevConfig.engineVersion
 	};
 
 	/**
@@ -596,5 +599,51 @@ class CDevUtils
 	public function setFitScale(sprite:FlxSprite, xAdd:Float = 0, yAdd:Float = 0){
 		sprite.scale.x = (FlxG.width / sprite.width) + xAdd;
         sprite.scale.y = (FlxG.height / sprite.height) + yAdd;
+	}
+
+	/**
+	 * Converts a base FNF chart to CDEV Engine's chart format.
+	 * @param json The JSON of your FNF Chart 
+	 * @return New CDEV Chart Object
+	 */
+	public function fnftocdev_chart(json:SwagSong):CDevChart {
+		var notes:Array<Dynamic> = [];
+		var events:Array<Dynamic> = [];
+		
+		for (i in json.notes){
+			for (j in i.sectionNotes){
+				if (i.mustHitSection){//swap the section if it's a player section.
+					var note = j;
+					note[1] = (note[1] + 4) % 8;
+					j = note;
+				}
+				notes.push([j[0],j[1],j[2],j[3],j[4]]);
+			}
+			if (Reflect.hasField(i,"sectionEvents")){ // bruh
+				for (k in i.sectionEvents){
+					events.push([k[0],k[1],k[2],k[3],k[4]]);
+				}
+			}
+		}
+		var cdev:CDevChart = {
+			data: {
+				player: json.player1,
+				opponent: json.player2,
+				third_char: json.gfVersion,
+				stage: json.stage,
+				note_skin: "default"
+			},
+			info: {
+				name: json.song,
+				bpm: json.bpm,
+				speed: json.speed,
+				time_signature: [4,4], // since most of fnf songs are charted in 4/4 time signature, set this by default.
+				version: CDevConfig.engineVersion
+			},
+			notes: notes,
+			events: events
+		}
+
+		return cdev;
 	}
 }

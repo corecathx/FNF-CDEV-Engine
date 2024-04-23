@@ -74,15 +74,8 @@ class SongConfScript
 					if (object.endsWith('.hx'))
 					{
 						var objName:String = object.substr(0, object.length - 3);
-						if (notAllowed.contains(objName))
-						{
-							trace(object + " can't be used as song script. skipping...");
-							// insideTheThing.remove(object);
-							continue;
-						}
-						else
-						{
-							trace("found " + object);
+						if (!notAllowed.contains(objName)) {
+							trace("Script Found: " + object);
 							scripts.push({
 								daMod: mod,
 								daPath: joint

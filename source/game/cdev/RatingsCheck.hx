@@ -68,28 +68,28 @@ class RatingsCheck
 		return daRank;
 	}
 
-	public static function getRatingText(acc:Float):String
+	public static function getRatingText(acc:Float):Array<Dynamic>
 	{
-		var aee:String = '';
+		var aee:Array<Dynamic> = ["?", 0xFFFFFFFF];
 
 		if (acc >= 0 && acc < 0.99)
-			aee = "?";
+			aee = ["?", 0xFFFFFFFF];
 		else if (acc >= 1 && acc < 69.99)
-			aee = 'F';
+			aee = ["F", 0xFFFF0000];
 		else if (acc >= 70 && acc < 74.99)
-			aee = 'D';
+			aee = ["D", 0xFFFF8800];
 		else if (acc >= 75 && acc < 79.99)
-			aee = 'C';
+			aee = ["C", 0xFFFFD900];
 		else if (acc >= 80 && acc < 84.99)
-			aee = 'B';
+			aee = ["B", 0xFFB3FF00];
 		else if (acc >= 85 && acc < 89.99)
-			aee = 'A';
+			aee = ["A", 0xFF1EFF00];
 		else if (acc >= 90 && acc < 94.99)
-			aee = 'S';
+			aee = ["S", 0xFF00CCFF];
 		else if (acc >= 95 && acc < 99.99)
-			aee = 'S+';
+			aee = ["S+", 0xFF00CCFF];
 		else if (acc == 100)
-			aee = 'S++';
+			aee = ["S++", 0xFF00CCFF];
 
 		return aee;
 	}

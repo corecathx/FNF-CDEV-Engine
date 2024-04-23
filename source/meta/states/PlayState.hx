@@ -110,8 +110,8 @@ class PlayState extends MusicBeatState
 	public static var playerStrums:FlxTypedGroup<StrumArrow>;
 	public static var p2Strums:FlxTypedGroup<StrumArrow>;
 
-	var stageGroup:FlxTypedGroup<SpriteStage>;
-	var stageHandler:Stage;
+	public var stageGroup:FlxTypedGroup<SpriteStage>;
+	public static var stageHandler:Stage;
 
 	private var curSong:String = "";
 
@@ -878,12 +878,15 @@ class PlayState extends MusicBeatState
 		/**CHARACTER INITIALIZATION**/
 		var gfVer:String = (SONG.gfVersion == null ? 'gf' : SONG.gfVersion);
 		dad = new Character(DADXPOS, DADYPOS, SONG.player2);
+		dad.objectName = "dad";
 		moveCharToPos(dad, true);
 
 		gf = new Character(GFXPOS, GFYPOS, gfVer);
+		gf.objectName = "gf";
 		moveCharToPos(gf);
 
 		boyfriend = new Boyfriend(BFXPOS, BFYPOS, SONG.player1);
+		boyfriend.objectName = "bf";
 		moveCharToPos(boyfriend);
 		
 		//Used for Week 7.
@@ -1115,7 +1118,7 @@ class PlayState extends MusicBeatState
 		healthBar = new FunkinBar(0, (!CDevConfig.saveData.downscroll ? (FlxG.height * 0.85) + 20 : 80), 'healthBar', () -> {return healthLerp;}, 0, 2);
 		healthBar.screenCenter(X);
 		healthBar.leftToRight = false;
-		healthBar.scrollFactor.set();
+		//healthBar.scrollFactor.set();
 		healthBar.setColors(FlxColor.fromRGB(dad.healthBarColors[0], dad.healthBarColors[1], dad.healthBarColors[2]),
 				FlxColor.fromRGB(boyfriend.healthBarColors[0], boyfriend.healthBarColors[1], boyfriend.healthBarColors[2]));
 
@@ -1132,7 +1135,7 @@ class PlayState extends MusicBeatState
 		scoreTxt = new FlxText(0, healthBarBG.y + 36, -1, "", 18);
 		scoreTxt.setFormat(config.uiTextFont, 16, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		scoreTxt.borderSize = 1.1;
-		scoreTxt.scrollFactor.set();
+		//scoreTxt.scrollFactor.set();
 		if (CDevConfig.saveData.downscroll)
 			scoreTxt.y = healthBarBG.y + 43;
 
@@ -1147,7 +1150,7 @@ class PlayState extends MusicBeatState
 		songPosBG.setGraphicSize(Std.int(songPosBGWIDTH), Std.int(songPosBGHEIGHT));
 		songPosBG.screenCenter(X);
 		songPosBG.antialiasing = CDevConfig.saveData.antialiasing;
-		songPosBG.scrollFactor.set();
+		//songPosBG.scrollFactor.set();
 		songPosBG.visible = false;
 		if (CDevConfig.saveData.downscroll) songPosBG.y = FlxG.height * 0.9 + 35;
 
@@ -1167,14 +1170,14 @@ class PlayState extends MusicBeatState
 
 		songName = new FlxText(songPosBG.x + (songPosBG.width / 2) - 20, songPosBG.y, 0, "", 16);
 		songName.setFormat(config.uiTextFont, 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		songName.scrollFactor.set();
+		//songName.scrollFactor.set();
 		songName.borderSize = 2;
 
 		// Botplay Text
 		botplayTxt = new FlxText(0, 0, FlxG.width, "> BOTPLAY <", 32);
 		botplayTxt.setFormat(config.uiTextFont, 32, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 		botplayTxt.antialiasing = CDevConfig.saveData.antialiasing;
-		botplayTxt.scrollFactor.set();
+		//botplayTxt.scrollFactor.set();
 		botplayTxt.borderSize = 2;
 		botplayTxt.y = 150;
 		if (CDevConfig.saveData.downscroll) botplayTxt.y = FlxG.height - 150;
@@ -2748,37 +2751,47 @@ class PlayState extends MusicBeatState
 	/**This function used to update texts such as scoreTxt and botplayTxt**/
 	public function updateUITexts(elapsed:Float)
 	{
+		// Rating text "Amazing (S++, MFC)"
 		ratingText = RatingsCheck.getRating(accuracy)
-			+ " ("
-			+ RatingsCheck.getRatingText(accuracy)
-			+ (accuracy == 0 ? ')' : ", " + RatingsCheck.getRankText() + ")");
+			+ " (<r>"
+			+ RatingsCheck.getRatingText(accuracy)[0]
+			+ (accuracy == 0 ? '<r>)' : "<r>, " + RatingsCheck.getRankText() + ")");
 
-		var scoreText:String = '${config.scoreText}: $songScore' + (CDevConfig.saveData.botplay ? " (Botplay)" : "");
+		// Score Text & Other stuff for scoreTxt
+		var scoreText:String = '${config.scoreText}: $songScore' + (CDevConfig.saveData.botplay ? " (<r>Botplay<r>)" : "");
 		if (CDevConfig.saveData.fullinfo)
 		{
 			scoreText = '${config.missesText}: $misses $scoreTxtDiv '
-				+ // MISSES
+				+ // MISSES-
 				'${config.scoreText}: $songScore $scoreTxtDiv '
 				+ // SCORE
-				'${config.accuracyText}: ${RatingsCheck.fixFloat(accuracy, 2)}% (${(CDevConfig.saveData.botplay ? "Botplay" : ratingText)})'
+				'${config.accuracyText}: ${RatingsCheck.fixFloat(accuracy, 2)}% (${(CDevConfig.saveData.botplay ? "<r>Botplay<r>" : ratingText)})'
 				+ // ACCURACY
 				(CDevConfig.saveData.healthCounter ? ' $scoreTxtDiv Health: ${Math.floor(healthBarPercent)}%' : ''); // HEALTH
 		}
-		scoreTxt.text = scoreText;
+
+		// Applying the new color text format for each "<r>" in the scoreText string
+		var rat = new FlxTextFormat((!CDevConfig.saveData.botplay ? RatingsCheck.getRatingText(accuracy)[1] : 0xFF00CCFF));
+		scoreTxt.applyMarkup(scoreText, [
+			new FlxTextFormatMarkerPair(rat, "<r>")
+		]);
+
 		scoreTxt.screenCenter(X);
 
-		//RPC Related stuff
+		// RPC Related stuff
 		daRPCInfo = '${config.scoreText}: ' + songScore + " | " + '${config.missesText}: ' + misses + ' | ' + '${config.accuracyText}: '
 			+ RatingsCheck.fixFloat(accuracy, 2) + "% (" + ratingText + ')';
 		if (songStarted) DiscordClient.changePresence(detailsText, (CDevConfig.saveData.botplay ? "Botplay" : daRPCInfo), iconRPC, true, songLength - Conductor.songPosition);
 
-		bgScore.setGraphicSize(Std.int(scoreTxt.width + 9), Std.int(scoreTxt.height + 3));
+		// ScoreTxt's background		
+		bgScore.setGraphicSize(Std.int(scoreTxt.width + 16), Std.int(scoreTxt.height + 3));
 		bgScore.screenCenter(X);
 		bgScore.y = scoreTxt.y - 2;
 		bgScore.alpha = scoreTxt.alpha * 0.3;
 		bgScore.updateHitbox();
 		bgScore.visible = scoreTxt.visible;
 
+		// Botplay Text stuff
 		botplayTxt.screenCenter(X);
 		botplayTxt.alpha = 0;
 

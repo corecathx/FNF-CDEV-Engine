@@ -70,7 +70,7 @@ class SongEditor extends MusicBeatState
 		FlxG.sound.music.stop();
 
 		menuBG = new FlxSprite().loadGraphic(Paths.image('menuDesat', 'preload'));
-		menuBG.color = 0xff0088ff;
+		menuBG.color = CDevConfig.utils.CDEV_ENGINE_BLUE;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();

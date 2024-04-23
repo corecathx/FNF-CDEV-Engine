@@ -19,6 +19,8 @@ class OffsetTest extends MusicBeatState
 	var bg:FlxSprite;
 	var offsetText:FlxText;
 
+	var bruhs:Float = 0;
+	var cliccs:Int = 0;
 	var offs:Float = 0;
 	var daOffset:String;
 	var infoTxt:FlxText;
@@ -107,10 +109,12 @@ class OffsetTest extends MusicBeatState
 
 		if (press)
 		{
-			//better?
-			offs = Math.abs(FlxG.sound.music.time - (Conductor.crochet*curBeat));
+			bruhs+=Math.abs(FlxG.sound.music.time - (Conductor.crochet*curBeat));
+			cliccs++;
+			offs = Math.abs(Math.round(bruhs / cliccs)); // get the average
 			dance();
 			offsetText.scale.x = 1.2;
+
 			var rating:FlxSprite = new FlxSprite();
 			rating.loadGraphic(Paths.image("sick", "shared"));
 			rating.screenCenter();
@@ -140,34 +144,6 @@ class OffsetTest extends MusicBeatState
 
 	}
 	var hitVal:Array<Float> = [];
-
-	function goodNoteHit(daNote:Note)
-	{
-		//var noteDiff:Float = Math.abs(daNote.strumTime - Conductor.songPosition);
-		var noteDiff:Float = Math.abs(Conductor.songPosition - daNote.strumTime);
-
-		var msTime = RatingsCheck.fixFloat(noteDiff, 3);
-
-		if (msTime >= 0.03)
-		{
-			hitVal.shift();
-			hitVal.shift();
-			hitVal.shift();
-			hitVal.pop();
-			hitVal.pop();
-			hitVal.pop();
-			hitVal.push(msTime);
-
-			var valTotal = 0.0;
-
-			for (e in hitVal)
-				valTotal += e;
-			
-			offs = RatingsCheck.fixFloat(valTotal / hitVal.length, 2);
-		}
-
-		offsetText.scale.x = 1.2;
-	}
 
 	override function beatHit()
 	{

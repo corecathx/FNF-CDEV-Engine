@@ -1,22 +1,11 @@
 package meta.states;
 
-
-import flixel.FlxCamera;
-import flixel.system.scaleModes.StageSizeScaleMode;
-import flixel.system.scaleModes.BaseScaleMode;
-import openfl.display.StageScaleMode;
-import lime.app.Application;
-import openfl.display.Window;
+import openfl.ui.Mouse;
+import openfl.ui.MouseCursor;
 import game.Conductor;
-import openfl.Lib;
-import flixel.FlxSprite;
 import game.Conductor.BPMChangeEvent;
 import flixel.FlxG;
-import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.ui.FlxUIState;
-import flixel.math.FlxRect;
-import flixel.util.FlxTimer;
-
 class MusicBeatState extends FlxUIState
 {
 	private var lastBeat:Float = 0;
@@ -25,6 +14,8 @@ class MusicBeatState extends FlxUIState
 	private var curStep:Int = -1;
 	private var curBeat:Int = -1;
 	public var controls(get, never):game.Controls;
+
+	public var curMouse(default, set):MouseCursor;
 
 	// my attempt of preventing repeating beats
 	var _highestPassedBeats:Int = -1;
@@ -35,19 +26,14 @@ class MusicBeatState extends FlxUIState
 
 	inline function get_controls():game.Controls
 		return game.cdev.engineutils.PlayerSettings.player1.controls;
+	
+	inline function set_curMouse(val:MouseCursor):MouseCursor {
+		return Mouse.cursor = val;
+	}
 
 	override function create()
 	{
-		//if (transIn != null)
-		//	trace('reg ' + transIn.region);
-
 		super.create();
-	}
-
-	override function onResize(width:Int, height:Int)
-	{
-		super.onResize(width, height);
-		//FlxG.resizeGame(Application.current.window.width, Application.current.window.height);
 	}
 
 	override function update(elapsed:Float)
@@ -87,12 +73,7 @@ class MusicBeatState extends FlxUIState
 
 	private function updateBeat():Void
 	{
-		var newBeats:Int = Math.floor(curStep / 4);
-		if (!passedBeats.contains(newBeats)){
-			curBeat = newBeats;
-			passedBeats.push(newBeats);
-			_highestPassedBeats = getLargerInt(passedBeats);
-		}
+		curBeat = Math.floor(curStep / 4);
 	}
 
 	function getLargerInt(array:Array<Int>):Int {

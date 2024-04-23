@@ -10,7 +10,7 @@ class FunkinThread {
 	/**
 	 * Runs a list of tasks based of `taskList`.
 	 */
-    public static function doTask(taskList:Array<() -> Void>,onTaskChange:(Int)->Void, onTaskFinished:()->Void) {
+    public static function doTask(taskList:Array<() -> Void>,onTaskChange:(Int)->Void, onTaskFinished:()->Void, ?onFailed:(String)->Void) {
         var cTasks:Int = 0;
         var threadPool:FixedThreadPool = new FixedThreadPool(taskList.length);
         trace("Thread Pool created: " + threadPool.threadsCount);
@@ -31,7 +31,10 @@ class FunkinThread {
                         onTaskFinished();
                         threadPool.shutdown();
                     }              
-                } catch(e) GameLog.warn("Failed to run task, " + e.toString());
+                } catch(e) {
+                    onFailed("[FunkinThread] Failed to run task, " + e.toString());
+                    GameLog.warn("[FunkinThread] Failed to run task, " + e.toString());
+                }
             });
         }
     }

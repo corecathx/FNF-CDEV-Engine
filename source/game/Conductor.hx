@@ -18,6 +18,8 @@ typedef BPMChangeEvent =
 
 class Conductor
 {
+	public static var time_signature:Array<Int> = [4,4];
+
 	public static var last_bpm:Float = 100;
 	public static var bpm:Float = 100;
 	public static var crochet:Float = ((60 / bpm) * 1000); // beats in milliseconds
@@ -67,6 +69,9 @@ class Conductor
 		fakeCrochet = (60 / oaoaoa) * 1000;
 	}
 
+	public static function changeTimeSignature(beat:Int, step:Int){
+		time_signature = [beat,step];
+	}
 
 	public static function mapBPMChanges(song:SwagSong)//, addToSongBPMTiming:Bool)
 	{

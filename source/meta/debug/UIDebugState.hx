@@ -1,5 +1,6 @@
 package meta.debug;
 
+import lime.ui.MouseCursor;
 import flixel.addons.ui.FlxUIList;
 import game.objects.HealthIcon;
 import game.cdev.objects.CDevTooltip;
@@ -61,9 +62,11 @@ class UIDebugState extends MusicBeatState
 		super.update(elapsed);
 		previewLogo.angle += (30 * elapsed);
         curTooltip.hide();
+		curMouse = openfl.ui.MouseCursor.ARROW;
 		for (stuff in bruh){
 			if (FlxG.mouse.overlaps(stuff[0])){
 				curTooltip.show(stuff[0], stuff[1], stuff[2], true);
+				curMouse = openfl.ui.MouseCursor.BUTTON;
 			}
 		}
 

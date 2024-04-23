@@ -21,6 +21,7 @@ class Note extends FlxSprite
 {
 	public static var noteScale:Float = 0.65;
 	public static var defaultGraphicSize:Float = 160;
+	public static var directions:Array<String> = ["purple", "blue", "green", "red"];
 
 	public var script:CDevScript = null;
 	var gotScript:Bool = false;

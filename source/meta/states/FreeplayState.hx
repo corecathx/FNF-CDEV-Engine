@@ -485,7 +485,7 @@ class FreeplayState extends MusicBeatState
 			lerpRating = intendedRating;
 
 		scoreText.text = 'PERSONAL BEST: ' + lerpScore + "\n" + game.cdev.RatingsCheck.fixFloat(lerpRating, 2) + '%' + " ("
-			+ game.cdev.RatingsCheck.getRatingText(lerpRating) + ")";
+			+ game.cdev.RatingsCheck.getRatingText(lerpRating)[0] + ")";
 
 		super.update(elapsed);
 		var upP = controls.UI_UP_P;
@@ -1091,7 +1091,7 @@ class FreeplayState extends MusicBeatState
 					if (msc != null) FlxG.sound.cache(msc);
 				}
 			}
-		],["Characters", "Stage", "Music Files"],()->{
+		],["Characters", "Stage", "Music Files", "Clean-Up"],()->{
 			for (i in characters){
 				if (i != null) remove(i);
 			}
@@ -1100,6 +1100,14 @@ class FreeplayState extends MusicBeatState
 				if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
 				playSong();
 			});
+		}, (wawas:String)->{
+			CDevPopUp.open(this,"Error","An error occured while running a task:\n-"+wawas,
+			[
+				{
+					text: "OK", 
+					callback:() -> {FlxG.switchState(new FreeplayState());}
+				}
+			], false, true);
 		});
 		//new lime.app.Future(doThreading,true);
 	}

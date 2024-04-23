@@ -65,8 +65,6 @@ class TitleState extends MusicBeatState
 		checkGitHubVersion();
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
-		super.create();
-
 		#if debug
 		CDevConfig.debug = true;
 		#end
@@ -105,6 +103,8 @@ class TitleState extends MusicBeatState
 		{
 			startIntro();
 		});
+
+		super.create();
 	}
 
 	var logoBl:FlxSprite;

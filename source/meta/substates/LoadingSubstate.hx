@@ -25,7 +25,7 @@ class LoadingSubstate extends MusicBeatSubstate {
     var _loadingProgress = {cur: 0, max: 0};
     var _lerpProgress:Float = 0;
     var _tn:Array<String> = [];
-    public function new(task:Array<()->Void>, taskNames:Array<String>, onLoadComplete:()->Void) {
+    public function new(task:Array<()->Void>, taskNames:Array<String>, onLoadComplete:()->Void, onFailed:(String)->Void) {
         super();
         trace("LOADING STARTED");
         _loadingProgress.max = task.length;
@@ -59,7 +59,7 @@ class LoadingSubstate extends MusicBeatSubstate {
         
         FunkinThread.doTask(task, (__loadCount)->{
             _loadingProgress.cur = __loadCount;
-        }, ()->onActualLoadComplete(onLoadComplete));
+        }, ()->onActualLoadComplete(onLoadComplete),onFailed);
     }
 
     var _curLoadText:String = "";
@@ -85,7 +85,7 @@ class LoadingSubstate extends MusicBeatSubstate {
      * Literally a shortcut for openSubState(new LoadingState([], ()->{})) lol;
      * @param task
      */
-    public static function load(current:MusicBeatState, task:Array<()->Void>, taskNames:Array<String>, onLoadComplete:()->Void){
-        current.openSubState(new LoadingSubstate(task, taskNames, onLoadComplete));
+    public static function load(current:MusicBeatState, task:Array<()->Void>, taskNames:Array<String>, onLoadComplete:()->Void, onFailed:(String)->Void){
+        current.openSubState(new LoadingSubstate(task, taskNames, onLoadComplete, onFailed));
     }
 }

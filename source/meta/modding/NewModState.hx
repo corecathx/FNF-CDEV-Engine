@@ -65,7 +65,7 @@ class NewModState extends meta.states.MusicBeatState
 		#end
 
 		menuBG = new FlxSprite().loadGraphic(game.Paths.image('menuDesat'));
-		menuBG.color = 0xff0088ff;
+		menuBG.color = CDevConfig.utils.CDEV_ENGINE_BLUE;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();

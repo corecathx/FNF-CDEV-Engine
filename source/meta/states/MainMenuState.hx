@@ -107,7 +107,7 @@ class MainMenuState extends MusicBeatState
 		persistentUpdate = persistentDraw = true;
 
 		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('aboutMenu'));
-		bg.color = 0xff0088ff;
+		bg.color = CDevConfig.utils.CDEV_ENGINE_BLUE;
 		bg.scrollFactor.x = 0;
 		bg.scrollFactor.y = 0.18;
 		CDevConfig.utils.setFitScale(bg, 0.1, 0.1);
@@ -224,37 +224,35 @@ class MainMenuState extends MusicBeatState
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			game.Conductor.songPosition = FlxG.sound.music.time;
 
-		if (FlxG.keys.pressed.CONTROL
-			&& FlxG.keys.pressed.SHIFT
-			&& FlxG.keys.pressed.F3)
-			{
-				shitHold += elapsed;
+		if (FlxG.keys.pressed.CONTROL && FlxG.keys.pressed.SHIFT && FlxG.keys.pressed.F3)
+		{
+			shitHold += elapsed;
 
-				if (shitHold >= 3)
-				{
-					shitHold = 0;
-					CDevConfig.saveData.testMode = !CDevConfig.saveData.testMode;
-					engineText.text = coreEngineText  + (CDevConfig.saveData.testMode ? ' - [TESTMODE]' : '');
-					
-					FlxG.sound.play(Paths.sound((CDevConfig.saveData.testMode ? 'confirmMenu' : 'cancelMenu')));
-				}
-			} else {
+			if (shitHold >= 3)
+			{
 				shitHold = 0;
+				CDevConfig.saveData.testMode = !CDevConfig.saveData.testMode;
+				engineText.text = coreEngineText  + (CDevConfig.saveData.testMode ? ' - [TESTMODE]' : '');
+				
+				FlxG.sound.play(Paths.sound((CDevConfig.saveData.testMode ? 'confirmMenu' : 'cancelMenu')));
 			}
+		} else {
+			shitHold = 0;
+		}
 
-			#if android
-			menuItems.forEach(function(spr:FlxSprite)
-			{
-				Android.touchJustPressed(spr, function (){
-					if (selectedSomethin) return;
-					if (spr.ID != curSelected){
-						changeItem(spr.ID, true);
-					} else{
-						confirmShit();
-					}
-				});
+		#if android
+		menuItems.forEach(function(spr:FlxSprite)
+		{
+			Android.touchJustPressed(spr, function (){
+				if (selectedSomethin) return;
+				if (spr.ID != curSelected){
+					changeItem(spr.ID, true);
+				} else{
+					confirmShit();
+				}
 			});
-			#end
+		});
+		#end
 
 		if (CDevConfig.saveData.testMode){
 			if (FlxG.keys.pressed.CONTROL && FlxG.keys.pressed.ALT && FlxG.keys.justPressed.R){

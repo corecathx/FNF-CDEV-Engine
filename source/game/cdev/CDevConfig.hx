@@ -279,7 +279,6 @@ class CDevConfig
 
 	public static function setExitHandler(func:Function):Void
 	{
-		trace("exit handler change: " + func);
 		#if openfl_legacy
 		openfl.Lib.current.stage.onQuit = function()
 		{

@@ -7,6 +7,6 @@ build.hxml
 vscode-project.hxml
 hxformat.json
 crash_handler/src
+crash_handler/cdev-ch_src
 CHANGELOG.md
 build-tools/
-source/game/system/util/

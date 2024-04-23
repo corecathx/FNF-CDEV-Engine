@@ -208,6 +208,7 @@ class ScriptSupport
 		script.setVariable("FlxVideo", FlxVideo);
 		script.setVariable("FlxVideoSprite", FlxVideoSprite);
 		#end
+		script.setVariable("FunkinNdll",game.system.util.FunkinNdll);
 
 		script.setVariable("importScript", function(name:String){
 			var exists:Bool = false;
