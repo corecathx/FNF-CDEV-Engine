@@ -1,5 +1,6 @@
 package meta.modding.chart_editor;
 
+import game.objects.StrumArrow;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import haxe.Json;
 import meta.modding.char_editor.CharacterData.CharData;
@@ -12,6 +13,8 @@ import flixel.group.FlxSpriteGroup;
 import game.song.Song;
 import game.cdev.song.CDevChart;
 import game.cdev.SongPosition;
+
+using StringTools;
 
 class ChartEditor extends MusicBeatState {
     public static var grid_size:Int = 40;
@@ -27,6 +30,9 @@ class ChartEditor extends MusicBeatState {
     var beatDividers:FlxSpriteGroup;
     var infoTxt:FlxText;
     var timeBar:FunkinBar;
+
+    var opStrum:FlxTypedGroup<StrumArrow>;
+    var plStrum:FlxTypedGroup<StrumArrow>;
 
     var opIcon:HealthIcon;
     var plIcon:HealthIcon;
@@ -120,6 +126,41 @@ class ChartEditor extends MusicBeatState {
         timeBar.angle = 90;
         timeBar.scrollFactor.set();
         add(timeBar);
+    }
+
+    function createStrumNotes(){
+        add(opStrum = new FlxTypedGroup<StrumArrow>());
+        add(plStrum = new FlxTypedGroup<StrumArrow>());
+
+        var bros:Array<Dynamic> = [
+            ["static", "arrow<A>"],
+            ["confirm", "<a> confirm"],
+        ];
+        var tex = Paths.getSparrowAtlas("notes/NOTE_assets", "shared");
+        for (ind => dir in ["left", "down", "up", "right"]){
+            var spr:StrumArrow = new StrumArrow(grid.x+(grid_size*ind),0);
+            spr.frames = tex;
+            for (anim in bros){
+                var formattedAnim:String = anim[1].replace("<A>", dir.toUpperCase()).replace("<a>", dir);
+                spr.animation.addByPrefix(anim[0], formattedAnim, 24, false);
+            }
+            spr.animation.play(bros[0][0], true);
+            spr.antialiasing = CDevConfig.saveData.antialiasing;
+            spr.setGraphicSize(grid_size,grid_size);
+            spr.updateHitbox();
+            spr.scrollFactor.set();
+            spr.y = hitLine.y + (hitLine.height - spr.height)*0.5;
+            
+            for (i in 0...2){ //stupid way to do something
+                switch(i){
+                    case 0:
+                        opStrum.add(spr);
+                    case 1:
+                        spr.x += (grid_size*4) + separator_width;
+                        plStrum.add(spr);
+                }
+            }
+        }
     }
 
     function createBeatDividers(){
