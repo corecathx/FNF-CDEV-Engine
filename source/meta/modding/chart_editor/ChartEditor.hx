@@ -40,6 +40,7 @@ class ChartEditor extends MusicBeatState {
     }
     
     override function create(){
+        FlxG.mouse.visible = true;
         loadSong(chart.info.name);
         loadUI();
         loadNotes();
@@ -116,7 +117,7 @@ class ChartEditor extends MusicBeatState {
 
         timeBar = new FunkinBar(0,0,"healthBar", ()->{return (Conductor.songPosition / FlxG.sound.music.length);}, 0, 1);
         timeBar.setColors(0xFF005FAD, 0xFF242424);
-        timeBar.angle = -90;
+        timeBar.angle = 90;
         timeBar.scrollFactor.set();
         add(timeBar);
     }
@@ -171,8 +172,9 @@ class ChartEditor extends MusicBeatState {
         + dur;
 
         infoTxt.setPosition(30+timeBar.height,FlxG.height-(infoTxt.height+20));
-        timeBar.setPosition(-((timeBar.width * 0.46)),0);
+        timeBar.setPosition(-(timeBar.width * 0.46),0);
         timeBar.screenCenter(Y);
+        timeBar.alpha = FlxG.mouse.overlaps(timeBar) ? 1 : 0.9;
     }
 
     function keyboardControls(elapsed:Float){
@@ -203,7 +205,7 @@ class ChartEditor extends MusicBeatState {
         if (upScrollControl.contains(true) || downScrollControl.contains(true)){
             var div:Int = (FlxG.keys.pressed.SHIFT ? 1 : 2);
             var scroll:Float = Conductor.stepCrochet/div;
-            Conductor.songPosition += (downScrollControl.contains(true) ? scroll : -scroll) / 4;
+            Conductor.songPosition += (downScrollControl.contains(true) ? scroll : -scroll) / 2;
             FlxG.sound.music.time = Conductor.songPosition;
             voiceAudio.time = FlxG.sound.music.time;
         }
