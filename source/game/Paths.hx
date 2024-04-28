@@ -346,17 +346,27 @@ class Paths
 		{
 			if (!customImagesLoaded.exists(key))
 			{
-				var data = Image.fromFile(modImages(key));
-				var newBitmap:BitmapData = BitmapData.fromImage(data);
-
-				if (CDevConfig.saveData.gpuBitmap)
-				{
-					newBitmap = new FunkinBitmap(0, 0, true, 0);
-					@:privateAccess newBitmap.__fromImage(data);
-				}
+				var newBitmap = null;
+				/*if (FlxG.stage.context3D != null){
+					var tempPNG:BitmapData = BitmapData.fromFile(modImages(key));
+					var tex = FlxG.stage.context3D.createTexture(tempPNG.width,tempPNG.height,BGRA, false);
+					tex.uploadFromBitmapData(tempPNG);
+					tempPNG.dispose();
+					tempPNG = null;
+					newBitmap = BitmapData.fromTexture(tex);
+				} else {
+					trace("Failed getting texture for " + key);*/
+					var data = Image.fromFile(modImages(key));
+					newBitmap = BitmapData.fromImage(data);
+					if (CDevConfig.saveData.gpuBitmap)
+					{
+						newBitmap = new FunkinBitmap(0, 0, true, 0);
+						@:privateAccess newBitmap.__fromImage(data);
+					}
+				//}
 
 				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
-				newGraphic.persist = true;
+				//newGraphic.persist = true;
 				FlxG.bitmap.addGraphic(newGraphic);
 				customImagesLoaded.set(key, true);
 			}

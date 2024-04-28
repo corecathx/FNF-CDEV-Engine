@@ -212,11 +212,9 @@ class SettingsSubState extends MusicBeatSubstate
 				curText = theCat.settings[set].value_name[0];
 		}
 		var spaces:String = "";
-		for (i in 0...largestLengthText - theCat.settings[set].name.length + 1)
-		{
-			spaces += " ";
-		}
-		grpOptions.members[set].text = (set == curSelected ? "> " : "") + theCat.settings[set].name + spaces + " : " + curText;
+		for (_ in 0...largestLengthText - theCat.settings[set].name.length + 1) spaces += " ";
+
+		grpOptions.members[set].text = (set == curSelected ? "> " : "") + theCat.settings[set].name + spaces + (curText.length>0 ? " : " + curText : "");
 	}
 
 	public function hideAllOptions(){

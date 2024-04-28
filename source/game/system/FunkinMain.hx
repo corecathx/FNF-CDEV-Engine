@@ -60,7 +60,6 @@ class FunkinMain extends Sprite
 
 	public static function main():Void
 	{
-		trace(FlxG.stage.application.window.width+"x"+FlxG.stage.application.window.height);
 		initArgs();
 		Lib.current.addChild(new FunkinMain());
 	}
@@ -153,7 +152,6 @@ class FunkinMain extends Sprite
 		Android.initialize();
 		#end
 
-		trace("before funkingame");
 		addChild(new FunkinGame(Std.int(game.gameWidth), Std.int(game.gameHeight), game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 		
 		#if !mobile
@@ -172,8 +170,6 @@ class FunkinMain extends Sprite
 		#if android 
 		FlxG.android.preventDefaultKeys = [FlxAndroidKey.BACK];
 		#end
-
-		trace("it runs");
 		
 		#if CRASH_HANDLER
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);

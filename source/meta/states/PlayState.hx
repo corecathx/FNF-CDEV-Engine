@@ -2239,6 +2239,9 @@ class PlayState extends MusicBeatState
 			switch (player)
 			{
 				case 0:
+					babyArrow.animation.finishCallback = (name:String) -> {
+						if (name == "confirm") babyArrow.playAnim("static", true);
+					}
 					p2Strums.add(babyArrow);
 				case 1:
 					playerStrums.add(babyArrow);
@@ -2305,6 +2308,7 @@ class PlayState extends MusicBeatState
 	override function destroy()
 	{
 		scripts.executeFunc("onDestroy", []);
+		destroyAll();
 		super.destroy();
 	}
 
@@ -3429,42 +3433,24 @@ class PlayState extends MusicBeatState
 				daNote.active = !noteValid;
 				daNote.visible = !noteValid;
 
-				if (!CDevConfig.saveData.middlescroll)
-				{
-					if (daNote.followX)
-						daNote.x = (daNote.mustPress ? playerStrums.members[Math.floor(Math.abs(daNote.noteData))].x : p2Strums.members[Math.floor(Math.abs(daNote.noteData))].x);
-				}
-				else
-					daNote.x = playerStrums.members[Math.floor(Math.abs(daNote.noteData))].x;
+				var strum:StrumArrow = daNote.mustPress ? playerStrums.members[daNote.noteData] : p2Strums.members[daNote.noteData];
 
-				if (daNote.followX)
-				{
-					if (daNote.isSustainNote)
-						daNote.x += daNote.width / 2 + (daNote.isPixelSkinNote ? 20 : 15);
-				}
+				if (!CDevConfig.saveData.middlescroll && daNote.followX)
+					daNote.x = strum.x;
+				else
+					daNote.x = playerStrums.members[daNote.noteData].x;
+
+				if (daNote.followX && daNote.isSustainNote)
+					daNote.x += (strum.width - daNote.width) * 0.5; //center to strum if sustain
 
 				if (!daNote.mustPress && CDevConfig.saveData.middlescroll)
 					daNote.alpha = (CDevConfig.saveData.bgNote ? 0.07 : 0);
 
-				var strum:StrumArrow = daNote.mustPress ? playerStrums.members[daNote.noteData] : p2Strums.members[daNote.noteData];
+				if (!CDevConfig.saveData.middlescroll && daNote.followAlpha)
+					daNote.alpha = daNote.isSustainNote ? strum.alpha * 0.6 : strum.alpha;
 
-				if (!CDevConfig.saveData.middlescroll)
-				{
-					if (daNote.followAlpha)
-					{
-						daNote.alpha = strum.alpha;
-						if (daNote.isSustainNote)
-						{
-							daNote.alpha = strum.alpha * 0.6;
-						}
-					}
-				}
-
-				if (daNote.followAngle)
-				{
-					if (!daNote.isSustainNote)
-						daNote.angle = strum.angle;
-				}
+				if (daNote.followAngle && !daNote.isSustainNote)
+					daNote.angle = strum.angle;
 
 				// fixing this since the last code was ass (tbh this one also ass)
 				var currentSongTime:Float = Conductor.songPosition;
@@ -3545,13 +3531,7 @@ class PlayState extends MusicBeatState
 						char.playAnim(animToPlay, true);
 						char.holdTimer = 0;
 					}
-					p2Strums.forEach(function(spr:StrumArrow)
-					{
-						if (Math.abs(daNote.noteData) == spr.ID)
-						{
-							spr.playAnim('confirm', true);
-						}
-					});
+					p2Strums.members[daNote.noteData].playAnim("confirm", true);
 
 					if (SONG.needsVoices)
 						vocals.volume = 1;
@@ -3602,14 +3582,6 @@ class PlayState extends MusicBeatState
 				}
 			});
 		}
-
-		p2Strums.forEach(function(spr:StrumArrow)
-		{
-			if (spr.animation.finished)
-			{
-				spr.playAnim('static', false);
-			}
-		});
 	}
 
 	/** Used for panning the camera of current player (based on MustHitSection) **/
@@ -4368,6 +4340,14 @@ class PlayState extends MusicBeatState
 			});
 	}
 
+	public static function destroyAll(){
+		if (boyfriend != null) boyfriend.destroy();
+		if (gf != null) gf.destroy();
+		if (dad != null) dad.destroy();
+
+		if (stageHandler != null) stageHandler.destroy();
+	}
+
 	private function keyShit():Void
 	{
 		var holdArray:Array<Bool> = [controls.LEFT, controls.DOWN, controls.UP, controls.RIGHT];
@@ -4756,13 +4736,7 @@ class PlayState extends MusicBeatState
 			}
 			// eeeeeeeeee
 
-			playerStrums.forEach(function(spr:StrumArrow)
-			{
-				if (Math.abs(note.noteData) == spr.ID)
-				{
-					spr.playAnim('confirm', true);
-				}
-			});
+			playerStrums.members[note.noteData].playAnim('confirm', true);
 
 			if (CDevConfig.saveData.hitsound && CDevConfig.saveData.botplay && !note.isSustainNote)
 				FlxG.sound.play(Paths.sound('hitsound', 'shared'), 0.6);

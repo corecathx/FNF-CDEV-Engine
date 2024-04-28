@@ -73,7 +73,7 @@ class MusicBeatState extends FlxUIState
 
 	private function updateBeat():Void
 	{
-		curBeat = Math.floor(curStep / 4);
+		curBeat = Std.int(curStep / 4);
 	}
 
 	function getLargerInt(array:Array<Int>):Int {
@@ -98,7 +98,7 @@ class MusicBeatState extends FlxUIState
 			if (Conductor.songPosition + Conductor.offset >= Conductor.bpmChangeMap[i].songTime)
 				lastChange = Conductor.bpmChangeMap[i];
 		}
-		var newSteps:Int = lastChange.stepTime + Math.floor(((Conductor.songPosition + Conductor.offset) - lastChange.songTime) / Conductor.stepCrochet);
+		var newSteps:Int = lastChange.stepTime + Std.int(((Conductor.songPosition + Conductor.offset) - lastChange.songTime) / Conductor.stepCrochet);
 		if (!passedSteps.contains(newSteps)){
 			curStep = newSteps;
 			passedSteps.push(newSteps);

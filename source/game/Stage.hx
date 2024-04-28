@@ -293,7 +293,7 @@ class Stage
 								framerate = stageJSON.sprites[i].animation.fpsValue;
 
 							daSprite.animType = stageJSON.sprites[i].animType;
-							daSprite.animation.addByPrefix(animName, animName, framerate, false);
+							daSprite.animation.addByPrefix(animName, animName, framerate, (stageJSON.sprites[i].animType.toLowerCase() == "normal"));
 							daSprite.animation.play(animName);
 							daSprite.anim = stageJSON.sprites[i].animation;
 
@@ -374,6 +374,22 @@ class Stage
 	 */
 	public function destroy()
 	{
+		if (play == null) {
+			trace("\"play\" field is null, can't destroy.");
+			GameLog.warn("\"play\" field is null, can't destroy.");
+			return;
+		}
+		if (play.stageGroup == null) {
+			trace("\"play.stageGroup\" field is null, can't destroy.");
+			GameLog.warn("\"play.stageGroup\" field is null, can't destroy.");
+			return;
+		}
+		if (play.stageGroup.members == null) {
+			trace("\"play.stageGroup.members\" field is null, can't destroy. (how tf??)");
+			GameLog.warn("\"play.stageGroup.members\" field is null, can't destroy. (how tf??)");
+			return;
+		}
+		trace("destroying...");
 		for (i in play.stageGroup.members){
 			if (i == null) continue;
 			if (["bf","gf", "dad"].contains(i.type)) continue;

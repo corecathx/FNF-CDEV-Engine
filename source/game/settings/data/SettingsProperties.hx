@@ -1,5 +1,6 @@
 package game.settings.data;
 
+import cpp.vm.Gc;
 import openfl.system.System;
 import openfl.utils.Assets;
 import meta.substates.RatingPosition;
@@ -67,6 +68,10 @@ class SettingsProperties
 					FlxG.switchState(new meta.states.OffsetTest());
 				}
 
+				if (FlxG.keys.justPressed.R){
+					CDevConfig.setData("offset", 0);
+				}
+
 				var daValueToAdd:Int = FlxG.keys.pressed.RIGHT ? 1 : -1;
 				if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.RIGHT)
 					holdTime += elapsed;
@@ -94,6 +99,7 @@ class SettingsProperties
 
 		create_category("Graphics", [
 			new BaseSettings("Shaders", ["Disabled", "Enabled"], "Whether to enable / disable shaders in the engine.", SettingsType.BOOL, function(elapsed:Float, bs:BaseSettings){}, function(){}, "shaders", false),
+			new BaseSettings("Native Memory Counter", ["Disabled", "Enabled"], "If enabled, this game will use Windows API for the Memory Counter.\nOtherwise, it will use OpenFL's System totalMemory field instead.", SettingsType.BOOL, function(e:Float, bs:BaseSettings){}, function(){}, "nativeMemory"),
 			new BaseSettings("FPS Cap", ["", ""], "Choose how many frames per second that this game should run at.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
 				var daValueToAdd:Int = FlxG.keys.pressed.RIGHT ? 1 : -1;
 				if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.RIGHT)
@@ -145,6 +151,7 @@ class SettingsProperties
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 					openfl.utils.Assets.cache.clear();
 					Paths.destroyLoadedImages();
+					Gc.run(true);
 				}
 			}, function(){}, "", false),
 		], null);
@@ -254,6 +261,9 @@ class SettingsProperties
 			}, function(){},"", false),
 			new BaseSettings("Graphic Rendering Test", ["", ""], "Testing state used for Graphic stuffs.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
 				if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new meta.debug.NoMemLeakState());
+			}, function(){},"", false),
+			new BaseSettings("System Stats", ["", ""], "Your system's stats.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
+				if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new meta.debug.SystemStatsState());
 			}, function(){},"", false),
 		]);
 	}

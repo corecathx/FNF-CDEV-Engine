@@ -1,5 +1,6 @@
 package game.cdev.engineutils;
 
+import game.system.native.Windows;
 import game.cdev.CDevConfig;
 import flixel.FlxG;
 import haxe.Timer;
@@ -39,7 +40,7 @@ class CDevFPSMem extends TextField
 		while (times[0] < now - 1)
 			times.shift();
 	
-		var mem:Float = System.totalMemory;
+		var mem:Float = CDevConfig.saveData.nativeMemory ? Windows.getCurrentUsedMemory() : System.totalMemory;
 		if (mem > highestMemory) highestMemory = mem;
 		var ramStr:String = CDevConfig.utils.convert_size(Std.int(mem));
 		

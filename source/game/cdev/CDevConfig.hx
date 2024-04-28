@@ -378,7 +378,8 @@ class CDevConfig
 			traceLogMessage: true,
 
 			gpuBitmap: false,
-			cameraFix: true
+			cameraFix: true,
+			nativeMemory: false
 		}
 		return save;
 	}

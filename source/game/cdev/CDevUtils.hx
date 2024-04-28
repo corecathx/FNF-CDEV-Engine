@@ -232,9 +232,8 @@ class CDevUtils
 	public function getRpcJSON():DiscordJson
 	{
 		var path:String = Paths.modsPath + "/" + Paths.currentMod +"/data/game/Discord.json";
-		trace("Looking for Discord.json in: " + path);
 		if (FileSystem.exists(path)){
-			trace("File Exists!");
+			trace("Found RPC JSON.");
 			var a:DiscordJson = cast Json.parse(File.getContent(path));
 			return a;
 		}
@@ -527,7 +526,6 @@ class CDevUtils
 			path.substr(0, path.length - 1);
 
 		Sys.command("explorer.exe", [path]);
-		trace('Execute: explorer.exe $path');
 	}
 
 	/**
@@ -609,8 +607,9 @@ class CDevUtils
 	public function fnftocdev_chart(json:SwagSong):CDevChart {
 		var notes:Array<Dynamic> = [];
 		var events:Array<Dynamic> = [];
+		var safeJSON:SwagSong = json;
 		
-		for (i in json.notes){
+		for (i in safeJSON.notes){
 			for (j in i.sectionNotes){
 				if (i.mustHitSection){//swap the section if it's a player section.
 					var note = j;
@@ -627,16 +626,16 @@ class CDevUtils
 		}
 		var cdev:CDevChart = {
 			data: {
-				player: json.player1,
-				opponent: json.player2,
-				third_char: json.gfVersion,
-				stage: json.stage,
+				player: safeJSON.player1,
+				opponent: safeJSON.player2,
+				third_char: safeJSON.gfVersion,
+				stage: safeJSON.stage,
 				note_skin: "default"
 			},
 			info: {
-				name: json.song,
-				bpm: json.bpm,
-				speed: json.speed,
+				name: safeJSON.song,
+				bpm: safeJSON.bpm,
+				speed: safeJSON.speed,
 				time_signature: [4,4], // since most of fnf songs are charted in 4/4 time signature, set this by default.
 				version: CDevConfig.engineVersion
 			},
