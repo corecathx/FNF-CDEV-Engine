@@ -14,6 +14,7 @@ class StrumArrow extends FlxSprite
 	public var isPixel:Bool = false;
 	// public var downscroll:Bool = false;
 	public var noteScroll:Float = 1;
+	public var inEditor:Bool = false;
 
 	public function new(xx:Float, yy:Float)
 	{
@@ -62,12 +63,8 @@ class StrumArrow extends FlxSprite
 	public function playAnim(AnimName:String, ?force:Bool = false):Void
 	{
 		animation.play(AnimName, force);
-
-		updateHitbox();
-		offset.set(frameWidth / 2, frameHeight / 2);
-
-		offset.x -= 50;
-		offset.y -= 52;
+		centerOffsets();
+		centerOrigin();
 	}
 
 	public static function checkRects(daNote:Note, strum:StrumArrow)

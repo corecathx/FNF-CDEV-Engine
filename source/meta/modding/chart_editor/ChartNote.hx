@@ -16,10 +16,15 @@ class ChartNote extends FlxSprite {
 
     public var nSustain:ChartNote = null;
     public var nSustainEnd:ChartNote = null;
+    public var bgHighlight:FlxSprite = null;
+
+    public var asDummyNote:Bool = false;
 
     public function new(nX:Float = 0, nY:Float = 0)
     {
         super(nX,nY);
+        bgHighlight = new FlxSprite().makeGraphic(ChartEditor.grid_size,ChartEditor.grid_size,FlxColor.WHITE);
+        bgHighlight.active = false;
     }
 
     /**
@@ -36,7 +41,7 @@ class ChartNote extends FlxSprite {
 
         this.isSustain = isSustain;
 
-        frames = Paths.getSparrowAtlas("notes/NOTE_assets", "shared");
+        frames = ChartEditor.note_texture;
 
         for (i in Note.directions) {
             animation.addByPrefix(i+"anim", i+"0", 24);
@@ -65,6 +70,13 @@ class ChartNote extends FlxSprite {
     }
 
     override function draw():Void {
+        if (asDummyNote){
+            bgHighlight.x = x;
+            bgHighlight.y = y;
+            bgHighlight.alpha = alpha * 0.5;
+            bgHighlight.draw();
+        }
+
         if (!isSustain && holdLength > 0) {
             nSustain.x = x + (width - nSustain.width) * 0.5;
             nSustain.y = y + ChartEditor.grid_size;
