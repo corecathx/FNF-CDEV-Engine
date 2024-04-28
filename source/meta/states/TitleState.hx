@@ -1,5 +1,13 @@
 package meta.states;
 
+import haxe.Timer;
+import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.graphics.frames.FlxFramesCollection;
+import flixel.graphics.frames.FlxFilterFrames;
+import flixel.addons.display.FlxRuntimeShader;
+import openfl.filters.BitmapFilterQuality;
+import openfl.filters.GlowFilter;
+import game.system.native.Windows;
 import game.system.FunkinThread;
 import lime.system.System;
 import game.cdev.CDevMods.ModFile;
@@ -42,6 +50,22 @@ class TitleState extends MusicBeatState
 
 	var titleTextEffects:Array<String> = ["wavy", "bouncy"];
 
+	public static var loadingBS:Array<String> = [
+		"Checking on assets n' stuff.",
+		"Ooh, cdev-mods folder.",
+		"Preparing for something.",
+		"CDEV Engine v"+CDevConfig.engineVersion,
+		"Staring deep to your soul.",
+		"Pro tip: Press the notes.",
+		"Gimme some time to load GlowFilter :skull:",
+		"Checking your OS.",
+		"This process usually took like 5 secs to finish.",
+		"Nuh uh.",
+		"Hello.",
+		"Don't stay in this game for more than 2 hours.",
+		"Pro tip: touch grass."
+	];
+
 	static var isLoaded:Bool = false;
 
 	static var initialized:Bool = false;
@@ -52,6 +76,8 @@ class TitleState extends MusicBeatState
 	var textGroup:FlxTypedGroup<Alphabet>;
 	var ngSpr:FlxSprite;
 	var yOffset:Float = 0;
+	
+	var cameraInitialZoom:Float = 0.9;
 
 	var curWacky:Array<String> = [];
 
@@ -60,9 +86,17 @@ class TitleState extends MusicBeatState
 
 	var lol:Bool = false;
 
+	var glow:GlowFilter;
+	var glowFilter:FlxFilterFrames;
+	var logoBlFrames:FlxAtlasFrames;
+	var startLoading:Float = 0;
+
+	var uDumb:FlxText;
+
 	override public function create():Void
 	{
 		checkGitHubVersion();
+		FlxG.camera.zoom = cameraInitialZoom;
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
 		#if debug
@@ -99,10 +133,21 @@ class TitleState extends MusicBeatState
 
 		isLoaded = false; // DIE
 
-		new FlxTimer().start(0.2, function(tmr:FlxTimer)
-		{
+		if (!initialized){
+			uDumb = new FlxText(0,0,-1,loadingBS[FlxG.random.int(0,loadingBS.length-1)]+"\nLoading...", 24);
+			uDumb.font = FunkinFonts.CONSOLAS;
+			uDumb.alignment = CENTER;
+			uDumb.antialiasing = CDevConfig.saveData.antialiasing;
+			uDumb.screenCenter();
+			add(uDumb);
+		}
+		
+		new FlxTimer().start(0.5, (_) -> {
+			startLoading = Timer.stamp();
+			trace("Loading TitleState...");
 			startIntro();
 		});
+
 
 		super.create();
 	}
@@ -115,6 +160,8 @@ class TitleState extends MusicBeatState
 
 	function startIntro()
 	{
+		transOut = FlxTransitionableState.defaultTransOut;
+		transIn = FlxTransitionableState.defaultTransIn;
 		Main.fpsCounter.visible = (CDevConfig.saveData.performTxt != "hide");
 
 		bg = FlxGradient.createGradientFlxSprite(FlxG.width, FlxG.height, [FlxColor.BLACK, FlxColor.BLUE], 1, 90, true);
@@ -136,10 +183,12 @@ class TitleState extends MusicBeatState
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
 		logoBl.antialiasing = CDevConfig.saveData.antialiasing;
 		logoBl.animation.addByPrefix('bump', 'logo bumpin', 24, false);
-		logoBl.animation.play('bump');
+		for (i in 0...4){
+			logoBl.animation.addByIndices(i+"freakyText", "funkinText", [i], "",24, true);
+		}
+		logoBl.animation.play('0freakyText');
 		logoBl.updateHitbox();
-		// logoBl.screenCenter();
-		// logoBl.color = FlxColor.BLACK;
+		logoBl.visible = false;
 
 		gfDance = new FlxSprite(FlxG.width * 0.4 + 50, FlxG.height * 0.07);
 		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
@@ -147,7 +196,6 @@ class TitleState extends MusicBeatState
 		gfDance.animation.addByIndices('danceRight', 'GF Dancing Beat blue', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 		gfDance.antialiasing = CDevConfig.saveData.antialiasing;
 		add(gfDance);
-		add(logoBl);
 
 		titleText = new FlxSprite(100, FlxG.height * 0.8);
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
@@ -156,16 +204,27 @@ class TitleState extends MusicBeatState
 		titleText.antialiasing = CDevConfig.saveData.antialiasing;
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
-		// titleText.screenCenter(X);
 		titleText.scale.set(0.9, 0.9);
+		//titleText.screenCenter(X);
 		add(titleText);
 
-		logoY = logoBl.y;
+		logoY = logoBl.y + 50;
+		logoX = logoBl.x;
 		gfY = gfDance.y;
 		tTextY = titleText.y;
 
-		blackScreen = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		blackScreen = new FlxSprite(0, 0);//.makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		blackScreen.frames = Paths.getSparrowAtlas("funkinVid");
+		blackScreen.animation.addByPrefix("idle", "idle", 24, true);
+		blackScreen.animation.play("idle", true);
+		blackScreen.setGraphicSize(FlxG.width,FlxG.height);
+		blackScreen.scale.x += 0.26;
+		blackScreen.scale.y += 0.26;
+		blackScreen.screenCenter();
+		blackScreen.antialiasing = CDevConfig.saveData.antialiasing;
+		blackScreen.color = 0xFF132841; //set the color to a bit darker ones
 		add(blackScreen);
+		add(logoBl);
 		credGroup = new FlxTypedGroup<Alphabet>();
 		add(credGroup);
 		textGroup = new FlxTypedGroup<Alphabet>();
@@ -196,6 +255,18 @@ class TitleState extends MusicBeatState
 
 		FlxG.mouse.visible = false;
 
+		if (!initialized){
+			var last = Timer.stamp();
+			trace("Loading Glow Filter...");
+			glow = new GlowFilter(0x0084FF, 0.5, 50, 50, 40, 1);
+			glowFilter = FlxFilterFrames.fromFrames(logoBl.frames,50,50,[glow]);
+			glowFilter.applyToSprite(logoBl,true, true);
+			trace("Glow Filter loaded, " + (Timer.stamp() - last) + "s elapsed.");
+	
+			logoBlFrames = Paths.getSparrowAtlas('logoBumpin'); // nah
+		}
+
+		
 		if (initialized)
 			skipIntro();
 		else
@@ -206,17 +277,26 @@ class TitleState extends MusicBeatState
 			// used this code to avoid the song from skipping some beats
 			if (!closedState)
 			{
-				Conductor.changeBPM(102);
+				Conductor.changeBPM(183);
 				if (FlxG.sound.music == null)
-					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.7);
+					FlxG.sound.playMusic(Paths.music('funkinBeat'), 0);
 
-				FlxG.sound.music.fadeIn(4, 0, 0.7);
+				FlxG.sound.music.fadeIn((Conductor.crochet*4)/1000, 0, 0.7);
 			}
 			isLoaded = true;
 		}
 
-		FlxG.camera.zoom = 0.9;
-		trace("okay");
+		trace("Finished loading state, " + (Timer.stamp() - startLoading) + "s elapsed.");
+
+		destroyLoadingText();
+	}
+
+	function destroyLoadingText(){
+		if (uDumb != null){
+			uDumb.destroy();
+			remove(uDumb);
+			uDumb = null;
+		}
 	}
 
 	function getIntroTextShit():Array<Array<String>>
@@ -241,7 +321,11 @@ class TitleState extends MusicBeatState
 	{
 		if (isLoaded)
 		{
-			if (blackScreen != null) blackScreen.scale.set(1/FlxG.camera.zoom, 1/FlxG.camera.zoom);
+			if (blackScreen != null){
+				blackScreen.setGraphicSize(FlxG.width,FlxG.height);
+				blackScreen.scale.x += 0.26;
+				blackScreen.scale.y += 0.26;
+			}
 			bg.alpha = FlxMath.lerp(0.2, bg.alpha, CDevConfig.utils.bound(1 - (elapsed * 7), 0, 1));
 			if (FlxG.sound.music != null)
 				Conductor.songPosition = FlxG.sound.music.time;
@@ -249,6 +333,8 @@ class TitleState extends MusicBeatState
 			speed = FlxMath.lerp(intendedSpeed, speed, CDevConfig.utils.bound(1 - (elapsed * 2), 0, 1));
 			checker.x -= 0.45 / (CDevConfig.saveData.fpscap / 60);
 			checker.y -= (0.16 / (CDevConfig.saveData.fpscap / 60)) * speed;
+
+			FlxG.camera.zoom = FlxMath.lerp(cameraInitialZoom, FlxG.camera.zoom, 1-(elapsed*5));
 
 			for (i in 0...credGroup.members.length)
 			{
@@ -321,6 +407,17 @@ class TitleState extends MusicBeatState
 		super.update(elapsed);
 	}
 
+	override function destroy() {
+		trace("Destroying TitleState...");
+		if (gfDance != null) gfDance.destroy();
+		if (blackScreen != null) blackScreen.destroy();
+		if (bg != null) bg.destroy();
+		if (checker != null) checker.destroy();
+		if (logoBl != null) logoBl.destroy();
+		if (titleText != null) titleText.destroy();
+		super.destroy();
+	}
+
 	function createCoolText(textArray:Array<String>, ?effect:String = "default")
 	{
 		for (i in 0...textArray.length)
@@ -389,13 +486,15 @@ class TitleState extends MusicBeatState
 		}
 	}
 
+	var progress:Int = 0;
 	override function beatHit()
 	{
 		super.beatHit();
 
 		if (isLoaded)
 		{
-			logoBl.animation.play('bump', true);
+			if (curBeat % 2 == 0) FlxG.camera.zoom += 0.05;
+			if (skippedIntro) logoBl.animation.play('bump', true);
 			danceLeft = !danceLeft;
 
 			if (danceLeft)
@@ -407,47 +506,57 @@ class TitleState extends MusicBeatState
 
 			bg.alpha = 0.3;
 
-			switch (curBeat)
+			if (!skippedIntro) switch (curBeat)
 			{
 				case 1:
 					yOffset = -30; // Y offset of these intro texts or shit
 					createCoolText(['ninjamuffin99', 'phantomArcade', 'kawaisprite', 'evilsk8r']);
-				case 3:
-					addMoreText('present');
 				case 4:
+					addMoreText('present');
+				case 6:
 					deleteCoolText();
-				case 5:
+				case 8:
 					yOffset = 10;
 					if (CDevConfig.saveData.engineWM)
 						createCoolText((!lol ? ['CDEV Engine', 'By'] : []));
 					else
-						createCoolText(['Not Associated', 'With']);
-				case 7:
+						createCoolText(['Newgrounds', 'Everything by']);
+				case 12:
 					if (CDevConfig.saveData.engineWM)
 						addMoreText((!lol?'CoreDev' : ""));
 					else
-						addMoreText('Newgrounds');
+						addMoreText('Everyone');
 					ngSpr.visible = true;
-				case 8:
+				case 14:
 					deleteCoolText();
 					ngSpr.visible = false;
-				case 9:
+				case 16:
+					yOffset = 70;
 					var text:String = _getText(curWacky[0], _getTextEffect(curWacky[0]));
 					createCoolText([text], _getTextEffect(curWacky[0]));
-				case 11:
+				case 20:
 					var text:String = _getText(curWacky[1], _getTextEffect(curWacky[1]));
 					addMoreText(text, _getTextEffect(curWacky[1]));
-				case 12:
+				case 22:
 					deleteCoolText();
-				case 13:
-					yOffset = 10;
-					addMoreText('Friday');
-				case 14:
-					addMoreText('Night');
-				case 15:
-					addMoreText('Funkin');
-				case 16:
+					logoBl.screenCenter();
+				case 24,26,28,30:
+					FlxG.camera.zoom += 0.05;
+					logoBl.visible = true;
+					logoBl.animation.play('${progress}freakyText', true);
+					progress++;
+					switch (curBeat){
+						case 24:
+							logoBl.scale.set(0.5,0.5);
+							FlxTween.tween(logoBl.scale,{x: 1.2,y: 1.2}, (Conductor.crochet*7.89)/1000, {ease:FlxEase.cubeIn});
+						case 28:
+							FlxG.camera.shake(0.005,(Conductor.crochet*4)/1000);
+					}
+				case 32:
+					logoBl.animation.play('bump', true);
+					logoBl.scale.set(1,1);
 					skipIntro();
+					FlxG.camera.zoom += 0.1;
 			}
 			for (i in 0...credGroup.members.length)
 			{
@@ -459,6 +568,7 @@ class TitleState extends MusicBeatState
 
 	var skippedIntro:Bool = false;
 	var logoY:Float = 0;
+	var logoX:Float = 0;
 	var gfY:Float = 0;
 	var tTextY:Float = 0;
 
@@ -467,6 +577,9 @@ class TitleState extends MusicBeatState
 		if (!skippedIntro)
 		{
 			// FlxG.camera.y = 720;
+			logoBl.visible = true;
+			if (logoBlFrames != null) logoBl.setFrames(logoBlFrames, true);
+			logoBl.x = logoX;
 			logoBl.y = FlxG.height;
 			gfDance.y = FlxG.height + 100;
 			titleText.y = FlxG.height + 300;
@@ -475,9 +588,11 @@ class TitleState extends MusicBeatState
 			FlxTween.tween(titleText, {y: tTextY}, 2, {ease: FlxEase.circOut});
 
 			remove(ngSpr);
-			FlxG.camera.flash(FlxColor.WHITE, 1);
+			FlxG.camera.flash(FlxColor.WHITE, (Conductor.crochet*4)/1000);
 			remove(credGroup);
+			blackScreen.destroy();
 			remove(blackScreen);
+			blackScreen = null;
 			skippedIntro = true;
 		}
 	}

@@ -28,8 +28,6 @@ class InitState extends MusicBeatState {
         loadedMod: false
     };
 
-    public static var nextState:MusicBeatState = new TitleState();
-
     override function create() {
         doInit();
 
@@ -37,7 +35,7 @@ class InitState extends MusicBeatState {
         if (!FileSystem.exists("./cdev-crash_handler.exe"))
             Application.current.window.alert("CDEV Engine Crash Handler is missing, some stuff might break without it.", "Warning");
 
-        FlxG.switchState(nextState);
+        FlxG.switchState(new TitleState());
         super.create();
     }
 
@@ -97,9 +95,6 @@ class InitState extends MusicBeatState {
         {
             FlxTransitionableState.defaultTransIn = __createTransData(true);
             FlxTransitionableState.defaultTransOut = __createTransData();
-
-            transIn = FlxTransitionableState.defaultTransIn;
-            transOut = FlxTransitionableState.defaultTransOut;
         }
     }
 

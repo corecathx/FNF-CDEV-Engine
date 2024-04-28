@@ -8,7 +8,6 @@ ouch--my balls
 dies--in a cool way
 please remind me--to update cdev engine
 ooooooo--ooooooo
-sixteen--nine
 wee--wee
 sample text--sample text
 Welcome to the underground--Give us your balls
@@ -18,3 +17,5 @@ look it's--booting
 loud incorrect--buzzer sfx
 messy source code--i wonder why
 big thanks to--the haxe community
+awesome--woohoo
+cool--sogn

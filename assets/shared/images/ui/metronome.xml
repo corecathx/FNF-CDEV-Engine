@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="metronome.png">
+	<!-- Created with Adobe Animate version 21.0.6.41649 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="beatLeft0000" x="10" y="10" width="86" height="92" frameX="0" frameY="-2" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0001" x="10" y="10" width="86" height="92" frameX="0" frameY="-2" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0002" x="106" y="10" width="86" height="93" frameX="0" frameY="-1" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0003" x="106" y="10" width="86" height="93" frameX="0" frameY="-1" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0004" x="202" y="10" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0005" x="202" y="10" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0006" x="294" y="10" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0007" x="294" y="10" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0008" x="386" y="10" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0009" x="386" y="10" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0010" x="386" y="10" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0011" x="386" y="10" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0012" x="386" y="10" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0013" x="386" y="10" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatLeft0014" x="386" y="10" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0000" x="10" y="114" width="86" height="92" frameX="0" frameY="-2" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0001" x="10" y="114" width="86" height="92" frameX="0" frameY="-2" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0002" x="106" y="114" width="86" height="93" frameX="0" frameY="-1" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0003" x="106" y="114" width="86" height="93" frameX="0" frameY="-1" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0004" x="202" y="114" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0005" x="202" y="114" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0006" x="294" y="114" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0007" x="294" y="114" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0008" x="386" y="114" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0009" x="386" y="114" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0010" x="386" y="114" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0011" x="386" y="114" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0012" x="386" y="114" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0013" x="386" y="114" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+	<SubTexture name="beatRight0014" x="386" y="114" width="82" height="94" frameX="-2" frameY="0" frameWidth="86" frameHeight="94"/>
+</TextureAtlas>
