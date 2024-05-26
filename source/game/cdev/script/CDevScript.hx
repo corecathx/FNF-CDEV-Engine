@@ -77,7 +77,7 @@ class CDevScript
 
 	public function errorLog(text:String)
 	{
-		game.cdev.log.GameLog.error(text);
+		game.cdev.log.Log.error(text);
 	}
 
 	public function loadFile(path:String)

@@ -18,14 +18,12 @@ class DiscordClient
 	public function new()
 	{
 		RPC_DATA = CDevConfig.utils.getRpcJSON();
-		trace("Discord Client starting...");
 		DiscordRpc.start({
 			clientID: (RPC_DATA != null ? RPC_DATA.clientID : CDevConfig.RPC_ID),
 			onReady: onReady,
 			onError: onError,
 			onDisconnected: onDisconnected
 		});
-		trace("Discord Client started.");
 
 		while (true)
 		{

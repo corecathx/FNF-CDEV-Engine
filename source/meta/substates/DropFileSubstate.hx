@@ -68,7 +68,7 @@ class DropFileSubstate extends MusicBeatSubstate {
     }
 
     function gError(stuff:String){
-        GameLog.error("Drop File Error: " + stuff);
+        Log.error("Drop File Error: " + stuff);
     }
 
     override function close() {

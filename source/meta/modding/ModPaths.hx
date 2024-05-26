@@ -115,7 +115,7 @@ class ModPaths
 		if (snd != null) return snd;
 		
 		if (!cantFind.contains(ogAssetPath)){
-			GameLog.warn("Can't find audio (sound) asset: " + ogAssetPath);
+			Log.warn("Can't find audio (sound) asset: " + ogAssetPath);
 			cantFind.push(ogAssetPath);
 		}
 		return null;
@@ -134,7 +134,7 @@ class ModPaths
 		if (snd != null) return snd;
 		
 		if (!cantFind.contains(ogAssetPath)){
-			GameLog.warn("Can't find audio (music) asset: " + ogAssetPath);
+			Log.warn("Can't find audio (music) asset: " + ogAssetPath);
 			cantFind.push(ogAssetPath);
 		}
 		return null;
@@ -148,7 +148,7 @@ class ModPaths
 		imageToReturn = Paths.image(key);
 		if (imageToReturn != null) return imageToReturn;
 
-		GameLog.warn('Error while loading "$key" image asset, returning null value.');
+		Log.warn('Error while loading "$key" image asset, returning null value.');
 		return currentModFolder('images/$key.png');
 	}
 
@@ -205,7 +205,7 @@ class ModPaths
 			case "music":
 				return Paths.music(key, lib);
 			default:
-				GameLog.warn('getFromAssets($key,$type,$fromPreload): Your "AssetType" should be "sound" / "image" / "music". $type is invalid.');
+				Log.warn('getFromAssets($key,$type,$fromPreload): Your "AssetType" should be "sound" / "image" / "music". $type is invalid.');
 				return null;
 		}
 		return null;

@@ -243,7 +243,7 @@ class ScriptSupport
 	public static function getExprFromPath(path:String, critical:Bool = false, ea:CDevScript):hscript.Expr
 	{
 		var parser = new hscript.Parser();
-		parser.allowTypes = true;
+		parser.allowTypes = parser.allowMetadata = parser.allowJSON = true;
 		var ast:Expr = null;
 		try
 		{
@@ -255,13 +255,13 @@ class ScriptSupport
 		}
 		catch (ex)
 		{
-			GameLog.error(ex);
+			Log.error(ex);
 			var ext = Std.string(ex);
 			var line = parser.line;
 			var gay:String = 'An error occured while parsing the file located at "$path".\r\n$ext at $line';
 			if (!openfl.Lib.application.window.fullscreen)
 				openfl.Lib.application.window.alert(gay);
-			GameLog.error(gay);
+			Log.error(gay);
 			ea.error = true;
 		}
 		return ast;

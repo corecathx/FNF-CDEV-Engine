@@ -1,5 +1,10 @@
 package meta.states;
 
+import game.system.FunkinSoundFilter;
+import openfl.display.BitmapData;
+import sys.FileSystem;
+import flixel.effects.particles.FlxParticle;
+import flixel.group.FlxSpriteGroup;
 import haxe.Timer;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.FlxFramesCollection;
@@ -43,6 +48,8 @@ import game.Conductor;
 
 using StringTools;
 
+typedef AlphabetGroup = FlxTypedSpriteGroup<Alphabet>;
+
 class TitleState extends MusicBeatState
 {
 	// experimental
@@ -60,10 +67,9 @@ class TitleState extends MusicBeatState
 		"Gimme some time to load GlowFilter :skull:",
 		"Checking your OS.",
 		"This process usually took like 5 secs to finish.",
-		"Nuh uh.",
-		"Hello.",
 		"Don't stay in this game for more than 2 hours.",
-		"Pro tip: touch grass."
+		"Pro tip: touch grass.",
+		"Trying to lower your memory usage (if possible)"
 	];
 
 	static var isLoaded:Bool = false;
@@ -71,9 +77,9 @@ class TitleState extends MusicBeatState
 	static var initialized:Bool = false;
 
 	var blackScreen:FlxSprite;
-	var credGroup:FlxTypedGroup<Alphabet>;
+	var credGroup:AlphabetGroup;
 	var credTextShit:game.objects.Alphabet;
-	var textGroup:FlxTypedGroup<Alphabet>;
+	//var textGroup:FlxTypedGroup<Alphabet>;
 	var ngSpr:FlxSprite;
 	var yOffset:Float = 0;
 	
@@ -92,6 +98,7 @@ class TitleState extends MusicBeatState
 	var startLoading:Float = 0;
 
 	var uDumb:FlxText;
+	var uArt:FlxSprite;
 
 	override public function create():Void
 	{
@@ -134,12 +141,31 @@ class TitleState extends MusicBeatState
 		isLoaded = false; // DIE
 
 		if (!initialized){
-			uDumb = new FlxText(0,0,-1,loadingBS[FlxG.random.int(0,loadingBS.length-1)]+"\nLoading...", 24);
-			uDumb.font = FunkinFonts.CONSOLAS;
-			uDumb.alignment = CENTER;
+			uDumb = new FlxText(0,0,-1,loadingBS[FlxG.random.int(0,loadingBS.length-1)]+" // Loading...", 20);
+			uDumb.font = FunkinFonts.VCR;
+			uDumb.alignment = RIGHT;
 			uDumb.antialiasing = CDevConfig.saveData.antialiasing;
-			uDumb.screenCenter();
+			uDumb.setPosition((FlxG.width - uDumb.width) - 20, (FlxG.height - uDumb.height) - 20);
 			add(uDumb);
+
+			var directory:String = Paths.getPreloadPath("images/boot/");
+			var pathList:Array<String> = FileSystem.readDirectory(directory);
+			var random:Int = FlxG.random.int(0,pathList.length-1);
+			var selectedGraphic:BitmapData = (
+				pathList[random].endsWith(".png") && !FileSystem.isDirectory(directory+pathList[random])
+				? BitmapData.fromFile(directory+pathList[random]) 
+				: null
+			);
+			
+			uArt = new FlxSprite();
+			add(uArt);
+			if (selectedGraphic != null){
+				uArt.loadGraphic(selectedGraphic);
+				uArt.antialiasing = CDevConfig.saveData.antialiasing;
+				uArt.screenCenter();
+			} else {
+				Log.warn("Failed to get game boot art, filename: " + directory+pathList[random]);
+			}
 		}
 		
 		new FlxTimer().start(0.5, (_) -> {
@@ -225,9 +251,9 @@ class TitleState extends MusicBeatState
 		blackScreen.color = 0xFF132841; //set the color to a bit darker ones
 		add(blackScreen);
 		add(logoBl);
-		credGroup = new FlxTypedGroup<Alphabet>();
+		credGroup = new AlphabetGroup();
 		add(credGroup);
-		textGroup = new FlxTypedGroup<Alphabet>();
+		//textGroup = new FlxTypedGroup<Alphabet>();
 
 		if (!CDevConfig.saveData.engineWM)
 		{
@@ -285,7 +311,6 @@ class TitleState extends MusicBeatState
 			}
 			isLoaded = true;
 		}
-
 		trace("Finished loading state, " + (Timer.stamp() - startLoading) + "s elapsed.");
 
 		destroyLoadingText();
@@ -296,6 +321,12 @@ class TitleState extends MusicBeatState
 			uDumb.destroy();
 			remove(uDumb);
 			uDumb = null;
+		}
+
+		if (uArt != null){
+			uArt.destroy();
+			remove(uArt);
+			uArt = null;
 		}
 	}
 
@@ -316,6 +347,8 @@ class TitleState extends MusicBeatState
 
 	var transitioning:Bool = false;
 	var intendedSpeed:Float = 1;
+
+	var disableEnter:Bool = false;
 
 	override function update(elapsed:Float)
 	{
@@ -342,6 +375,8 @@ class TitleState extends MusicBeatState
 					_runTextEffect(credGroup.members[i].effect, credGroup.members[i]);
 			}
 
+			credGroup.y = FlxMath.lerp((FlxG.height/2)-((60*credGroup.members.length)/2),credGroup.y,1-(elapsed*16));
+
 			var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
 
 			#if mobile
@@ -367,41 +402,46 @@ class TitleState extends MusicBeatState
 				#end
 			}
 
-			if (pressedEnter && !transitioning && skippedIntro)
-			{
-				titleText.animation.play('press');
-				intendedSpeed += 100;
-
-				FlxG.camera.flash(FlxColor.WHITE, 1);
-				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
-
-				transitioning = true;
-
-				new FlxTimer().start(2, function(tmr:FlxTimer)
+			if (!disableEnter){
+				if (pressedEnter && !transitioning && skippedIntro)
 				{
-					goToMain();
-					closedState = true;
-					if (CDevConfig.saveData.testMode && FlxG.keys.pressed.SHIFT)
-					{
-						FlxG.switchState(new OutdatedState());
+					titleText.animation.play('press');
+					intendedSpeed += 100;
+	
+					FlxG.camera.flash(FlxColor.WHITE, 1);
+					FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+	
+					transitioning = true;
+
+					if (!shouldUpdate && CDevConfig.saveData.smoothAF) {
+						new FlxTimer().start(1, (_) -> {
+							FlxTween.tween(FlxG.camera, {y:FlxG.height},1,{ease:FlxEase.expoIn});
+						});
+						MainMenuState.fromTitle = true;
 					}
-					else
+	
+					new FlxTimer().start(2, function(tmr:FlxTimer)
 					{
-						if (!shouldUpdate)
-							FlxG.switchState(new MainMenuState());
+						closedState = true;
+						if (CDevConfig.saveData.testMode && FlxG.keys.pressed.SHIFT)
+						{
+							FlxG.switchState(new OutdatedState());
+						}
 						else
 						{
-							if (CDevConfig.saveData.checkNewVersion)
-								FlxG.switchState(new OutdatedState());
-							else
+							if (!shouldUpdate)
 								FlxG.switchState(new MainMenuState());
+							else
+							{
+								FlxG.switchState(new OutdatedState());
+							}
 						}
-					}
-				});
+					});
+				}
+	
+				if (pressedEnter && !skippedIntro)
+					skipIntro();
 			}
-
-			if (pressedEnter && !skippedIntro)
-				skipIntro();
 		}
 
 		super.update(elapsed);
@@ -424,10 +464,10 @@ class TitleState extends MusicBeatState
 		{
 			var money:Alphabet = new Alphabet(0, 0, textArray[i], true);
 			money.screenCenter(X);
-			money.y += (i * 60) + 200 + yOffset;
+			money.y += (i * 60);
 			money.effect = effect;
 			credGroup.add(money);
-			textGroup.add(money);
+			//textGroup.add(money);
 		}
 	}
 
@@ -439,6 +479,7 @@ class TitleState extends MusicBeatState
 
 	function checkGitHubVersion()
 	{
+		if (!CDevConfig.saveData.checkNewVersion) return;
 		if (!closedState)
 		{
 			trace('we do som update checking!1!!1');
@@ -472,17 +513,17 @@ class TitleState extends MusicBeatState
 		var coolText:Alphabet = new Alphabet(0, 0, text, true);
 		coolText.screenCenter(X);
 		coolText.effect = effect;
-		coolText.y += (textGroup.length * 60) + 200 + yOffset;
+		coolText.y += (credGroup.length * 60);
 		credGroup.add(coolText);
-		textGroup.add(coolText);
+		//textGroup.add(coolText);
 	}
 
 	function deleteCoolText()
 	{
-		while (textGroup.members.length > 0)
+		while (credGroup.members.length > 0)
 		{
-			credGroup.remove(textGroup.members[0], true);
-			textGroup.remove(textGroup.members[0], true);
+			credGroup.remove(credGroup.members[0], true);
+			//textGroup.remove(textGroup.members[0], true);
 		}
 	}
 
@@ -526,7 +567,11 @@ class TitleState extends MusicBeatState
 						addMoreText((!lol?'CoreDev' : ""));
 					else
 						addMoreText('Everyone');
+					addMoreText("");
+					addMoreText("");
 					ngSpr.visible = true;
+					ngSpr.y += 70;
+					FlxTween.tween(ngSpr,{y:ngSpr.y - 70}, (Conductor.crochet*1)/1000, {ease:FlxEase.expoOut});
 				case 14:
 					deleteCoolText();
 					ngSpr.visible = false;
@@ -541,6 +586,7 @@ class TitleState extends MusicBeatState
 					deleteCoolText();
 					logoBl.screenCenter();
 				case 24,26,28,30:
+					disableEnter = true;
 					FlxG.camera.zoom += 0.05;
 					logoBl.visible = true;
 					logoBl.animation.play('${progress}freakyText', true);
@@ -548,7 +594,7 @@ class TitleState extends MusicBeatState
 					switch (curBeat){
 						case 24:
 							logoBl.scale.set(0.5,0.5);
-							FlxTween.tween(logoBl.scale,{x: 1.2,y: 1.2}, (Conductor.crochet*7.89)/1000, {ease:FlxEase.cubeIn});
+							FlxTween.tween(logoBl.scale,{x: 1.5,y: 1.5}, (Conductor.crochet*7.95)/1000, {ease:FlxEase.quintIn});
 						case 28:
 							FlxG.camera.shake(0.005,(Conductor.crochet*4)/1000);
 					}
@@ -576,7 +622,13 @@ class TitleState extends MusicBeatState
 	{
 		if (!skippedIntro)
 		{
+			disableEnter = false;
+			if (curBeat != 32 && FlxG.sound.music != null && !closedState){
+				FlxG.sound.music.time = Conductor.songPosition = (Conductor.crochet*32); //force seek
+			}
 			// FlxG.camera.y = 720;
+			FlxTween.completeTweensOf(logoBl);
+			FlxG.camera.stopFX();
 			logoBl.visible = true;
 			if (logoBlFrames != null) logoBl.setFrames(logoBlFrames, true);
 			logoBl.x = logoX;
@@ -595,11 +647,6 @@ class TitleState extends MusicBeatState
 			blackScreen = null;
 			skippedIntro = true;
 		}
-	}
-
-	function goToMain()
-	{
-		FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.circOut});
 	}
 
 	function _getTextEffect(s:String)

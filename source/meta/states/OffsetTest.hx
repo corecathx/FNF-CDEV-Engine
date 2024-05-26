@@ -1,5 +1,6 @@
 package meta.states;
 
+import lime.app.Application;
 import flixel.util.FlxSort;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -33,7 +34,6 @@ class OffsetTest extends MusicBeatState
 	{
 		FlxG.sound.playMusic(Paths.music('offsetSong', 'shared'));
 		FlxG.sound.music.onComplete = endShit;
-
 		Conductor.changeBPM(100);
 		Conductor.updateSettings();
 
@@ -74,6 +74,7 @@ class OffsetTest extends MusicBeatState
 		infoTxt.borderSize = 3;
 		infoTxt.antialiasing = CDevConfig.saveData.antialiasing;
 		FlxTween.tween(infoTxt, {alpha: 1}, 2, {ease: FlxEase.linear});
+		Conductor.offset = 0;
 		super.create();
 	}
 
@@ -99,6 +100,7 @@ class OffsetTest extends MusicBeatState
 		FlxG.sound.music.stop();
 		FlxG.sound.music.onComplete = null;
 		FlxG.sound.playMusic(Paths.music('freakyMenu'));
+		Application.current.window.onKeyDown.remove(onKeyPress);
 		FlxG.switchState(new OptionsState());
 	}
 
@@ -109,28 +111,34 @@ class OffsetTest extends MusicBeatState
 
 		if (press)
 		{
-			bruhs+=Math.abs(FlxG.sound.music.time - (Conductor.crochet*curBeat));
-			cliccs++;
-			offs = Math.abs(Math.round(bruhs / cliccs)); // get the average
-			dance();
-			offsetText.scale.x = 1.2;
 
-			var rating:FlxSprite = new FlxSprite();
-			rating.loadGraphic(Paths.image("sick", "shared"));
-			rating.screenCenter();
-			rating.y -= 50;
-			rating.x -= 255;
-			rating.acceleration.y = 550;
-			rating.velocity.y -= FlxG.random.int(140, 175);
-			rating.velocity.x -= FlxG.random.int(0, 10);
-
-			add(rating);
-			rating.setGraphicSize(Std.int(rating.width * 0.5));
-			rating.antialiasing = CDevConfig.saveData.antialiasing;
-			FlxTween.tween(rating, {alpha: 0}, 0.2, {
-				startDelay: Conductor.crochet * 0.001
-			});
 		}
+	}
+
+	function onKeyPress(_,_) {
+		if (!canTestNow) return;
+		if (!FlxG.keys.checkStatus(ANY, JUST_PRESSED)) return;
+		bruhs+=Math.abs(FlxG.sound.music.time - (Conductor.crochet*curBeat));
+		cliccs++;
+		offs = Math.abs(Math.round(bruhs / cliccs)); // get the average
+		dance();
+		offsetText.scale.x = 1.2;
+
+		var rating:FlxSprite = new FlxSprite();
+		rating.loadGraphic(Paths.image("sick", "shared"));
+		rating.screenCenter();
+		rating.y -= 50;
+		rating.x -= 255;
+		rating.acceleration.y = 550;
+		rating.velocity.y -= FlxG.random.int(140, 175);
+		rating.velocity.x -= FlxG.random.int(0, 10);
+
+		add(rating);
+		rating.setGraphicSize(Std.int(rating.width * 0.5));
+		rating.antialiasing = CDevConfig.saveData.antialiasing;
+		FlxTween.tween(rating, {alpha: 0}, 0.2, {
+			startDelay: Conductor.crochet * 0.001
+		});
 	}
 
 	function dance()
@@ -202,9 +210,11 @@ class OffsetTest extends MusicBeatState
 					}
 				});
 			case 16:
+				Application.current.window.onKeyDown.add(onKeyPress);
 				canTestNow = true;
 				FlxTween.tween(offsetText, {y: FlxG.height - 100}, Conductor.crochet / 1000, {ease: FlxEase.circOut});
 			case 80:
+				Application.current.window.onKeyDown.remove(onKeyPress);
 				dance();
 				canTestNow = false;
 				FlxTween.tween(gfDance, {alpha: 0}, Conductor.crochet / 1000, {ease: FlxEase.linear});

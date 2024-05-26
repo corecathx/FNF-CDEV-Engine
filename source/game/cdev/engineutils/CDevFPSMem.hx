@@ -1,5 +1,6 @@
 package game.cdev.engineutils;
 
+import game.cdev.log.GameLog;
 import game.system.native.Windows;
 import game.cdev.CDevConfig;
 import flixel.FlxG;
@@ -9,12 +10,33 @@ import openfl.system.System;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 
+/**
+ * FPS and Memory Usage counter that's shown on top corner left of the game.
+ */
 class CDevFPSMem extends TextField
 {
-	public var times:Array<Float>;
+	/**
+	 * Just like the variable's name, it returns current FPS.
+	 */
+	public var curFps:Int = 0;
+
+	/**
+	 * Current used Memory by the game in Bytes.
+	 * (Depends on what memory setting the player used, it can be showing the garbage collector memory / the total program used memory.)
+	 */
+	public var curMemory:Float = 0;
+	
+	/**
+	 * Memory Peak / Highest Memory.
+	 */
 	public var highestMemory:Float = 0;
+
+	/**
+	 * Static instance of this class.
+	 */
 	public static var current:CDevFPSMem = null;
-	public var showingInfo:Bool = false;
+
+	public var times:Array<Float>;
 
 	public function new(inX:Float = 10.0, inY:Float = 10.0, inCol:Int = 0x000000, bold:Bool = false)
 	{
@@ -28,61 +50,72 @@ class CDevFPSMem extends TextField
 		defaultTextFormat = new TextFormat(FunkinFonts.VCR, Std.int(14*mobileMulti), inCol, false);
 		text = "FPS: ";
 		times = [];
-	    addEventListener(Event.ENTER_FRAME, onEnter);
 		autoSize = LEFT;
 	}
 
-	private function onEnter(_)
-	{
+	var updateTime:Float = 0;
+	private override function __enterFrame(elapsed:Float) {
+		if (updateTime > 1000){
+			updateTime = 0;
+			return;
+		}
 		var now = Timer.stamp();
 		times.push(now);
 	
 		while (times[0] < now - 1)
 			times.shift();
 	
-		var mem:Float = CDevConfig.saveData.nativeMemory ? Windows.getCurrentUsedMemory() : System.totalMemory;
-		if (mem > highestMemory) highestMemory = mem;
-		var ramStr:String = CDevConfig.utils.convert_size(Std.int(mem));
+		curMemory = CDevConfig.saveData.nativeMemory ? Windows.getCurrentUsedMemory() : System.totalMemory;
+		curFps = times.length > CDevConfig.saveData.fpscap ? CDevConfig.saveData.fpscap : times.length;
 		
-		if (mem / 1024 / 1024 >= 2048){
+		if (curMemory > highestMemory) highestMemory = curMemory;
+		if (curMemory / 1024 / 1024 >= 2048){
 			openfl.Assets.cache.clear();
 			FlxG.save.flush();
 			CDevConfig.storeSaveData();
 			game.Paths.destroyLoadedImages();
 		}
+		game.cdev.CDevConfig.elapsedGameTime += FlxG.elapsed * 1000;
+		updateText();
 
-		var debugText:String = (CDevConfig.debug ? "\n[Debug Build]" : "");
-		var s:String = "";
+		updateTime += elapsed;
+	}
 
-		var lowFPS:Bool = (times.length < CDevConfig.saveData.fpscap / 2);
-
-		var c = {
-			fps: "FPS: " + times.length + (lowFPS?" [!]":""),
-			mem: "RAM: " + ramStr
-		}
-		
+	public dynamic function updateText():Void {
+		var ramStr:String = CDevConfig.utils.convert_size(Std.int(curMemory));
+		var debugText:String = (CDevConfig.debug ? "\n- Debug -" : "");
+		var lowFPS:Bool = (curFps < CDevConfig.saveData.fpscap / 2);
 		if (visible)
 		{
+			var c = {
+				fps: curFps + " FPS ("+ Std.int((1/curFps)*1000)+ "ms)" + (lowFPS?" [!]":""),
+				mem: ramStr + " RAM"
+			}
+			var wholeText:String = "";
 			switch (CDevConfig.saveData.performTxt){
 				case "fps":
-					s = c.fps;
+					wholeText = c.fps;
 				case "fps-mem":
-					s = '${c.fps}\n${c.mem}';
+					wholeText = '${c.fps}\n${c.mem}';
 				case "mem":
-					s = c.mem;
+					wholeText = c.mem;
 				default:
-					s = "";
+					wholeText = "";
 			}
 
 			var memoryPeak = (GameLog.isVisible
 				&& (CDevConfig.saveData.performTxt == "fps-mem" 
-				|| CDevConfig.saveData.performTxt == "mem") ? " // RAM Peak: " + CDevConfig.utils.convert_size(Std.int(highestMemory)) : "");
+				|| CDevConfig.saveData.performTxt == "mem") ? " // " + CDevConfig.utils.convert_size(Std.int(highestMemory)) + " Peak" : "");
 			
-			text = s + memoryPeak + debugText;
+			text = wholeText + memoryPeak + debugText;
+			applySizes();
 		}
 	
 		textColor = lowFPS ? 0xFF0000 : 0xFFFFFF;
+	}
 
-		game.cdev.CDevConfig.elapsedGameTime += FlxG.elapsed * 1000;
+	function applySizes(){
+		if ((CDevConfig.saveData.performTxt == "fps-mem" || CDevConfig.saveData.performTxt == "fps"))
+			this.setTextFormat(new TextFormat(FunkinFonts.VCR, 16, 0xFFFFFF),0,Std.string(times.length).length);
 	}
 }

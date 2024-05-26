@@ -616,7 +616,7 @@ class CDevUtils
 					note[1] = (note[1] + 4) % 8;
 					j = note;
 				}
-				notes.push([j[0],j[1],j[2],j[3],j[4]]);
+				notes.push([j[0],j[1],j[2],(j[3]==null?"Default Note":j[3]),(j[4]==null?['','']:j[4])]);
 			}
 			if (Reflect.hasField(i,"sectionEvents")){ // bruh
 				for (k in i.sectionEvents){
@@ -628,12 +628,13 @@ class CDevUtils
 			data: {
 				player: safeJSON.player1,
 				opponent: safeJSON.player2,
-				third_char: safeJSON.gfVersion,
+				third_char: (safeJSON.gfVersion == null ? "gf" : safeJSON.gfVersion),
 				stage: safeJSON.stage,
-				note_skin: "default"
+				note_skin: "notes/NOTE_assets"
 			},
 			info: {
 				name: safeJSON.song,
+				composer: "Kawai Sprite",
 				bpm: safeJSON.bpm,
 				speed: safeJSON.speed,
 				time_signature: [4,4], // since most of fnf songs are charted in 4/4 time signature, set this by default.

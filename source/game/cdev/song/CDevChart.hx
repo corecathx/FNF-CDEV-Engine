@@ -10,6 +10,7 @@ typedef CDevChart = {
 
 typedef ChartInfo = {
     var name:String; //sogn name
+    var composer:String;
     var bpm:Float;
     var speed:Float;
     var time_signature:Array<Int>; //[4,4]

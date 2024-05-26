@@ -265,6 +265,9 @@ class SettingsProperties
 			new BaseSettings("System Stats", ["", ""], "Your system's stats.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
 				if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new meta.debug.SystemStatsState());
 			}, function(){},"", false),
+			new BaseSettings("Bitmap Test", ["", ""], "asdasdasd.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
+				if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new meta.debug.BitmapState());
+			}, function(){},"", false),
 		]);
 	}
 

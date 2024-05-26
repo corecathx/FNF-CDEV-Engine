@@ -6,7 +6,7 @@ cdev-changelog.txt
 build.hxml
 vscode-project.hxml
 hxformat.json
-crash_handler/src
-crash_handler/cdev-ch_src
+crash_handler/src/build
+crash_handler/src-old
 CHANGELOG.md
 build-tools/

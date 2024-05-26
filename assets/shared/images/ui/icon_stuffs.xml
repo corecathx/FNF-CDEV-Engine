@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="icon_stuffs.png">
+	<!-- Created with Adobe Animate version 21.0.6.41649 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="burg0000" x="10" y="10" width="19" height="19"/>
+	<SubTexture name="edit0000" x="39" y="10" width="17" height="27"/>
+	<SubTexture name="file0000" x="66" y="10" width="25" height="25"/>
+	<SubTexture name="help0000" x="10" y="47" width="21" height="33"/>
+	<SubTexture name="playtest0000" x="41" y="47" width="27" height="29"/>
+	<SubTexture name="view0000" x="78" y="47" width="25" height="21"/>
+</TextureAtlas>

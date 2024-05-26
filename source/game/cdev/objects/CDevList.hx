@@ -3,7 +3,7 @@ package game.cdev.objects;
 import flixel.group.FlxSpriteGroup;
 
 //wip
-class CDevTooltip extends FlxSpriteGroup {
+class CDevList extends FlxSpriteGroup {
     var bgOutline:FlxSprite;
     var bgSprite:FlxSprite;
 

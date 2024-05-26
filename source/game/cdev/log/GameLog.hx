@@ -23,6 +23,7 @@ class GameLogType {
     public static var WARNING:String = "[WARNING]";
     public static var ERROR:String = "[ERROR]";
 	public static var GAME:String = "[GAME]";
+	public static var SCRIPT:String = "[SCRIPT]";
 }
 
 class GameLogData {
@@ -48,6 +49,7 @@ class GameLog extends Sprite
 		GameLogType.WARNING => new GameLogData(GameLogType.WARNING, 0xFFFF00),
 		GameLogType.ERROR => new GameLogData(GameLogType.ERROR, 0xFF0000),
 		GameLogType.GAME => new GameLogData(GameLogType.GAME, 0x00B7FF),
+		GameLogType.SCRIPT => new GameLogData(GameLogType.SCRIPT,0xe100ff)
 	];
 
 	/** Background of this class. **/
@@ -173,6 +175,14 @@ class GameLog extends Sprite
 			return;
 		}
 		trace("[LOG] "+data);
+    }
+
+	public static function script(data:Dynamic){
+        if (GameLog.current != null){
+			GameLog.current.addLog(data, GameLogType.SCRIPT);
+			return;
+		}
+		trace("[SCRIPT] "+data);
     }
 
 	public static function game(data:Dynamic){

@@ -31,26 +31,11 @@ class CDevConfig
 	public static var window_icon_custom:Bool = false;
 	public static var debug:Bool = false;
 	public static var elapsedGameTime:Float;
-	public static var engineVersion:String = "1.6.4";
+	public static var engineVersion:String = "1.7";
 	public static var RPC_ID:String = "947735855672475679";
 	public static var utils(default, null):CDevUtils = new CDevUtils();
 
 	public static var DEPRECATED_STUFFS:Map<String, String>;
-
-	public static var keyBinds:Dynamic = {
-		left: "A",
-		down: "S",
-		up: "W",
-		right: "D",
-
-		ui_left: "A",
-		ui_down: "S",
-		ui_up: "W",
-		ui_right: "D",
-
-		reset: "R",
-		accept: "BACK"
-	};
 
 	public static var saveData(default, null):Dynamic;
 	public static var savePath:String = "";
@@ -269,7 +254,8 @@ class CDevConfig
 	public static function setFPS(daSet:Int)
 	{
 		openfl.Lib.current.stage.frameRate = daSet;
-		FlxG.drawFramerate = FlxG.updateFramerate = daSet;
+		FlxG.drawFramerate = daSet;
+		FlxG.updateFramerate = 1000;
 	}
 
 	// what to do before application get closed?
@@ -379,7 +365,7 @@ class CDevConfig
 
 			gpuBitmap: false,
 			cameraFix: true,
-			nativeMemory: false
+			nativeMemory: false,
 		}
 		return save;
 	}

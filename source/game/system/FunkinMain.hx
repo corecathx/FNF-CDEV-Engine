@@ -1,5 +1,7 @@
 package game.system;
 
+import game.cdev.log.GameLog;
+import game.cdev.log.TerminalLog;
 import game.cdev.engineutils.CDevInfoTxt;
 #if android
 import flixel.input.android.FlxAndroidKey;
@@ -146,17 +148,17 @@ class FunkinMain extends Sprite
 		});
 		#end
 
-		//FunkinInit.start();
-
-		#if android
-		Android.initialize();
-		#end
+		#if android Android.initialize(); #end
 
 		addChild(new FunkinGame(Std.int(game.gameWidth), Std.int(game.gameHeight), game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 		
 		#if !mobile
 		cdevLogs = new GameLog();
-		GameLog.startInit();
+
+		// me when conflict
+		TerminalLog.init(); // Call this first since it overrides haxe.Log.trace
+		GameLog.startInit(); // Then call GameLog's init cuz' it only attaches itself to the function
+
 		addChild(cdevLogs);
 		#end
 
@@ -189,6 +191,7 @@ class FunkinMain extends Sprite
 	#if CRASH_HANDLER
 	function onCrash(uncaught:UncaughtErrorEvent):Void
 	{
+		Log.error("CDEV Engine just crashed.");
 		// somehow, the music crashed the crash handler
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			FlxG.sound.music.stop();
@@ -222,7 +225,8 @@ class FunkinMain extends Sprite
 
 		File.saveContent(filePath, textStuff + "\n");
 
-		Sys.println("Crash info file saved in " + Path.normalize(filePath));	
+		Log.error("Crash info file saved in " + Path.normalize(filePath));	
+		Log.error("Saving current save data, and closing the game...");
 
 		CDevConfig.storeSaveData();
 		DiscordClient.shutdown(); 
@@ -239,9 +243,9 @@ class FunkinMain extends Sprite
 			new Process(cdev_ch_path, ["crash", filePath]);
 		}
 		else
-		#else #if android
+		#elseif android
 		Android.onCrash(reportClassic, "CDEV-Engine_" + dateNow + ".txt");
-		#end #end
+		#end
 		{
 			// gotta call a simple message box thingie
 			Application.current.window.alert(reportClassic);

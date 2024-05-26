@@ -59,7 +59,7 @@ class HScript extends CDevScript
 				return result;
 			}
 			if (CDevConfig.DEPRECATED_STUFFS.exists(funcName)){
-				GameLog.warn('Function \"$funcName\" is deprecated since CDEV Engine v.${CDevConfig.DEPRECATED_STUFFS.get(funcName)}.');
+				Log.warn('Function \"$funcName\" is deprecated since CDEV Engine v.${CDevConfig.DEPRECATED_STUFFS.get(funcName)}.');
 			}
 		}
 		return null;
@@ -104,13 +104,13 @@ class HScript extends CDevScript
 	public override function trace(text:String)
 	{
 		var posInfo = hscript.posInfos();
+		posInfo.className = "HScript - "+fileName+".hx";
 
 		// var fileName = posInfo.fileName;
 		var lineNumber = Std.string(posInfo.lineNumber);
 		var methodName = posInfo.methodName;
 		var className = posInfo.className;
-		//trace('$fileName:$methodName:$lineNumber: $text');
-		GameLog.log('$fileName:$methodName:$lineNumber: $text');
+		Log.script('$fileName:$lineNumber: $text', posInfo);
 
 		if (!CDevConfig.saveData.testMode)
 			return;
@@ -124,7 +124,7 @@ class HScript extends CDevScript
 		var methodName = posInfo.methodName;
 		var className = posInfo.className;
 		//trace('$fileName:$methodName:$lineNumber: $text');
-		GameLog.error('$fileName:$methodName:$lineNumber: $text');
+		Log.error('$fileName:$lineNumber: $text');
 	}
 
 	public override function setVariable(name:String, val:Dynamic)

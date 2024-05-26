@@ -75,24 +75,37 @@ class StrumArrow extends FlxSprite
 			|| CDevConfig.saveData.botplay)
 		{
 			var swagRect:FlxRect = daNote.clipRect;
-			if(swagRect == null) swagRect = new FlxRect(0, 0, daNote.frameWidth, daNote.frameHeight);
+			if (swagRect == null) 
+				swagRect = new FlxRect(0, 0, (strum.noteScroll < 0) ? tail.frameWidth : tail.width / tail.scale.x;, daNote.frameHeight);
 
-			if (strum.noteScroll < 0)
-			{
-				if(daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= strumLineMid)
-				{
-					swagRect.width = daNote.frameWidth;
-					swagRect.height = (strumLineMid - daNote.y) / daNote.scale.y;
-					swagRect.y = daNote.frameHeight - swagRect.height;
+			if (strum.noteScroll < 0) {
+				if (daNote.y + daNote.height >= strumLineMid){
+					swagRect.width = daNote.width;
+					swagRect.height = strumLineMid - Math.max(strumLineMid,daNote.y);
+					swagRect.y = strumLineMid-Math.min(strumLineMid-daNote.y,daNote.y);
+				}
+			} else {
+				if (daNote.y <= strumLineMid){
+					swagRect.width = daNote.width;
+					swagRect.height = strumLineMid - Math.min(strumLineMid,daNote.y);
+					swagRect.y = strumLineMid-Math.max(strumLineMid-daNote.y,daNote.y);
 				}
 			}
-			else if (daNote.y + daNote.offset.y * daNote.scale.y <= strumLineMid)
-			{
-				swagRect.y = (strumLineMid - daNote.y) / daNote.scale.y;
-				swagRect.width = daNote.width / daNote.scale.x;
-				swagRect.height = (daNote.height / daNote.scale.y) - swagRect.y;
-			}
 			daNote.clipRect = swagRect;
+
+			var clipRect:FlxRect = (tail.clipRect ?? FlxRect.get()).set();
+			clipRect.width = (downscroll) ? tail.frameWidth : tail.width / tail.scale.x;
+	  
+			if (downscroll) {
+			   clipRect.height = (receptorCenter - tail.y) / tail.scale.y;
+			   clipRect.y = tail.frameHeight - clipRect.height;
+			}
+			else {
+			   clipRect.y = (receptorCenter - tail.y) / tail.scale.y;
+				  clipRect.height = (tail.height / tail.scale.y) - clipRect.y;
+			}
+	  
+			tail.clipRect = clipRect;
 		}
 	}
 }

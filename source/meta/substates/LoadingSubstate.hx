@@ -40,7 +40,7 @@ class LoadingSubstate extends MusicBeatSubstate {
         _loadingBar = new FunkinBar(0,0,"healthBar", ()->{return _lerpProgress;},0,_loadingProgress.max);
         _loadingBar.setColors(FlxColor.fromInt(0xFF00A2FF), FlxColor.BLACK);
         _loadingBar.screenCenter();
-        _loadingBar.y += 90;
+        _loadingBar.y += 60;
         add(_loadingBar);
 
         _loadingText = new FlxText(0, _loadingBar.y + 30, "Loading...", 20);

@@ -171,7 +171,7 @@ class UIDropDown extends FlxUIGroup implements IFlxUIWidget implements IFlxUICli
 			dropPanel = new FlxUI9SliceSprite(0, 0, FlxUIAssets.IMG_BOX, rect, [1, 1, 14, 14]);
 		}
 
-		if (DataList != null)
+		if (DataList != null && ButtonList == null)
 		{
 			for (i in 0...DataList.length)
 			{
@@ -180,12 +180,13 @@ class UIDropDown extends FlxUIGroup implements IFlxUIWidget implements IFlxUICli
 			}
 			selectSomething(DataList[0].name, DataList[0].label);
 		}
-		else if (ButtonList != null)
+		else if (DataList != null && ButtonList != null)
 		{
-			for (btn in ButtonList)
+			for (index => btn in ButtonList)
 			{
 				list.push(btn);
 				btn.resize(header.background.width, header.background.height);
+				btn.onUp.callback = onClickItem.bind(index);
 				btn.x = 1;
 			}
 		}

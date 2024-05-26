@@ -61,7 +61,7 @@ class RSprites {
         if (sprites.exists(name)){
             return sprites[name];
         }
-        GameLog.warn("No rating asset found for \"" + name + "\n.");
+        Log.warn("No rating asset found for \"" + name + "\n.");
         return sprites["shit"];
     }
 }

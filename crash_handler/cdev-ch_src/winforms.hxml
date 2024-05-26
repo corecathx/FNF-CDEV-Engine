@@ -1,7 +1,0 @@
--cp src
--main Main
-
--lib haxeui-core
--lib haxeui-winforms
-
--cs build/winforms

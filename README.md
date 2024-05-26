@@ -59,6 +59,7 @@ CDEV Engine
 
 Special Thanks
 - [PolybiusProxy](https://github.com/polybiusproxy) - MP4 Video Haxe Library (hxCodec)
+- [CobaltBar](https://github.com/CobaltBar/FNF-Horizon-Engine/) - Colored Traces in terminal (game/cdev/log/Log.hx)
 
 Engines that inspired CDEV Engine & Codes used in this engine
 - [Codename Engine](https://github.com/FNF-CNE-Devs/CodenameEngine) - GPU Bitmap code.

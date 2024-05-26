@@ -254,7 +254,7 @@ class CustomSubstate extends MusicBeatSubstate
 		if (gotScript && script.error){
 			if (isErrorBefore != script.error){
 				FlxG.sound.play(Paths.sound("cancelMenu"));
-				GameLog.error("An error occured on the script. If you're stuck on this Custom Substate, press Shift + Escape.");
+				Log.error("An error occured on the script. If you're stuck on this Custom Substate, press Shift + Escape.");
 				isErrorBefore = script.error;
 			}
 		}

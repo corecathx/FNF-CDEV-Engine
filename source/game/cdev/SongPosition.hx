@@ -60,9 +60,4 @@ class SongPosition
 		var shit:String = mins + ":" + seconds;
 		return shit;
 	}
-
-	public static function getSongPercent(musicTime:Float, musicLength:Float):Float
-	{
-		return musicTime / musicLength;
-	}
 }

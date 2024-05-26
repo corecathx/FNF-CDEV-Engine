@@ -2324,7 +2324,7 @@ class ChartingState extends MusicBeatState
 				lis = _song.notes[curSection].lengthInSteps;
 			} else{
 				if (!warnOnce)
-					GameLog.warn("JSON of this chart have an invalid lengthInSteps field.");
+					Log.warn("JSON of this chart have an invalid lengthInSteps field.");
 				warnOnce = true;
 			}
 
@@ -2367,7 +2367,8 @@ class ChartingState extends MusicBeatState
 			if (i[3] != null)
 				daType = i[3];
 
-			var note:Note = new Note(daStrumTime, daNoteInfo % 4);
+			var note:Note = new Note();
+			note.load(daStrumTime,daNoteInfo%4);
 			note.noteType = daType;
 			note.rawNoteData = daNoteInfo;
 			note.sustainLength = daSus;
@@ -2393,29 +2394,10 @@ class ChartingState extends MusicBeatState
 				CDevConfig.utils.moveToCenterOfSprite(newShit, note);
 			}
 
-			if (daSus > 0)
-			{
-				/*var color:FlxColor = FlxColor.WHITE;
-				switch (daNoteInfo % 4)
-				{
-					case 3:
-						color = FlxColor.RED;
-					case 1:
-						color = FlxColor.CYAN;
-					case 2:
-						color = FlxColor.GREEN;
-					case 0:
-						color = FlxColor.MAGENTA;
-				}
-				var yPos:Float = note.y + GRID_SIZE;
-				if (usingDownscroll)
-				{
-					yPos = note.y - (GRID_SIZE * (daSus / Conductor.stepCrochet));
-				}
-				var sustainVis:FlxSprite = new FlxSprite(note.x + (GRID_SIZE / 2) - 3,
-					yPos).makeGraphic(8, Math.floor(FlxMath.remapToRange(daSus, 0, Conductor.stepCrochet * 16, 0, gridBG.height)), color);
-				curRenderedSustains.add(sustainVis);*/
-				var susBody:Note = new Note(daStrumTime+Conductor.stepCrochet,daNoteInfo%4, null, true);
+			if (daSus > 0){
+			
+				var susBody:Note = new Note();
+				susBody.load(daStrumTime+Conductor.stepCrochet,daNoteInfo%4, true);
 				susBody.noteType = daType;
 				susBody.rawNoteData = daNoteInfo;
 				susBody.setGraphicSize(GRID_SIZE/2.5, Std.int(GRID_SIZE*((daSus-(Conductor.stepCrochet*2)) / Conductor.stepCrochet)));
@@ -2427,7 +2409,8 @@ class ChartingState extends MusicBeatState
 				if (usingDownscroll) susBody.y = Math.floor(note.y - (GRID_SIZE * (daSus / Conductor.stepCrochet)));
 				curRenderedSustains.add(susBody);
 				var susold = susBody;
-				var nSus:Note = new Note(Conductor.stepCrochet,daNoteInfo%4, null, true);
+				var nSus:Note = new Note();
+				nSus.load(Conductor.stepCrochet,daNoteInfo%4, true);
 				nSus.noteType = daType;
 				nSus.rawNoteData = daNoteInfo;
 				switch (daNoteInfo%4)

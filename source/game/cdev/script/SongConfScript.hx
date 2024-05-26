@@ -17,11 +17,6 @@ typedef SongConfResult =
 	var scripts:Array<CDevModScript>;
 }
 
-typedef Aaaaaaaaaaaaa =
-{
-	var scripts:Array<String>;
-}
-
 class SongConfScript
 {
 	public static function parse(mod:String, song:String):SongConfResult

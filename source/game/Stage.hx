@@ -1,5 +1,6 @@
 package game;
 
+import game.cdev.log.TerminalLog;
 import game.cdev.script.ScriptSupport;
 import game.cdev.script.CDevScript;
 import meta.modding.char_editor.CharacterData.AnimationArray;
@@ -226,7 +227,7 @@ class Stage
 		}
 		//you got NOTHIN'
 		if (play!=null)
-			PlayState.addNewTraceKey("No stage object found: "+name);
+			Log.warn("No stage object found: "+name);
 		return null;
 	}
 
@@ -234,7 +235,7 @@ class Stage
 	{
 		if (jsonWasNull)
 		{
-			trace("Unable to create the stage, can't find the JSON file");
+			Log.warn("Unable to create the stage, can't find the JSON file");
 			play.stageGroup.add(PlayState.gf);
 			play.stageGroup.add(PlayState.dad);
 			play.stageGroup.add(PlayState.boyfriend);
@@ -307,7 +308,7 @@ class Stage
 									beatHit_force_sprites.push(beatSprite_anim);
 								case "beat":
 									beatHit_sprites.push(beatSprite_anim);
-								case "normal":
+								default: // yes
 									normalAnim_sprites.push(beatSprite_anim);
 							}
 						}
@@ -375,21 +376,18 @@ class Stage
 	public function destroy()
 	{
 		if (play == null) {
-			trace("\"play\" field is null, can't destroy.");
-			GameLog.warn("\"play\" field is null, can't destroy.");
+			Log.warn("\"play\" field is null, can't destroy.");
 			return;
 		}
 		if (play.stageGroup == null) {
-			trace("\"play.stageGroup\" field is null, can't destroy.");
-			GameLog.warn("\"play.stageGroup\" field is null, can't destroy.");
+			Log.warn("\"play.stageGroup\" field is null, can't destroy.");
 			return;
 		}
 		if (play.stageGroup.members == null) {
-			trace("\"play.stageGroup.members\" field is null, can't destroy. (how tf??)");
-			GameLog.warn("\"play.stageGroup.members\" field is null, can't destroy. (how tf??)");
+			Log.warn("\"play.stageGroup.members\" field is null, can't destroy. (how tf??)");
 			return;
 		}
-		trace("destroying...");
+		Log.info("Destroying stage...");
 		for (i in play.stageGroup.members){
 			if (i == null) continue;
 			if (["bf","gf", "dad"].contains(i.type)) continue;

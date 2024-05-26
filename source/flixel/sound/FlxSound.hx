@@ -594,7 +594,7 @@ class FlxSound extends FlxBasic
 	function updateTransform():Void
 	{
         if (_transform == null) {
-            GameLog.warn("FlxSound - _transform is null!!");
+            Log.warn("FlxSound - _transform is null!!");
             return;
         }
 

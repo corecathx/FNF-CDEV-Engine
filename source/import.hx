@@ -11,7 +11,7 @@ import meta.states.MusicBeatState;
 // CDEV Engine //
 import game.cdev.CDevConfig;
 import game.cdev.CDevPopUp;
-import game.cdev.log.GameLog;
+import game.cdev.log.Log;
 
 // Flixel //
 import flixel.FlxG;

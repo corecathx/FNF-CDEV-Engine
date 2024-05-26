@@ -79,7 +79,7 @@ class CDevInfoTxt extends TextField
             if (p.exitCode() == 0) {
                 cpu = p.stdout.readAll().toString().trim().split("\n")[1].trim();
             }
-        } catch (e:Dynamic){GameLog.error("Init Error: Can't get System CPU data, "+e.toString());}
+        } catch (e:Dynamic){Log.error("Init Error: Can't get System CPU data, "+e.toString());}
 
         @:privateAccess{
             if (FlxG.stage.context3D != null && FlxG.stage.context3D.gl != null){
@@ -88,7 +88,7 @@ class CDevInfoTxt extends TextField
 					var vRAMBytes:Float = cast(FlxG.stage.context3D.gl.getParameter(openfl.display3D.Context3D.__glMemoryTotalAvailable), Float)*1024;
                     trace(vRAMBytes);
 					if (vRAMBytes == 1000 || vRAMBytes == 1 || vRAMBytes <= 0)
-						GameLog.error("Init Error: Can't get VRAM data.");
+						Log.error("Init Error: Can't get VRAM data.");
 					else{
 						vram = CDevConfig.utils.convert_size(vRAMBytes); // bro
                     }

@@ -1,6 +1,5 @@
 package meta.states;
 
-
 import game.system.native.Windows;
 #if android import game.system.native.Android; #end
 import game.settings.data.SettingsProperties;
@@ -36,6 +35,7 @@ using StringTools;
 class MainMenuState extends MusicBeatState
 {
 	public var disableSwitching:Bool = false; //fallback
+	public static var fromTitle:Bool = false; //
 	static var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
@@ -147,7 +147,8 @@ class MainMenuState extends MusicBeatState
 
 		for (i in 0...optionShit.length)
 		{
-			var menuItem:FlxSprite = new FlxSprite(60, 40 + (i * 160));
+			var mainX:Float = 60; // Where should the position end (after tween)
+			var menuItem:FlxSprite = new FlxSprite(-240, 40 + (i * 160));
 			menuItem.frames = tex;
 			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24);
 			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
@@ -158,6 +159,8 @@ class MainMenuState extends MusicBeatState
 			menuItems.add(menuItem);
 			menuItem.scrollFactor.set(0, 0.8);
 			menuItem.antialiasing = CDevConfig.saveData.antialiasing;
+
+			FlxTween.tween(menuItem,{x:mainX}, 1, {ease:FlxEase.backInOut, startDelay: 0.1*i});
 
 			var theIcon:FlxSprite = new FlxSprite(daX, 0).loadGraphic(Paths.image('menuicons/' + optionShit[i]));
 			theIcon.screenCenter(Y);
@@ -206,12 +209,16 @@ class MainMenuState extends MusicBeatState
 
 		if (CDevConfig.saveData.smoothAF)
 		{
-			FlxG.camera.zoom = 1.5;
-			FlxTween.tween(FlxG.camera, {zoom: 1}, 1, {ease: FlxEase.cubeOut});
+			if (fromTitle){
+				FlxG.camera.y = -FlxG.height;
+				FlxTween.tween(FlxG.camera, {y:0},1,{ease:FlxEase.expoOut});
+			} else{
+				FlxG.camera.zoom = 1.5;
+				FlxTween.tween(FlxG.camera, {zoom: 1}, 1, {ease: FlxEase.cubeOut});
+			}
 		}
 
 		var drvSize:Float = Windows.getCurrentDriveSize();
-		trace("Free drive space: "+drvSize+" GB");
 		if (drvSize <= 1){
 			new FlxTimer().start(1,(_)->{
 				CDevPopUp.open(this,"Warning!","You have less than 1 GB of free disk space remaining.\nIf you ran out of disk space, this engine might crash while writing stuff to your disk.",[
@@ -319,7 +326,6 @@ class MainMenuState extends MusicBeatState
 			}
 
 			if (controls.UI_DOWN_P){
-
 				changeItem(1);
 			}
 
@@ -434,7 +440,10 @@ class MainMenuState extends MusicBeatState
 						FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
 					}
 
-					FlxG.switchState(new StoryMenuState());
+					if (!FlxG.keys.pressed.SHIFT)
+						FlxG.switchState(new StoryMenuState());
+					else
+						FlxG.switchState(new StoryModeState());
 					trace("Story Menu Selected");
 				case 'freeplay':
 					if (CDevConfig.saveData.smoothAF)

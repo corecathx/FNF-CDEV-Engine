@@ -202,7 +202,7 @@ class lolol extends MusicBeatState {
 			if (lis == null){
 				lis = 16;
 				if (!warnOnce)
-					GameLog.warn("JSON of this chart doesn't have lengthInSteps.");
+					Log.warn("JSON of this chart doesn't have lengthInSteps.");
 				warnOnce = true;
 			} else if (lis == 0){
 				lis = 16;

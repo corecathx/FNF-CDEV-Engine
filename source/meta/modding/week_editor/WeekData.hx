@@ -45,101 +45,59 @@ typedef WeekChar =
 	var flipX:Bool;
 }
 
+typedef StoryData = {
+    var data:WeekFile;
+    var mod:String;
+}
+
 class WeekData
 {
-	public static var loadedWeeks:Array<Dynamic> = []; // weekFile, modName
+    public static var loadedWeeks:Array<StoryData> = [];
 
-	#if !desktop
-	public static var weekCount:Int = 8; //dumb way to do this but whatever
-	#end
+    #if !desktop
+    public static var weekCount:Int = 8;
+    #end
 
-	public function new()
-	{
-	}
-
-	public static function loadWeeks()
-	{
+    public static function loadWeeks():Void
+    {
         loadedWeeks = [];
 
-		var allowDefSongs = true;
-		if (CDevConfig.utils.isPriorityMod())
-		{
-			Paths.currentMod = CDevConfig.utils.isPriorityMod(true);
-			var data:ModFile = Paths.modData();
-			if (data != null)
-			{
-				if (Reflect.hasField(data, "disable_base_game"))
-				{
-					allowDefSongs = !data.disable_base_game;
-				}
-			}
-		}
-		#if desktop
-		var pathraw = "./assets/data/weeks/";
-		var direct:Array<String> = FileSystem.readDirectory(pathraw);
+        var theFiles:Array<StoryData> = [];
+        var allowDefSongs = true;
 
-		if (allowDefSongs) for (i in 0...direct.length)
-		{
-			if (direct[i].endsWith(".json")){
-				var pathJson:String = pathraw+direct[i];
+        if (CDevConfig.utils.isPriorityMod()) {
+            Paths.currentMod = CDevConfig.utils.isPriorityMod(true);
+            var data:ModFile = Paths.modData();
+            if (data != null && Reflect.hasField(data, "disable_base_game")) {
+                allowDefSongs = false;
+            }
+        }
 
-				var crapJSON = null;
-				if (FileSystem.exists(pathJson))
-					crapJSON = File.getContent(pathJson);
+        loadWeekFileFromPath("./assets/data/weeks/", "BASEFNF", theFiles, allowDefSongs);
+        
+        for (mod in Paths.curModDir) {
+            var modPath = Paths.mods(mod + '/data/weeks/');
+            if (FileSystem.isDirectory(modPath))
+                loadWeekFileFromPath(modPath, mod, theFiles, true);
+        }
 
-				var json:WeekFile = null;
-				if (crapJSON != null) json = cast Json.parse(crapJSON);
+        loadedWeeks = theFiles;
+    }
 
-				if (json != null) loadedWeeks.push([json, 'BASEFNF']);
-			}
-		}
-		#else
-		if (allowDefSongs) for (i in 0...weekCount){
-			var path:String = Paths.week("week"+i);
-			trace("Mobile - Week Path: "+path);
-			if (OFLAssets.exists(path, TEXT)){
-				trace("Mobile - Found week.");
+    private static function loadWeekFileFromPath(path:String, modName:String, theFiles:Array<StoryData>, allowLoad:Bool):Void {
+        if (!allowLoad) return;
 
-				var crapJSON = null;
-				try{
-					crapJSON = OFLAssets.getText(path);		
-				} catch(e){
-					trace("Mobile - Failed to getText using OFL, reason: " + e.toString());
-					continue;
-				}
-				var json:WeekFile = cast Json.parse(crapJSON);
-				loadedWeeks.push([json, 'BASEFNF']);
-			} else{
-				trace("Mobile - Week not found: " + path);
-				continue;
-			}
-		}
-		#end
+        var weekFiles:Array<String> = FileSystem.readDirectory(path);
+        for (file in weekFiles) {
+            if (!file.endsWith(".json")) continue;
+			var path:String = path + file;
+			var rawJson:String = File.getContent(path);
 
-		for (mod in 0...Paths.curModDir.length)
-		{
-			var path:String = Paths.mods(Paths.curModDir[mod] + '/data/weeks/');
-			var weekFiles:Array<String> = [];
-
-			if (FileSystem.isDirectory(path))
-			{
-				weekFiles = FileSystem.readDirectory(path);
-				var crapJSON = null;
-
-				for (json in 0...weekFiles.length)
-				{
-					#if ALLOW_MODS
-					var file:String = path + weekFiles[json];
-					if (FileSystem.exists(file))
-						crapJSON = File.getContent(file);
-					#end
-
-					var json:WeekFile = cast Json.parse(crapJSON);
-					var gugugaga:Array<Dynamic> = [json, Paths.curModDir[mod]];
-					if (crapJSON != null)
-						loadedWeeks.push(gugugaga);
-				}
-			}
-		}
-	}
+			if (rawJson.length == 0) continue;
+			var json:WeekFile = cast Json.parse(rawJson);
+			if (json == null) continue;
+			theFiles.push({data: json, mod: modName});
+        }
+    }
 }
+

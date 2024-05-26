@@ -12,6 +12,8 @@ class ChartNote extends FlxSprite {
     public var noteType:String = "Default Note";
     public var noteArgs:Array<String> = ["",""];
 
+    public var rawData:Array<Dynamic> = [0,0,0,"Default Note", ["",""]];
+
     public var isSustain:Bool = false;
 
     public var nSustain:ChartNote = null;
@@ -19,11 +21,12 @@ class ChartNote extends FlxSprite {
     public var bgHighlight:FlxSprite = null;
 
     public var asDummyNote:Bool = false;
+    public var isSelected:Bool = false;
 
     public function new(nX:Float = 0, nY:Float = 0)
     {
         super(nX,nY);
-        bgHighlight = new FlxSprite().makeGraphic(ChartEditor.grid_size,ChartEditor.grid_size,FlxColor.WHITE);
+        bgHighlight = new FlxSprite().makeGraphic(ChartEditor.grid_size,1,FlxColor.WHITE);
         bgHighlight.active = false;
     }
 
@@ -38,6 +41,7 @@ class ChartNote extends FlxSprite {
         holdLength = noteArray[2];
         noteType = noteArray[3];
         noteArgs = noteArray[4];
+        rawData = noteArray;
 
         this.isSustain = isSustain;
 
@@ -53,7 +57,7 @@ class ChartNote extends FlxSprite {
         setGraphicSize(ChartEditor.grid_size,ChartEditor.grid_size);
         updateHitbox();
 
-        if (!isSustain && holdLength > 0){
+        if (!isSustain){
             nSustain = new ChartNote();
             nSustain.init([strumTime + Conductor.stepCrochet,noteData, 0, noteType, noteArgs], true);
             nSustain.setGraphicSize(ChartEditor.grid_size/2.5, Std.int(ChartEditor.grid_size*((holdLength-(Conductor.stepCrochet*2)) / Conductor.stepCrochet)));
@@ -72,8 +76,9 @@ class ChartNote extends FlxSprite {
     override function draw():Void {
         if (asDummyNote){
             bgHighlight.x = x;
-            bgHighlight.y = y;
+            bgHighlight.y = y+(bgHighlight.height*bgHighlight.scale.y)/2;
             bgHighlight.alpha = alpha * 0.5;
+            bgHighlight.setGraphicSize(ChartEditor.grid_size, height);
             bgHighlight.draw();
         }
 
@@ -99,5 +104,13 @@ class ChartNote extends FlxSprite {
             animation.play(Note.directions[noteData%4]+"anim",true);
         }
         super.draw();
+        if (!asDummyNote && isSelected){
+            bgHighlight.x = x;
+            bgHighlight.y = y+(bgHighlight.height*bgHighlight.scale.y)/2;
+            bgHighlight.alpha = alpha * 0.5;
+            bgHighlight.setGraphicSize(ChartEditor.grid_size, height+(!isSustain && holdLength>0?nSustain.height+nSustainEnd.height:0));
+            bgHighlight.color = CDevConfig.utils.CDEV_ENGINE_BLUE;
+            bgHighlight.draw();
+        }
     }
 }

@@ -1,6 +1,5 @@
 package game.objects;
 
-
 import game.cdev.script.ScriptSupport;
 import game.cdev.script.CDevScript;
 import sys.FileSystem;
@@ -17,51 +16,46 @@ import meta.states.PlayState;
 
 using StringTools;
 
+/**
+ * Note object for Funkin
+ */
 class Note extends FlxSprite
 {
+	public static var NOTE_TEXTURE:FlxAtlasFrames = null;
 	public static var noteScale:Float = 0.65;
 	public static var defaultGraphicSize:Float = 160;
+	public static var swagWidth:Float = defaultGraphicSize * noteScale; // Parent note size after scaling
 	public static var directions:Array<String> = ["purple", "blue", "green", "red"];
 
+	// avoid repetitive missing note type file warnings
+	public static var noteTypeFail:Array<String> = [];
+
 	public var script:CDevScript = null;
+
 	var gotScript:Bool = false;
-	public var noteArgs:Array<String> = ["",""];
 
-	public var noteType:String = "Default Note";
-
+	// Data stuff retrieved from the chart json
 	public var strumTime:Float = 0;
-
-	public var mustPress:Bool = false;
 	public var noteData:Int = 0;
+	public var isSustainNote:Bool = false;
+	public var noteType:String = "Default Note";
+	public var noteArgs:Array<String> = ["", ""];
+
+	// Indicating if this note belongs to the player or opponent
+	public var mustPress:Bool = false;
 	public var canBeHit:Bool = false;
 	public var tooLate:Bool = false;
 	public var wasGoodHit:Bool = false;
 	public var prevNote:Note;
 
-	//chart editor stuffs
+	// Legacy chart editor stuffs
+	public var sustainLength:Float = 0;
 	public var rawNoteData:Int = 0;
 	public var noteStep:Int = 0;
 
-	public var isPixelSkinNote:Bool = false;
-
-	public var sustainLength:Float = 0;
-	public var isSustainNote:Bool = false;
-
-	public var isTesting:Bool = false;
-
-	public var noteScore:Float = 1;
-
-	//avoid repetitive missing note type file warnings
-	public static var noteTypeFail:Array<String> = [];
-
-	public static var swagWidth:Float = defaultGraphicSize * noteScale;
-	public static var PURP_NOTE:Int = 0;
-	public static var GREEN_NOTE:Int = 2;
-	public static var BLUE_NOTE:Int = 1;
-	public static var RED_NOTE:Int = 3;
-
 	public var noteYOffset:Float = 0;
 
+	// HScript stuffs
 	public var xAdd:Float = 0;
 	public var yAdd:Float = 0;
 
@@ -70,79 +64,73 @@ class Note extends FlxSprite
 	public var offsetAngle:Float = 0;
 	public var multAlpha:Float = 1;
 
-	// used for hscript
 	public var followX:Bool = true;
 	public var followY:Bool = true;
-	public var noAnim:Bool = false; //should this note trigger an animation?
+	public var noAnim:Bool = false; // Whether this note should trigger an animation?
 	public var canIgnore:Bool = false;
 
-	// follow the strum's arrow angle & alpha
-	public var followAngle:Bool = true;
-	public var followAlpha:Bool = true;
+	public var followAngle:Bool = true; // follow the strum's arrow angle
+	public var followAlpha:Bool = true; // and alpha
 
 	public var graphicHeightOrigin:Float = 0;
 	public var theYScale:Float = 0;
 
 	public var rating:String = "shit";
 
-	public var noteColor:FlxColor = FlxColor.WHITE;
-
-	var noteBeat:Float = 0;
-
 	// TESTING AND SHET
-	public var mainNote:Note = null; //used for sustain notes.
+	public var mainNote:Note = null; // used for sustain notes.
 	public var strumParent:StrumArrow;
-	var calcStepH:Bool = true;
 
-	// hell of arguments
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?MustCalcStepHeight:Bool = true, ?noteTyp:String = "Default Note", ?noteArg:Array<String>)
+	// Creates a new note object.
+	public function new()
 	{
 		super();
+	}
 
-		if (prevNote == null)
-			prevNote = this;
-
-		if (noteArg != null)
-			noteArgs = noteArg;
-
-		this.prevNote = prevNote;
-		isSustainNote = sustainNote;
-		this.strumTime = strumTime;
-		this.noteData = noteData;
-		this.noteType = noteTyp;
-		calcStepH = MustCalcStepHeight;
+	public function load(time:Float, data:Int, isSustain:Bool = false, lastNote:Note = null, ?noteTyp:String = "Default Note", ?noteArg:Array<String>)
+	{
+		prevNote = (lastNote == null) ? this : lastNote;
+		isSustainNote = isSustain;
+		strumTime = time;
+		noteData = data;
+		noteType = noteTyp;
+		noteArgs = noteArg == null ? ['',''] : noteArg;
 
 		x += PlayState.strumXpos + 50;
-		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
 
-		//damn bro.
-		if (!default_notetypes.contains(noteType)){
-			var scriptPath:String = Paths.modFolders("notes/"+noteType+".hx");
+		// damn bro.
+		if (!default_notetypes.contains(noteType))
+		{
+			var scriptPath:String = Paths.modFolders("notes/" + noteType + ".hx");
 			if (FileSystem.exists(scriptPath))
 			{
 				script = CDevScript.create(scriptPath);
 				gotScript = true;
-				
+
 				script.setVariable("initialize", initialize);
 				script.setVariable("loadTexture", loadTexture);
 				script.setVariable("current", this);
 				ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.song);
-				
+
 				script.loadFile(scriptPath);
-				
+
 				if (gotScript)
 					script.executeFunc("create", noteArgs);
-			} else{
+			}
+			else
+			{
 				if (!noteTypeFail.contains(noteType))
 				{
 					noteTypeFail.push(noteType);
-					GameLog.warn("Note Type " + noteType + " doesn't exist on path " + scriptPath);
+					Log.warn("Note Type " + noteType + " doesn't exist on path " + scriptPath);
 				}
 				loadTexture("notes/NOTE_assets");
 				initialize();
 			}
-		} else{
+		}
+		else
+		{
 			loadTexture("notes/NOTE_assets");
 			initialize();
 			if (noteType == "No Animation")
@@ -150,14 +138,18 @@ class Note extends FlxSprite
 		}
 	}
 
-	public function disableScript(){
-		if (script == null) return;
+	public function disableScript()
+	{
+		if (script == null)
+			return;
 		script.destroy();
 		script = null;
 		gotScript = false;
 	}
 
-	public function initialize(){
+	public static var traceMe:Bool = false;
+	public function initialize()
+	{
 		switch (noteData)
 		{
 			case 0:
@@ -175,17 +167,14 @@ class Note extends FlxSprite
 		}
 
 		graphicHeightOrigin = frameHeight;
-		//prevNote.graphicHeightOrigin = prevNote.frameHeight;
+		// prevNote.graphicHeightOrigin = prevNote.frameHeight;
 
 		if (CDevConfig.saveData.downscroll && isSustainNote)
 			flipY = true;
 
-		if (calcStepH)
-			calculateNoteStepHeight();
-
 		if (isSustainNote && prevNote != null)
 		{
-			//noteScore * 0.2;
+			// noteScore * 0.2;
 			alpha = 0.6;
 
 			x += width / 2 + 30;
@@ -206,11 +195,11 @@ class Note extends FlxSprite
 
 			x -= width / 2 + 30;
 			noteYOffset = offset.y;
-
 			if (PlayState.curStage.startsWith('school'))
 				x += 30;
 
-			var shit:Float = (CDevConfig.saveData.scrollSpeed == 1 && PlayState.SONG != null ? PlayState.SONG.speed : CDevConfig.saveData.scrollSpeed);
+			var sSpeed:Float = (CDevConfig.saveData.scrollSpeed == 1
+				&& PlayState.SONG != null ? PlayState.SONG.speed : CDevConfig.saveData.scrollSpeed);
 			if (prevNote.isSustainNote)
 			{
 				switch (prevNote.noteData)
@@ -224,27 +213,23 @@ class Note extends FlxSprite
 					case 3:
 						prevNote.animation.play('redhold');
 				}
-				
-				//prevNote.scale.y *= (Conductor.stepCrochet + 10) / 100 * 1.5 * shit;
-				//prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
-				//prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05 * shit;
-				prevNote.scale.y *= (Conductor.stepCrochet-2) / 100 * ((43 / 52)*1.35) * 1.5 * shit;
-				prevNote.theYScale = prevNote.scale.y;
+
+				prevNote.scale.y = ((Conductor.stepCrochet+2) * (sSpeed*0.45)) / 44;
+
+				if (!traceMe) {
+					traceMe = true;
+					trace(prevNote.scale.y);
+				}
+
 				prevNote.updateHitbox();
-
-				prevNote.noteYOffset = prevNote.offset.y;
 			}
-
-			noteColor = CDevConfig.utils.getColor(this);
 		}
 	}
 
-	public function loadTexture(tex:String = "notes/NOTE_assets"){
+	public function loadTexture(tex:String = "notes/NOTE_assets")
+	{
 		Paths.currentMod = PlayState.fromMod;
-		/*if (tex!="notes/NOTE_assets") trace("loading " + tex);
-		if (tex!="notes/NOTE_assets") trace("playstate frommod " + PlayState.fromMod);
-		if (tex!="notes/NOTE_assets") trace("paths curmod " + Paths.currentMod);
-		if (tex!="notes/NOTE_assets") trace(Paths.modFolders('images/' + tex + '.png'));*/
+
 		var pixelStage:Bool = PlayState.isPixel;
 
 		if (pixelStage)
@@ -273,14 +258,15 @@ class Note extends FlxSprite
 
 			setGraphicSize(Std.int(width * (PlayState.daPixelZoom - 0.1)));
 			updateHitbox();
-			isPixelSkinNote = true;
 			graphicHeightOrigin = height;
 		}
 		else
 		{
-			frames = Paths.getSparrowAtlas(tex, "shared");
-			if (frames==null){
-				GameLog.warn("Note.hx:0: Texture asset \""+tex+"\" for note type \""+noteType+"\" doesn't exist!");
+			// What
+			frames = (tex == "notes/NOTE_assets" && Note.NOTE_TEXTURE != null ? Note.NOTE_TEXTURE : Paths.getSparrowAtlas(tex, "shared"));
+			if (frames == null)
+			{
+				Log.warn("Note.hx:0: Texture asset \"" + tex + "\" for note type \"" + noteType + "\" doesn't exist!");
 				frames = Paths.getSparrowAtlas("notes/NOTE_assets", "shared");
 			}
 
@@ -305,29 +291,10 @@ class Note extends FlxSprite
 		}
 	}
 
-	function changeNoteColor(newColor:Int)
-	{
-		color = newColor;
-		noteColor = newColor;
-	}
-
-	var noteStepHeight:Float = 0;
-
-	function calculateNoteStepHeight()
-	{
-		if (!isTesting)
-			noteStepHeight = (((0.45 * Conductor.stepCrochet)) * FlxMath.roundDecimal(CDevConfig.saveData.scrollSpeed == 1 && PlayState.SONG != null ? PlayState.SONG.speed : CDevConfig.saveData.scrollSpeed,
-				2));
-	}
-
 	public static function getNoteInfo(ntDt:Int = 0):Note
 	{
-		var noteToReturn:Note;
-		if (ntDt == -1)
-			noteToReturn = new Note(0, 0);
-		else
-			noteToReturn = new Note(0, ntDt);
-
+		var noteToReturn:Note = new Note();
+		noteToReturn.load(0,(ntDt==-1?0:ntDt));
 		return noteToReturn;
 	}
 
@@ -339,49 +306,52 @@ class Note extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if (!isTesting)
-		{
-			if (mustPress)
-			{
-				// The * 0.5 is so that it's easier to hit them too late, instead of too early
-				if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
-					&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
-					canBeHit = true;
-				else
-					canBeHit = false;
 
-				if (strumTime < (Conductor.songPosition - 166) /* && !wasGoodHit*/)
-					tooLate = true;
-			}
+		if (mustPress)
+		{
+			// The * 0.5 is so that it's easier to hit them too late, instead of too early
+			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
+				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
+				canBeHit = true;
 			else
-			{
 				canBeHit = false;
 
-				if (strumTime <= Conductor.songPosition)
-					wasGoodHit = true;
-			}
-
-			if (tooLate)
-			{
-				if (alpha > 0.3)
-					alpha = 0.3;
-			}
-
-			if (gotScript)
-				script.executeFunc("update", [elapsed]);
+			if (strumTime < (Conductor.songPosition - 166) /* && !wasGoodHit*/)
+				tooLate = true;
 		}
+		else
+		{
+			canBeHit = false;
+
+			if (strumTime <= Conductor.songPosition)
+				wasGoodHit = true;
+		}
+
+		if (tooLate)
+		{
+			if (alpha > 0.3)
+				alpha = 0.3;
+		}
+
+		if (gotScript)
+			script.executeFunc("update", [elapsed]);
 	}
 
-	//scripting purposes
-	public function onNoteHit(rating:String, player:Bool){
+	// scripting purposes
+	public function onNoteHit(rating:String, player:Bool)
+	{
 		if (gotScript)
 			script.executeFunc("onNoteHit", [rating, player]);
 	}
-	public function onNoteSpawn(){
+
+	public function onNoteSpawn()
+	{
 		if (gotScript)
 			script.executeFunc("onNoteSpawn", []);
 	}
-	public function onNoteMiss(){
+
+	public function onNoteMiss()
+	{
 		if (gotScript)
 			script.executeFunc("onNoteMiss", []);
 	}

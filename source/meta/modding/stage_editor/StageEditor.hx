@@ -222,7 +222,7 @@ class StageEditor extends MusicBeatState
 			function(stage:String)
 			{
 				stageToLoad = stageList[Std.parseInt(stage)];
-				FlxG.resetState();
+				FlxG.switchState(new StageEditor(stageList[Std.parseInt(stage)]));
 			});
 		stageDropDown.selectedLabel = stageToLoad;
 		stageDropDown.dropDirection = Up;

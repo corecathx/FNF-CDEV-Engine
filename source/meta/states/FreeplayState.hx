@@ -1,5 +1,7 @@
 package meta.states;
 
+import game.system.FunkinSoundFilter;
+import game.cdev.objects.CDevInputText;
 import meta.substates.LoadingSubstate;
 import game.system.FunkinThread;
 import sys.thread.FixedThreadPool;
@@ -56,6 +58,7 @@ class FreeplayState extends MusicBeatState
 	var selector:FlxText;
 
 	static var curSelected:Int = 0;
+	static var supposedlySelected:Int = 0;
 
 	var selectedDifficulty:String = "";
 
@@ -96,8 +99,6 @@ class FreeplayState extends MusicBeatState
 
 	static var selectedBPMSONG:Int = 0;
 
-	var songBG:FlxSprite;
-	var songBar:FlxBar;
 
 	var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('aboutMenu'));
 	private var iconArray:Array<HealthIcon> = [];
@@ -113,6 +114,9 @@ class FreeplayState extends MusicBeatState
 
 	// this is just dumb
 	var yeahNormal:Bool = false;
+	
+	var searchBar:CDevInputText;
+	var hint:FlxText;
 
 	override function create()
 	{
@@ -131,9 +135,8 @@ class FreeplayState extends MusicBeatState
 			var list:Array<String> = [];
 
 			if (FileSystem.exists(Sys.getCwd() + 'cdev-mods/' + Paths.curModDir[directory] + '/songList.txt'))
-			{
 				list = File.getContent('cdev-mods/' + Paths.curModDir[directory] + '/songList.txt').trim().split('\n');
-			}
+
 			for (i in 0...list.length)
 				list[i] = list[i].trim();
 
@@ -144,7 +147,6 @@ class FreeplayState extends MusicBeatState
 				{
 					customSongList.push(songListTxt[i]);
 					songModListIdk.push(crapz);
-					// trace('\nSong: ' + songListTxt[i] + "\nMod: " + crapz);
 				}
 			}
 		}
@@ -155,26 +157,13 @@ class FreeplayState extends MusicBeatState
 			Paths.currentMod = CDevConfig.utils.isPriorityMod(true);
 			var data:ModFile = Paths.modData();
 			if (data != null)
-			{
 				if (Reflect.hasField(data, "disable_base_game"))
-				{
 					allowDefSongs = !data.disable_base_game;
-				}
-			}
 		}
-
-		/*if (allowDefSongs)
-		{
-			for (i in 0...initSonglist.length)
-			{
-				var data:Array<String> = initSonglist[i].split(':');
-				songs.push(new SongMetadata(data[0], Std.parseInt(data[2]), data[1], 'BASEFNF'));
-			}
-		}*/
 
 		for (i in 0...WeekData.loadedWeeks.length)
 		{
-			var daWeek:WeekFile = WeekData.loadedWeeks[i][0];
+			var daWeek:WeekFile = WeekData.loadedWeeks[i].data;
 			var daSongs:Array<String> = [];
 			var daChars:Array<String> = [];
 
@@ -192,11 +181,8 @@ class FreeplayState extends MusicBeatState
 					{
 						var colors:Array<Int> = song.colors;
 						if (colors == null || colors.length < 3)
-						{
 							colors = [146, 113, 253];
-						}
-						songs.push(new SongMetadata(song.song, 1, song.character, WeekData.loadedWeeks[i][1], colors, true, daWeek));
-						// addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
+						songs.push(new SongMetadata(song.song, 1, song.character, WeekData.loadedWeeks[i].mod, colors, true, daWeek));
 					}
 				}
 			}
@@ -257,31 +243,7 @@ class FreeplayState extends MusicBeatState
 		grpSongs = new FlxTypedGroup<Alphabet>();
 		add(grpSongs);
 
-		for (i in 0...songs.length)
-		{
-			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName, true);
-			songText.isMenuItem = true;
-			songText.isFreeplay = true;
-			songText.targetY = i;
-			songText.ID = i;
-			grpSongs.add(songText);
-
-			Paths.currentMod = songs[i].fromMod;
-			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
-			icon.sprTracker = songText;
-			icon.ID = i;
-
-			// using a FlxGroup is too much fuss!
-			iconArray.push(icon);
-			add(icon);
-
-			// h e l l .
-			// Caching.doMusicCaching(songs[i].songName);
-
-			// songText.x += 40;
-			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
-			// songText.screenCenter(X);
-		}
+		genSongText();
 
 		var scoreBG:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, 66, 0xFF000000);
 		scoreBG.alpha = 0.8;
@@ -301,7 +263,7 @@ class FreeplayState extends MusicBeatState
 		difficultySelectors = new FlxTypedGroup<FlxSprite>();
 		add(difficultySelectors);
 
-		leftArrow = new FlxSprite(800, 0);
+		leftArrow = new FlxSprite(880, 0);
 		leftArrow.frames = ui_tex;
 		leftArrow.animation.addByPrefix('idle', "arrow left");
 		leftArrow.animation.addByPrefix('press', "arrow push left");
@@ -312,7 +274,7 @@ class FreeplayState extends MusicBeatState
 		leftArrow.y = FlxG.height - leftArrow.height - 30;
 
 		sprDifficulty = new FlxText(leftArrow.x + 70, leftArrow.y + 20, (308 * 0.8), "DIFF", 44);
-		sprDifficulty.setFormat(Paths.font("diffic.ttf"), 44, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		sprDifficulty.setFormat(FunkinFonts.DIFF, 44, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
 
 		difficultySelectors.add(sprDifficulty);
 
@@ -347,6 +309,27 @@ class FreeplayState extends MusicBeatState
 		tip.screenCenter(X);
 		add(tip);
 
+		searchBar = new CDevInputText(0, bottomPanl.y, 340, "", 16, FlxColor.WHITE, 0xFF303030);
+		searchBar.font = FunkinFonts.VCR;
+		@:privateAccess{
+			searchBar.calcFrame();
+		}
+		searchBar.y -= searchBar.height;
+		searchBar.x = (FlxG.width-(searchBar.width+20));
+		searchBar.onTextChanged = (nText:String) -> {
+			genSongText(nText.trim() == "");
+		}
+		add(searchBar);
+		hint = new FlxText(searchBar.x, searchBar.y, searchBar.width-4,"Type here to search",16);
+		hint.font = FunkinFonts.VCR;
+		hint.active = false;
+		hint.alpha = 0.5;
+		add(hint);
+
+		searchBar.onFocus = (b:Bool) -> {
+			hint.visible = (!b && searchBar.text == "" && searchBar.visible);
+		};
+
 		// the mod menu
 		createModMenu();
 
@@ -363,6 +346,52 @@ class FreeplayState extends MusicBeatState
 		FlxG.mouse.visible = true;
 
 		super.create();
+	}
+
+	function genSongText(genAll:Bool = true){
+		grpSongs.clear();
+		while (iconArray.length != 0)
+		{
+			for (i in iconArray)
+			{
+				if (i != null)
+				{
+					i.destroy();
+					remove(i);
+				}
+				iconArray.remove(i);
+			}
+		}
+		var supposedInt:Int = 0;
+		for (i in 0...songs.length)
+		{
+			if (!genAll && !songs[i].songName.toLowerCase().trim().contains(searchBar.text.toLowerCase().trim())) continue;
+			Paths.currentMod = songs[i].fromMod;
+
+			var size:Int = 34;
+			var offset:Float = 36;
+			var songText:Alphabet = new Alphabet(120, ((supposedInt - curSelected) * (size + offset)) + (FlxG.height * 0.48), songs[i].songName, true, false, size);
+			songText.isMenuItem = true;
+			songText.isFreeplay = true;
+			songText.forcePositionToScreen = false;
+			songText.heightOffset = offset;
+			songText.targetY = supposedInt;
+			songText.rawSelect = i;
+			songText.ID = supposedInt;
+			grpSongs.add(songText);
+
+			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
+			icon.sprTracker = songText;
+			icon.ID = supposedInt;
+			icon.offset.set(15, 15);
+			icon.scale.set(0.7, 0.7);
+			iconArray.push(icon);
+			add(icon);
+
+			supposedInt++;
+		}
+
+		changeSelection(curSelected, true);
 	}
 
 	function createModMenu()
@@ -403,32 +432,20 @@ class FreeplayState extends MusicBeatState
 		versionSht.borderSize = 2;
 	}
 
-	public function addSong(songName:String, weekNum:Int, songCharacter:String, daMod:String)
-	{
-		songs.push(new SongMetadata(songName, weekNum, songCharacter, daMod));
-	}
-
-	public function addWeek(songs:Array<String>, weekNum:Int, ?songCharacters:Array<String>, daMod:String)
-	{
-		if (songCharacters == null)
-			songCharacters = ['bf'];
-
-		var num:Int = 0;
-		for (song in songs)
-		{
-			addSong(song, weekNum, songCharacters[num], daMod);
-
-			if (songCharacters.length != 1)
-				num++;
-		}
-	}
-
 	var bgX:Float = FlxG.width;
 	var vershit:Float = FlxG.height;
 	var addedSmthing:Bool = false;
 
+	var cLowPass:Float = 1;
+	var curPass:Float = 1;
+
 	override function update(elapsed:Float)
 	{
+		if (FlxG.sound.music != null) {
+			Conductor.songPosition = FlxG.sound.music.time;
+			FunkinSoundFilter.setLowPass(FlxG.sound.music,1,cLowPass);
+			cLowPass = FlxMath.lerp(cLowPass,curPass, 1-(elapsed*5));
+		}
 		modMenuBG.x = Std.int(FlxMath.lerp(bgX, modMenuBG.x, game.cdev.CDevConfig.utils.bound(1 - (elapsed * 10), 0, 1)));
 		versionSht.y = Std.int(FlxMath.lerp(vershit, versionSht.y, game.cdev.CDevConfig.utils.bound(1 - (elapsed * 7), 0, 1)));
 		grpModMenu.forEachAlive(function(theThing:VCRGrpText)
@@ -437,15 +454,12 @@ class FreeplayState extends MusicBeatState
 		});
 		modTitle.x = modMenuBG.x + (modMenuBG.width / 2) - (modTitle.width / 2);
 
-		if (FlxG.sound.music != null)
-			Conductor.songPosition = FlxG.sound.music.time;
-
 		if (!selectedThing){
 			if (FlxG.sound.music!=null&&FlxG.sound.music.volume < 0.7)
 				FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
 
-		bg.alpha = FlxMath.lerp(0.7, bg.alpha, game.cdev.CDevConfig.utils.bound(1 - (elapsed * 8), 0, 1));
+		bg.alpha = FlxMath.lerp(0.5, bg.alpha, game.cdev.CDevConfig.utils.bound(1 - (elapsed * 8), 0, 1));
 		
 		//using bgScaleLerp so that the scaling doesn't go way too smooth
 		//(preventing motion sickness or something??)
@@ -457,28 +471,6 @@ class FreeplayState extends MusicBeatState
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, 0.4));
 		lerpRating = FlxMath.lerp(lerpRating, intendedRating, 0.4);
 
-		for (icon in iconArray)
-		{
-			var lerp:Float = FlxMath.lerp(1, icon.scale.x, game.cdev.CDevConfig.utils.bound(1 - (elapsed * 12), 0, 1));
-			icon.scale.set(lerp, lerp);
-
-			if (icon.ID == curSelected)
-			{
-				if (icon.hasWinningIcon)
-				{
-					icon.animation.curAnim.curFrame = 2;
-				}
-				else
-				{
-					icon.animation.curAnim.curFrame = 0;
-				}
-			}
-			else
-			{
-				iconArray[icon.ID].animation.curAnim.curFrame = 0;
-			}
-		}
-
 		if (Math.abs(lerpScore - intendedScore) <= 10)
 			lerpScore = intendedScore;
 		if (Math.abs(lerpRating - intendedRating) <= 0.01)
@@ -487,26 +479,24 @@ class FreeplayState extends MusicBeatState
 		scoreText.text = 'PERSONAL BEST: ' + lerpScore + "\n" + game.cdev.RatingsCheck.fixFloat(lerpRating, 2) + '%' + " ("
 			+ game.cdev.RatingsCheck.getRatingText(lerpRating)[0] + ")";
 
+		for (icon in iconArray)
+		{
+			if (icon == null) continue;
+			var lerp:Float = FlxMath.lerp(0.7, icon.scale.x, game.cdev.CDevConfig.utils.bound(1 - (elapsed * 12), 0, 1));
+			icon.scale.set(lerp, lerp);
+
+			if (icon.ID == curSelected)
+				icon.animation.curAnim.curFrame = icon.hasWinningIcon ? 2 : 0;
+			else
+				icon.animation.curAnim.curFrame = 0;
+		}
+
+		searchBar.active = searchBar.visible = !modMenuOpened;
+
 		super.update(elapsed);
 		var upP = controls.UI_UP_P;
 		var downP = controls.UI_DOWN_P;
 		var accepted = FlxG.keys.justPressed.ENTER;
-		var clicked = false;
-
-		if (selectedThing)
-		{
-			barValueLRP = FlxMath.lerp(barValue, barValueLRP, 1 - (elapsed*3));
-			if (daText != null){
-				// doing this on a update function since changing FlxText text property
-				// on a new thread somehow messes with the openfl's text engine
-				if (daText.text != currentText){
-					var percent:Float = FlxMath.roundDecimal((barValueLRP/cachingAmount)*100, 2)+2;
-					percent = FlxMath.bound(percent, 0, 100);
-					daText.text = currentText + " // " + percent + "%";
-					daText.screenCenter(X);
-				}
-			}
-		}
 
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			CDevConfig.utils.setSoundPitch(FlxG.sound.music, speed);
@@ -515,157 +505,141 @@ class FreeplayState extends MusicBeatState
 		{
 			if (!selectedThing)
 			{
-				if (controls.UI_RIGHT)
-					rightArrow.animation.play('press')
-				else
-					rightArrow.animation.play('idle');
+				if (!searchBar.hasFocus){
+					if (curSelected == grpSongs.length) return;
+					rightArrow.animation.play(controls.UI_RIGHT ? 'press' : 'idle');
+					leftArrow.animation.play(controls.UI_LEFT ? 'press' : 'idle');
 
-				if (controls.UI_LEFT)
-					leftArrow.animation.play('press');
-				else
-					leftArrow.animation.play('idle');
-
-				if (FlxG.mouse.wheel > 0 || upP)
-				{
-					// up
-					changeSelection(-1);
-				}
-				else if (FlxG.mouse.wheel < 0 || downP)
-				{
-					// down
-					changeSelection(1);
-				}
-
-				if (controls.RESET)
-					resetScore();
-
-				if (FlxG.mouse.overlaps(leftArrow))
-				{
-					if (FlxG.mouse.pressed)
-						leftArrow.animation.play('press');
-					else
-						leftArrow.animation.play('idle');
-
-					if (FlxG.mouse.justPressed)
+					if (FlxG.mouse.wheel > 0 || upP)
 					{
-						changeDiff(-1);
+						changeSelection(-1);
 					}
-				}
-
-				if (FlxG.mouse.overlaps(rightArrow))
-				{
-					if (FlxG.mouse.pressed)
-						rightArrow.animation.play('press');
-					else
-						rightArrow.animation.play('idle');
-
-					if (FlxG.mouse.justPressed)
+					else if (FlxG.mouse.wheel < 0 || downP)
 					{
-						changeDiff(1);
+						changeSelection(1);
 					}
-				}
 
-				for (item in grpSongs.members)
-				{
-					if (FlxG.mouse.overlaps(item))
+					if (controls.RESET)
+						resetScore();
+
+					if (FlxG.mouse.overlaps(leftArrow))
 					{
+						leftArrow.animation.play(FlxG.mouse.pressed ? 'press' : 'idle');
+
 						if (FlxG.mouse.justPressed)
+							changeDiff(-1);
+					}
+
+					if (FlxG.mouse.overlaps(rightArrow))
+					{
+						rightArrow.animation.play(FlxG.mouse.pressed ? 'press' : 'idle');
+
+						if (FlxG.mouse.justPressed)
+							changeDiff(1);
+					}
+
+					for (item in grpSongs.members)
+					{
+						if (FlxG.mouse.overlaps(item))
 						{
-							if (curSelected != item.ID)
+							if (FlxG.mouse.justPressed)
 							{
-								changeSelection(item.ID, true);
-							}
-							else
-							{
-								var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
-								var daSong:String = songs[curSelected].songName.toLowerCase().replace(" ", "-");
-
-								var sel:String = (yeahNormal ? daSong : poop);
-								#if sys
-								if (!FileSystem.exists(Paths.modJson(songs[curSelected].songName.toLowerCase() + '/' + sel))
-									&& !FileSystem.exists(Paths.json(songs[curSelected].songName.toLowerCase() + '/' + sel)))
+								if (curSelected != item.ID)
 								{
-									if (FlxG.sound.music != null) FlxG.sound.music.pause();
-
-									var songName:String = "";
-									var f:Array<String> = sel.split("-");
-									trace(f);
-									songName = sel.toLowerCase().replace(f[f.length], "");
-
-									var detailText = 'Can\'t load this chart file: \"$sel.json\" because it doesn\'t exists.'
-										+ "\nWe can't find them under this folder path: "
-										+ (songs[curSelected].fromMod == "BASEFNF" ? 
-										   "\n- /assets/data/charts/" + songName + "/" :
-										   "\n- /cdev-mods/"+Paths.currentMod+"/data/charts/" + songName) 
-										+ "\n\nPlease make sure the .json chart file exists on that directory";
-									openSubState(new CDevPopUp("Error", detailText, [{text:"OK", callback:closeSubState}],false, true));
-									//openSubState(new MissingFileSubstate(sel));
+									changeSelection(item.ID, true);
 								}
 								else
 								{
-								#end
-									selectedSong();
-								#if sys
+									var poop:String = Highscore.formatSong(songs[supposedlySelected].songName.toLowerCase(), curDifficulty);
+									var daSong:String = songs[supposedlySelected].songName.toLowerCase().replace(" ", "-");
+
+									var sel:String = (yeahNormal ? daSong : poop);
+									#if sys
+									if (!FileSystem.exists(Paths.modJson(songs[supposedlySelected].songName.toLowerCase() + '/' + sel))
+										&& !FileSystem.exists(Paths.json(songs[supposedlySelected].songName.toLowerCase() + '/' + sel)))
+									{
+										if (FlxG.sound.music != null) FlxG.sound.music.pause();
+
+										var songName:String = "";
+										var f:Array<String> = sel.split("-");
+										trace(f);
+										songName = sel.toLowerCase().replace(f[f.length], "");
+
+										var detailText = 'Can\'t load this chart file: \"$sel.json\" because it doesn\'t exists.'
+											+ "\nWe can't find them under this folder path: "
+											+ (songs[supposedlySelected].fromMod == "BASEFNF" ? 
+											"\n- /assets/data/charts/" + songName + "/" :
+											"\n- /cdev-mods/"+Paths.currentMod+"/data/charts/" + songName) 
+											+ "\n\nPlease make sure the .json chart file exists on that directory";
+										openSubState(new CDevPopUp("Error", detailText, [{text:"OK", callback:closeSubState}],false, true));
+										//openSubState(new MissingFileSubstate(sel));
+									}
+									else
+									{
+									#end
+										selectedSong();
+									#if sys
+									}
+									#end
 								}
-								#end
 							}
 						}
 					}
-				}
 
-				if (controls.UI_LEFT_P)
-					changeDiff(-1);
-				if (controls.UI_RIGHT_P)
-					changeDiff(1);
+					if (controls.UI_LEFT_P)
+						changeDiff(-1);
+					if (controls.UI_RIGHT_P)
+						changeDiff(1);
 
-				if (FlxG.keys.justPressed.M)
-					openMods();
+					if (FlxG.keys.justPressed.M)
+						openMods();
 
-				if (controls.BACK)
-				{
-					if (CDevConfig.saveData.smoothAF)
+					if (controls.BACK)
 					{
-						FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
+						if (CDevConfig.saveData.smoothAF)
+						{
+							FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
+						}
+
+						if (FlxG.sound.music != null && FlxG.sound.music.playing)
+							CDevConfig.utils.setSoundPitch(FlxG.sound.music, speed);
+
+						FlxG.switchState(new MainMenuState());
+
+						readDiff(true);
 					}
 
-					if (FlxG.sound.music != null && FlxG.sound.music.playing)
-						CDevConfig.utils.setSoundPitch(FlxG.sound.music, speed);
-
-					FlxG.switchState(new MainMenuState());
-
-					readDiff(true);
-				}
-
-				if (FlxG.sound.music != null && !FlxG.sound.music.playing)
-				{
-					curPlayedSong = '';
-				}
-
-				if (FlxG.keys.justPressed.SPACE)
-				{
-					if (curPlayedSong != songs[curSelected].songName)
+					if (FlxG.sound.music != null && !FlxG.sound.music.playing)
 					{
-						curPlayedSong = songs[curSelected].songName;
-						Paths.currentMod = songs[curSelected].fromMod;
-						#if PRELOAD_ALL
-						FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
-						#end
+						curPlayedSong = '';
+					}
 
-						#if desktop
-						changeDaBPM();
-						#end
+					if (FlxG.keys.justPressed.SPACE)
+					{
+						if (curPlayedSong != songs[supposedlySelected].songName)
+						{
+							curPlayedSong = songs[supposedlySelected].songName;
+							Paths.currentMod = songs[supposedlySelected].fromMod;
+							#if PRELOAD_ALL
+							FlxG.sound.playMusic(Paths.inst(songs[supposedlySelected].songName), 0);
+							#end
+							FunkinSoundFilter.setLowPass(FlxG.sound.music,1,cLowPass);
+
+							#if desktop
+							changeDaBPM();
+							#end
+						}
 					}
 				}
-
 				if (accepted)
 				{
-					var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
-					var daSong:String = songs[curSelected].songName.toLowerCase().replace(" ", "-");
+					var poop:String = Highscore.formatSong(songs[supposedlySelected].songName.toLowerCase(), curDifficulty);
+					var daSong:String = songs[supposedlySelected].songName.toLowerCase().replace(" ", "-");
 
 					var sel:String = (yeahNormal ? daSong : poop);
 					#if sys
-					if (!FileSystem.exists(Paths.modJson(songs[curSelected].songName.toLowerCase() + '/' + sel))
-						&& !FileSystem.exists(Paths.json(songs[curSelected].songName.toLowerCase() + '/' + sel)))
+					if (!FileSystem.exists(Paths.modJson(songs[supposedlySelected].songName.toLowerCase() + '/' + sel))
+						&& !FileSystem.exists(Paths.json(songs[supposedlySelected].songName.toLowerCase() + '/' + sel)))
 					{
 						if (FlxG.sound.music != null) FlxG.sound.music.pause();
 
@@ -676,7 +650,7 @@ class FreeplayState extends MusicBeatState
 
 						var detailText = 'Can\'t load this chart file: \"$sel.json\", it doesn\'t exists.'
 							+ "\nWe can't find the file in this folder: "
-							+ (songs[curSelected].fromMod == "BASEFNF" ? 
+							+ (songs[supposedlySelected].fromMod == "BASEFNF" ? 
 							   "\n- /assets/data/charts/" + songName + "/" :
 							   "\n- /cdev-mods/"+Paths.currentMod+"/data/charts/" + songName) 
 							+ "\n\nPlease make sure the .json chart file exists on that directory.";
@@ -905,18 +879,108 @@ class FreeplayState extends MusicBeatState
 		}
 		versionSht.text = modDescs[curModSelected];
 	}
-	var daText:FlxText;
-	var currentText:String;
-	function __updTxt(toThis:String){
-		currentText = toThis;
-		trace(currentText);
-	}
 	var characters:Array<Character> = [];
-	/*function doThreading(){
-		trace("=== Song Loading Thread start ===");
-		__updTxt("Loading...");
-		try FunkinThread.doTask(
-			[
+	function selectedSong() // look at how messy this function is
+	{
+		try {
+			curPass = 0.005;
+			selectedBPMSONG = supposedlySelected;
+			cachingAmount = 3;
+			curPlayedSong = songs[supposedlySelected].songName;
+	
+			var poop:String = Highscore.formatSong(songs[supposedlySelected].songName.toLowerCase(), curDifficulty);
+			var daSong:String = songs[supposedlySelected].songName.toLowerCase().replace(" ", "-");
+	
+			var sel:String = (yeahNormal ? daSong : poop);
+			PlayState.SONG = game.song.Song.loadFromJson(sel, songs[supposedlySelected].songName.toLowerCase());
+	
+			if (CDevConfig.saveData.testMode && FlxG.keys.pressed.SHIFT)
+				PlayState.isStoryMode = true;
+			else
+				PlayState.isStoryMode = false;
+	
+			if (PlayState.isStoryMode)
+			{
+				PlayState.storyPlaylist = [songs[supposedlySelected].songName];
+			}
+			PlayState.storyDifficulty = curDifficulty;
+	
+			PlayState.storyWeek = songs[supposedlySelected].week;
+			PlayState.fromMod = songs[supposedlySelected].fromMod;
+			PlayState.difficultyName = selectedDifficulty;
+			trace('CUR WEEK' + PlayState.storyWeek);
+	
+			selectedThing = true;
+			if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.3, 0.4);
+			FlxG.sound.play(Paths.sound('confirmMenu'), 0.6);
+			for (i in 0...iconArray.length)
+			{
+				if (i != curSelected)
+				{
+					FlxTween.tween(iconArray[i], {alpha: 0}, 1, {
+						ease: FlxEase.quadOut,
+						onComplete: function(twn:FlxTween)
+						{
+							iconArray[i].kill();
+						}
+					});
+				}
+				else
+				{
+					iconArray[curSelected].alpha = 1;
+				}
+			}
+			for (item in grpSongs.members)
+			{
+				if (item.targetY == 0)
+				{
+					item.lerpOnForceX = true;
+					item.alpha = 1;
+					// item.screenCenter(X);
+					item.xAdd -= 70;
+					item.wasChoosed = true;
+				}
+				else
+				{
+					item.wasChoosed = false;
+					FlxTween.tween(item, {alpha: 0}, 1, {
+						ease: FlxEase.circOut,
+						onComplete: function(twn:FlxTween)
+						{
+							item.kill();
+						}
+					});
+				}
+			}
+	
+			FlxTween.tween(scoreText, {y: scoreText.y + 200}, 1, {
+				ease: FlxEase.circOut,
+			});
+	
+			FlxTween.tween(tip, {y: tip.y + 150}, 1, {
+				ease: FlxEase.circOut,
+			});
+	
+			FlxTween.tween(searchBar, {x: FlxG.width}, 1, {
+				ease: FlxEase.circOut,
+			});
+			FlxTween.tween(hint, {x: FlxG.width}, 1, {
+				ease: FlxEase.circOut,
+			});
+	
+			FlxTween.tween(songInfo, {y: songInfo.y - 100}, 1, {
+				ease: FlxEase.circOut,
+			});
+			difficultySelectors.forEachAlive(function(hell:FlxSprite)
+			{
+				FlxTween.tween(hell, {y: hell.y + 100}, 1, {
+					ease: FlxEase.circOut,
+				});
+			});
+	
+			persistentDraw = persistentUpdate = true;
+	
+			LoadingSubstate.load(this,[
 				() -> {
 					//Character Caching
 					for (chr in [PlayState.SONG.player2,PlayState.SONG.player1,PlayState.SONG.gfVersion]){
@@ -938,178 +1002,34 @@ class FreeplayState extends MusicBeatState
 						if (msc != null) FlxG.sound.cache(msc);
 					}
 				}
-			],
-			(value:Int) -> {
-				barValue = value;
-				__updTxt("Loading...");
-			},
-			() -> {
-				__updTxt("Finished! Please Wait...");
-			}
-		) catch(e){
-			trace("the hell happened? " + e.toString());
-			
-			var text:String = "Failed loading assets for this song! Error: \n\n"+e.toString();
-			var butt:Array<PopUpButton> = [
-				{text: "Ok", callback: function(){
-					FlxG.switchState(new FreeplayState());
-				}},
-			];
-			openSubState(new CDevPopUp("Error", text, butt,false, true));
-		}
-	}*/
-	function selectedSong() // look at how messy this function is
-	{
-		selectedBPMSONG = curSelected;
-		cachingAmount = 3;
-		curPlayedSong = songs[curSelected].songName;
-		/*songBG = new FlxSprite(0, FlxG.height / 2 + 90).loadGraphic(Paths.image('healthBar', 'shared'));
-		songBG.screenCenter(X);
-		songBG.antialiasing = true;
-		songBG.scrollFactor.set();
-		add(songBG);
-
-		songBar = new FlxBar(songBG.x + 4, songBG.y + 4, LEFT_TO_RIGHT, Std.int(songBG.width - 8), Std.int(songBG.height - 8), this, 'barValueLRP', 0, cachingAmount);
-		songBar.numDivisions = 1000;
-		songBar.scrollFactor.set();
-		songBar.screenCenter(X);
-		songBar.antialiasing = true;
-		songBar.createFilledBar(FlxColor.BLACK, FlxColor.CYAN);
-		add(songBar);
-
-		daText = new FlxText(0, songBG.y + 30, "Getting ready to play the song...", 20);
-		daText.setFormat(FunkinFonts.VCR, 20, FlxColor.CYAN, CENTER, OUTLINE, FlxColor.BLACK);
-		daText.screenCenter(X);
-		add(daText);*/
-
-		var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
-		var daSong:String = songs[curSelected].songName.toLowerCase().replace(" ", "-");
-
-		var sel:String = (yeahNormal ? daSong : poop);
-		PlayState.SONG = game.song.Song.loadFromJson(sel, songs[curSelected].songName.toLowerCase());
-
-		if (CDevConfig.saveData.testMode && FlxG.keys.pressed.SHIFT)
-			PlayState.isStoryMode = true;
-		else
-			PlayState.isStoryMode = false;
-
-		if (PlayState.isStoryMode)
-		{
-			PlayState.storyPlaylist = [songs[curSelected].songName];
-		}
-		PlayState.storyDifficulty = curDifficulty;
-
-		PlayState.storyWeek = songs[curSelected].week;
-		PlayState.fromMod = songs[curSelected].fromMod;
-		PlayState.difficultyName = selectedDifficulty;
-		trace('CUR WEEK' + PlayState.storyWeek);
-
-		selectedThing = true;
-		if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.3, 0.4);
-		FlxG.sound.play(Paths.sound('confirmMenu'), 0.6);
-		for (i in 0...iconArray.length)
-		{
-			if (i != curSelected)
-			{
-				FlxTween.tween(iconArray[i], {alpha: 0}, 1, {
-					ease: FlxEase.quadOut,
-					onComplete: function(twn:FlxTween)
-					{
-						iconArray[i].kill();
-					}
-				});
-			}
-			else
-			{
-				iconArray[curSelected].alpha = 1;
-			}
-		}
-		for (item in grpSongs.members)
-		{
-			if (item.targetY == 0)
-			{
-				item.lerpOnForceX = true;
-				item.alpha = 1;
-				// item.screenCenter(X);
-				item.xAdd -= 70;
-				item.wasChoosed = true;
-			}
-			else
-			{
-				item.wasChoosed = false;
-				FlxTween.tween(item, {alpha: 0}, 1, {
-					ease: FlxEase.circOut,
-					onComplete: function(twn:FlxTween)
-					{
-						item.kill();
-					}
-				});
-			}
-		}
-
-		FlxTween.tween(scoreText, {y: scoreText.y + 200}, 1, {
-			ease: FlxEase.circOut,
-		});
-
-		FlxTween.tween(tip, {y: tip.y + 150}, 1, {
-			ease: FlxEase.circOut,
-		});
-
-		FlxTween.tween(songInfo, {y: songInfo.y - 100}, 1, {
-			ease: FlxEase.circOut,
-		});
-		difficultySelectors.forEachAlive(function(hell:FlxSprite)
-		{
-			FlxTween.tween(hell, {y: hell.y + 100}, 1, {
-				ease: FlxEase.circOut,
-			});
-		});
-
-		persistentDraw = persistentUpdate = true;
-
-		//Thread.create(doThreading);
-		//doThreading();
-		LoadingSubstate.load(this,[
-			() -> {
-				//Character Caching
-				for (chr in [PlayState.SONG.player2,PlayState.SONG.player1,PlayState.SONG.gfVersion]){
-					var tempChar:Character = new Character(0,0,chr);
-					tempChar.alpha = 0.00001;
-					add(tempChar);
-					characters.push(tempChar);
-					barValue++;
+			],["Characters", "Stage", "Music Files", "Clean-Up"],()->{
+				for (i in characters){
+					if (i != null) remove(i);
 				}
-			},
-			() -> {
-				//Stage Caching
-				new Stage(PlayState.SONG.stage, new PlayState(), true).createDaStage();
-				barValue++;
-			},
-			() -> {
-				// Music caching
-				for (msc in [Paths.inst(PlayState.SONG.song),Paths.voices(PlayState.SONG.song)]){
-					if (msc != null) FlxG.sound.cache(msc);
-				}
-			}
-		],["Characters", "Stage", "Music Files", "Clean-Up"],()->{
-			for (i in characters){
-				if (i != null) remove(i);
-			}
-			new FlxTimer().start(0.2, function(hasd:FlxTimer)
-			{
-				if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
-				playSong();
+				new FlxTimer().start(0.2, function(hasd:FlxTimer)
+				{
+					if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
+					playSong();
+				});
+			}, (wawas:String)->{
+				CDevPopUp.open(this,"Error","An error occured while running a task:\n-"+wawas,
+				[
+					{
+						text: "OK", 
+						callback:() -> {FlxG.switchState(new FreeplayState());}
+					}
+				], false, true);
 			});
-		}, (wawas:String)->{
-			CDevPopUp.open(this,"Error","An error occured while running a task:\n-"+wawas,
+		} catch(e){
+			CDevPopUp.open(this,"Error","An error occured while preparing to load your song:\n-"+e.toString(),
 			[
 				{
 					text: "OK", 
 					callback:() -> {FlxG.switchState(new FreeplayState());}
 				}
 			], false, true);
-		});
-		//new lime.app.Future(doThreading,true);
+		}
+
 	}
 
 	function playSong()
@@ -1119,20 +1039,18 @@ class FreeplayState extends MusicBeatState
 
 	function songInfoUpdate()
 	{
-		var songName:String = songs[curSelected].songName.toUpperCase();
+		var songName:String = songs[supposedlySelected].songName.toUpperCase();
 		var datePlayed:String = Std.string(Highscore.getSongDate(songName.toLowerCase()));
 
 		if (datePlayed == 'null')
-		{
 			datePlayed = "You haven't played this song yet!";
-		}
 		songInfo.text = "Song: " + songName.replace('-', ' ') + "\n" + "Last played time: " + datePlayed;
 		songInfo.x = (FlxG.width - songInfo.width) - 20;
 	}
 
 	function resetScore()
 	{
-		var theSong:String = songs[curSelected].songName.toLowerCase();
+		var theSong:String = songs[supposedlySelected].songName.toLowerCase();
 		var diffshit:Int = curDifficulty;
 		var theDiff:String = selectedDifficulty;
 		var weirdButt:Array<PopUpButton> = [
@@ -1160,19 +1078,21 @@ class FreeplayState extends MusicBeatState
 	function readDiff(clear:Bool = false)
 	{
 		// currentMod = songs[curSelected].fromMod;
-		var b:Bool = (songs[curSelected].fromMod != "BASEFNF");
+		var b:Bool = (songs[supposedlySelected].fromMod != "BASEFNF");
 		// trace(b);
 
 		// var data:String = Json.parse()//Paths.modFolders()
 		if (!clear)
 		{
 			if (b)
-				CoolUtil.songDifficulties = CDevConfig.utils.readChartJsons(songs[curSelected].songName, b);
+				CoolUtil.songDifficulties = CDevConfig.utils.readChartJsons(songs[supposedlySelected].songName, b);
 			else
 				CoolUtil.songDifficulties = CoolUtil.difficultyArray;
 		}
 		else
 			CoolUtil.songDifficulties = [];
+
+		if (sprDifficulty == null) return;
 
 		selectedDifficulty = CoolUtil.songDifficulties[0];
 		sprDifficulty.text = CoolUtil.songDifficulties[0].toUpperCase();
@@ -1223,8 +1143,8 @@ class FreeplayState extends MusicBeatState
 			curDifficulty = 0;
 
 		#if !switch
-		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
-		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
+		intendedScore = Highscore.getScore(songs[supposedlySelected].songName, curDifficulty);
+		intendedRating = Highscore.getRating(songs[supposedlySelected].songName, curDifficulty);
 		#end
 
 		// sprDifficulty.offset.x = 0;
@@ -1258,6 +1178,7 @@ class FreeplayState extends MusicBeatState
 
 	function changeBGColor(?fromColor:Array<Int>)
 	{
+		if (iconArray[curSelected] == null) return;
 		var nextColor:Int = -1;
 		if (fromColor != null)
 		{
@@ -1286,7 +1207,6 @@ class FreeplayState extends MusicBeatState
 	function changeSelection(change:Int = 0, forceChange:Bool = false)
 	{
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
-
 		if (songs.length == 0) return;
 
 		if (!forceChange)
@@ -1294,21 +1214,27 @@ class FreeplayState extends MusicBeatState
 		else
 			curSelected = change;
 		if (curSelected < 0)
-			curSelected = songs.length - 1;
-		if (curSelected >= songs.length)
+			curSelected = grpSongs.length - 1;
+		if (curSelected >= grpSongs.length)
 			curSelected = 0;
 
+		if (grpSongs.members[curSelected] != null){
+			supposedlySelected = grpSongs.members[curSelected].rawSelect;
+		}
+
+		if (grpSongs.length == 0) return;
+
 		#if !switch
-		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
-		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
+		intendedScore = Highscore.getScore(songs[supposedlySelected].songName, curDifficulty);
+		intendedRating = Highscore.getRating(songs[supposedlySelected].songName, curDifficulty);
 		#end
 
-		songInfoUpdate();
+		if (songInfo != null) songInfoUpdate();
 
 		#if desktop
 		// Updating Discord Rich Presence
 		if (Main.discordRPC)
-			DiscordClient.changePresence("Freeplay Menu", "Selected: " + songs[curSelected].songName, null);
+			DiscordClient.changePresence("Freeplay Menu", "Selected: " + songs[supposedlySelected].songName, null);
 		#end
 
 		var bullShit:Int = 0;
@@ -1318,12 +1244,14 @@ class FreeplayState extends MusicBeatState
 			iconArray[i].alpha = 0.6;
 		}
 
-		changeBGColor(songs[curSelected].color);
+		changeBGColor(songs[supposedlySelected].color);
 
-		iconArray[curSelected].alpha = 1;
+		if (iconArray[curSelected] != null)
+			iconArray[curSelected].alpha = 1;
 
 		for (item in grpSongs.members)
 		{
+			if (item == null) return;
 			item.targetY = bullShit - curSelected;
 			bullShit++;
 			item.selected = false;
@@ -1339,18 +1267,19 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
-		Paths.currentMod = songs[curSelected].fromMod;
-		if (!songs[curSelected].weekMode)
+		if (curSelected == grpSongs.length) return;
+		Paths.currentMod = songs[supposedlySelected].fromMod;
+		if (!songs[supposedlySelected].weekMode)
 			readDiff();
 		else
-			CoolUtil.songDifficulties = songs[curSelected].weekFile.weekDifficulties;
+			CoolUtil.songDifficulties = songs[supposedlySelected].weekFile.weekDifficulties;
 		curDifficulty = 0;
 	}
 
 	override function beatHit()
 	{
 		if (CDevConfig.saveData.flashing)
-			bg.alpha = 1;
+			bg.alpha += 0.1;
 
 		if (CDevConfig.saveData.smoothAF){
 			bg.scale.x += 0.02;

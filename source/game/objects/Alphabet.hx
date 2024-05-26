@@ -44,6 +44,8 @@ class Alphabet extends FlxSpriteGroup
 	/**Like the name, the height offset if forcePositionToScreen is false**/
 	public var heightOffset:Float = 0;
 
+	public var rawSelect:Int = 0;
+
 	public var innerX:Float = 0;
 
 	/**Current text size**/

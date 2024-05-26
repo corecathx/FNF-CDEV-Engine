@@ -1,5 +1,6 @@
 package meta.debug;
 
+import cpp.abi.Winapi;
 import game.system.native.Windows;
 import lime.ui.MouseCursor;
 import flixel.addons.ui.FlxUIList;
@@ -38,8 +39,13 @@ class SystemStatsState extends MusicBeatState
         }
         displayText.text = "CPU Usage: " + FlxMath.roundDecimal(lastCPU,2) + "%"
         + "\n(native) Memory Usage: " + CDevConfig.utils.convert_size(Windows.getCurrentUsedMemory())
-        + "\nFree disk space (cwd): " + FlxMath.roundDecimal(Windows.getCurrentDriveSize(),2) + "GB";
+        + "\nFree disk space (cwd): " + FlxMath.roundDecimal(Windows.getCurrentDriveSize(),2) + "GB"
+		+ "\n\nPress SPACE for notification test.";
         displayText.screenCenter();
+
+		if (FlxG.keys.justPressed.SPACE){
+			trace("wintoast bugged :(");
+		}
 
 		if (FlxG.keys.justPressed.ESCAPE)
 		{

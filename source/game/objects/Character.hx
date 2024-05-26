@@ -21,366 +21,307 @@ import flixel.graphics.frames.FlxAtlasFrames;
 
 using StringTools;
 
-class Character extends SpriteStage
-{
-	public var animOffsets:Map<String, Array<Dynamic>>;
-	public var debugMode:Bool = false;
-
-	public var script:CDevScript;
-	public var gotScript:Bool = false;
-
-	var charLists:Array<String> = [];
-
-	public var curCharacter:String = 'bf';
-	public var specialAnim:Bool = false;
-	public var heyTimer:Float = 0;
-
-	public var singAltPrefix:String = "-alt"; // used For Alt anims
-	public var idleAltPrefix:String = "-alt"; // overrides the default -alt prefix, if not ""
-	public var idleSpeed:Int = 2;
-	public var forceDance:Bool = false;
-
-	var defaultChar:String = 'bf';
-
-	public var lockedChar:Bool = false; // used in WeekEditor.hx
-
-	public var holdTimer:Float = 0;
-
-	public var imgFile:String = ''; // same as = 'spritePath'
-	public var jsonScale:Float = 1; // same as = 'charScale'
-	public var charXYPos:Array<Float> = [0, 0]; // same as = 'charXYOffset'
-	public var charCamPos:Array<Float> = [0, 0]; // same as = 'camXYPos'
-	public var charHoldTime:Float = 4; // same as = 'singHoldTime';
-	public var healthBarColors:Array<Int> = [0, 0, 0]; // same as = 'healthBarColor'
-	public var animArray:Array<AnimationArray> = []; // same as = 'animations'
-	public var healthIcon:String = 'face'; // same as = 'iconName'
-	public var isPlayer:Bool = false; // same as 'isPlayer'
-	public var previousFlipX:Bool = false;
-	public var usingAntiAlias:Bool = false;
-
-	//public var gfTestBop:Bool = false;
-
-	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?usedForStoryChar:Bool = false)
-	{
-		super(x, y);
+class Character extends SpriteStage {
+    /** Animation offsets. **/
+    public var animOffsets:Map<String, Array<Dynamic>>;
 	
-		animOffsets = new Map<String, Array<Dynamic>>();
-		curCharacter = character;
-		this.isPlayer = isPlayer;
+	/** Used for character editor. **/
+    public var debugMode:Bool = false;
 
-		if (!debugMode) initScript();
+    /** Current script instance of this Character. **/
+    public var script:CDevScript;
+    public var gotScript:Bool = false;
 
-		executeFunc("create", []);
+	/** Current character. **/
+    public var curCharacter:String = 'bf';
+	/** Whether to set the current running animation as a special anim. **/
+    public var specialAnim:Bool = false;
 
-		antialiasing = CDevConfig.saveData.antialiasing;
+	/** Sing animation alt prefix. **/
+    public var singAltPrefix:String = "-alt";
+	/** Idle animation alt prefix. **/
+    public var idleAltPrefix:String = "-alt";
+	/** Current character idle speed when `forceDance` is true (in beats). **/
+    public var idleSpeed:Int = 2;
+    /** Whether to just force the idle playing on certain beats. **/
+    public var forceDance:Bool = false;
 
-		switch (curCharacter)
-		{
-			default:
-				var charPath:String = 'characters/' + curCharacter + '.json';
-				var daRawJSON = null;
-				#if ALLOW_MODS
-				var path:String = Paths.modChar(curCharacter);
-				if (!FileSystem.exists(path))
-					path = Paths.char(curCharacter);
+    /** Lock character informations, used in Week Editor. **/
+    public var lockedChar:Bool = false;
 
-				if (!FileSystem.exists(path))
-				#else
-				var path:String = Paths.getPreloadPath(charPath);
-				if (!Assets.exists(path))
-				#end
-				{
-					path = Paths.char('bf');
-				}
+	/** Hold Timer for animation (usually for sustain notes). **/
+    public var holdTimer:Float = 0;
 
-				#if ALLOW_MODS
-				daRawJSON = File.getContent(path);
-				#else
-				daRawJSON = Assets.getText(path);
-				#end
+    // Character properties //
+    public var imgFile:String = ''; // Sprite path
+    public var jsonScale:Float = 1; // Character scale
+    public var charXYPos:Array<Float> = [0, 0]; // Character XY offset
+    public var charCamPos:Array<Float> = [0, 0]; // Camera XY position
+    public var charHoldTime:Float = 4; // Sing hold time
+    public var healthBarColors:Array<Int> = [0, 0, 0]; // Health bar color
+    public var animArray:Array<AnimationArray> = []; // Animations
+    public var healthIcon:String = 'face'; // Icon name
+    public var isPlayer:Bool = false; // Is player character
+    public var previousFlipX:Bool = false;
+    public var usingAntiAlias:Bool = false;
 
-				var parsedJSON:CharData = cast Json.parse(daRawJSON);
-				if (Assets.exists(Paths.getPath('images/' + parsedJSON.spritePath + '.txt', TEXT)))
-					frames = Paths.getPackerAtlas(parsedJSON.spritePath, 'shared');
-				else
-					frames = Paths.getSparrowAtlas(parsedJSON.spritePath, 'shared');
+    // Array for animation notes (specific for pico-speaker)
+    public var animNotes:Array<Dynamic> = [];
+    // Whether to allow the character to dance
+    public var canDance:Bool = true;
 
-				imgFile = parsedJSON.spritePath;
-				jsonScale = parsedJSON.charScale;
-				charXYPos = parsedJSON.charXYPosition;
-				charCamPos = parsedJSON.camXYPos;
-				charHoldTime = parsedJSON.singHoldTime;
-				healthBarColors = parsedJSON.healthBarColor;
-				animArray = parsedJSON.animations;
-				healthIcon = parsedJSON.iconName;
-				usingAntiAlias = parsedJSON.usingAntialiasing;
-				setGraphicSize(Std.int(width * jsonScale));
-				updateHitbox();
+    // Default animations
+    public var defaultAnims:Array<String> = [
+        'idle', 'danceLeft', 'danceRight', 'singRIGHT', 'singLEFT', 'singDOWN', 'singUP',
+        'singRIGHT-alt', 'singLEFT-alt', 'singDOWN-alt', 'singUP-alt',
+    ];
 
-				flipX = !!parsedJSON.flipX;
+    // Dance state variables
+    private var danced:Bool = false;
+    var idleDance:Bool = false;
+    var danceShit:Bool = false;
 
-				antialiasing = parsedJSON.usingAntialiasing;
-				if (!CDevConfig.saveData.antialiasing) // force disable antialiasing while CDevConfig.saveData.antialiasing was false.
-					antialiasing = false;
+    public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?usedForStoryChar:Bool = false) {
+        super(x, y);
+        animOffsets = new Map<String, Array<Dynamic>>();
+        curCharacter = character;
+        this.isPlayer = isPlayer;
 
-				if (animArray != null && animArray.length > 0)
-				{
-					for (anim in animArray)
-					{
-						var animPrefix:String = '' + anim.animPrefix;
-						var animName:String = '' + anim.animName;
-						var animFpsVal:Int = anim.fpsValue;
-						var animLooping:Bool = !!anim.looping;
-						var animIndices:Array<Int> = anim.indices;
-						var shouldshit:Array<String> = ['idle', 'danceLeft', 'danceRight'];
+        if (!debugMode) initScript();
 
-						if (usedForStoryChar && !shouldshit.contains(anim.animPrefix)) 
-							continue;
+        executeFunc("create", []);
 
-						if (animIndices != null && animIndices.length > 0)
-							animation.addByIndices(animPrefix, animName, animIndices, "", animFpsVal, animLooping);
-						else
-							animation.addByPrefix(animPrefix, animName, animFpsVal, animLooping);
+        antialiasing = CDevConfig.saveData.antialiasing;
 
-						if (anim.offset != null && anim.offset.length > 1) 
-							addOffset(anim.animPrefix, anim.offset[0], anim.offset[1]);
-					}
-				}
-		}
+        initializeCharacter(curCharacter, usedForStoryChar);
 
-		previousFlipX = flipX;
+        previousFlipX = flipX;
 
-		if (isPlayer)
-		{
-			flipX = !flipX;
-		}
+        if (isPlayer) {
+            flipX = !flipX;
+        }
 
-		defineIdleDance();
-		dance(false, 1);
+        defineIdleDance();
+        dance(false, 1);
 
-		if (!usedForStoryChar)
-		{
-			switch (curCharacter)
-			{
-				case 'pico-speaker':
-					canDance = false;
-					loadMappedAnims();
-					playAnim("shoot1");
-			}
-		}
+        if (!usedForStoryChar) {
+            switch (curCharacter) {
+                case 'pico-speaker':
+                    canDance = false;
+                    loadMappedAnims();
+                    playAnim("shoot1");
+            }
+        }
 
-		executeFunc("postCreate", []);
-	}
+        executeFunc("postCreate", []);
+    }
 
-	public function initScript(){
-		if (debugMode) return;
-		var scriptPath:String = Paths.modFolders("data/characters/"+curCharacter+".hx");
-		if (!FileSystem.exists(scriptPath)) return;
+    private function initializeCharacter(character:String, usedForStoryChar:Bool):Void {
+        var path:String = Paths.modChar(character);
+        if (!FileSystem.exists(path))
+            path = Paths.char(character);
+        if (!FileSystem.exists(path))
+            path = Paths.char('bf');
 
-		script = CDevScript.create(scriptPath);
-		gotScript = true;
-		script.setVariable("current", this);
-		ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.song);
-		script.loadFile(scriptPath);
-	}
+        var daRawJSON:String = File.getContent(path);
+        var parsedJSON:CharData = cast Json.parse(daRawJSON);
 
-	public var animNotes:Array<Dynamic> = []; // used for pico-speaker
+        var spritePath:String = 'images/' + parsedJSON.spritePath + '.txt';
+        frames = Assets.exists(Paths.getPath(spritePath, TEXT)) ?
+                 Paths.getPackerAtlas(parsedJSON.spritePath, 'shared') :
+                 Paths.getSparrowAtlas(parsedJSON.spritePath, 'shared');
 
-	public var canDance:Bool = true;
+        imgFile = parsedJSON.spritePath;
+        jsonScale = parsedJSON.charScale;
+        charXYPos = parsedJSON.charXYPosition;
+        charCamPos = parsedJSON.camXYPos;
+        charHoldTime = parsedJSON.singHoldTime;
+        healthBarColors = parsedJSON.healthBarColor;
+        animArray = parsedJSON.animations;
+        healthIcon = parsedJSON.iconName;
+        usingAntiAlias = parsedJSON.usingAntialiasing;
 
-	public var defaultAnims:Array<String> = [
-		'idle', 'danceLeft', 'danceRight', 'singRIGHT', 'singLEFT', 'singDOWN', 'singUP', 'singRIGHT-alt', 'singLEFT-alt', 'singDOWN-alt', 'singUP-alt',
-	];
+        setGraphicSize(Std.int(width * jsonScale));
+        updateHitbox();
 
-	override function update(elapsed:Float)
-	{
-		executeFunc("update", [elapsed]);
-		if (debugMode) {
-			if (gotScript){
-				gotScript = false;
-				script.destroy();
-			}
-		}
-		if (!debugMode && animation.curAnim != null)
-		{
-			/*if(heyTimer > 0)
-				{
-					heyTimer -= elapsed;
-					if(heyTimer <= 0)
-					{
-						if(specialAnim && defaultAnims.contains(animation.curAnim.name))
-						{
-							specialAnim = false;
-							dance();
-						}
-						heyTimer = 0;
-					}
-			} else*/
-			if (specialAnim)
-			{
-				if (defaultAnims.contains(animation.curAnim.name))
-				{
-					specialAnim = false;
-					dance();
-				}
+        flipX = parsedJSON.flipX;
+        antialiasing = parsedJSON.usingAntialiasing && CDevConfig.saveData.antialiasing;
 
-				if (animation.curAnim.finished)
-				{
-					specialAnim = false;
-					dance();
-				}
-			}
+        if (animArray != null && animArray.length > 0) {
+            var shouldInclude:Array<String> = ['idle', 'danceLeft', 'danceRight'];
+            for (anim in animArray) {
+                if (usedForStoryChar && !shouldInclude.contains(anim.animPrefix)) 
+                    continue;
 
-			switch (curCharacter)
-			{
-				case 'pico-speaker':
-					if (animNotes.length > 0 && Conductor.songPosition > animNotes[0][0])
-					{
-						var noteData:Int = 1;
-						if (animNotes[0][1] > 2)
-							noteData = 3;
+                var animPrefix:String = anim.animPrefix;
+                var animName:String = anim.animName;
+                var animFpsVal:Int = anim.fpsValue;
+                var animLooping:Bool = anim.looping;
+                var animIndices:Array<Int> = anim.indices;
 
-						noteData += FlxG.random.int(0, 1);
-						playAnim('shoot' + noteData, true);
-						animNotes.shift();
-					}
-					if (animation.curAnim.finished)
-						playAnim(animation.curAnim.name, false, false, animation.curAnim.frames.length - 3);
-			}
-			if (!isPlayer)
-			{
-				if (animation.curAnim.name.startsWith('sing'))
-					holdTimer += elapsed;
+                if (animIndices != null && animIndices.length > 0)
+                    animation.addByIndices(animPrefix, animName, animIndices, "", animFpsVal, animLooping);
+                else
+                    animation.addByPrefix(animPrefix, animName, animFpsVal, animLooping);
 
-				if (holdTimer >= Conductor.stepCrochet * 0.001 * charHoldTime)
-				{
-					dance(animation.curAnim.name.endsWith(singAltPrefix), 1);
-					holdTimer = 0;
-				}
-			}
-			// finally.
-			if (animation.curAnim.finished)
-			{
-				if (animation.getByName(animation.curAnim.name + '-looping') != null)
-					playAnim(animation.curAnim.name + '-looping');
-			}
-		}
+                if (anim.offset != null && anim.offset.length > 1) 
+                    addOffset(anim.animPrefix, anim.offset[0], anim.offset[1]);
+            }
+        }
+    }
 
-		super.update(elapsed);
-		executeFunc("postUpdate", [elapsed]);
-	}
+    public function initScript():Void {
+        if (debugMode) return;
+        var scriptPath:String = Paths.modFolders("data/characters/" + curCharacter + ".hx");
+        if (!FileSystem.exists(scriptPath)) return;
 
-	public function curAnimStartsWith(prefix:String):Bool {
-		if (animation.curAnim == null) return false;
-		return animation.curAnim.name.startsWith(prefix);
-	}
+        script = CDevScript.create(scriptPath);
+        gotScript = true;
+        script.setVariable("current", this);
+        ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.song);
+        script.loadFile(scriptPath);
+    }
 
-	private var danced:Bool = false;
+    override function update(elapsed:Float):Void {
+        executeFunc("update", [elapsed]);
+        if (debugMode && gotScript) {
+            gotScript = false;
+            script.destroy();
+        }
 
-	/**
-	 * FOR GF DANCING SHIT
-	 */
-	var idleDance:Bool = false;
+        if (!debugMode && animation.curAnim != null) {
+            handleSpecialAnimations(elapsed);
+            handleCharacterSpecificAnimations(elapsed);
+            handleAnimationFinish();
+        }
 
-	var danceShit:Bool = false;
+        super.update(elapsed);
+        executeFunc("postUpdate", [elapsed]);
+    }
 
-	public function dance(?alt:Bool = false, ?beat:Int = 1)
-	{
-		executeFunc("onDance", [alt, beat]);
-		if (!canDance)
-			return;
-		if (debugMode)
-			return;
-		if (specialAnim)
-			return;
-		if (forceDance && beat % idleSpeed == 0)
-			return;
+    private function handleSpecialAnimations(elapsed:Float):Void {
+        if (specialAnim) {
+            if (defaultAnims.contains(animation.curAnim.name)) {
+                specialAnim = false;
+                dance();
+            }
+            if (animation.curAnim.finished) {
+                specialAnim = false;
+                dance();
+            }
+        }
+    }
 
-		var dRight:String = "danceRight"+(alt?idleAltPrefix:"");
-		var dLeft:String = "danceLeft"+(alt?idleAltPrefix:"");
-		var aIdle:String = "idle"+(alt?idleAltPrefix:"");
+    private function handleCharacterSpecificAnimations(elapsed:Float):Void {
+        switch (curCharacter) {
+            case 'pico-speaker':
+                handlePicoSpeakerAnimations();
+        }
+        if (!isPlayer && animation.curAnim.name.startsWith('sing')) {
+            holdTimer += elapsed;
+            if (holdTimer >= Conductor.stepCrochet * 0.001 * charHoldTime) {
+                dance(animation.curAnim.name.endsWith(singAltPrefix), 1);
+                holdTimer = 0;
+            }
+        }
+    }
 
-		if ((animation.getByName(dLeft) != null && animation.getByName(dRight) != null))
-		{
-			danced = !danced;
+    private function handlePicoSpeakerAnimations():Void {
+        if (animNotes.length > 0 && Conductor.songPosition > animNotes[0][0]) {
+            var noteData:Int = animNotes[0][1] > 2 ? 3 : 1;
+            noteData += FlxG.random.int(0, 1);
+            playAnim('shoot' + noteData, true);
+            animNotes.shift();
+        }
+        if (animation.curAnim.finished) {
+            playAnim(animation.curAnim.name, false, false, animation.curAnim.frames.length - 3);
+        }
+    }
 
-			if (danced)
-				playAnim(dRight,forceDance);
-			else
-				playAnim(dLeft,forceDance);
-		}
-		else if (animation.getByName(aIdle) != null)
-		{
-			playAnim(aIdle, forceDance);
-		}
-		executeFunc("onPostDance", [alt, beat]);
-	}
+    private function handleAnimationFinish():Void {
+        if (animation.curAnim.finished && animation.getByName(animation.curAnim.name + '-looping') != null) {
+            playAnim(animation.curAnim.name + '-looping');
+        }
+    }
 
-	public function defineIdleDance()
-	{
-		idleDance = (animation.getByName('danceLeft') != null && animation.getByName('danceRight') != null);
-	}
+    public function curAnimStartsWith(prefix:String):Bool {
+        if (animation.curAnim == null) return false;
+        return animation.curAnim.name.startsWith(prefix);
+    }
 
-	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
-	{
-		executeFunc("onPlayAnim", [AnimName, Force, Reversed, Frame]);
-		specialAnim = false;
+    public function dance(?alt:Bool = false, ?beat:Int = 1):Void {
+        executeFunc("onDance", [alt, beat]);
+        if (!canDance || debugMode || specialAnim || (forceDance && beat % idleSpeed == 0)) return;
 
-		animation.play(AnimName, Force, Reversed, Frame);
-		// updateHitbox();
-		var daOffset = animOffsets.get(AnimName);
-		if (animOffsets.exists(AnimName))
-		{
-			offset.set(daOffset[0], daOffset[1]);
-		}
-		else
-			offset.set(0, 0);
+        var dRight:String = "danceRight" + (alt ? idleAltPrefix : "");
+        var dLeft:String = "danceLeft" + (alt ? idleAltPrefix : "");
+        var aIdle:String = "idle" + (alt ? idleAltPrefix : "");
 
-		if (curCharacter == 'gf')
-		{
-			if (AnimName == 'singLEFT')
-			{
-				danced = true;
-			}
-			else if (AnimName == 'singRIGHT')
-			{
-				danced = false;
-			}
+        if (animation.getByName(dLeft) != null && animation.getByName(dRight) != null) {
+            danced = !danced;
+            playAnim(danced ? dRight : dLeft, forceDance);
+        } else if (animation.getByName(aIdle) != null) {
+            playAnim(aIdle, forceDance);
+        }
 
-			if (AnimName == 'singUP' || AnimName == 'singDOWN')
-			{
-				danced = !danced;
-			}
-		}
-		executeFunc("onPostPlayAnim", [AnimName, Force, Reversed, Frame]);
-	}
+        executeFunc("onPostDance", [alt, beat]);
+    }
 
-	public function addOffset(name:String, x:Float = 0, y:Float = 0)
-	{
-		animOffsets[name] = [x, y];
-	}
+    public function defineIdleDance():Void {
+        idleDance = (animation.getByName('danceLeft') != null && animation.getByName('danceRight') != null);
+    }
 
-	function loadMappedAnims():Void
-	{
-		var nd:Array<SwagSection> = Song.loadFromJson('picoGunMap', PlayState.SONG.song.toLowerCase().replace(' ', '-')).notes;
-		for (s in nd)
-		{
-			for (sn in s.sectionNotes)
-			{
-				animNotes.push(sn);
-			}
-		}
-		BackgroundTankmen.animNotes = animNotes;
-		animNotes.sort(sortByValue);
-	}
+    public function playAnim(animName:String, force:Bool = false, reversed:Bool = false, frame:Int = 0):Void {
+        executeFunc("onPlayAnim", [animName, force, reversed, frame]);
+        specialAnim = false;
 
-	function sortByValue(Obj1:Array<Dynamic>, Obj2:Array<Dynamic>):Int
-	{
-		return FlxSort.byValues(FlxSort.ASCENDING, Obj1[0], Obj2[0]);
-	}
+        animation.play(animName, force, reversed, frame);
 
-	public function executeFunc(name,data){
-		if (!gotScript) return;
-		script.executeFunc(name, data);
-	}
+        if (animOffsets.exists(animName)) {
+            var offset = animOffsets.get(animName);
+            this.offset.set(offset[0], offset[1]);
+        } else {
+            this.offset.set(0, 0);
+        }
+
+        handleGfAnimation(animName);
+
+        executeFunc("onPostPlayAnim", [animName, force, reversed, frame]);
+    }
+
+    private function handleGfAnimation(animName:String):Void {
+        if (curCharacter == 'gf') {
+            switch (animName) {
+                case 'singLEFT':
+                    danced = true;
+                case 'singRIGHT':
+                    danced = false;
+                case 'singUP', 'singDOWN':
+                    danced = !danced;
+            }
+        }
+    }
+
+    public function addOffset(name:String, x:Float = 0, y:Float = 0):Void {
+        animOffsets[name] = [x, y];
+    }
+
+    private function loadMappedAnims():Void {
+        var sections:Array<SwagSection> = Song.loadFromJson('picoGunMap', PlayState.SONG.song.toLowerCase().replace(' ', '-')).notes;
+        for (section in sections) {
+            for (note in section.sectionNotes) {
+                animNotes.push(note);
+            }
+        }
+        BackgroundTankmen.animNotes = animNotes;
+        animNotes.sort(sortByValue);
+    }
+
+    private function sortByValue(obj1:Array<Dynamic>, obj2:Array<Dynamic>):Int {
+        return FlxSort.byValues(FlxSort.ASCENDING, obj1[0], obj2[0]);
+    }
+
+    private function executeFunc(name:String, data:Array<Dynamic>):Void {
+        if (gotScript) script.executeFunc(name, data);
+    }
 }

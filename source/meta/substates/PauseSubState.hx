@@ -25,6 +25,10 @@ class PauseSubState extends MusicBeatSubstate
 	var curSelected:Int = 0;
 
 	var pauseMusic:FlxSound;
+
+	var onEnd:Void->Void;
+	var controls_enabled:Bool = true;
+
 	public function new(x:Float, y:Float)
 	{
 		super();
@@ -42,7 +46,6 @@ class PauseSubState extends MusicBeatSubstate
 				menuItems = ['Resume', 'Restart Song', 'Options', 'Exit to freeplay'];
 			}
 		}
-
 		
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
 		pauseMusic.volume = 0;
@@ -54,6 +57,7 @@ class PauseSubState extends MusicBeatSubstate
 		bg.alpha = 0;
 		bg.scrollFactor.set();
 		bg.scale.set(1/PlayState.camHUD.zoom, 1/PlayState.camHUD.zoom);
+		bg.angle = (-PlayState.camHUD.angle);
 		add(bg);
 
 		var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
@@ -103,20 +107,44 @@ class PauseSubState extends MusicBeatSubstate
 			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
 			songText.isMenuItem = true;
 			songText.targetY = i;
+			songText.ID = i;
 			grpMenuShit.add(songText);
 		}
 
 		changeSelection();
+
+		onEnd = ()->{
+			controls_enabled = false;
+			pauseMusic.fadeOut(0.7,0,(_)->{
+				pauseMusic.destroy();
+			});
+			FlxTween.tween(bg, {alpha: 0}, 0.4, {ease: FlxEase.quartInOut});
+			FlxTween.tween(levelInfo, {alpha: 0, y: 15}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.1});
+			FlxTween.tween(levelDifficulty, {alpha: 0, y: levelDifficulty.y - 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.3});
+			FlxTween.tween(chartingText, {alpha: 0, y: chartingText.y - 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.5});
+
+			for (i in grpMenuShit.members){
+				if (i.ID != curSelected){
+					FlxTween.tween(i, {alpha: 0}, 0.4, {ease: FlxEase.quartInOut});
+				} else{
+					FlxTween.tween(i, {alpha: 0}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.3, onComplete:(_)->{
+						close();
+					}});
+				}
+			}
+		}
 
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 	}
 
 	override function update(elapsed:Float)
 	{
+		super.update(elapsed);
+		
+		if (!controls_enabled) return;
+
 		if (pauseMusic.volume < 0.5)
 			pauseMusic.volume += 0.01 * elapsed;
-
-		super.update(elapsed);
 
 		var upP = controls.UI_UP_P;
 		var downP = controls.UI_DOWN_P;
@@ -134,7 +162,7 @@ class PauseSubState extends MusicBeatSubstate
 			switch (daSelected)
 			{
 				case "Resume":
-					close();
+					onEnd();
 				case "Restart Song":
 					GameOverSubstate.resetDeathStatus();
 					FlxG.resetState();
@@ -171,15 +199,13 @@ class PauseSubState extends MusicBeatSubstate
 	}
 
 	override function closeSubState()
-		{
-			super.closeSubState();
-			changeSelection();
-		}
+	{
+		super.closeSubState();
+		changeSelection();
+	}
 
 	override function destroy()
 	{
-		pauseMusic.destroy();
-
 		super.destroy();
 	}
 

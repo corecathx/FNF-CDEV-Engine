@@ -52,18 +52,11 @@ class CDevTooltip extends FlxSpriteGroup {
         isVisible = true;
 
         if (spawnOnMouse) {
-            var fpPoint:FlxPoint = new FlxPoint(0,0);
-            @:privateAccess {
-                fpPoint = FlxPointer._cachedPoint;
-            }
-            FlxG.mouse.getScreenPosition(this.cameras[0], fpPoint);
-            fpPoint.putWeak();
-
-            var yFlip:Bool = (FlxG.mouse.y > FlxG.height/2);
-            var xFlip:Bool = (FlxG.mouse.x > FlxG.width/2);
+            var yFlip:Bool = (FlxG.mouse.screenX > FlxG.height/2);
+            var xFlip:Bool = (FlxG.mouse.screenY > FlxG.width/2);
             
-            var xVal:Float = FlxG.mouse.x + (xFlip ? -(width + 5) : 25);
-            var yVal:Float = FlxG.mouse.y + (yFlip ? -(height + 5) : 25);
+            var xVal:Float = FlxG.mouse.screenX + (xFlip ? -(width + 5) : 25);
+            var yVal:Float = FlxG.mouse.screenY + (yFlip ? -(height + 5) : 25);
             setPosition(xVal, yVal);
         }
 
