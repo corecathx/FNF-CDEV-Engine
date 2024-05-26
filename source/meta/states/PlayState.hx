@@ -2067,7 +2067,7 @@ class PlayState extends MusicBeatState
 				if (songNotes[1] > -1)
 				{
 					var note = {
-						time: songNotes[0] + SONG.offset + Conductor.offset,
+						time: songNotes[0] + SONG.offset,
 						data: Std.int(songNotes[1] % 4),
 						sustain: songNotes[2],
 						type: (songNotes[3] == null ? "Default Note" : songNotes[3]),
@@ -3573,9 +3573,11 @@ class PlayState extends MusicBeatState
 							if (!isHoldEnd)
 								daNote.y -= (distance*0.5) + (-daNote.height);
 							else
-								daNote.y += ((distance*2)-daNote.height);
+								daNote.y += ((distance*2)-daNote.height*2);
 						else
 							daNote.y += distance*0.5;
+						
+						StrumArrow.checkRects(daNote, strum);
 					}
 				}
 				
@@ -5250,9 +5252,9 @@ class PlayState extends MusicBeatState
 
 	public function getCameraLerp():Float
 	{
-		var followLerp:Float = FlxG.elapsed/10;//CDevConfig.utils.bound((0.08 / (CDevConfig.saveData.fpscap / 60)), 0, 1);
+		var followLerp:Float = (0.08 / (CDevConfig.saveData.fpscap / 60));//CDevConfig.utils.bound((0.08 / (CDevConfig.saveData.fpscap / 60)), 0, 1);
 		if (isModStage && Stage.USECUSTOMFOLLOWLERP)
-			followLerp = (Stage.FOLLOW_LERP/10);//CDevConfig.utils.bound(((Stage.FOLLOW_LERP+0.08) / (CDevConfig.saveData.fpscap / 60)), 0, 1);
+			followLerp = ((Stage.FOLLOW_LERP+0.08) / (CDevConfig.saveData.fpscap / 60));//CDevConfig.utils.bound(((Stage.FOLLOW_LERP+0.08) / (CDevConfig.saveData.fpscap / 60)), 0, 1);
 		return followLerp;
 	}
 }

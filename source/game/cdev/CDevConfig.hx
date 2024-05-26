@@ -254,8 +254,7 @@ class CDevConfig
 	public static function setFPS(daSet:Int)
 	{
 		openfl.Lib.current.stage.frameRate = daSet;
-		FlxG.drawFramerate = daSet;
-		FlxG.updateFramerate = 1000;
+		FlxG.drawFramerate = FlxG.updateFramerate = daSet;
 	}
 
 	// what to do before application get closed?

@@ -69,43 +69,27 @@ class StrumArrow extends FlxSprite
 
 	public static function checkRects(daNote:Note, strum:StrumArrow)
 	{
-		var strumLineMid = strum.y + Note.swagWidth / 2;
-		if ((daNote.isSustainNote && (daNote.mustPress || !daNote.canIgnore) &&
-			(!daNote.mustPress || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
+		var strumLineMid:Float = strum.y + Note.swagWidth / 2;
+		var isDownscroll:Bool = strum.noteScroll < 0;
+		if ((daNote.isSustainNote && ((daNote.mustPress && daNote.wasGoodHit) || (!daNote.mustPress)))
 			|| CDevConfig.saveData.botplay)
 		{
 			var swagRect:FlxRect = daNote.clipRect;
 			if (swagRect == null) 
-				swagRect = new FlxRect(0, 0, (strum.noteScroll < 0) ? tail.frameWidth : tail.width / tail.scale.x;, daNote.frameHeight);
+				swagRect = new FlxRect(0, 0, (strum.noteScroll < 0) ? daNote.frameWidth : daNote.width / daNote.scale.x, daNote.frameHeight);
 
-			if (strum.noteScroll < 0) {
+			if (isDownscroll) {
 				if (daNote.y + daNote.height >= strumLineMid){
-					swagRect.width = daNote.width;
-					swagRect.height = strumLineMid - Math.max(strumLineMid,daNote.y);
-					swagRect.y = strumLineMid-Math.min(strumLineMid-daNote.y,daNote.y);
+					swagRect.height = (strumLineMid - daNote.y) / daNote.scale.y;
+					swagRect.y = daNote.frameHeight - swagRect.height;
 				}
 			} else {
 				if (daNote.y <= strumLineMid){
-					swagRect.width = daNote.width;
-					swagRect.height = strumLineMid - Math.min(strumLineMid,daNote.y);
-					swagRect.y = strumLineMid-Math.max(strumLineMid-daNote.y,daNote.y);
+					swagRect.y = (strumLineMid - daNote.y) / daNote.scale.y;
+					swagRect.height = (daNote.height / daNote.scale.y) - swagRect.y;
 				}
 			}
 			daNote.clipRect = swagRect;
-
-			var clipRect:FlxRect = (tail.clipRect ?? FlxRect.get()).set();
-			clipRect.width = (downscroll) ? tail.frameWidth : tail.width / tail.scale.x;
-	  
-			if (downscroll) {
-			   clipRect.height = (receptorCenter - tail.y) / tail.scale.y;
-			   clipRect.y = tail.frameHeight - clipRect.height;
-			}
-			else {
-			   clipRect.y = (receptorCenter - tail.y) / tail.scale.y;
-				  clipRect.height = (tail.height / tail.scale.y) - clipRect.y;
-			}
-	  
-			tail.clipRect = clipRect;
 		}
 	}
 }

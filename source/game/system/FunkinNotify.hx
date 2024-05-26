@@ -6,5 +6,5 @@ package game.system;
     using namespace WinToastLib;
 ')
 class FunkinNotify {
-    
+    // 👺👺👺
 }
