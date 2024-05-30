@@ -1,12 +1,12 @@
 # Friday Night Funkin': CDEV Engine
 ![logo](art/CDEV-Engine-Logo.png)
 
-This is the repository of CDEV Engine, an Friday Night Funkin' Engine.
+FNF CDEV Engine is a Friday Night Funkin' Engine that's intended to fix issues with the base game, while also adding a lot of features to the engine.
 
 ## Build instructions
 
 First you need to install Haxe and HaxeFlixel.
-1. [Install Haxe 4.2.5](https://haxe.org/download/version/4.2.5/) (Download 4.2.5 instead of 4.1.5.)
+1. [Install Haxe 4.2.5](https://haxe.org/download/version/4.2.5/) (If you're using newer version of haxe, CDEV Engine would likely failed to compile due to macro stuffs)
 2. [Install HaxeFlixel](https://haxeflixel.com/documentation/install-haxeflixel/) after downloading Haxe.
 
 Second, you need to install the additional libraries, a fully updated list will be in `Project.xml` in the project root. Here's the list of libraries that you need to install:
@@ -15,43 +15,43 @@ flixel
 flixel-addons
 flixel-ui
 hscript
-newgrounds
 hxCodec
 extension-androidtools
+HxWebView
 ```
-Type `haxelib install [library]` for each of those libs, so like: `haxelib install newgrounds`.
+Type `haxelib install [library]` for each the libraries, so like: `haxelib install newgrounds`.
 
-You'll also need to install a couple things that involve Gits. To do this, you need to do a few things first.
+You'll also need to install `discord_rpc` library so that the engine could display what you're currently playing on Discord, this requires you to install git.
 1. Download [git-scm](https://git-scm.com/downloads). Works for Windows, Mac, and Linux, just select your build.
 2. Follow instructions to install the application properly.
-3. Run `haxelib git polymod https://github.com/larsiusprime/polymod.git` to install Polymod.
-4. Run `haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc` to install Discord RPC.
+3. Run `haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc` to install the library.
 
 You should have everything ready for compiling the engine! Follow the guide below to continue!
 
-At the moment, you can optionally fix the transition bug in songs with zoomed out cameras.
-- Run `haxelib git flixel-addons https://github.com/HaxeFlixel/flixel-addons` in the terminal/command-prompt.
+### Compiling the engine
 
-### Compiling game
+> For now, CDEV Engine supports compiling only to Windows.
 
-Once you have all those installed, it's pretty easy to compile the engine. You just need to run 'lime test html5 -debug' in the root of the project to build and run the HTML5 version.
-
-To compile the engine on your desktop (Windows, Mac, Linux), you need to install Visual Studio Community 2019.
-While installing VSC, don't click on any of the options to install workloads. Instead, go to the individual components tab and choose the following:
+To compile the engine to Windows Target, you need to install Visual Studio Community. While installing VSC, don't click on any of the options to install workloads. Instead, go to the "Individual Components" tab and choose the following:
 * MSVC v143 - VS 2019 C++ x64/x86 build tools
 * Windows SDK (10.0.17763.0)
 
-The executables are located on export/ folder in the root of your project after it was compiled.
+Once you have finished doing all of those steps, you could run this command to build the engine.
+> `lime test windows` or `lime test windows -debug` to run the game with debugging enabled.
 
-Once everything has done, have fun with the engine!
+Your compiled version of CDEV Engine are located under the `export` folder in the root of your project.
 
-## WHAT?? MESSY SOURCE CODE??
-yeah uh, most of the codes there are made when i still lack of haxe understanding, i'm still cleaning it up
+Now you know how to build the engine, enjoy!
 
-# Important thing
-## READ THE ENGINE'S DOCUMENTATION HERE: https://core5570ryt.github.io/FNF-CDEV-Engine/
-CDEV Engine is currently only supported for Windows target only since the code is messed up and more (sorry!)
+## CDEV Engine Modding Docs
+If you don't like modifying source codes, you might want to try the built-in modding feature, though you also need to read this page to understand how modding works in this engine:
+> https://core5570ryt.github.io/FNF-CDEV-Engine/
 
+## Source Code Modding!!
+If you wanted to make mods without using the built-in modding support, Download the source code from the Releases tab or press [Here](https://github.com/Core5570RYT/FNF-CDEV-Engine/releases/latest)
+
+## Supported Platforms
+CDEV Engine is currently only supported for Windows target only (I don't understand how to do cross-platform support)
 ## Credits
 
 CDEV Engine
@@ -59,7 +59,7 @@ CDEV Engine
 
 Special Thanks
 - [PolybiusProxy](https://github.com/polybiusproxy) - MP4 Video Haxe Library (hxCodec)
-- [CobaltBar](https://github.com/CobaltBar/FNF-Horizon-Engine/) - Colored Traces in terminal (game/cdev/log/Log.hx)
+- [CobaltBar](https://github.com/CobaltBar) - Colored Traces in terminal (game/cdev/log/Log.hx)
 
 Engines that inspired CDEV Engine & Codes used in this engine
 - [Codename Engine](https://github.com/FNF-CNE-Devs/CodenameEngine) - GPU Bitmap code.
