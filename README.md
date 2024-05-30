@@ -52,14 +52,15 @@ If you wanted to make mods without using the built-in modding support, Download 
 
 ## Supported Platforms
 CDEV Engine is currently only supported for Windows target only (I don't understand how to do cross-platform support)
-## Credits
 
+# Credits
 CDEV Engine
 - [CoreDev](https://twitter.com/core5570r) - Programmer of this engine, additional assets.
 
 Special Thanks
-- [PolybiusProxy](https://github.com/polybiusproxy) - MP4 Video Haxe Library (hxCodec)
-- [CobaltBar](https://github.com/CobaltBar) - Colored Traces in terminal (game/cdev/log/Log.hx)
+- [PolybiusProxy](https://github.com/polybiusproxy) - MP4 Video Haxe Library (hxCodec).
+- [SanicBTW](https://github.com/SanicBTW) - HxWebView Library.
+- [CobaltBar](https://github.com/CobaltBar) - Colored Traces in terminal (game/cdev/log/Log.hx).
 
 Engines that inspired CDEV Engine & Codes used in this engine
 - [Codename Engine](https://github.com/FNF-CNE-Devs/CodenameEngine) - GPU Bitmap code.
