@@ -22,6 +22,7 @@ package game.system.native;
 #include <Shlobj.h>
 #include <shellapi.h>
 #include <cstdio>
+#include <strsafe.h>
 
 static float CalculateCPULoad(unsigned long long idleTicks, unsigned long long totalTicks)
 {
@@ -48,6 +49,11 @@ float GetCPULoad()
 ')
 class Windows
 {
+    /**
+     * Allows the user to switch between Dark Mode or Light Mode in the window.
+     * @param title Window title, do something like `lime.app.Application.current.window.title`.
+     * @param enable Whether to enable / disable Dark Mode.
+     */
     @:functionCode('
         int darkMode = enable ? 1 : 0;
         
@@ -61,11 +67,17 @@ class Windows
     ')
     public static function setWindowDarkMode(title:String, enable:Bool) {}
 
+	/**
+	 * Makes the process DPI Aware.
+	 */
 	@:functionCode('
         SetProcessDPIAware();
     ')
 	public static function setDPIAware(){}
 
+    /**
+     * Returns current free drive size in bytes.
+     */
     @:functionCode('
         ULARGE_INTEGER freeBytesAvailableToCaller;
         ULARGE_INTEGER totalNumberOfBytes;
@@ -85,6 +97,9 @@ class Windows
         return 0;
     }
 
+    /**
+     * Return native process memory.
+     */
     @:functionCode('
         PROCESS_MEMORY_COUNTERS info;
         GetProcessMemoryInfo(GetCurrentProcess(), &info, sizeof(info));
@@ -94,6 +109,9 @@ class Windows
         return 0.0;
     }
 
+    /**
+     * Returns current process CPU Usage.
+     */
     @:functionCode('
         return GetCPULoad();
     ')
@@ -101,5 +119,44 @@ class Windows
         return 0.0;
     }
 
+    /**
+     * Creates a Windows Toast Notification.
+     * @param title Toast title.
+     * @param body Toast body / description.
+     * @param res Icon res
+     */
+    @:functionCode('
+        NOTIFYICONDATA m_NID;
 
+        memset(&m_NID, 0, sizeof(m_NID));
+        m_NID.cbSize = sizeof(m_NID);
+        m_NID.hWnd = GetForegroundWindow();
+        m_NID.uFlags = NIF_MESSAGE | NIIF_WARNING | NIS_HIDDEN;
+
+        m_NID.uVersion = NOTIFYICON_VERSION_4;
+
+        if (!Shell_NotifyIcon(NIM_ADD, &m_NID))
+            return FALSE;
+    
+        Shell_NotifyIcon(NIM_SETVERSION, &m_NID);
+
+        m_NID.uFlags |= NIF_INFO;
+        m_NID.uTimeout = 1000;
+        m_NID.dwInfoFlags = NULL;
+
+        LPCTSTR lTitle = title.c_str();
+        LPCTSTR lDesc = body.c_str();
+
+        if (StringCchCopy(m_NID.szInfoTitle, sizeof(m_NID.szInfoTitle), lTitle) != S_OK)
+            return FALSE;
+
+        if (StringCchCopy(m_NID.szInfo, sizeof(m_NID.szInfo), lDesc) != S_OK)
+            return FALSE;
+
+        return Shell_NotifyIcon(NIM_MODIFY, &m_NID);
+    ')
+    public static function toast(title:String = "", body:String = "", res:Int = 0)    // TODO: Linux (found out how to do it so ill do it soon)
+    {
+        return res;
+    }
 }

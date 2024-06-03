@@ -40,24 +40,6 @@ class StrumArrow extends FlxSprite
 				angle -= 3;
 			}
 		}
-
-		/*if (animation.curAnim.name == 'confirm' && !isPixel)
-			{
-				centerOffsets();
-
-				if (CDevConfig.saveData.fnfNotes)
-				{
-					offset.x -= 13;
-					offset.y -= 13;
-				}
-				else
-				{
-					offset.x -= 30;
-					offset.y -= 30;
-				}
-			}
-			else
-				centerOffsets(); */
 	}
 
 	public function playAnim(AnimName:String, ?force:Bool = false):Void

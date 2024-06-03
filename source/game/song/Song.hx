@@ -53,46 +53,18 @@ class Song
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
 		var rawJson = null;
+		var curPath:String = Paths.modJson(folder+"/"+jsonInput); // Mod Folder
 
-		#if ALLOW_MODS
-		var modFile:String = game.Paths.modJson(folder + '/' + jsonInput);
-		if (FileSystem.exists(modFile))
-		{
-			rawJson = File.getContent(modFile).trim();
-		}
-		#end
+		if (FileSystem.exists(curPath))
+			rawJson = File.getContent(curPath).trim();
+		if (rawJson != null) return parseJSONshit(rawJson);
 
-		if (rawJson == null)
-		{
-			#if ALLOW_MODS
-			rawJson = File.getContent(game.Paths.json(folder + '/' + jsonInput)).trim();
-			#else
-			rawJson = Assets.getText(game.Paths.json(folder + '/' + jsonInput)).trim();
-			#end
-		}
-		while (!rawJson.endsWith("}"))
-		{
-			rawJson = rawJson.substr(0, rawJson.length - 1);
-			// LOL GOING THROUGH THE BULLSHIT TO CLEAN IDK WHATS STRANGE
-		}
+		curPath = Paths.json(folder + '/' + jsonInput); // Assets Folder
+		if (FileSystem.exists(curPath))
+			rawJson = File.getContent(curPath).trim();
 
-		// FIX THE CASTING ON WINDOWS/NATIVE
-		// Windows???
-		// trace(songData);
-
-		// trace('LOADED FROM JSON: ' + songData.notes);
-		/* 
-			for (i in 0...songData.notes.length)
-			{
-				trace('LOADED FROM JSON: ' + songData.notes[i].sectionNotes);
-				// songData.notes[i].sectionNotes = songData.notes[i].sectionNotes
-			}
-
-				daNotes = songData.notes;
-				daSong = songData.song;
-				daBpm = songData.bpm; */
-
-		return parseJSONshit(rawJson);
+		if (rawJson != null) return parseJSONshit(rawJson);
+		return null;
 	}
 
 	public static function parseJSONshit(rawJson:String):SwagSong

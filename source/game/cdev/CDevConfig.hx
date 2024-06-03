@@ -69,6 +69,9 @@ class CDevConfig
 		DEPRECATED_STUFFS["p2NoteHit"] = "1.4";
 	}
 
+	/**
+	 * Update everything that depends on the save data.
+	 */
 	public static function updateSettingsOnSaves()
 	{
 		trace("called!");
@@ -81,25 +84,33 @@ class CDevConfig
 		saveCurrentKeyBinds();
 	}
 
+	/**
+	 * Saves your save data.
+	 */
 	public static function storeSaveData()
 	{
 		FlxG.save.data.lastVolume = FlxG.sound.volume;
 
 		#if windows
 		var data:String = Serializer.run(Json.stringify(saveData, "\t"));
-		//var conv_data:Bytes = Bytes.ofString(data); nah
 		var fullPath:String = savePath + saveFileName;
-		if (!FileSystem.exists(savePath)){
+
+		if (!FileSystem.exists(savePath))
 			FileSystem.createDirectory(savePath);
-		}
+
 		if (data.length > 0)
 			File.saveContent(fullPath, data);
 		#else
 		trace("This is not a windows target, could not store save data.");
 		#end
-
 	}
 
+	/**
+	 * Returns the save file to get the existing data from it.
+	 * If there's any, it'll return the values from that save file.
+	 * Otherwise it'll return default values.
+	 * @return Dynamic
+	 */
 	public static function getSaveData():Dynamic
 	{
 		var toReturn = getDefaultSaves();
@@ -128,7 +139,11 @@ class CDevConfig
 		return toReturn;
 	}
 
-	// PAIN
+	/**
+	 * Used in settings to get a value from save data keys.
+	 * @param name Key
+	 * @return Dynamic
+	 */
 	public static function getData(name:String):Dynamic
 	{
 		if (Reflect.hasField(saveData, name))
@@ -138,6 +153,12 @@ class CDevConfig
 		return null;
 	}
 
+	/**
+	 * Used in settings to set a value from save data keys.
+	 * @param name Key
+	 * @param data Value
+	 * @return Dynamic
+	 */
 	public static function setData(name:String, data:Dynamic)
 	{
 		if (Reflect.hasField(saveData, name))
@@ -146,6 +167,9 @@ class CDevConfig
 			trace("Save Data has no \""+name+"\" field.");
 	}
 
+	/**
+	 * Loads forced mod list from ./assets/data/texts/modsEnabled.txt.
+	 */
 	public static function loadForcedMods(){
 		var fullText:String = File.getContent(Paths.txt('modsEnabled')).trim();
 		var splitted:Array<String> = fullText.split("\n");
@@ -195,6 +219,11 @@ class CDevConfig
 		if (Paths.curModDir.length != 0) Paths.currentMod = Paths.curModDir[0];
 	}
 
+	/**
+	 * Checks a save data key to see if it exists on the save data or not.
+	 * If it doesn't exists, it will load the default settings for it.
+	 * @param name 
+	 */
 	public static function checkDataField(name:String) {
 		var saves = getDefaultSaves();
 		var defSave = null;
@@ -210,6 +239,9 @@ class CDevConfig
 			
 	}
 
+	/**
+	 * Checks if your mod's name is exists on the save data, but not exists in the cdev-mods folder.
+	 */
 	public static function checkLoadedMods()
 	{
 		// is this actually working??
@@ -234,7 +266,13 @@ class CDevConfig
 		//hi
 	}
 
-	
+
+	/**
+	 * Override CDEV Engine's window properties, such as title and icon.
+	 * @param reset 
+	 * @param title 
+	 * @param icon 
+	 */
 	public static function setWindowProperty(reset:Bool, ?title:String, ?icon:String){
 		var error = (title==null || icon==null);
 		if (error)
@@ -250,7 +288,10 @@ class CDevConfig
 		Application.current.window.setIcon(i);
 	}
 
-
+	/**
+	 * Changes your fps.
+	 * @param daSet new fps
+	 */
 	public static function setFPS(daSet:Int)
 	{
 		openfl.Lib.current.stage.frameRate = daSet;
@@ -258,6 +299,7 @@ class CDevConfig
 	}
 
 	// what to do before application get closed?
+	// this is completely dumb
 	public static var onExitFunction:Function = function()
 	{
 	};

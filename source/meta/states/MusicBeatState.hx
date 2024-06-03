@@ -83,17 +83,12 @@ class MusicBeatState extends FlxUIState {
 
     private function handleDesync():Void {
         if (Math.abs(curStep - _highestPassedSteps) >= syncingSensitivity) {
-            if (CDevConfig.saveData.testMode) {
-                Log.warn("Game desynced! Trying to sync the _highestPassedSteps with curStep...");
-            }
             _highestPassedSteps = curStep;
             passedSteps = [];
             for (i in 0..._highestPassedSteps) {
                 passedSteps.push(i);
             }
-            if (CDevConfig.saveData.testMode) {
-                Log.warn("Game synced, current values: " + curStep + " // " + _highestPassedSteps + ".");
-            }
+            //Log.warn("Game synced, current values: " + curStep + " // " + _highestPassedSteps + ".");
         }
     }
 

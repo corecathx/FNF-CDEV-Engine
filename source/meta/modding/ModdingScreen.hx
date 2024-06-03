@@ -140,7 +140,7 @@ class ModdingScreen extends meta.states.MusicBeatState
 					FlxG.switchState(new meta.modding.stage_editor.StageEditor());
 				case 'Week Editor':
 					FlxG.sound.music.stop();
-					FlxG.switchState(new meta.modding.week_editor.WeekEditor(''));	
+					FlxG.switchState(new meta.modding.week_editor.WeekEditor());	
 				case 'Add Event Script': // Shhh
 					FlxG.switchState(new meta.modding.event_editor.EventScriptEditor()); 
 			}

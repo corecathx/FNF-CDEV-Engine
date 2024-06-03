@@ -84,7 +84,7 @@ class WeekData
         loadedWeeks = theFiles;
     }
 
-    private static function loadWeekFileFromPath(path:String, modName:String, theFiles:Array<StoryData>, allowLoad:Bool):Void {
+    public static function loadWeekFileFromPath(path:String, modName:String, theFiles:Array<StoryData>, allowLoad:Bool):Void {
         if (!allowLoad) return;
 
         var weekFiles:Array<String> = FileSystem.readDirectory(path);

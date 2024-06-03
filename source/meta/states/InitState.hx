@@ -1,5 +1,7 @@
 package meta.states;
 
+import game.objects.AtlasSprite;
+import flxanimate.FlxAnimate;
 import lime.app.Application;
 import openfl.display.Window;
 import flixel.math.FlxRect;
@@ -22,6 +24,11 @@ import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
  * Initialization Class for CDEV Engine.
  */
 class InitState extends MusicBeatState {
+    public static var compiler_thing:Array<Dynamic> = [
+        AtlasSprite,
+        FlxAnimate
+    ];
+
     public static var status = {
         loadedSaves: false,
         transitionLoaded: false,

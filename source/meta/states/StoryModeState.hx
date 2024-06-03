@@ -1,10 +1,13 @@
 package meta.states;
 
+import game.Stage;
+import meta.substates.LoadingSubstate;
+import game.song.Song;
+import sys.FileSystem;
 import haxe.Timer;
 import game.system.FunkinThread;
 import game.objects.Character;
 import game.objects.DifficultyText;
-import game.objects.Alphabet;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import game.CoolUtil;
 import game.objects.StoryItem;
@@ -232,6 +235,114 @@ class StoryModeState extends MusicBeatState {
                     for (spr in weekList.members) if (spr.ID != curWeek) spr.disabled = false;
                     status = WEEK;
                 }
+
+                if (controls.ACCEPT) {
+                    var missingSongs:Array<String> = [];
+                    var file:StoryData = WeekData.loadedWeeks[curWeek];
+                
+                    for (track in file.data.tracks) {
+                        Paths.currentMod = file.mod;
+                        var chartPath:String = '$track/';
+                        var trackPath:String = '$track-$diffStr';
+                
+                        var paths:Array<String> = [
+                            Paths.modJson(chartPath + trackPath),
+                            Paths.json(chartPath + trackPath),
+                            Paths.modJson(chartPath + track),
+                            Paths.json(chartPath + track)
+                        ];
+                
+                        var foundNothing:Bool = true;
+                        for (path in paths) {
+                            if (FileSystem.exists(path)) {
+                                foundNothing = false;
+                                break;
+                            }
+                        }
+                
+                        if (foundNothing) {
+                            missingSongs.push(chartPath + trackPath);
+                        }
+                    }
+                
+                    if (missingSongs.length > 0) {
+                        FlxG.sound.play(Paths.sound('cancelMenu'));
+                        var errorMessage:String = "Couldn't load week due to a missing song file(s)\n" + missingSongs.join('\n');
+                        CDevPopUp.open(this, "Error", errorMessage, [{
+                            text: "OK",
+                            callback: () -> closeSubState()
+                        }]);
+                    } else {
+                        bgAlphaI = 0;
+                        FlxG.sound.play(Paths.sound('confirmMenu'));
+                        if (FlxG.sound.music != null) {
+                            FlxG.sound.music.fadeOut(0.4, 0.3);
+                        }
+                
+                        PlayState.storyPlaylist = file.data.tracks;
+                        PlayState.isStoryMode = true;
+                        PlayState.weekName = file.data.weekName;
+                        PlayState.difficultyName = diffStr;
+                        PlayState.storyDifficulty = curDiff;
+                
+                        var diffic:String = '-' + diffStr;
+                        var tryJson:Dynamic = Song.loadFromJson(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
+                        if (tryJson == null && diffStr.toLowerCase() == "normal") {
+                            Log.info("Chart JSON is null, but current selected difficulty is \"normal\", hold on...");
+                            diffic = "";
+                            tryJson = Song.loadFromJson(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
+                        }
+                        if (tryJson != null) Log.info("I guess it worked!"); else Log.info("Oh, it doesn't work.");
+                
+                        PlayState.SONG = tryJson;
+                        PlayState.storyWeek = curWeek;
+                        PlayState.campaignScore = 0;
+                        PlayState.fromMod = file.mod;
+
+                        persistentDraw = persistentUpdate = true;
+
+                        var characters:Array<Character> = [];
+                        LoadingSubstate.load(this,[
+                            () -> {
+                                //Character Caching
+                                for (chr in [PlayState.SONG.player2,PlayState.SONG.player1,PlayState.SONG.gfVersion]){
+                                    var tempChar:Character = new Character(0,0,chr);
+                                    tempChar.alpha = 0.00001;
+                                    add(tempChar);
+                                    characters.push(tempChar);
+                                }
+                            },
+                            () -> {
+                                //Stage Caching
+                                new Stage(PlayState.SONG.stage, new PlayState(), true).createDaStage();
+                            },
+                            () -> {
+                                // Music caching
+                                for (msc in [Paths.inst(PlayState.SONG.song),Paths.voices(PlayState.SONG.song)]){
+                                    if (msc != null) FlxG.sound.cache(msc);
+                                }
+                            }
+                        ],["Characters", "Stage", "Music Files", "Clean-Up"],()->{
+                            for (i in characters){
+                                if (i != null) remove(i);
+                            }
+                            new FlxTimer().start(0.2, function(hasd:FlxTimer)
+                            {
+                                if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
+                                LoadingState.loadAndSwitchState(new PlayState(), true);
+                            });
+                        }, (wawas:String)->{
+                            CDevPopUp.open(this,"Error","An error occured while running a task:\n-"+wawas,
+                            [
+                                {
+                                    text: "OK", 
+                                    callback:() -> {FlxG.switchState(new StoryModeState());}
+                                }
+                            ], false, true);
+                        });
+                    }
+                }
+                
         }
     }
 
@@ -304,7 +415,7 @@ class StoryModeState extends MusicBeatState {
         allowChange = false;
         character_group.forEachAlive((char:Character) -> {
             char.kill();
-            char.destroy();
+            //char.destroy();
         });
         character_group.clear();
 

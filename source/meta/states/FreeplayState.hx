@@ -104,9 +104,6 @@ class FreeplayState extends MusicBeatState
 	private var iconArray:Array<HealthIcon> = [];
 
 	var songInfo:FlxText;
-	var barValue:Float = 0;
-	var barValueLRP:Float = 0;
-	var cachingAmount:Float = 0;
 	var tip:FlxText;
 
 	var tween:FlxTween;
@@ -885,7 +882,6 @@ class FreeplayState extends MusicBeatState
 		try {
 			curPass = 0.005;
 			selectedBPMSONG = supposedlySelected;
-			cachingAmount = 3;
 			curPlayedSong = songs[supposedlySelected].songName;
 	
 			var poop:String = Highscore.formatSong(songs[supposedlySelected].songName.toLowerCase(), curDifficulty);
@@ -988,13 +984,11 @@ class FreeplayState extends MusicBeatState
 						tempChar.alpha = 0.00001;
 						add(tempChar);
 						characters.push(tempChar);
-						barValue++;
 					}
 				},
 				() -> {
 					//Stage Caching
 					new Stage(PlayState.SONG.stage, new PlayState(), true).createDaStage();
-					barValue++;
 				},
 				() -> {
 					// Music caching

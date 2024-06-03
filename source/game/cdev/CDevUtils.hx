@@ -118,6 +118,18 @@ class CDevUtils
 	}
 
 	/**
+	 * Returns total notes in a chart.
+	 * @param chart Your chart file.
+	 */
+	public function getNotesTotal(chart:SwagSong) {
+		var total:Int = 0;
+		for (i in chart.notes){
+			for (j in i.sectionNotes) total++;
+		}
+		return total;
+	}
+
+	/**
 	 * Reads the `songname`'s JSON files and returns the Difficulty names.
 	 * @param songname 	The song's name.
 	 * @param mod 		Whether if it's a mod or not.

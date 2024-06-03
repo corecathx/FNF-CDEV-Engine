@@ -84,6 +84,7 @@ class Character extends SpriteStage {
     public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?usedForStoryChar:Bool = false) {
         super(x, y);
         animOffsets = new Map<String, Array<Dynamic>>();
+        
         curCharacter = character;
         this.isPlayer = isPlayer;
 

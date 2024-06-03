@@ -4,6 +4,9 @@ import flixel.addons.ui.FlxInputText;
 import flixel.graphics.tile.FlxDrawQuadsItem;
 import flixel.addons.ui.FlxUIInputText;
 
+/**
+ * Textbox Object for CDEV Engine since FlxInputText sometimes buggy
+ */
 class CDevInputText extends FlxInputText {
     public var onTextChanged:String->Void = (nT:String)->{}; //what to do when text changed
     override function set_text(Text:String):String {
@@ -20,7 +23,7 @@ class CDevInputText extends FlxInputText {
         focusLost = ()->{
             newStuff(false);
         }
-        return newStuff;
+        return onFocus = newStuff;
     }
 
     override function update(elapsed:Float) {
@@ -30,5 +33,16 @@ class CDevInputText extends FlxInputText {
                 focusLost();
         }
         super.update(elapsed);
+    }
+
+    override private function drawSprite(Sprite:FlxSprite):Void
+    {
+        if (Sprite == null) return;
+        if (Sprite.shader == null && Sprite.graphic.isDestroyed) return;
+
+        Sprite.scrollFactor = scrollFactor;
+        Sprite._cameras = _cameras;
+        Sprite.alpha = alpha;
+        Sprite.draw();
     }
 }

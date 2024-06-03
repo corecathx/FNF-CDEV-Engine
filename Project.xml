@@ -130,8 +130,6 @@
 	<haxelib name="flixel-addons" />
 	<haxelib name="hscript"/>
 	<!--<haxelib name="hscript-improved" /> y'all this might break your mods-->
-	
-	<haxelib name="flxanimate"/>
 
 	<!--In case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
@@ -140,6 +138,7 @@
 	<!--<haxelib name="linc_luajit" if="ALLOW_LUA"/>-->
 	<haxelib name="discord_rpc" if="desktop"/>
 	<haxelib name="HxWebView" if="desktop"/>
+	<haxelib name="flxanimate"/>
 	<!--<haxelib name="linc_luajit" if="windows"/>-->
 	<!--<haxelib name="hxcpp-debug-server" if="desktop"/>-->
 

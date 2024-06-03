@@ -21,10 +21,11 @@ HxWebView
 ```
 Type `haxelib install [library]` for each the libraries, so like: `haxelib install newgrounds`.
 
-You'll also need to install `discord_rpc` library so that the engine could display what you're currently playing on Discord, this requires you to install git.
+There are also few libraries that you need to install using git.
 1. Download [git-scm](https://git-scm.com/downloads). Works for Windows, Mac, and Linux, just select your build.
 2. Follow instructions to install the application properly.
 3. Run `haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc` to install the library.
+4. run `haxelib git flxanimate https://github.com/Core5570RYT/flxanimate-cdev.git` to install CDEV Engine version of FlxAnimate.
 
 You should have everything ready for compiling the engine! Follow the guide below to continue!
 

@@ -44,7 +44,7 @@ class SystemStatsState extends MusicBeatState
         displayText.screenCenter();
 
 		if (FlxG.keys.justPressed.SPACE){
-			trace("wintoast bugged :(");
+			Windows.toast("CDEV Engine", "Finished downloading update!", 0);
 		}
 
 		if (FlxG.keys.justPressed.ESCAPE)

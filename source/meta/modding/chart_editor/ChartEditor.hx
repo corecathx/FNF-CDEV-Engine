@@ -1093,6 +1093,5 @@ class ChartEditor extends MusicBeatState {
         } else {
             CDevPopUp.open(this, "Error", "An error occured while generating JSON data for your chart.", [{text: "OK", callback:()->{closeSubState();}}], false, true);
         }
-
     }
 }
