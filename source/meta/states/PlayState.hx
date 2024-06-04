@@ -10,14 +10,8 @@ import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;
 import flixel.ui.FlxBar;
 import flixel.util.FlxSort;
-import lime.app.Application;
-import lime.ui.KeyCode;
-import lime.ui.KeyModifier;
-import openfl.display.BitmapData;
 import openfl.events.KeyboardEvent;
-import openfl.ui.Keyboard;
 import game.cdev.CDevPopUp.PopUpButton;
-import game.cdev.engineutils.CDevFPSMem;
 import game.cdev.objects.CDevCamera;
 import game.cdev.script.CDevScript;
 import game.cdev.script.ScriptData;
@@ -3484,7 +3478,11 @@ class PlayState extends MusicBeatState
 				while (unspawnNotes.length > 0 && unspawnNotes[unspawnNotes.length - 1].strumTime - Conductor.songPosition < daTime) {
 					var note:Note = unspawnNotes.pop();
 					note.active = note.visible = true;
-					notes.add(note);
+					if (note.isSustainNote) //layering issue
+						notes.insert(notes.length-1, note);
+					else 
+						notes.add(note);
+					
 					note.onNoteSpawn();
 				}
 			}

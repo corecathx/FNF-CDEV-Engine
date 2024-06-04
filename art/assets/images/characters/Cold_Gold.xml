@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="Cold Gold.png">
+	<!-- Created with Adobe Animate version 22.0.3.179 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="GOLD DOWN POSE0000" x="0" y="0" width="455" height="504" frameX="-24" frameY="-24" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0001" x="0" y="0" width="455" height="504" frameX="-24" frameY="-24" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0002" x="505" y="0" width="445" height="502" frameX="-19" frameY="-26" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0003" x="505" y="0" width="445" height="502" frameX="-19" frameY="-26" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0004" x="1000" y="0" width="452" height="508" frameX="-6" frameY="-13" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0005" x="1000" y="0" width="452" height="508" frameX="-6" frameY="-13" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0006" x="1502" y="0" width="498" height="515" frameX="0" frameY="-3" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0007" x="1502" y="0" width="498" height="515" frameX="0" frameY="-3" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0008" x="2050" y="0" width="419" height="516" frameX="0" frameY="0" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0009" x="2050" y="0" width="419" height="516" frameX="0" frameY="0" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0010" x="2519" y="0" width="419" height="516" frameX="0" frameY="0" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0011" x="2519" y="0" width="419" height="516" frameX="0" frameY="0" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0012" x="2519" y="0" width="419" height="516" frameX="0" frameY="0" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0013" x="2519" y="0" width="419" height="516" frameX="0" frameY="0" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE0014" x="2519" y="0" width="419" height="516" frameX="0" frameY="0" frameWidth="498" frameHeight="528"/>
+	<SubTexture name="GOLD DOWN POSE MISS0000" x="2988" y="0" width="442" height="498" frameX="0" frameY="0" frameWidth="455" frameHeight="507"/>
+	<SubTexture name="GOLD DOWN POSE MISS0001" x="3480" y="0" width="448" height="494" frameX="-3" frameY="-9" frameWidth="455" frameHeight="507"/>
+	<SubTexture name="GOLD DOWN POSE MISS0002" x="3480" y="0" width="448" height="494" frameX="-3" frameY="-9" frameWidth="455" frameHeight="507"/>
+	<SubTexture name="GOLD DOWN POSE MISS0003" x="0" y="566" width="451" height="492" frameX="-4" frameY="-15" frameWidth="455" frameHeight="507"/>
+	<SubTexture name="GOLD DOWN POSE MISS0004" x="0" y="566" width="451" height="492" frameX="-4" frameY="-15" frameWidth="455" frameHeight="507"/>
+	<SubTexture name="GOLD IDLE0000" x="501" y="566" width="412" height="524" frameX="-11" frameY="-20" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0001" x="963" y="566" width="412" height="524" frameX="-11" frameY="-20" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0002" x="1425" y="566" width="408" height="524" frameX="-13" frameY="-21" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0003" x="1883" y="566" width="403" height="534" frameX="-7" frameY="-11" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0004" x="2336" y="566" width="406" height="545" frameX="-1" frameY="0" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0005" x="2792" y="566" width="402" height="545" frameX="-1" frameY="0" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0006" x="3244" y="566" width="405" height="545" frameX="0" frameY="0" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0007" x="0" y="1161" width="405" height="545" frameX="0" frameY="0" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0008" x="455" y="1161" width="405" height="545" frameX="0" frameY="0" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0009" x="910" y="1161" width="407" height="545" frameX="0" frameY="0" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0010" x="910" y="1161" width="407" height="545" frameX="0" frameY="0" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0011" x="910" y="1161" width="407" height="545" frameX="0" frameY="0" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0012" x="910" y="1161" width="407" height="545" frameX="0" frameY="0" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0013" x="910" y="1161" width="407" height="545" frameX="0" frameY="0" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD IDLE0014" x="910" y="1161" width="407" height="545" frameX="0" frameY="0" frameWidth="423" frameHeight="545"/>
+	<SubTexture name="GOLD LEFT POSE0000" x="1367" y="1161" width="496" height="539" frameX="0" frameY="-11" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0001" x="1367" y="1161" width="496" height="539" frameX="0" frameY="-11" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0002" x="1913" y="1161" width="488" height="548" frameX="-18" frameY="-4" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0003" x="1913" y="1161" width="488" height="548" frameX="-18" frameY="-4" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0004" x="2451" y="1161" width="462" height="550" frameX="-54" frameY="0" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0005" x="2451" y="1161" width="462" height="550" frameX="-54" frameY="0" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0006" x="2963" y="1161" width="446" height="548" frameX="-73" frameY="-1" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0007" x="2963" y="1161" width="446" height="548" frameX="-73" frameY="-1" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0008" x="3459" y="1161" width="445" height="547" frameX="-77" frameY="-2" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0009" x="3459" y="1161" width="445" height="547" frameX="-77" frameY="-2" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0010" x="0" y="1761" width="445" height="547" frameX="-77" frameY="-2" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0011" x="0" y="1761" width="445" height="547" frameX="-77" frameY="-2" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0012" x="0" y="1761" width="445" height="547" frameX="-77" frameY="-2" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0013" x="0" y="1761" width="445" height="547" frameX="-77" frameY="-2" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE0014" x="0" y="1761" width="445" height="547" frameX="-77" frameY="-2" frameWidth="522" frameHeight="552"/>
+	<SubTexture name="GOLD LEFT POSE MISS0000" x="495" y="1761" width="445" height="546" frameX="-42" frameY="0" frameWidth="487" frameHeight="560"/>
+	<SubTexture name="GOLD LEFT POSE MISS0001" x="990" y="1761" width="464" height="548" frameX="-7" frameY="-7" frameWidth="487" frameHeight="560"/>
+	<SubTexture name="GOLD LEFT POSE MISS0002" x="990" y="1761" width="464" height="548" frameX="-7" frameY="-7" frameWidth="487" frameHeight="560"/>
+	<SubTexture name="GOLD LEFT POSE MISS0003" x="1504" y="1761" width="471" height="552" frameX="0" frameY="-8" frameWidth="487" frameHeight="560"/>
+	<SubTexture name="GOLD LEFT POSE MISS0004" x="1504" y="1761" width="471" height="552" frameX="0" frameY="-8" frameWidth="487" frameHeight="560"/>
+	<SubTexture name="GOLD MISS UP0000" x="2025" y="1761" width="428" height="591" frameX="-8" frameY="-33" frameWidth="436" frameHeight="624"/>
+	<SubTexture name="GOLD MISS UP0001" x="2503" y="1761" width="434" height="622" frameX="-2" frameY="0" frameWidth="436" frameHeight="624"/>
+	<SubTexture name="GOLD MISS UP0002" x="2503" y="1761" width="434" height="622" frameX="-2" frameY="0" frameWidth="436" frameHeight="624"/>
+	<SubTexture name="GOLD MISS UP0003" x="2987" y="1761" width="436" height="614" frameX="0" frameY="-8" frameWidth="436" frameHeight="624"/>
+	<SubTexture name="GOLD MISS UP0004" x="2987" y="1761" width="436" height="614" frameX="0" frameY="-8" frameWidth="436" frameHeight="624"/>
+	<SubTexture name="GOLD RIGHT POSE0000" x="3473" y="1761" width="423" height="530" frameX="-5" frameY="0" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0001" x="3473" y="1761" width="423" height="530" frameX="-5" frameY="0" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0002" x="0" y="2433" width="425" height="523" frameX="-2" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0003" x="0" y="2433" width="425" height="523" frameX="-2" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0004" x="475" y="2433" width="433" height="523" frameX="-2" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0005" x="475" y="2433" width="433" height="523" frameX="-2" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0006" x="958" y="2433" width="454" height="523" frameX="-1" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0007" x="958" y="2433" width="454" height="523" frameX="-1" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0008" x="1462" y="2433" width="422" height="523" frameX="0" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0009" x="1462" y="2433" width="422" height="523" frameX="0" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0010" x="1934" y="2433" width="422" height="523" frameX="0" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0011" x="1934" y="2433" width="422" height="523" frameX="0" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0012" x="1934" y="2433" width="422" height="523" frameX="0" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0013" x="1934" y="2433" width="422" height="523" frameX="0" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE0014" x="1934" y="2433" width="422" height="523" frameX="0" frameY="-7" frameWidth="455" frameHeight="530"/>
+	<SubTexture name="GOLD RIGHT POSE MISS0000" x="2406" y="2433" width="422" height="523" frameX="0" frameY="0" frameWidth="425" frameHeight="525"/>
+	<SubTexture name="GOLD RIGHT POSE MISS0001" x="2878" y="2433" width="422" height="520" frameX="-2" frameY="-3" frameWidth="425" frameHeight="525"/>
+	<SubTexture name="GOLD RIGHT POSE MISS0002" x="2878" y="2433" width="422" height="520" frameX="-2" frameY="-3" frameWidth="425" frameHeight="525"/>
+	<SubTexture name="GOLD RIGHT POSE MISS0003" x="3350" y="2433" width="422" height="516" frameX="-3" frameY="-9" frameWidth="425" frameHeight="525"/>
+	<SubTexture name="GOLD RIGHT POSE MISS0004" x="3350" y="2433" width="422" height="516" frameX="-3" frameY="-9" frameWidth="425" frameHeight="525"/>
+	<SubTexture name="GOLD UP MISS0000" x="0" y="3006" width="429" height="592" frameX="-8" frameY="0" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0001" x="0" y="3006" width="429" height="592" frameX="-8" frameY="0" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0002" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0003" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0004" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0005" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0006" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0007" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0008" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0009" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0010" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0011" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0012" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0013" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP MISS0014" x="479" y="3006" width="436" height="586" frameX="0" frameY="-5" frameWidth="437" frameHeight="592"/>
+	<SubTexture name="GOLD UP POSE0000" x="965" y="3006" width="417" height="624" frameX="-14" frameY="0" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0001" x="965" y="3006" width="417" height="624" frameX="-14" frameY="0" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0002" x="1432" y="3006" width="435" height="597" frameX="-5" frameY="-15" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0003" x="1432" y="3006" width="435" height="597" frameX="-5" frameY="-15" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0004" x="1917" y="3006" width="433" height="587" frameX="-1" frameY="-26" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0005" x="1917" y="3006" width="433" height="587" frameX="-1" frameY="-26" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0006" x="2400" y="3006" width="434" height="587" frameX="0" frameY="-25" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0007" x="2400" y="3006" width="434" height="587" frameX="0" frameY="-25" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0008" x="2884" y="3006" width="434" height="587" frameX="0" frameY="-25" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0009" x="2884" y="3006" width="434" height="587" frameX="0" frameY="-25" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0010" x="3368" y="3006" width="434" height="587" frameX="0" frameY="-25" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0011" x="3368" y="3006" width="434" height="587" frameX="0" frameY="-25" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0012" x="3368" y="3006" width="434" height="587" frameX="0" frameY="-25" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0013" x="3368" y="3006" width="434" height="587" frameX="0" frameY="-25" frameWidth="440" frameHeight="624"/>
+	<SubTexture name="GOLD UP POSE0014" x="3368" y="3006" width="434" height="587" frameX="0" frameY="-25" frameWidth="440" frameHeight="624"/>
+</TextureAtlas>

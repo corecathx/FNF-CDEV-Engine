@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="freakachu entrance.png">
+	<!-- Created with Adobe Animate version 22.0.5.191 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Freakachu entrance instance 10000" x="5" y="5" width="257" height="480" frameX="-472" frameY="-8" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10001" x="5" y="5" width="257" height="480" frameX="-472" frameY="-8" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10002" x="262" y="5" width="253" height="486" frameX="-472" frameY="-2" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10003" x="515" y="5" width="280" height="486" frameX="-445" frameY="-2" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10004" x="795" y="5" width="349" height="488" frameX="-375" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10005" x="1144" y="5" width="384" height="488" frameX="-340" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10006" x="1528" y="5" width="407" height="488" frameX="-317" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10007" x="1935" y="5" width="407" height="488" frameX="-317" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10008" x="2342" y="5" width="473" height="488" frameX="-251" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10009" x="2815" y="5" width="473" height="488" frameX="-251" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10010" x="3288" y="5" width="517" height="488" frameX="-207" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10011" x="3288" y="5" width="517" height="488" frameX="-207" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10012" x="5" y="493" width="562" height="488" frameX="-162" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10013" x="567" y="493" width="583" height="500" frameX="-141" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10014" x="1150" y="493" width="614" height="518" frameX="-110" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10015" x="1764" y="493" width="639" height="518" frameX="-85" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10016" x="1764" y="493" width="639" height="518" frameX="-85" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10017" x="2403" y="493" width="658" height="513" frameX="-66" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10018" x="3061" y="493" width="667" height="491" frameX="-57" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10019" x="5" y="1011" width="723" height="497" frameX="-1" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10020" x="5" y="1011" width="723" height="497" frameX="-1" frameY="0" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10021" x="728" y="1011" width="358" height="210" frameX="0" frameY="-285" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10022" x="728" y="1011" width="358" height="210" frameX="0" frameY="-285" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10023" x="1086" y="1011" width="352" height="227" frameX="-10" frameY="-269" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10024" x="1438" y="1011" width="350" height="289" frameX="-9" frameY="-207" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10025" x="1438" y="1011" width="350" height="289" frameX="-9" frameY="-207" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10026" x="1788" y="1011" width="319" height="311" frameX="-40" frameY="-184" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10027" x="1788" y="1011" width="319" height="311" frameX="-40" frameY="-184" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10028" x="2107" y="1011" width="322" height="306" frameX="-37" frameY="-189" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10029" x="2429" y="1011" width="319" height="308" frameX="-40" frameY="-187" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10030" x="2107" y="1011" width="322" height="306" frameX="-37" frameY="-189" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10031" x="2429" y="1011" width="319" height="308" frameX="-40" frameY="-187" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10032" x="2107" y="1011" width="322" height="306" frameX="-37" frameY="-189" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10033" x="2429" y="1011" width="319" height="308" frameX="-40" frameY="-187" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10034" x="2107" y="1011" width="322" height="306" frameX="-37" frameY="-189" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10035" x="2429" y="1011" width="319" height="308" frameX="-40" frameY="-187" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10036" x="2107" y="1011" width="322" height="306" frameX="-37" frameY="-189" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10037" x="2429" y="1011" width="319" height="308" frameX="-40" frameY="-187" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10038" x="2107" y="1011" width="322" height="306" frameX="-37" frameY="-189" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10039" x="2429" y="1011" width="319" height="308" frameX="-40" frameY="-187" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10040" x="2107" y="1011" width="322" height="306" frameX="-37" frameY="-189" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10041" x="2429" y="1011" width="319" height="308" frameX="-40" frameY="-187" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10042" x="2107" y="1011" width="322" height="306" frameX="-37" frameY="-189" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10043" x="2429" y="1011" width="319" height="308" frameX="-40" frameY="-187" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10044" x="2748" y="1011" width="293" height="299" frameX="-65" frameY="-196" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10045" x="3041" y="1011" width="301" height="270" frameX="-55" frameY="-225" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10046" x="3041" y="1011" width="301" height="270" frameX="-55" frameY="-225" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10047" x="3342" y="1011" width="305" height="259" frameX="-50" frameY="-236" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10048" x="3342" y="1011" width="305" height="259" frameX="-50" frameY="-236" frameWidth="729" frameHeight="518"/>
+	<SubTexture name="Freakachu entrance instance 10049" x="3342" y="1011" width="305" height="259" frameX="-50" frameY="-236" frameWidth="729" frameHeight="518"/>
+</TextureAtlas>

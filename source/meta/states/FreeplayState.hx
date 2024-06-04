@@ -99,7 +99,6 @@ class FreeplayState extends MusicBeatState
 
 	static var selectedBPMSONG:Int = 0;
 
-
 	var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('aboutMenu'));
 	private var iconArray:Array<HealthIcon> = [];
 

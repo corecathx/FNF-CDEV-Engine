@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="Thermometer.png">
+	<!-- Created with Adobe Animate version 22.0.2.168 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Therm10000" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10001" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10002" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10003" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10004" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10005" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10006" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10007" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10008" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10009" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10010" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10011" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10012" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10013" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10014" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10015" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10016" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10017" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10018" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10019" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10020" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10021" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10022" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10023" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10024" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10025" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10026" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10027" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10028" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10029" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10030" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10031" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10032" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10033" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10034" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10035" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10036" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10037" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10038" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10039" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10040" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10041" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10042" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10043" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm10044" x="5" y="5" width="88" height="400"/>
+	<SubTexture name="Therm20000" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20001" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20002" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20003" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20004" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20005" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20006" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20007" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20008" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20009" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20010" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20011" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20012" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20013" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20014" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20015" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20016" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20017" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20018" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20019" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20020" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20021" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20022" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20023" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20024" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20025" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20026" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20027" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20028" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20029" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20030" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20031" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20032" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20033" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20034" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20035" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20036" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20037" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20038" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20039" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20040" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20041" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20042" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20043" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm20044" x="98" y="5" width="87" height="408" frameX="0" frameY="-1" frameWidth="87" frameHeight="408"/>
+	<SubTexture name="Therm30000" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30001" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30002" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30003" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30004" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30005" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30006" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30007" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30008" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30009" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30010" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30011" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30012" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30013" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30014" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30015" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30016" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30017" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30018" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30019" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30020" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30021" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30022" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30023" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30024" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30025" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30026" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30027" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30028" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30029" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30030" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30031" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30032" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30033" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30034" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30035" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30036" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30037" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30038" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30039" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30040" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30041" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30042" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30043" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+	<SubTexture name="Therm30044" x="190" y="5" width="88" height="439" frameX="0" frameY="4" frameWidth="88" frameHeight="439"/>
+</TextureAtlas>

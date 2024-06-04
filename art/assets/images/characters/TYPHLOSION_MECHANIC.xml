@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="TYPHLOSION MECHANIC.png">
+	<!-- Created with Adobe Animate version 22.0.7.214 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="TYPHLOSION MECHANIC0000" x="5" y="5" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0001" x="5" y="5" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0002" x="753" y="5" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0003" x="1501" y="5" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0004" x="2249" y="5" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0005" x="2997" y="5" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0006" x="5" y="495" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0007" x="5" y="495" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0008" x="753" y="495" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0009" x="753" y="495" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0010" x="1501" y="495" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0011" x="1501" y="495" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0012" x="1501" y="495" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0013" x="1501" y="495" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0014" x="1501" y="495" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0015" x="2249" y="495" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0016" x="2997" y="495" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0017" x="5" y="985" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0018" x="5" y="985" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0019" x="753" y="985" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0020" x="1501" y="985" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0021" x="2249" y="985" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0022" x="2997" y="985" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0023" x="5" y="1475" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0024" x="5" y="1475" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0025" x="753" y="1475" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0026" x="753" y="1475" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0027" x="753" y="1475" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0028" x="753" y="1475" width="748" height="490"/>
+	<SubTexture name="TYPHLOSION MECHANIC0029" x="753" y="1475" width="748" height="490"/>
+</TextureAtlas>

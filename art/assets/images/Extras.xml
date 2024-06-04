@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="Extras.png">
+	<!-- Created with Adobe Animate version 21.0.9.42677 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="Checkmark0000" x="20" y="20" width="213" height="162" frameX="-3" frameY="-12" frameWidth="221" frameHeight="177"/>
+	<SubTexture name="Checkmark0001" x="253" y="20" width="221" height="159" frameX="0" frameY="-18" frameWidth="221" frameHeight="177"/>
+	<SubTexture name="Checkmark0002" x="20" y="20" width="213" height="162" frameX="-3" frameY="-12" frameWidth="221" frameHeight="177"/>
+	<SubTexture name="Checkmark0003" x="20" y="20" width="213" height="162" frameX="-3" frameY="-12" frameWidth="221" frameHeight="177"/>
+	<SubTexture name="Checkmark0004" x="494" y="20" width="198" height="174" frameX="-9" frameY="0" frameWidth="221" frameHeight="177"/>
+	<SubTexture name="Checkmark0005" x="494" y="20" width="198" height="174" frameX="-9" frameY="0" frameWidth="221" frameHeight="177"/>
+	<SubTexture name="Checkmark0006" x="494" y="20" width="198" height="174" frameX="-9" frameY="0" frameWidth="221" frameHeight="177"/>
+	<SubTexture name="Checkmark0007" x="712" y="20" width="198" height="174" frameX="-9" frameY="0" frameWidth="221" frameHeight="177"/>
+	<SubTexture name="Checkmark0008" x="930" y="20" width="198" height="174" frameX="-9" frameY="0" frameWidth="221" frameHeight="177"/>
+	<SubTexture name="Checkmark0009" x="712" y="20" width="198" height="174" frameX="-9" frameY="0" frameWidth="221" frameHeight="177"/>
+	<SubTexture name="Checkmark0010" x="1148" y="20" width="0" height="0" frameX="401" frameY="65" frameWidth="221" frameHeight="177"/>
+	<SubTexture name="Spacebar0000" x="1168" y="20" width="212" height="184" frameX="-9" frameY="-11" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0001" x="1400" y="20" width="213" height="185" frameX="-9" frameY="-11" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0002" x="1633" y="20" width="211" height="185" frameX="-9" frameY="-11" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0003" x="20" y="225" width="220" height="196" frameX="0" frameY="0" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0004" x="20" y="225" width="220" height="196" frameX="0" frameY="0" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0005" x="20" y="225" width="220" height="196" frameX="0" frameY="0" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0006" x="260" y="225" width="211" height="185" frameX="-9" frameY="-11" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0007" x="491" y="225" width="206" height="169" frameX="-14" frameY="-27" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0008" x="717" y="225" width="206" height="155" frameX="-14" frameY="-41" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0009" x="943" y="225" width="206" height="83" frameX="-14" frameY="-113" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0010" x="1169" y="225" width="206" height="108" frameX="-14" frameY="-88" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0011" x="1395" y="225" width="206" height="106" frameX="-14" frameY="-89" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0012" x="1621" y="225" width="206" height="104" frameX="-14" frameY="-92" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0013" x="1621" y="225" width="206" height="104" frameX="-14" frameY="-92" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0014" x="1621" y="225" width="206" height="104" frameX="-14" frameY="-92" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0015" x="1621" y="225" width="206" height="104" frameX="-14" frameY="-92" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0016" x="1621" y="225" width="206" height="104" frameX="-14" frameY="-92" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="Spacebar0017" x="1621" y="225" width="206" height="104" frameX="-14" frameY="-92" frameWidth="222" frameHeight="196"/>
+	<SubTexture name="X finished0000" x="20" y="441" width="240" height="194" frameX="-19" frameY="-27" frameWidth="263" frameHeight="226"/>
+	<SubTexture name="X finished0001" x="280" y="441" width="258" height="204" frameX="0" frameY="-22" frameWidth="263" frameHeight="226"/>
+	<SubTexture name="X finished0002" x="558" y="441" width="233" height="205" frameX="-24" frameY="-16" frameWidth="263" frameHeight="226"/>
+	<SubTexture name="X finished0003" x="811" y="441" width="242" height="198" frameX="-21" frameY="-14" frameWidth="263" frameHeight="226"/>
+	<SubTexture name="X finished0004" x="1073" y="441" width="214" height="214" frameX="-34" frameY="-7" frameWidth="263" frameHeight="226"/>
+	<SubTexture name="X finished0005" x="1307" y="441" width="217" height="214" frameX="-30" frameY="0" frameWidth="263" frameHeight="226"/>
+	<SubTexture name="X finished0006" x="1544" y="441" width="207" height="218" frameX="-35" frameY="-4" frameWidth="263" frameHeight="226"/>
+	<SubTexture name="X finished0007" x="1771" y="441" width="217" height="209" frameX="-36" frameY="-9" frameWidth="263" frameHeight="226"/>
+	<SubTexture name="X finished0008" x="20" y="679" width="218" height="207" frameX="-30" frameY="-10" frameWidth="263" frameHeight="226"/>
+	<SubTexture name="X finished0009" x="258" y="679" width="210" height="221" frameX="-27" frameY="-2" frameWidth="263" frameHeight="226"/>
+	<SubTexture name="X finished0010" x="488" y="679" width="0" height="0" frameX="193" frameY="60" frameWidth="263" frameHeight="226"/>
+</TextureAtlas>

@@ -1,0 +1,147 @@
+{
+    "followLerp": 0.03,
+    "useCustomFollowLerp": false,
+    "stageZoom": 1,
+    "sprites": [
+        {
+            "animType": "",
+            "imageVar": "back",
+            "imageScale": 1,
+            "imageSF": 1,
+            "position": [
+                -635,
+                -420
+            ],
+            "spriteType": "bitmap",
+            "imageFlipX": false,
+            "imagePath": "bg",
+            "imageAlpha": 1,
+            "imageAntialias": false,
+            "animation": null
+        },
+        {
+            "animType": "",
+            "imageVar": "wa",
+            "imageScale": 0.3,
+            "imageSF": 0.7,
+            "position": [
+                -1356.67,
+                -710
+            ],
+            "spriteType": "bitmap",
+            "imageFlipX": false,
+            "imagePath": "Pokemons",
+            "imageAlpha": 1,
+            "imageAntialias": false,
+            "animation": null
+        },
+        {
+            "animType": "",
+            "imageVar": "wawa",
+            "imageScale": 0.7,
+            "imageSF": 0.7,
+            "position": [
+                -993.33,
+                -680
+            ],
+            "spriteType": "bitmap",
+            "imageFlipX": false,
+            "imagePath": "Blastoise",
+            "imageAlpha": 1,
+            "imageAntialias": true,
+            "animation": null
+        },
+        {
+            "animType": "",
+            "imageVar": "mom",
+            "imageScale": 1,
+            "imageSF": 0.7,
+            "position": [
+                -440,
+                -715
+            ],
+            "spriteType": "bitmap",
+            "imageFlipX": false,
+            "imagePath": "charizard",
+            "imageAlpha": 1,
+            "imageAntialias": false,
+            "animation": null
+        },
+        {
+            "animType": "",
+            "imageVar": "Opponent",
+            "imageScale": 0.799621928166352,
+            "imageSF": 1,
+            "position": [
+                800.89,
+                -91.78
+            ],
+            "spriteType": "dad",
+            "imageFlipX": false,
+            "imagePath": "",
+            "imageAlpha": 1,
+            "imageAntialias": true,
+            "animation": null
+        },
+        {
+            "animType": "",
+            "imageVar": "Boyfriend",
+            "imageScale": 1,
+            "imageSF": 1,
+            "position": [
+                -14.22,
+                232.22
+            ],
+            "spriteType": "bf",
+            "imageFlipX": false,
+            "imagePath": "",
+            "imageAlpha": 1,
+            "imageAntialias": true,
+            "animation": null
+        },
+        {
+            "animType": "",
+            "imageVar": "Girlfriend",
+            "imageScale": 1,
+            "imageSF": 1,
+            "position": [
+                57,
+                484.5
+            ],
+            "spriteType": "gf",
+            "imageFlipX": false,
+            "imagePath": "",
+            "imageAlpha": 1,
+            "imageAntialias": true,
+            "animation": null
+        },
+        {
+            "animType": "",
+            "imageVar": "ea",
+            "imageScale": 1.4,
+            "imageSF": 0.001,
+            "position": [
+                9.67,
+                29.67
+            ],
+            "spriteType": "bitmap",
+            "imageFlipX": false,
+            "imagePath": "fog",
+            "imageAlpha": 1,
+            "imageAntialias": false,
+            "animation": null
+        }
+    ],
+    "opponentPosition": [
+        900.89,
+        -91.78
+    ],
+    "boyfriendPosition": [
+        -14.22,
+        232.22
+    ],
+    "girlfriendPosition": [
+        57,
+        484.5
+    ]
+}
