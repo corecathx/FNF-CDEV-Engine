@@ -682,7 +682,7 @@ class WeekEditor extends MusicBeatState
 		super.beatHit();
 		character_group.forEachAlive((char:Character) ->
 		{
-			char.dance(false, curBeat);
+			char.dance(curBeat);
 		});
 	}
 }

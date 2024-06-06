@@ -1,12 +1,13 @@
 
 package game;
 
+import game.cdev.song.CDevChart;
 import game.song.Song.SwagSong;
 import flixel.FlxG;
 
 typedef BPMChangeEvent =
 {
-	var stepTime:Int;
+	var stepTime:Float;
 	var songTime:Float;
 	var bpm:Float;
 }
@@ -68,41 +69,27 @@ class Conductor
 		time_signature = [beat,step];
 	}
 
-	public static function mapBPMChanges(song:SwagSong)//, addToSongBPMTiming:Bool)
+	public static function mapBPMChanges(song:CDevChart)
 	{
 		bpmChangeMap = [];
 
-		var curBPM:Float = song.bpm;
-		var totalSteps:Int = 0;
-		var totalPos:Float = 0;
-		for (i in 0...song.notes.length)
-		{
-			if(song.notes[i].changeBPM && song.notes[i].bpm != curBPM)
-			{
-				
-				curBPM = song.notes[i].bpm;
-				var event:BPMChangeEvent = {
-					stepTime: totalSteps,
-					songTime: totalPos,
+		var curBPM:Float = song.info.bpm;
+		for (event in song.events) {
+			if (event[0] == "Change BPM" && Std.parseFloat(event[3]) != curBPM) {
+				var time:Float = Std.parseFloat(event[2]);
+				bpmChangeMap.push({
+					stepTime: time / stepCrochet,
+					songTime: time,
 					bpm: curBPM
-				};
-				bpmChangeMap.push(event);
-
-				//SongBPMTiming.addTiming(songTime/(((60 / curBPM) * 1000)*(totalSteps%4)),curBPM,);
+				});
+				curBPM = Std.parseFloat(event[3]);
 			}
-
-			var deltaSteps:Int = song.notes[i].lengthInSteps;
-			totalSteps += deltaSteps;
-			totalPos += ((60 / curBPM) * 1000 / 4) * deltaSteps;
 		}
 		if (bpmChangeMap.length > 0) trace("new BPM map BUDDY " + bpmChangeMap);
 	}
 
-	public static function changeBPM(newBpm:Float, ?alsoChangeLast:Bool=false)
-	{
-		if (alsoChangeLast) last_bpm = newBpm;
+	public static function changeBPM(newBpm:Float) {
 		bpm = newBpm;
-
 		crochet = ((60 / bpm) * 1000);
 		stepCrochet = crochet / 4;
 	}

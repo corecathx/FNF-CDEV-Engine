@@ -440,11 +440,8 @@ class MainMenuState extends MusicBeatState
 						FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
 					}
 
-					if (!FlxG.keys.pressed.SHIFT)
-						FlxG.switchState(new StoryMenuState());
-					else
-						FlxG.switchState(new StoryModeState());
-					trace("Story Menu Selected");
+					FlxG.switchState(new StoryModeState());
+					trace("Story Mode Selected");
 				case 'freeplay':
 					if (CDevConfig.saveData.smoothAF)
 					{

@@ -1,0 +1,4 @@
+--force enable your mod by entering the mod name here.
+--any line starting with '--' is a comment.
+--uncomment this line below to override the saved mod list for the player
+--OVERRIDE_MOD_LIST

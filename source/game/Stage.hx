@@ -173,7 +173,7 @@ class Stage
 			trace("script "+name+" exists.");
 			script = CDevScript.create(apa);
 			script.setVariable("getObject", getObject);
-			ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.song);
+			ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.info.name);
 
 			gotScript = true;
 			script.loadFile(apa);

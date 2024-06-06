@@ -1,0 +1,78 @@
+{
+	"weekTxtImgPath": "week6",
+	"disableFreeplay": false,
+	"tracks": [
+		"senpai",
+		"roses",
+		"thorns"
+	],
+	"weekDifficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
+	"weekCharacters": [
+		"senpai",
+		"gf-pixel",
+		"bf-pixel"
+	],
+	"charSetting": [
+		{
+			"scale": 3,
+			"position": [
+				184,
+				162.5
+			],
+			"flipX": false
+		},
+		{
+			"scale": 3,
+			"position": [
+				585,
+				174
+			],
+			"flipX": false
+		},
+		{
+			"scale": 3,
+			"position": [
+				967.5,
+				277.5
+			],
+			"flipX": false
+		}
+	],
+	"freeplaySongs": [
+		{
+			"colors": [
+				220,
+				100,
+				200
+			],
+			"bpm": 120,
+			"character": "senpai",
+			"song": "senpai"
+		},
+		{
+			"colors": [
+				150,
+				120,
+				255
+			],
+			"bpm": 120,
+			"character": "senpai",
+			"song": "roses"
+		},
+		{
+			"colors": [
+				150,
+				120,
+				255
+			],
+			"bpm": 120,
+			"character": "spirit",
+			"song": "thorns"
+		}
+	],
+	"weekName": "Hating Simulator FT. Moawling"
+}

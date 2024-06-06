@@ -60,7 +60,7 @@ class MusicBeatState extends FlxUIState {
 
     private function updateCurStep():Void {
         var lastChange:BPMChangeEvent = getLastBPMChangeEvent();
-        var newSteps:Int = lastChange.stepTime + Std.int(((Conductor.songPosition - Conductor.offset) - lastChange.songTime) / Conductor.stepCrochet);
+        var newSteps:Int = Std.int(lastChange.stepTime + ((Conductor.songPosition - Conductor.offset) - lastChange.songTime) / Conductor.stepCrochet);
         
         if (!passedSteps.contains(newSteps)) {
             curStep = newSteps;

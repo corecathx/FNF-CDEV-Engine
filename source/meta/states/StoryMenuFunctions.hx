@@ -43,8 +43,8 @@ class StoryMenuFunctions
 			var poop:String = daSong;
 
 			trace(tracks[a].toLowerCase().replace(" ", '-'));
-			if (!FileSystem.exists(Paths.modJson(tracks[a].toLowerCase().replace(" ", "-") + '/' + poop))
-			&& !FileSystem.exists(Paths.json(tracks[a].toLowerCase().replace(" ", "-") + '/' + poop)))
+			if (!FileSystem.exists(Paths.modCdc(tracks[a].toLowerCase().replace(" ", "-") + '/' + poop))
+			&& !FileSystem.exists(Paths.cdc(tracks[a].toLowerCase().replace(" ", "-") + '/' + poop)))
 			{
 				canLoadWeek = false;
 				songsThatCantBeLoaded.push(poop);

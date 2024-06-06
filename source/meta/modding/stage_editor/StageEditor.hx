@@ -1258,9 +1258,9 @@ class StageEditor extends MusicBeatState
 
 	override function beatHit()
 	{
-		gf.dance(false, curBeat);
-		dad.dance(false, curBeat);
-		bf.dance(false, curBeat);
+		gf.dance(curBeat);
+		dad.dance(curBeat);
+		bf.dance(curBeat);
 
 		for (s in beatHit_sprites)
 		{

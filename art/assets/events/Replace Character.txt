@@ -1,4 +1,0 @@
-It's like Psych Engine's Change Character event.
-
-Value 1: Character to change,  "dad", "gf", or "bf".
-Value 2: Character that will replace the character written on Value 1.

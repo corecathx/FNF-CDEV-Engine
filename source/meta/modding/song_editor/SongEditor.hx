@@ -1,9 +1,10 @@
 package meta.modding.song_editor;
 
+import meta.modding.chart_editor.ChartEditor;
+import game.cdev.song.CDevChart;
 import flixel.FlxState;
 import meta.states.LoadingState;
 import meta.states.PlayState;
-import meta.modding.chart_editor.ChartingState;
 import haxe.Json;
 import game.cdev.CDevPopUp;
 import game.cdev.CDevPopUp.PopUpButton;
@@ -42,7 +43,7 @@ class SongEditor extends MusicBeatState
 	var titleText:FlxText;
 	var menuBG:FlxSprite;
 
-	var currentData:SwagSong;
+	var currentData:CDevChart;
 	var jsonPATH:String = "";
 	var checker:FlxBackdrop;
 
@@ -63,8 +64,7 @@ class SongEditor extends MusicBeatState
 		offset: 0,
 		validScore: true
 		*/
-		currentData = CDevConfig.utils.getTemplate(CHART);
-		currentData.validScore = true;
+		currentData = CDevConfig.utils.CDEV_CHART_TEMPLATE;//CDevConfig.utils.getTemplate(CHART);
 
 		FlxG.mouse.visible = true;
 		FlxG.sound.music.stop();
@@ -150,7 +150,7 @@ class SongEditor extends MusicBeatState
 
 		input_songName = new FlxUIInputText(title.x + 40, title.y + 68, 200, "", 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
 		input_songName.font = FunkinFonts.VCR;
-		input_songName.text = currentData.song;
+		input_songName.text = currentData.info.name;
 		add(input_songName);
 		label_songName = new FlxText(input_songName.x, input_songName.y - 25, 200, "Song Name", 20);
 		label_songName.font = FunkinFonts.VCR;
@@ -161,18 +161,18 @@ class SongEditor extends MusicBeatState
 			}
 		});
 		check_useVocal.button.label.setFormat(FunkinFonts.VCR, 14, FlxColor.WHITE, LEFT, OUTLINE,FlxColor.BLACK);
-		check_useVocal.checked = currentData.needsVoices;
+		check_useVocal.checked = true;
 		add(check_useVocal);
 
 		stepr_songBPM = new FlxUINumericStepper(input_songName.x, input_songName.y+input_songName.height+36, 1, 120, 0, 999, 0);
-		stepr_songBPM.value = currentData.bpm;
+		stepr_songBPM.value = currentData.info.bpm;
 		add(stepr_songBPM);
 		label_songBPM = new FlxText(stepr_songBPM.x, stepr_songBPM.y - 25, 200, "Song BPM", 20);
 		label_songBPM.font = FunkinFonts.VCR;
 		add(label_songBPM);
 
 		stepr_songSpeed = new FlxUINumericStepper(stepr_songBPM.x + stepr_songBPM.width + 80, input_songName.y+input_songName.height+36, 1, 120, 0, 999, 0);
-		stepr_songSpeed.value = currentData.speed;
+		stepr_songSpeed.value = currentData.info.speed;
 		add(stepr_songSpeed);
 		label_songSpeed = new FlxText(stepr_songSpeed.x, stepr_songSpeed.y - 25, 200, "Scroll Speed", 20);
 		label_songSpeed.font = FunkinFonts.VCR;
@@ -224,7 +224,7 @@ class SongEditor extends MusicBeatState
 			else
 				sound_songInst.play();
 
-			if (currentData.needsVoices){
+			if (check_useVocal.checked){
 				if (sound_songVoic.playing)
 					sound_songVoic.stop();
 				else
@@ -328,11 +328,10 @@ class SongEditor extends MusicBeatState
 				File.copy(filePaths.inst, filePaths.instMod);
 				if (check_useVocal.checked) File.copy(filePaths.voices, filePaths.voicesMod);
 			
-				currentData.bpm = stepr_songBPM.value;
-				currentData.speed = stepr_songSpeed.value;
-				currentData.song = input_songName.text.trim();
-				currentData.needsVoices = check_useVocal.checked;
-				
+				currentData.info.bpm = stepr_songBPM.value;
+				currentData.info.speed = stepr_songSpeed.value;
+				currentData.info.name = input_songName.text.trim();
+
 				var json = {
 					"song": currentData
 				};
@@ -385,10 +384,9 @@ class SongEditor extends MusicBeatState
 	}
 
 	function updateSettings(){
-		stepr_songSpeed.value = currentData.speed;
-		stepr_songBPM.value = currentData.bpm;
-		check_useVocal.checked = currentData.needsVoices;
-		input_songName.text = currentData.song;
+		stepr_songSpeed.value = currentData.info.speed;
+		stepr_songBPM.value = currentData.info.bpm;
+		input_songName.text = currentData.info.name;
 	}
 
 	function stopPreviews(){
@@ -410,11 +408,6 @@ class SongEditor extends MusicBeatState
 		checker.x -= elapsed * 20;
 		checker.y += elapsed * 20;
 
-		if (currentData != null) {
-			currentData.needsVoices = check_useVocal.checked;
-		}
-
-
 		if (FlxG.keys.justPressed.ESCAPE && !exit)
 		{
 			leave(true);
@@ -427,7 +420,7 @@ class SongEditor extends MusicBeatState
 		exit = true;
 		new FlxTimer().start(1.1, (t:FlxTimer) -> {
 			if (!menu){
-				LoadingState.loadAndSwitchState(new ChartingState(currentData), false);
+				LoadingState.loadAndSwitchState(new ChartEditor(currentData), false);
 			} else{ 
 				FlxG.switchState(new ModdingScreen());
 			}

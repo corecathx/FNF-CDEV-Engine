@@ -186,9 +186,9 @@ class Paths
 		return getPath('data/$key.xml', TEXT, library);
 	}
 
-	inline static public function json(key:String, ?library:String)
+	inline static public function cdc(key:String, ?library:String)
 	{
-		return getPath('data/$CHARTS_PATH$key.json', TEXT, library);
+		return getPath('data/$CHARTS_PATH$key.cdc', TEXT, library);
 	}
 
 	inline static public function chartPath(key:String)
@@ -221,28 +221,34 @@ class Paths
 		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
 	}
 
-	inline static public function voices(song:String):Any
+	inline static public function voices(song:String, ?prefix:String=""):Sound
 	{
-		#if sys
-		var file:Sound = returnSongFile(modSongs(song.toLowerCase().replace(' ', '-') + '/Voices'));
+		var file:Sound = returnSongFile(modSongs(song + '/Voices$prefix'));
 		if (file != null)
-		{
 			return file;
-		}
-		#end
-		return 'songs:assets/songs/${song.toLowerCase().replace(' ', '-')}/Voices.$SOUND_EXT';
+
+		var path:String = './assets/songs/${song}/Voices$prefix.$SOUND_EXT';
+		if (FileSystem.exists(path))
+			file = Sound.fromFile(path);
+		if (file != null)
+			return file;
+
+		return null;
 	}
 
-	inline static public function inst(song:String):Any
+	inline static public function inst(song:String):Sound
 	{
-		#if sys
-		var file:Sound = returnSongFile(modSongs(song.toLowerCase().replace(' ', '-') + '/Inst'));
+		var file:Sound = returnSongFile(modSongs(song + '/Inst'));
 		if (file != null)
-		{
 			return file;
-		}
-		#end
-		return 'songs:assets/songs/${song.toLowerCase().replace(' ', '-')}/Inst.$SOUND_EXT';
+		
+		var path:String = './assets/songs/${song}/Inst.$SOUND_EXT';
+		if (FileSystem.exists(path))
+			file = Sound.fromFile(path);
+		if (file != null)
+			return file;
+
+		return null;
 	}
 
 	// hi :) credit: Shadow Mario#9396
@@ -466,9 +472,9 @@ class Paths
 		return 'cdev-mods/' + key + '.txt';
 	}
 
-	inline static public function modJson(key:String)
+	inline static public function modCdc(key:String)
 	{
-		return modFolders('data/' + CHARTS_PATH + key + '.json');
+		return modFolders('data/' + CHARTS_PATH + key + '.cdc');
 	}
 
 	inline static public function modChartPath(key:String)

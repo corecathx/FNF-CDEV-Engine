@@ -61,7 +61,7 @@ class MusicBeatSubstate extends FlxSubState
 				lastChange = Conductor.bpmChangeMap[i];
 		}
 
-		curStep = lastChange.stepTime + Math.floor((Conductor.songPosition + CDevConfig.saveData.offset - lastChange.songTime) / Conductor.stepCrochet);
+		curStep = Std.int(lastChange.stepTime + (Conductor.songPosition + CDevConfig.saveData.offset - lastChange.songTime) / Conductor.stepCrochet);
 	}
 
 	public function stepHit():Void

@@ -1,0 +1,78 @@
+{
+	"tracks": [
+		"pico",
+		"philly",
+		"blammed"
+	],
+	"disableFreeplay": false,
+	"weekTxtImgPath": "week3",
+	"weekDifficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
+	"freeplaySongs": [
+		{
+			"colors": [
+				10,
+				140,
+				0
+			],
+			"song": "pico",
+			"character": "pico",
+			"bpm": 120
+		},
+		{
+			"colors": [
+				10,
+				140,
+				0
+			],
+			"bpm": 120,
+			"character": "pico",
+			"song": "philly"
+		},
+		{
+			"colors": [
+				10,
+				140,
+				0
+			],
+			"bpm": 120,
+			"character": "pico",
+			"song": "blammed"
+		}
+	],
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"flipX": true,
+			"position": [
+				-32.5,
+				78.5
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				788.5,
+				94
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				298.5,
+				-112
+			]
+		}
+	],
+	"weekCharacters": [
+		"pico",
+		"bf",
+		"gf"
+	],
+	"weekName": "Pico"
+}

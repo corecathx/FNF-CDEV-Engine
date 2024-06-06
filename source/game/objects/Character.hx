@@ -37,6 +37,8 @@ class Character extends SpriteStage {
 	/** Whether to set the current running animation as a special anim. **/
     public var specialAnim:Bool = false;
 
+    /** Whether to use alt dance anim for this character. **/
+    public var altDance:Bool = false;
 	/** Sing animation alt prefix. **/
     public var singAltPrefix:String = "-alt";
 	/** Idle animation alt prefix. **/
@@ -81,6 +83,14 @@ class Character extends SpriteStage {
     var idleDance:Bool = false;
     var danceShit:Bool = false;
 
+    /**
+     * Initializes a new Character.
+     * @param x Position X
+     * @param y Position Y
+     * @param character Character to add
+     * @param isPlayer Is it a player object?
+     * @param usedForStoryChar Whether if this character used for Story Mode Character
+     */
     public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?usedForStoryChar:Bool = false) {
         super(x, y);
         animOffsets = new Map<String, Array<Dynamic>>();
@@ -103,7 +113,7 @@ class Character extends SpriteStage {
         }
 
         defineIdleDance();
-        dance(false, 1);
+        dance(1);
 
         if (!usedForStoryChar) {
             switch (curCharacter) {
@@ -171,6 +181,9 @@ class Character extends SpriteStage {
         }
     }
 
+    /**
+     * Loads this character's script file.
+     */
     public function initScript():Void {
         if (debugMode) return;
         var scriptPath:String = Paths.modFolders("data/characters/" + curCharacter + ".hx");
@@ -179,7 +192,7 @@ class Character extends SpriteStage {
         script = CDevScript.create(scriptPath);
         gotScript = true;
         script.setVariable("current", this);
-        ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.song);
+        ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.info.name);
         script.loadFile(scriptPath);
     }
 
@@ -221,7 +234,7 @@ class Character extends SpriteStage {
         if (!isPlayer && animation.curAnim.name.startsWith('sing')) {
             holdTimer += elapsed;
             if (holdTimer >= Conductor.stepCrochet * 0.001 * charHoldTime) {
-                dance(animation.curAnim.name.endsWith(singAltPrefix), 1);
+                dance(1);
                 holdTimer = 0;
             }
         }
@@ -250,13 +263,17 @@ class Character extends SpriteStage {
         return animation.curAnim.name.startsWith(prefix);
     }
 
-    public function dance(?alt:Bool = false, ?beat:Int = 1):Void {
-        executeFunc("onDance", [alt, beat]);
+    /**
+     * Making this character dance, or playing the dance animation, or whatever.
+     * @param beat Current beat
+     */
+    public function dance(?beat:Int = 1):Void {
+        executeFunc("onDance", [beat]);
         if (!canDance || debugMode || specialAnim || (forceDance && beat % idleSpeed == 0)) return;
 
-        var dRight:String = "danceRight" + (alt ? idleAltPrefix : "");
-        var dLeft:String = "danceLeft" + (alt ? idleAltPrefix : "");
-        var aIdle:String = "idle" + (alt ? idleAltPrefix : "");
+        var dRight:String = "danceRight" + (altDance ? idleAltPrefix : "");
+        var dLeft:String = "danceLeft" + (altDance ? idleAltPrefix : "");
+        var aIdle:String = "idle" + (altDance ? idleAltPrefix : "");
 
         if (animation.getByName(dLeft) != null && animation.getByName(dRight) != null) {
             danced = !danced;
@@ -265,7 +282,7 @@ class Character extends SpriteStage {
             playAnim(aIdle, forceDance);
         }
 
-        executeFunc("onPostDance", [alt, beat]);
+        executeFunc("onPostDance", [beat]);
     }
 
     public function defineIdleDance():Void {
@@ -308,11 +325,9 @@ class Character extends SpriteStage {
     }
 
     private function loadMappedAnims():Void {
-        var sections:Array<SwagSection> = Song.loadFromJson('picoGunMap', PlayState.SONG.song.toLowerCase().replace(' ', '-')).notes;
-        for (section in sections) {
-            for (note in section.sectionNotes) {
-                animNotes.push(note);
-            }
+        var notes:Array<Dynamic> = Song.load('picoGunMap', PlayState.SONG.info.name).notes;
+        for (note in notes) {
+            animNotes.push(note);
         }
         BackgroundTankmen.animNotes = animNotes;
         animNotes.sort(sortByValue);

@@ -190,7 +190,7 @@ class CustomState extends MusicBeatState
 		script.setVariable("CustomState", CustomState);
 		script.setVariable("TitleState", TitleState);
 		script.setVariable("MainMenuState", MainMenuState);
-		script.setVariable("StoryMenuState", StoryMenuState);
+		script.setVariable("StoryMenuState", StoryModeState);
 		script.setVariable("FreeplayState", FreeplayState);
 		script.setVariable("PlayState", PlayState);
 		script.setVariable("OptionsState", OptionsState);

@@ -8,7 +8,6 @@ import sys.io.File;
 import haxe.Json;
 import game.song.Song.SwagSong;
 import meta.substates.CustomSubstate;
-
 import flixel.sound.FlxSound;
 import game.settings.data.SettingsProperties;
 import meta.states.TitleState;
@@ -35,15 +34,17 @@ import game.Paths;
 
 using StringTools;
 
-enum TemplateData {
+enum TemplateData
+{
 	CHART;
 	DISCORD;
 }
 
-typedef DiscordJson = {
-	var clientID:String; //client id, take it from discord developer portal
-	var imageKey:String; //big image
-	var imageTxt:String; //idk
+typedef DiscordJson =
+{
+	var clientID:String; // client id, take it from discord developer portal
+	var imageKey:String; // big image
+	var imageTxt:String; // idk
 }
 
 /**
@@ -51,11 +52,12 @@ typedef DiscordJson = {
  */
 class CDevUtils
 {
-	public var CDEV_ENGINE_BLUE:Int = 0xff0088ff; //blueueue
+	public var CDEV_ENGINE_BLUE:Int = 0xff0088ff; // blueueue
+
 	/**
 	 * Chart Template, like, just a template.
 	 */
-	public var CHART_TEMPLATE:SwagSong = {
+	public final CHART_TEMPLATE:SwagSong = {
 		song: 'Your Song',
 		notes: [],
 		songEvents: [],
@@ -70,6 +72,26 @@ class CDevUtils
 		validScore: false
 	};
 
+	public final CDEV_CHART_TEMPLATE:CDevChart = {
+		data: {
+			player: "bf",
+			opponent: "dad",
+			third_char: "gf",
+			stage: "stage",
+			note_skin: "notes/NOTE_assets"
+		},
+		info: {
+			name: "Your Song",
+			composer: "Kawai Sprite",
+			bpm: 120,
+			speed: 1.5,
+			time_signature: [4, 4], // since most of fnf songs are charted in 4/4 time signature, set this by default.
+			version: CDevConfig.engineVersion
+		},
+		notes: [],
+		events: []
+	}
+
 	/**
 	 * Discord RPC Template
 	 */
@@ -83,25 +105,19 @@ class CDevUtils
 	 * Contains bunch of blacklisted names for a folder / file in Windows.
 	 */
 	public var BLACKLISTED_NAMES:Array<String> = [
-		"CON", "PRN", "AUX", "NUL",
-		"COM1", "COM2", "COM3", "COM4",
-		"COM5", "COM6", "COM7", "COM8",
-		"COM9", "LPT1", "LPT2", "LPT3",
-		"LPT4", "LPT5", "LPT6", "LPT7",
-		"LPT8", "LPT9"
+		"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6",
+		"LPT7", "LPT8", "LPT9"
 	];
 
-	
 	/**
 	 * Contains bunch of blacklisted names for a folder / file in Windows.
 	 */
-	public var BLACKLISTED_SYMBOLS:Array<String> = [
-		"<",">",":","\"","/","\\","|","?","*"
-	];
-	
+	public var BLACKLISTED_SYMBOLS:Array<String> = ["<", ">", ":", "\"", "/", "\\", "|", "?", "*"];
 
-	public function getTemplate(type:TemplateData):Dynamic {
-		switch (type){
+	public function getTemplate(type:TemplateData):Dynamic
+	{
+		switch (type)
+		{
 			case CHART:
 				return CHART_TEMPLATE;
 			case DISCORD:
@@ -121,10 +137,13 @@ class CDevUtils
 	 * Returns total notes in a chart.
 	 * @param chart Your chart file.
 	 */
-	public function getNotesTotal(chart:SwagSong) {
+	public function getNotesTotal(chart:SwagSong)
+	{
 		var total:Int = 0;
-		for (i in chart.notes){
-			for (j in i.sectionNotes) total++;
+		for (i in chart.notes)
+		{
+			for (j in i.sectionNotes)
+				total++;
 		}
 		return total;
 	}
@@ -151,8 +170,9 @@ class CDevUtils
 			p = Paths.modChartPath(songname);
 			fe = FileSystem.readDirectory(Paths.modChartPath(songname));
 		}
-		if (fe == null) return diffs;
-		if (fe.length > 0) //my stupid ass put ">=" on the older version of the engine.
+		if (fe == null)
+			return diffs;
+		if (fe.length > 0) // my stupid ass put ">=" on the older version of the engine.
 		{
 			for (i in 0...fe.length)
 			{
@@ -192,9 +212,12 @@ class CDevUtils
 	 * @param str String to check. 
 	 * @return Result.
 	 */
-	public function containsBlockedSymbol(str:String):Bool{
-		for (i in BLACKLISTED_SYMBOLS){
-			if (str.contains(i)) return true;
+	public function containsBlockedSymbol(str:String):Bool
+	{
+		for (i in BLACKLISTED_SYMBOLS)
+		{
+			if (str.contains(i))
+				return true;
 		}
 		return false;
 	}
@@ -204,9 +227,11 @@ class CDevUtils
 	 * @param str Your String.
 	 * @return Capitalized string.
 	 */
-	public function capitalize(str:String):String {
+	public function capitalize(str:String):String
+	{
 		var words = str.split(" ");
-		for (i in 0...words.length) {
+		for (i in 0...words.length)
+		{
 			var word = words[i];
 			words[i] = word.substring(0, 1).toUpperCase() + word.substring(1);
 		}
@@ -218,9 +243,12 @@ class CDevUtils
 	 * @param str String to check. 
 	 * @return Result.
 	 */
-	public function isBlockedWord(str:String):Bool{
-		for (i in BLACKLISTED_NAMES){
-			if (i.toLowerCase() == str.toLowerCase()) return true;
+	public function isBlockedWord(str:String):Bool
+	{
+		for (i in BLACKLISTED_NAMES)
+		{
+			if (i.toLowerCase() == str.toLowerCase())
+				return true;
 		}
 		return false;
 	}
@@ -243,8 +271,9 @@ class CDevUtils
 	 */
 	public function getRpcJSON():DiscordJson
 	{
-		var path:String = Paths.modsPath + "/" + Paths.currentMod +"/data/game/Discord.json";
-		if (FileSystem.exists(path)){
+		var path:String = Paths.modsPath + "/" + Paths.currentMod + "/data/game/Discord.json";
+		if (FileSystem.exists(path))
+		{
 			trace("Found RPC JSON.");
 			var a:DiscordJson = cast Json.parse(File.getContent(path));
 			return a;
@@ -260,17 +289,18 @@ class CDevUtils
 	 */
 	public function removeSymbols(input:String):String
 	{
-        var symbolsToRemove = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
-        var ee = '';
-        for (i in 0...input.length) {
-            var char = input.charAt(i);
-            if (symbolsToRemove.indexOf(char) == -1) {
-                ee += char;
-            }
-        }
+		var symbolsToRemove = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+		var ee = '';
+		for (i in 0...input.length)
+		{
+			var char = input.charAt(i);
+			if (symbolsToRemove.indexOf(char) == -1)
+			{
+				ee += char;
+			}
+		}
 		return ee;
 	}
-
 
 	/**
 	 * Checks if `defaultState` is exists on the priority mod, if it exists, then it will open
@@ -456,9 +486,9 @@ class CDevUtils
 	// hi :) credit: Shadow Mario#9396
 	public function fileIsExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
 	{
-		if (FileSystem.exists(Paths.mods(Paths.currentMod+"/"+key)) || OpenFlAssets.exists(Paths.getPath(key, type)))
+		if (FileSystem.exists(Paths.mods(Paths.currentMod + "/" + key)) || OpenFlAssets.exists(Paths.getPath(key, type)))
 			return true;
-		
+
 		return false;
 	}
 
@@ -526,58 +556,58 @@ class CDevUtils
 		#end
 	}
 
-	public function openFolder(folder:String, useAbsolutePath:Bool = false) {
+	public function openFolder(folder:String, useAbsolutePath:Bool = false)
+	{
 		var path:String = folder;
-		if (!useAbsolutePath) 
-			path =  Sys.getCwd() + '$folder';
+		if (!useAbsolutePath)
+			path = Sys.getCwd() + '$folder';
 
 		path = Path.normalize(path);
 		path = path.replace('/', '\\');
-		
-		if (path.endsWith('/')) 
+
+		if (path.endsWith('/'))
 			path.substr(0, path.length - 1);
 
 		Sys.command("explorer.exe", [path]);
 	}
 
 	/**
-	 * Checks to see if a point in 2D world space overlaps this `FlxObject`.
-	 *
-	 * @param   point           The point in world space you want to check.
-	 * @param   inScreenSpace   Whether to take scroll factors into account when checking for overlap.
-	 * @param   camera          Specify which game camera you want.
-	 *                          If `null`, it will just grab the first global camera.
-	 * @return  Whether or not the point overlaps this object.
+		* Checks to see if a point in 2D world space overlaps this `FlxObject`.
+		*
+		* @param   point           The point in world space you want to check.
+		* @param   inScreenSpace   Whether to take scroll factors into account when checking for overlap.
+		* @param   camera          Specify which game camera you want.
+		*                          If `null`, it will just grab the first global camera.
+		* @return  Whether or not the point overlaps this object.
 
-	public function mouseOverlap(point:FlxPoint, inScreenSpace = false, ?camera:FlxCamera):Bool
+		public function mouseOverlap(point:FlxPoint, inScreenSpace = false, ?camera:FlxCamera):Bool
+		{
+			if (camera == null)
+				camera = FlxG.camera;
+
+			var xPos:Float = point.x - camera.scroll.x;
+			var yPos:Float = point.y - camera.scroll.y;
+			FlxPointer.getScreenPosition(_point, camera);
+			point.putWeak();
+			return (xPos >= _point.x) && (xPos < _point.x + width) && (yPos >= _point.y) && (yPos < _point.y + height);
+	}*/
+	public function mouseOverlap(obj:FlxSprite, ?camera:FlxCamera)
 	{
 		if (camera == null)
 			camera = FlxG.camera;
 
-		var xPos:Float = point.x - camera.scroll.x;
-		var yPos:Float = point.y - camera.scroll.y;
-		FlxPointer.getScreenPosition(_point, camera);
-		point.putWeak();
-		return (xPos >= _point.x) && (xPos < _point.x + width) && (yPos >= _point.y) && (yPos < _point.y + height);
-	}	 */
-
-	public function mouseOverlap(obj:FlxSprite, ?camera:FlxCamera){
-		if (camera==null)camera=FlxG.camera;
-
 		var objX:Float = obj.x - camera.scroll.x;
 		var objY:Float = obj.y - camera.scroll.y;
-		var fpPoint:FlxPoint = new FlxPoint(0,0);
+		var fpPoint:FlxPoint = new FlxPoint(0, 0);
 		@:privateAccess {
 			fpPoint = FlxPointer._cachedPoint;
 		}
 		FlxG.mouse.getScreenPosition(camera, fpPoint);
 		fpPoint.putWeak();
-		return (
-			(fpPoint.x >= objX) && 
-			(fpPoint.x < objX + (obj.width * obj.scale.x)) && 
-			(fpPoint.y >= objY) && 
-			(fpPoint.y < objY + (obj.height * obj.scale.y))
-		);
+		return ((fpPoint.x >= objX)
+			&& (fpPoint.x < objX + (obj.width * obj.scale.x))
+			&& (fpPoint.y >= objY)
+			&& (fpPoint.y < objY + (obj.height * obj.scale.y)));
 	}
 
 	/**
@@ -592,23 +622,13 @@ class CDevUtils
 	}
 
 	/**
-	 * Music Caching
-	 */
-	public function doMusicCaching(musicPath:String)
-	{
-		if (!Assets.cache.hasSound(Paths.inst(musicPath)))
-		{
-			FlxG.sound.cache(Paths.inst(musicPath));
-		}
-	}
-
-	/**
 	 * Sets your `sprite` object to fit the screen.
 	 * @param sprite 
 	 */
-	public function setFitScale(sprite:FlxSprite, xAdd:Float = 0, yAdd:Float = 0){
+	public function setFitScale(sprite:FlxSprite, xAdd:Float = 0, yAdd:Float = 0)
+	{
 		sprite.scale.x = (FlxG.width / sprite.width) + xAdd;
-        sprite.scale.y = (FlxG.height / sprite.height) + yAdd;
+		sprite.scale.y = (FlxG.height / sprite.height) + yAdd;
 	}
 
 	/**
@@ -616,23 +636,35 @@ class CDevUtils
 	 * @param json The JSON of your FNF Chart 
 	 * @return New CDEV Chart Object
 	 */
-	public function fnftocdev_chart(json:SwagSong):CDevChart {
+	public function fnftocdev_chart(json:SwagSong):CDevChart
+	{
 		var notes:Array<Dynamic> = [];
 		var events:Array<Dynamic> = [];
 		var safeJSON:SwagSong = json;
-		
-		for (i in safeJSON.notes){
-			for (j in i.sectionNotes){
-				if (i.mustHitSection){//swap the section if it's a player section.
+
+		for (i in safeJSON.notes)
+		{
+			for (j in i.sectionNotes)
+			{
+				if (i.mustHitSection)
+				{ // swap the section if it's a player section.
 					var note = j;
 					note[1] = (note[1] + 4) % 8;
 					j = note;
 				}
-				notes.push([j[0],j[1],j[2],(j[3]==null?"Default Note":j[3]),(j[4]==null?['','']:j[4])]);
+				notes.push([
+					j[0],
+					j[1],
+					j[2],
+					(j[3] == null ? "Default Note" : j[3]),
+					(j[4] == null ? ['', ''] : j[4])
+				]);
 			}
-			if (Reflect.hasField(i,"sectionEvents")){ // bruh
-				for (k in i.sectionEvents){
-					events.push([k[0],k[1],k[2],k[3],k[4]]);
+			if (Reflect.hasField(i, "sectionEvents"))
+			{ // bruh
+				for (k in i.sectionEvents)
+				{
+					events.push([k[0], k[1], k[2], k[3], k[4]]);
 				}
 			}
 		}
@@ -649,7 +681,7 @@ class CDevUtils
 				composer: "Kawai Sprite",
 				bpm: safeJSON.bpm,
 				speed: safeJSON.speed,
-				time_signature: [4,4], // since most of fnf songs are charted in 4/4 time signature, set this by default.
+				time_signature: [4, 4], // since most of fnf songs are charted in 4/4 time signature, set this by default.
 				version: CDevConfig.engineVersion
 			},
 			notes: notes,

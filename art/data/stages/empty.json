@@ -1,0 +1,22 @@
+{
+    "sprites": [
+
+    ],
+    "anim": [
+
+    ],
+    "stageZoom": 1,
+    "pixelStage": false,
+    "boyfriendPosition": [
+        770,
+        100
+    ],
+    "girlfriendPosition": [
+        400,
+        130
+    ],
+    "opponentPosition": [
+        100,
+        100
+    ]
+}

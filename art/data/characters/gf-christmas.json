@@ -1,0 +1,193 @@
+{
+	"animations": [
+		{
+			"looping": false,
+			"offset": [
+				1,
+				0
+			],
+			"animPrefix": "cheer",
+			"fpsValue": 24,
+			"animName": "GF Cheer",
+			"indices": []
+		},
+		{
+			"looping": false,
+			"offset": [
+				0,
+				-19
+			],
+			"animPrefix": "singLEFT",
+			"fpsValue": 24,
+			"animName": "GF left note",
+			"indices": []
+		},
+		{
+			"looping": false,
+			"offset": [
+				0,
+				-20
+			],
+			"animPrefix": "singDOWN",
+			"fpsValue": 24,
+			"animName": "GF Down Note",
+			"indices": []
+		},
+		{
+			"looping": false,
+			"offset": [
+				0,
+				4
+			],
+			"animPrefix": "singUP",
+			"fpsValue": 24,
+			"animName": "GF Up Note",
+			"indices": []
+		},
+		{
+			"looping": false,
+			"offset": [
+				0,
+				-20
+			],
+			"animPrefix": "singRIGHT",
+			"fpsValue": 24,
+			"animName": "GF Right Note",
+			"indices": []
+		},
+		{
+			"looping": false,
+			"offset": [
+				-2,
+				-21
+			],
+			"animPrefix": "sad",
+			"fpsValue": 24,
+			"animName": "gf sad",
+			"indices": [
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12
+			]
+		},
+		{
+			"looping": false,
+			"offset": [
+				0,
+				-9
+			],
+			"animPrefix": "danceLeft",
+			"fpsValue": 24,
+			"animName": "GF Dancing Beat",
+			"indices": [
+				30,
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14
+			]
+		},
+		{
+			"looping": false,
+			"offset": [
+				0,
+				-9
+			],
+			"animPrefix": "danceRight",
+			"fpsValue": 24,
+			"animName": "GF Dancing Beat",
+			"indices": [
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				22,
+				23,
+				24,
+				25,
+				26,
+				27,
+				28,
+				29
+			]
+		},
+		{
+			"looping": false,
+			"offset": [
+				0,
+				-9
+			],
+			"animPrefix": "hairFall",
+			"fpsValue": 24,
+			"animName": "GF Dancing Beat Hair Landing",
+			"indices": [
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11
+			]
+		},
+		{
+			"looping": true,
+			"offset": [
+				-2,
+				-17
+			],
+			"animPrefix": "scared",
+			"fpsValue": 24,
+			"animName": "GF FEAR",
+			"indices": []
+		}
+	],
+	"usingAntialiasing": true,
+	"spritePath": "characters/gfChristmas",
+	"charXYPosition": [
+		0,
+		0
+	],
+	"iconName": "gf",
+	"flipX": false,
+	"healthBarColor": [
+		165,
+		0,
+		77
+	],
+	"camXYPos": [
+		0,
+		0
+	],
+	"singHoldTime": 4,
+	"charScale": 1
+}

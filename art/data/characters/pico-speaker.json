@@ -1,0 +1,142 @@
+{
+	"animations": [
+		{
+			"offset": [
+				0,
+				0
+			],
+			"looping": false,
+			"fpsValue": 24,
+			"animPrefix": "shoot1",
+			"indices": [],
+			"animName": "Pico shoot 1"
+		},
+		{
+			"offset": [
+				-1,
+				-128
+			],
+			"looping": false,
+			"fpsValue": 24,
+			"animPrefix": "shoot2",
+			"indices": [],
+			"animName": "Pico shoot 2"
+		},
+		{
+			"offset": [
+				412,
+				-64
+			],
+			"looping": false,
+			"fpsValue": 24,
+			"animPrefix": "shoot3",
+			"indices": [],
+			"animName": "Pico shoot 3"
+		},
+		{
+			"offset": [
+				439,
+				-19
+			],
+			"looping": false,
+			"fpsValue": 24,
+			"animPrefix": "shoot4",
+			"indices": [],
+			"animName": "Pico shoot 4"
+		},
+		{
+			"offset": [
+				412,
+				-64
+			],
+			"looping": true,
+			"fpsValue": 24,
+			"animPrefix": "shoot3-looping",
+			"indices": [
+				50,
+				51,
+				52
+			],
+			"animName": "Pico shoot 3"
+		},
+		{
+			"offset": [
+				0,
+				0
+			],
+			"looping": true,
+			"fpsValue": 24,
+			"animPrefix": "shoot1-looping",
+			"indices": [
+				23,
+				24,
+				25
+			],
+			"animName": "Pico shoot 1"
+		},
+		{
+			"offset": [
+				1,
+				-128
+			],
+			"looping": true,
+			"fpsValue": 24,
+			"animPrefix": "shoot2-looping",
+			"indices": [
+				57,
+				58,
+				59
+			],
+			"animName": "Pico shoot 2"
+		},
+		{
+			"offset": [
+				439,
+				-19
+			],
+			"looping": true,
+			"fpsValue": 24,
+			"animPrefix": "shoot4-looping",
+			"indices": [
+				50,
+				51,
+				52
+			],
+			"animName": "Pico shoot 4"
+		},
+		{
+			"offset": [
+				439,
+				-19
+			],
+			"looping": true,
+			"fpsValue": 24,
+			"animPrefix": "idle",
+			"indices": [
+				50,
+				51,
+				52
+			],
+			"animName": "Pico shoot 4"
+		}
+	],
+	"usingAntialiasing": true,
+	"spritePath": "characters/picoSpeaker",
+	"charXYPosition": [
+		120,
+		-125
+	],
+	"iconName": "pico",
+	"flipX": false,
+	"healthBarColor": [
+		183,
+		216,
+		85
+	],
+	"camXYPos": [
+		-310,
+		100
+	],
+	"singHoldTime": 4,
+	"charScale": 1
+}

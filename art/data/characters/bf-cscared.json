@@ -1,0 +1,133 @@
+{
+	"animations": [
+		{
+			"animName": "BF idle dance",
+			"fpsValue": 24,
+			"looping": false,
+			"indices": [],
+			"offset": [
+				-3,
+				-1
+			],
+			"animPrefix": "idle"
+		},
+		{
+			"animName": "BF NOTE LEFT0",
+			"fpsValue": 24,
+			"looping": false,
+			"indices": [],
+			"offset": [
+				12,
+				-6
+			],
+			"animPrefix": "singLEFT"
+		},
+		{
+			"animName": "BF NOTE DOWN0",
+			"fpsValue": 24,
+			"looping": false,
+			"indices": [],
+			"offset": [
+				-10,
+				-50
+			],
+			"animPrefix": "singDOWN"
+		},
+		{
+			"animName": "BF NOTE UP0",
+			"fpsValue": 24,
+			"looping": false,
+			"indices": [],
+			"offset": [
+				-29,
+				27
+			],
+			"animPrefix": "singUP"
+		},
+		{
+			"animName": "BF NOTE RIGHT0",
+			"fpsValue": 24,
+			"looping": false,
+			"indices": [],
+			"offset": [
+				-38,
+				-7
+			],
+			"animPrefix": "singRIGHT"
+		},
+		{
+			"animName": "BF NOTE LEFT MISS",
+			"fpsValue": 24,
+			"looping": false,
+			"indices": [],
+			"offset": [
+				12,
+				24
+			],
+			"animPrefix": "singLEFTmiss"
+		},
+		{
+			"animName": "BF NOTE DOWN MISS",
+			"fpsValue": 24,
+			"looping": false,
+			"indices": [],
+			"offset": [
+				-11,
+				-19
+			],
+			"animPrefix": "singDOWNmiss"
+		},
+		{
+			"animName": "BF NOTE UP MISS",
+			"fpsValue": 24,
+			"looping": false,
+			"indices": [],
+			"offset": [
+				-29,
+				27
+			],
+			"animPrefix": "singUPmiss"
+		},
+		{
+			"animName": "BF NOTE RIGHT MISS",
+			"fpsValue": 24,
+			"looping": false,
+			"indices": [],
+			"offset": [
+				-30,
+				21
+			],
+			"animPrefix": "singRIGHTmiss"
+		},
+		{
+			"animName": "BF HEY",
+			"fpsValue": 24,
+			"looping": false,
+			"indices": [],
+			"offset": [
+				-3,
+				5
+			],
+			"animPrefix": "hey"
+		}
+	],
+	"healthBarColor": [
+		49,
+		176,
+		209
+	],
+	"spritePath": "characters/bfChristmasScared",
+	"singHoldTime": 4,
+	"charXYPosition": [
+		0,
+		350
+	],
+	"flipX": true,
+	"charScale": 1,
+	"usingAntialiasing": true,
+	"camXYPos": [
+		0,
+		0
+	],
+	"iconName": "bf"
+}

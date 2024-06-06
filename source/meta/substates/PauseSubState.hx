@@ -61,7 +61,7 @@ class PauseSubState extends MusicBeatSubstate
 		add(bg);
 
 		var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
-		levelInfo.text += meta.states.PlayState.SONG.song;
+		levelInfo.text += meta.states.PlayState.SONG.info.name;
 		levelInfo.scrollFactor.set();
 		levelInfo.setFormat(FunkinFonts.VCR, 32);
 		levelInfo.updateHitbox();

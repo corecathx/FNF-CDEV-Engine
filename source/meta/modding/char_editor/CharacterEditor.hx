@@ -156,9 +156,9 @@ class CharacterEditor extends meta.states.MusicBeatState
 		if (fromPlayState)
 		{
 			if (isPp1)
-				characterToAdd = meta.states.PlayState.SONG.player1;
+				characterToAdd = meta.states.PlayState.SONG.data.player;
 			else
-				characterToAdd = meta.states.PlayState.SONG.player2;
+				characterToAdd = meta.states.PlayState.SONG.data.opponent;
 		}
 
 		if (noJson)

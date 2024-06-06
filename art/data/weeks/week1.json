@@ -1,0 +1,78 @@
+{
+	"tracks": [
+		"bopeebo",
+		"fresh",
+		"dadbattle"
+	],
+	"disableFreeplay": false,
+	"weekTxtImgPath": "week1",
+	"weekDifficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
+	"freeplaySongs": [
+		{
+			"colors": [
+				150,
+				120,
+				255
+			],
+			"song": "bopeebo",
+			"character": "dad",
+			"bpm": 120
+		},
+		{
+			"colors": [
+				150,
+				120,
+				255
+			],
+			"song": "fresh",
+			"character": "dad",
+			"bpm": 120
+		},
+		{
+			"colors": [
+				150,
+				120,
+				255
+			],
+			"song": "dadbattle",
+			"character": "dad",
+			"bpm": 120
+		}
+	],
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				72.5,
+				-145
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				296.5,
+				-100
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				750.5,
+				126
+			]
+		}
+	],
+	"weekCharacters": [
+		"dad",
+		"gf",
+		"bf"
+	],
+	"weekName": "Daddy Dearest"
+}

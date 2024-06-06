@@ -1,0 +1,78 @@
+{
+	"tracks": [
+		"spookeez",
+		"south",
+		"monster"
+	],
+	"disableFreeplay": false,
+	"weekTxtImgPath": "week2",
+	"weekDifficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
+	"freeplaySongs": [
+		{
+			"colors": [
+				250,
+				140,
+				0
+			],
+			"song": "spookeez",
+			"character": "spooky",
+			"bpm": 120
+		},
+		{
+			"colors": [
+				250,
+				140,
+				0
+			],
+			"song": "south",
+			"character": "spooky",
+			"bpm": 120
+		},
+		{
+			"colors": [
+				255,
+				255,
+				0
+			],
+			"song": "monster",
+			"character": "monster",
+			"bpm": 120
+		}
+	],
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				23,
+				-3.5
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				788.5,
+				94
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				298.5,
+				-112
+			]
+		}
+	],
+	"weekCharacters": [
+		"spooky",
+		"bf",
+		"gf"
+	],
+	"weekName": "Spooky Month"
+}

@@ -1,0 +1,78 @@
+{
+	"weekTxtImgPath": "week5",
+	"disableFreeplay": false,
+	"tracks": [
+		"cocoa",
+		"eggnog",
+		"winter-horrorland"
+	],
+	"weekDifficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
+	"weekCharacters": [
+		"parents-christmas",
+		"bf-christmas",
+		"gf-christmas"
+	],
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"position": [
+				-163,
+				-149
+			],
+			"flipX": false
+		},
+		{
+			"scale": 0.5,
+			"position": [
+				797.5,
+				106
+			],
+			"flipX": false
+		},
+		{
+			"scale": 0.5,
+			"position": [
+				297.5,
+				-74
+			],
+			"flipX": false
+		}
+	],
+	"freeplaySongs": [
+		{
+			"colors": [
+				220,
+				100,
+				200
+			],
+			"bpm": 120,
+			"character": "parents",
+			"song": "cocoa"
+		},
+		{
+			"colors": [
+				220,
+				100,
+				200
+			],
+			"bpm": 120,
+			"character": "parents",
+			"song": "eggnog"
+		},
+		{
+			"colors": [
+				220,
+				100,
+				200
+			],
+			"bpm": 120,
+			"character": "parents",
+			"song": "winter-horrorland"
+		}
+	],
+	"weekName": "Red Snow"
+}

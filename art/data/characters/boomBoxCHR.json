@@ -1,0 +1,34 @@
+{
+	"animations": [
+		{
+			"animPrefix": "idle",
+			"fpsValue": 24,
+			"indices": [],
+			"looping": false,
+			"offset": [
+				0,
+				0
+			],
+			"animName": "boombox"
+		}
+	],
+	"healthBarColor": [
+		165,
+		0,
+		77
+	],
+	"spritePath": "characters/speakersChristmas",
+	"singHoldTime": 4,
+	"charXYPosition": [
+		0,
+		0
+	],
+	"flipX": false,
+	"charScale": 1,
+	"usingAntialiasing": true,
+	"camXYPos": [
+		0,
+		0
+	],
+	"iconName": "gf"
+}

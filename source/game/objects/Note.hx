@@ -117,7 +117,7 @@ class Note extends FlxSprite
 				script.setVariable("initialize", initialize);
 				script.setVariable("loadTexture", loadTexture);
 				script.setVariable("current", this);
-				ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.song);
+				ScriptSupport.setScriptDefaultVars(script, PlayState.fromMod, PlayState.SONG.info.name);
 
 				script.loadFile(scriptPath);
 
@@ -180,7 +180,7 @@ class Note extends FlxSprite
 			{
 				prevNote.animation.play(directions[prevNote.noteData]+'hold'); // Hold body
 
-				var sSpeed:Float = (CDevConfig.saveData.scrollSpeed == 1 && PlayState.SONG != null ? PlayState.SONG.speed : CDevConfig.saveData.scrollSpeed);
+				var sSpeed:Float = (CDevConfig.saveData.scrollSpeed == 1 && PlayState.SONG != null ? PlayState.SONG.info.speed : CDevConfig.saveData.scrollSpeed);
 				prevNote.scale.y = ((Conductor.stepCrochet+2) * (sSpeed*0.45)) / prevNote.frameHeight;
 				prevNote.updateHitbox();
 			}

@@ -1,0 +1,78 @@
+{
+	"tracks": [
+		"ugh",
+		"guns",
+		"stress"
+	],
+	"disableFreeplay": false,
+	"weekTxtImgPath": "week7",
+	"weekDifficulties": [
+		"easy",
+		"normal",
+		"hard"
+	],
+	"freeplaySongs": [
+		{
+			"colors": [
+				120,
+				120,
+				120
+			],
+			"song": "ugh",
+			"character": "tankman",
+			"bpm": 120
+		},
+		{
+			"colors": [
+				120,
+				120,
+				120
+			],
+			"bpm": 120,
+			"character": "tankman",
+			"song": "guns"
+		},
+		{
+			"colors": [
+				120,
+				120,
+				120
+			],
+			"bpm": 120,
+			"character": "tankman",
+			"song": "stress"
+		}
+	],
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"flipX": true,
+			"position": [
+				38,
+				-12.5
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				379,
+				-201
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				687.5,
+				99
+			]
+		}
+	],
+	"weekCharacters": [
+		"tankman",
+		"pico-speaker",
+		"bf-holding-gf"
+	],
+	"weekName": "Tankman"
+}

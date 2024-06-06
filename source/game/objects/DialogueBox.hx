@@ -55,7 +55,7 @@ class DialogueBox extends FlxSpriteGroup
 		box = new FlxSprite(-20, 45);
 		
 		var hasDialog = false;
-		switch (PlayState.SONG.song.toLowerCase())
+		switch (PlayState.SONG.info.name.toLowerCase())
 		{
 			case 'senpai':
 				hasDialog = true;
@@ -134,7 +134,7 @@ class DialogueBox extends FlxSpriteGroup
 		dialogue = new Alphabet(0, 80, "", false, true);
 		// dialogue.x = 90;
 		// add(dialogue);
-		if (PlayState.SONG.song.toLowerCase() == 'thorns'){
+		if (PlayState.SONG.info.name.toLowerCase() == 'thorns'){
 			face = new FlxSprite(320, 170).loadGraphic(Paths.image('weeb/spiritFaceForward', "week6"));
 			face.setGraphicSize(Std.int(face.width * 6));
 			add(face);			
@@ -151,9 +151,9 @@ class DialogueBox extends FlxSpriteGroup
 	override function update(elapsed:Float)
 	{
 		// HARD CODING CUZ IM STUPDI
-		if (PlayState.SONG.song.toLowerCase() == 'roses')
+		if (PlayState.SONG.info.name.toLowerCase() == 'roses')
 			portraitLeft.visible = false;
-		if (PlayState.SONG.song.toLowerCase() == 'thorns')
+		if (PlayState.SONG.info.name.toLowerCase() == 'thorns')
 		{
 			portraitLeft.color = FlxColor.BLACK;
 			swagDialogue.color = FlxColor.WHITE;
@@ -214,7 +214,7 @@ class DialogueBox extends FlxSpriteGroup
 					{
 						isEnding = true;
 	
-						if (PlayState.SONG.song.toLowerCase() == 'senpai' || PlayState.SONG.song.toLowerCase() == 'thorns')
+						if (PlayState.SONG.info.name.toLowerCase() == 'senpai' || PlayState.SONG.info.name.toLowerCase() == 'thorns')
 							FlxG.sound.music.fadeOut(2.2, 0);
 	
 						new FlxTimer().start(0.2, function(tmr:FlxTimer)
@@ -225,7 +225,7 @@ class DialogueBox extends FlxSpriteGroup
 							portraitRight.visible = false;
 							swagDialogue.alpha -= 1 / 5;
 							dropText.alpha = swagDialogue.alpha;
-							if (PlayState.SONG.song.toLowerCase() == 'thorns')
+							if (PlayState.SONG.info.name.toLowerCase() == 'thorns')
 								face.alpha -= 1 / 5;
 						}, 5);
 	

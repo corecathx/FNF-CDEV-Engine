@@ -1,5 +1,6 @@
 package game.song;
 
+import game.cdev.song.CDevChart;
 import game.objects.ChartEvent.SongEvent;
 import game.song.Section.SwagSection;
 import haxe.Json;
@@ -50,16 +51,16 @@ class Song
 		this.bpm = bpm;
 	}
 
-	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
+	public static function load(jsonInput:String, ?folder:String):CDevChart
 	{
 		var rawJson = null;
-		var curPath:String = Paths.modJson(folder+"/"+jsonInput); // Mod Folder
+		var curPath:String = Paths.modCdc(folder+"/"+jsonInput); // Mod Folder
 
 		if (FileSystem.exists(curPath))
 			rawJson = File.getContent(curPath).trim();
 		if (rawJson != null) return parseJSONshit(rawJson);
 
-		curPath = Paths.json(folder + '/' + jsonInput); // Assets Folder
+		curPath = Paths.cdc(folder + '/' + jsonInput); // Assets Folder
 		if (FileSystem.exists(curPath))
 			rawJson = File.getContent(curPath).trim();
 
@@ -67,10 +68,9 @@ class Song
 		return null;
 	}
 
-	public static function parseJSONshit(rawJson:String):SwagSong
+	public static function parseJSONshit(rawJson:String):CDevChart
 	{
-		var swagShit:SwagSong = cast Json.parse(rawJson).song;
-		swagShit.validScore = true;
+		var swagShit:CDevChart = cast Json.parse(rawJson);
 		return swagShit;
 	}
 }

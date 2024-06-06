@@ -1,12 +1,19 @@
-export/
+# During Development stuffs
 .vscode/
+assets_temp/
+build-tools/
+export/
+build.hxml
+hxformat.json
+
+# Useless things
 art/backupcodeshit/
+CHANGELOG.md
+
+# Whatever is these things
 todo.txt
 cdev-changelog.txt
-build.hxml
-vscode-project.hxml
-hxformat.json
+
+# Crash Handler (Old)
 crash_handler/src/build
 crash_handler/src-old
-CHANGELOG.md
-build-tools/

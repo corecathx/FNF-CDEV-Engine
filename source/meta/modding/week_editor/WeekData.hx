@@ -69,7 +69,7 @@ class WeekData
             Paths.currentMod = CDevConfig.utils.isPriorityMod(true);
             var data:ModFile = Paths.modData();
             if (data != null && Reflect.hasField(data, "disable_base_game")) {
-                allowDefSongs = false;
+                allowDefSongs = !data.disable_base_game;
             }
         }
 

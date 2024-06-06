@@ -84,15 +84,15 @@ class ChartEditor extends MusicBeatState {
 
     var writing_enabled:Bool = false;
 
-    public function new(?fnfChart:SwagSong){
-        if (fnfChart == null) fnfChart = CDevConfig.utils.CHART_TEMPLATE;
+    public function new(?fnfChart:CDevChart){
+        if (fnfChart == null) fnfChart = CDevConfig.utils.CDEV_CHART_TEMPLATE;//CDevConfig.utils.CHART_TEMPLATE;
         loadChart(fnfChart);
         note_texture = Paths.getSparrowAtlas("notes/NOTE_assets", "shared"); // cache the note texture first
         super();
     }
 
-    function loadChart(fnfChart:SwagSong){
-        chart = CDevConfig.utils.fnftocdev_chart(fnfChart);
+    function loadChart(fnfChart:CDevChart){
+        chart = fnfChart;
         character_opponent = chart.data.opponent;
         character_player = chart.data.player;
         character_thirdchar = chart.data.third_char; 

@@ -246,10 +246,10 @@ class StoryModeState extends MusicBeatState {
                         var trackPath:String = '$track-$diffStr';
                 
                         var paths:Array<String> = [
-                            Paths.modJson(chartPath + trackPath),
-                            Paths.json(chartPath + trackPath),
-                            Paths.modJson(chartPath + track),
-                            Paths.json(chartPath + track)
+                            Paths.modCdc(chartPath + trackPath),
+                            Paths.cdc(chartPath + trackPath),
+                            Paths.modCdc(chartPath + track),
+                            Paths.cdc(chartPath + track)
                         ];
                 
                         var foundNothing:Bool = true;
@@ -286,11 +286,11 @@ class StoryModeState extends MusicBeatState {
                         PlayState.storyDifficulty = curDiff;
                 
                         var diffic:String = '-' + diffStr;
-                        var tryJson:Dynamic = Song.loadFromJson(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
+                        var tryJson:Dynamic = Song.load(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
                         if (tryJson == null && diffStr.toLowerCase() == "normal") {
                             Log.info("Chart JSON is null, but current selected difficulty is \"normal\", hold on...");
                             diffic = "";
-                            tryJson = Song.loadFromJson(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
+                            tryJson = Song.load(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
                         }
                         if (tryJson != null) Log.info("I guess it worked!"); else Log.info("Oh, it doesn't work.");
                 
@@ -305,7 +305,7 @@ class StoryModeState extends MusicBeatState {
                         LoadingSubstate.load(this,[
                             () -> {
                                 //Character Caching
-                                for (chr in [PlayState.SONG.player2,PlayState.SONG.player1,PlayState.SONG.gfVersion]){
+                                for (chr in [PlayState.SONG.data.opponent,PlayState.SONG.data.player,PlayState.SONG.data.third_char]){
                                     var tempChar:Character = new Character(0,0,chr);
                                     tempChar.alpha = 0.00001;
                                     add(tempChar);
@@ -314,15 +314,9 @@ class StoryModeState extends MusicBeatState {
                             },
                             () -> {
                                 //Stage Caching
-                                new Stage(PlayState.SONG.stage, new PlayState(), true).createDaStage();
+                                new Stage(PlayState.SONG.data.stage, new PlayState(), true).createDaStage();
                             },
-                            () -> {
-                                // Music caching
-                                for (msc in [Paths.inst(PlayState.SONG.song),Paths.voices(PlayState.SONG.song)]){
-                                    if (msc != null) FlxG.sound.cache(msc);
-                                }
-                            }
-                        ],["Characters", "Stage", "Music Files", "Clean-Up"],()->{
+                        ],["Characters", "Stage", "Clean-Up"],()->{
                             for (i in characters){
                                 if (i != null) remove(i);
                             }
@@ -436,7 +430,7 @@ class StoryModeState extends MusicBeatState {
     override function beatHit() {
         super.beatHit();
         character_group.forEachAlive((char:Character) -> {
-            char.dance(false, curBeat);
+            char.dance(curBeat);
         });
     }
 }

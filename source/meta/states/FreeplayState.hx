@@ -541,43 +541,9 @@ class FreeplayState extends MusicBeatState
 							if (FlxG.mouse.justPressed)
 							{
 								if (curSelected != item.ID)
-								{
 									changeSelection(item.ID, true);
-								}
 								else
-								{
-									var poop:String = Highscore.formatSong(songs[supposedlySelected].songName.toLowerCase(), curDifficulty);
-									var daSong:String = songs[supposedlySelected].songName.toLowerCase().replace(" ", "-");
-
-									var sel:String = (yeahNormal ? daSong : poop);
-									#if sys
-									if (!FileSystem.exists(Paths.modJson(songs[supposedlySelected].songName.toLowerCase() + '/' + sel))
-										&& !FileSystem.exists(Paths.json(songs[supposedlySelected].songName.toLowerCase() + '/' + sel)))
-									{
-										if (FlxG.sound.music != null) FlxG.sound.music.pause();
-
-										var songName:String = "";
-										var f:Array<String> = sel.split("-");
-										trace(f);
-										songName = sel.toLowerCase().replace(f[f.length], "");
-
-										var detailText = 'Can\'t load this chart file: \"$sel.json\" because it doesn\'t exists.'
-											+ "\nWe can't find them under this folder path: "
-											+ (songs[supposedlySelected].fromMod == "BASEFNF" ? 
-											"\n- /assets/data/charts/" + songName + "/" :
-											"\n- /cdev-mods/"+Paths.currentMod+"/data/charts/" + songName) 
-											+ "\n\nPlease make sure the .json chart file exists on that directory";
-										openSubState(new CDevPopUp("Error", detailText, [{text:"OK", callback:closeSubState}],false, true));
-										//openSubState(new MissingFileSubstate(sel));
-									}
-									else
-									{
-									#end
-										selectedSong();
-									#if sys
-									}
-									#end
-								}
+									onEnterPressed();
 							}
 						}
 					}
@@ -593,9 +559,7 @@ class FreeplayState extends MusicBeatState
 					if (controls.BACK)
 					{
 						if (CDevConfig.saveData.smoothAF)
-						{
 							FlxTween.tween(FlxG.camera, {zoom: 1.5}, 1, {ease: FlxEase.quadOut});
-						}
 
 						if (FlxG.sound.music != null && FlxG.sound.music.playing)
 							CDevConfig.utils.setSoundPitch(FlxG.sound.music, speed);
@@ -627,40 +591,7 @@ class FreeplayState extends MusicBeatState
 						}
 					}
 				}
-				if (accepted)
-				{
-					var poop:String = Highscore.formatSong(songs[supposedlySelected].songName.toLowerCase(), curDifficulty);
-					var daSong:String = songs[supposedlySelected].songName.toLowerCase().replace(" ", "-");
-
-					var sel:String = (yeahNormal ? daSong : poop);
-					#if sys
-					if (!FileSystem.exists(Paths.modJson(songs[supposedlySelected].songName.toLowerCase() + '/' + sel))
-						&& !FileSystem.exists(Paths.json(songs[supposedlySelected].songName.toLowerCase() + '/' + sel)))
-					{
-						if (FlxG.sound.music != null) FlxG.sound.music.pause();
-
-						var songName:String = "";
-						var f:Array<String> = sel.split("-");
-						trace(f);
-						songName = sel.toLowerCase().replace(f[f.length], "");
-
-						var detailText = 'Can\'t load this chart file: \"$sel.json\", it doesn\'t exists.'
-							+ "\nWe can't find the file in this folder: "
-							+ (songs[supposedlySelected].fromMod == "BASEFNF" ? 
-							   "\n- /assets/data/charts/" + songName + "/" :
-							   "\n- /cdev-mods/"+Paths.currentMod+"/data/charts/" + songName) 
-							+ "\n\nPlease make sure the .json chart file exists on that directory.";
-						openSubState(new CDevPopUp("Error", detailText, [{text:"OK", callback:closeSubState}],false, true));
-						//openSubState(new MissingFileSubstate(sel));
-					}
-					else
-					{
-					#end
-						selectedSong();
-					#if sys
-					}
-					#end
-				}
+				if (accepted) onEnterPressed();
 			}
 		}
 		else
@@ -748,6 +679,36 @@ class FreeplayState extends MusicBeatState
 					a.theText.text = modOptions[a.ID][0] + (modOptions[a.ID][1] ? '' : modOptions[a.ID][2]);
 				}
 			});
+		}
+	}
+
+	function onEnterPressed() {
+		var currentSongName:String = songs[supposedlySelected].songName;
+		var poop:String = Highscore.formatSong(currentSongName, curDifficulty);
+		var daSong:String = currentSongName;
+
+		var chartFile:String = (yeahNormal ? daSong : poop);
+		if (!FileSystem.exists(Paths.modCdc(currentSongName + '/' + chartFile))
+			&& !FileSystem.exists(Paths.cdc(currentSongName + '/' + chartFile)))
+		{
+			if (FlxG.sound.music != null) FlxG.sound.music.pause();
+
+			var songFile:String = "";
+			var f:Array<String> = chartFile.split("-");
+			songFile = chartFile.replace(f[f.length], "");
+			trace(songFile);
+
+			var detailText = 'Can\'t load chart file: \"$songFile.cdc\" because it doesn\'t exists.'
+				+ "\nWe can't find them under this folder path: "
+				+ (songs[supposedlySelected].fromMod == "BASEFNF" ? 
+				"\n- /assets/data/charts/" + currentSongName + '/$songFile.cdc' :
+				"\n- /cdev-mods/"+Paths.currentMod+"/data/charts/" + currentSongName + '/$songFile.cdc') 
+				+ "\n\nPlease make sure the .cdc chart file exists on that directory";
+			openSubState(new CDevPopUp("Error", detailText, [{text:"OK", callback:closeSubState}],false, true));
+		}
+		else
+		{
+			selectedSong();
 		}
 	}
 
@@ -887,7 +848,7 @@ class FreeplayState extends MusicBeatState
 			var daSong:String = songs[supposedlySelected].songName.toLowerCase().replace(" ", "-");
 	
 			var sel:String = (yeahNormal ? daSong : poop);
-			PlayState.SONG = game.song.Song.loadFromJson(sel, songs[supposedlySelected].songName.toLowerCase());
+			PlayState.SONG = game.song.Song.load(sel, songs[supposedlySelected].songName.toLowerCase());
 	
 			if (CDevConfig.saveData.testMode && FlxG.keys.pressed.SHIFT)
 				PlayState.isStoryMode = true;
@@ -978,7 +939,7 @@ class FreeplayState extends MusicBeatState
 			LoadingSubstate.load(this,[
 				() -> {
 					//Character Caching
-					for (chr in [PlayState.SONG.player2,PlayState.SONG.player1,PlayState.SONG.gfVersion]){
+					for (chr in [PlayState.SONG.data.opponent,PlayState.SONG.data.player,PlayState.SONG.data.third_char]){
 						var tempChar:Character = new Character(0,0,chr);
 						tempChar.alpha = 0.00001;
 						add(tempChar);
@@ -987,15 +948,9 @@ class FreeplayState extends MusicBeatState
 				},
 				() -> {
 					//Stage Caching
-					new Stage(PlayState.SONG.stage, new PlayState(), true).createDaStage();
-				},
-				() -> {
-					// Music caching
-					for (msc in [Paths.inst(PlayState.SONG.song),Paths.voices(PlayState.SONG.song)]){
-						if (msc != null) FlxG.sound.cache(msc);
-					}
+					new Stage(PlayState.SONG.data.stage, new PlayState(), true).createDaStage();
 				}
-			],["Characters", "Stage", "Music Files", "Clean-Up"],()->{
+			],["Characters", "Stage", "Clean-Up"],()->{
 				for (i in characters){
 					if (i != null) remove(i);
 				}
@@ -1293,12 +1248,12 @@ class FreeplayState extends MusicBeatState
 			var songLowercase:String = (yeahNormal ? daSong : poop);
 
 			if (!FileSystem.exists(songLowercase)) return;
-			if (!FileSystem.exists(Paths.modJson(songs[curSelected].songName.toLowerCase() + '/' + songs[curSelected].songName.toLowerCase()))) return;
-			if (!FileSystem.exists(Paths.json(songs[curSelected].songName.toLowerCase() + '/' + songs[curSelected].songName.toLowerCase()))) return;
+			if (!FileSystem.exists(Paths.modCdc(songs[curSelected].songName.toLowerCase() + '/' + songs[curSelected].songName.toLowerCase()))) return;
+			if (!FileSystem.exists(Paths.cdc(songs[curSelected].songName.toLowerCase() + '/' + songs[curSelected].songName.toLowerCase()))) return;
 
 			selectedBPMSONG = curSelected;
-			var tempStoring = game.song.Song.loadFromJson(songLowercase, songs[curSelected].songName.toLowerCase());
-			Conductor.changeBPM(tempStoring.bpm * speed);
+			var tempStoring = game.song.Song.load(songLowercase, songs[curSelected].songName.toLowerCase());
+			Conductor.changeBPM(tempStoring.info.bpm * speed);
 		}
 	}
 }
