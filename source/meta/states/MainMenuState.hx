@@ -276,6 +276,18 @@ class MainMenuState extends MusicBeatState
 				}
 			});
 		});
+		#elseif ios
+		menuItems.forEach(function(spr:FlxSprite)
+		{
+			IOS.touchJustPressed(spr, function (){
+				if (selectedSomethin) return;
+				if (spr.ID != curSelected){
+					changeItem(spr.ID, true);
+				} else{
+					confirmShit();
+				}
+			});
+		});
 		#end
 
 		if (CDevConfig.saveData.testMode){

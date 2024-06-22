@@ -95,6 +95,21 @@ class OptionsState extends MusicBeatState
 				}
 			});
 		});
+		#elseif ios
+		grpOptions.forEach(function(spr:FlxText)
+		{
+			Android.touchJustPressed(spr, function()
+			{
+				if (spr.ID != curSelected)
+				{
+					changeSelection(spr.ID, true);
+				}
+				else
+				{
+					onSelected();
+				}
+			});
+		});
 		#end
 
 		if (controls.UI_UP_P)

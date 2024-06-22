@@ -50,7 +50,7 @@
 
 	<!--CDEV Engine's define names-->
 	<define name="ALLOW_MODS"/><!-- if="desktop"-->
-	<define name="CRASH_HANDLER" if="windows || android"/>
+	<define name="CRASH_HANDLER" if="windows || mobile"/>
 	<define name="USE_VIDEOS" if="cpp"/>
 	<define name="DARK_MODE_WINDOW"/>
 	
@@ -112,7 +112,7 @@
 	<assets path='example_mods' rename='cdev-mods' embed='false' if="desktop"/>
 	
 	<assets path='crash_handler/cdev-crash_handler.exe' rename='cdev-crash_handler.exe' embed='false' if="windows"/>
-	<assets path='art/readme.txt' rename='do NOT readme.txt'  />
+	<assets path='art/readme.txt' rename='do NOT readme.txt' unless="mobile" />
 
 	<!-- NOTE FOR FUTURE SELF SINCE FONTS ARE ALWAYS FUCKY 
 		TO FIX ONE OF THEM, I CONVERTED IT TO OTF. DUNNO IF YOU NEED TO
