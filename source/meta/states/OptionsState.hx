@@ -2,6 +2,8 @@ package meta.states;
 
 #if android
 import game.system.native.Android;
+#elseif ios
+import game.system.native.IOS;
 #end
 import game.settings.SettingsSubState;
 import game.settings.data.SettingsProperties;

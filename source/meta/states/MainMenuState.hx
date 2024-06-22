@@ -1,7 +1,7 @@
 package meta.states;
 
 import game.system.native.Windows;
-#if android import game.system.native.Android; #end
+#if android import game.system.native.Android; #elseif ios import game.system.native.IOS; #end
 import game.settings.data.SettingsProperties;
 import meta.modding.week_editor.WeekData;
 import meta.modding.ModPaths;
