@@ -432,15 +432,10 @@ class FreeplayState extends MusicBeatState
 	var vershit:Float = FlxG.height;
 	var addedSmthing:Bool = false;
 
-	var cLowPass:Float = 1;
-	var curPass:Float = 1;
-
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music != null) {
 			Conductor.songPosition = FlxG.sound.music.time;
-			FunkinSoundFilter.setLowPass(FlxG.sound.music,1,cLowPass);
-			cLowPass = FlxMath.lerp(cLowPass,curPass, 1-(elapsed*5));
 		}
 		modMenuBG.x = Std.int(FlxMath.lerp(bgX, modMenuBG.x, game.cdev.CDevConfig.utils.bound(1 - (elapsed * 10), 0, 1)));
 		versionSht.y = Std.int(FlxMath.lerp(vershit, versionSht.y, game.cdev.CDevConfig.utils.bound(1 - (elapsed * 7), 0, 1)));
@@ -583,8 +578,6 @@ class FreeplayState extends MusicBeatState
 							#if PRELOAD_ALL
 							FlxG.sound.playMusic(Paths.inst(songs[supposedlySelected].songName), 0);
 							#end
-							FunkinSoundFilter.setLowPass(FlxG.sound.music,1,cLowPass);
-
 							#if desktop
 							changeDaBPM();
 							#end
@@ -684,34 +677,48 @@ class FreeplayState extends MusicBeatState
 
 	function onEnterPressed() {
 		var currentSongName:String = songs[supposedlySelected].songName;
-		var poop:String = Highscore.formatSong(currentSongName, curDifficulty);
-		var daSong:String = currentSongName;
-
-		var chartFile:String = (yeahNormal ? daSong : poop);
-		if (!FileSystem.exists(Paths.modCdc(currentSongName + '/' + chartFile))
-			&& !FileSystem.exists(Paths.cdc(currentSongName + '/' + chartFile)))
-		{
-			if (FlxG.sound.music != null) FlxG.sound.music.pause();
-
-			var songFile:String = "";
-			var f:Array<String> = chartFile.split("-");
-			songFile = chartFile.replace(f[f.length], "");
-			trace(songFile);
-
-			var detailText = 'Can\'t load chart file: \"$songFile.cdc\" because it doesn\'t exists.'
-				+ "\nWe can't find them under this folder path: "
-				+ (songs[supposedlySelected].fromMod == "BASEFNF" ? 
-				"\n- /assets/data/charts/" + currentSongName + '/$songFile.cdc' :
-				"\n- /cdev-mods/"+Paths.currentMod+"/data/charts/" + currentSongName + '/$songFile.cdc') 
-				+ "\n\nPlease make sure the .cdc chart file exists on that directory";
-			openSubState(new CDevPopUp("Error", detailText, [{text:"OK", callback:closeSubState}],false, true));
+		var chartFile:String = yeahNormal ? currentSongName : Highscore.formatSong(currentSongName, curDifficulty);
+		var allPath:String = currentSongName + '/' + chartFile;
+	
+		var exists = checkIfFileExists(allPath);
+	
+		if (!exists && selectedDifficulty.toLowerCase() == "normal") {
+			chartFile = currentSongName;
+			allPath = currentSongName + '/' + chartFile;
+			exists = checkIfFileExists(allPath);
 		}
+		
+		if (!exists)
+			handleFileNotFound(currentSongName, chartFile);
 		else
-		{
 			selectedSong();
-		}
 	}
-
+	
+	inline function checkIfFileExists(path:String):Bool {
+		return FileSystem.exists(Paths.modCdc(path)) || 
+			   FileSystem.exists(Paths.cdc(path)) || 
+			   FileSystem.exists(Paths.mod_legacy_json(path)) || 
+			   FileSystem.exists(Paths.legacy_json(path));
+	}
+	
+	inline function handleFileNotFound(currentSongName:String, chartFile:String):Void {
+		if (FlxG.sound.music != null) FlxG.sound.music.pause();
+	
+		var songFile:String = chartFile.substring(0, chartFile.lastIndexOf("-") + 1);
+		trace(songFile);
+	
+		var basePath:String = songs[supposedlySelected].fromMod == "BASEFNF" ? 
+			"/assets/data/charts/" : 
+			"/cdev-mods/" + Paths.currentMod + "/data/charts/";
+	
+		var detailText:String = 'Can\'t load chart file: "$songFile.cdc" because it doesn\'t exist.' +
+			"\nWe can't find it under this folder path: " +
+			"\n- " + basePath + currentSongName + '/' + songFile + ".cdc" +
+			"\n\nPlease make sure the .cdc chart file exists in that directory.";
+	
+		openSubState(new CDevPopUp("Error", detailText, [{text:"OK", callback:closeSubState}], false, true));
+	}
+	
 	function resetMods()
 	{
 		FlxG.sound.play(Paths.sound('cancelMenu'), 0.4);
@@ -837,152 +844,59 @@ class FreeplayState extends MusicBeatState
 		versionSht.text = modDescs[curModSelected];
 	}
 	var characters:Array<Character> = [];
-	function selectedSong() // look at how messy this function is
+
+	/**
+	 * Called after the player selected a song.
+	 */
+	function selectedSong()
 	{
-		try {
-			curPass = 0.005;
-			selectedBPMSONG = supposedlySelected;
-			curPlayedSong = songs[supposedlySelected].songName;
-	
-			var poop:String = Highscore.formatSong(songs[supposedlySelected].songName.toLowerCase(), curDifficulty);
-			var daSong:String = songs[supposedlySelected].songName.toLowerCase().replace(" ", "-");
-	
-			var sel:String = (yeahNormal ? daSong : poop);
-			PlayState.SONG = game.song.Song.load(sel, songs[supposedlySelected].songName.toLowerCase());
-	
-			if (CDevConfig.saveData.testMode && FlxG.keys.pressed.SHIFT)
-				PlayState.isStoryMode = true;
+		if (FlxG.sound.music != null) 
+			FlxG.sound.music.fadeOut(0.3, 0.4);
+		FlxG.sound.play(Paths.sound('confirmMenu'), 0.6);
+		persistentDraw = persistentUpdate = true;
+		
+		var curSong:SongMetadata = songs[supposedlySelected];
+		trace(curSong);
+
+		selectedThing = true;
+		selectedBPMSONG = supposedlySelected;
+
+		curPlayedSong = curSong.songName;
+
+		// Initializing PlayState
+		CDevConfig.utils.loadSong(false, [curPlayedSong], selectedDifficulty, curDifficulty, curSong.week, (curSong.weekFile != null ? curSong.weekFile.weekName : ""), curSong.fromMod);
+
+		// Making most of UI Stuffs in Freeplay screen gone / disappear.
+		for (index => spr in iconArray) {
+			if (index != curSelected)
+				FlxTween.tween(spr, {alpha: 0}, 1, {onComplete: (_)->spr.kill()});
 			else
-				PlayState.isStoryMode = false;
-	
-			if (PlayState.isStoryMode)
-			{
-				PlayState.storyPlaylist = [songs[supposedlySelected].songName];
-			}
-			PlayState.storyDifficulty = curDifficulty;
-	
-			PlayState.storyWeek = songs[supposedlySelected].week;
-			PlayState.fromMod = songs[supposedlySelected].fromMod;
-			PlayState.difficultyName = selectedDifficulty;
-			trace('CUR WEEK' + PlayState.storyWeek);
-	
-			selectedThing = true;
-			if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.3, 0.4);
-			FlxG.sound.play(Paths.sound('confirmMenu'), 0.6);
-			for (i in 0...iconArray.length)
-			{
-				if (i != curSelected)
-				{
-					FlxTween.tween(iconArray[i], {alpha: 0}, 1, {
-						ease: FlxEase.quadOut,
-						onComplete: function(twn:FlxTween)
-						{
-							iconArray[i].kill();
-						}
-					});
-				}
-				else
-				{
-					iconArray[curSelected].alpha = 1;
-				}
-			}
-			for (item in grpSongs.members)
-			{
-				if (item.targetY == 0)
-				{
-					item.lerpOnForceX = true;
-					item.alpha = 1;
-					// item.screenCenter(X);
-					item.xAdd -= 70;
-					item.wasChoosed = true;
-				}
-				else
-				{
-					item.wasChoosed = false;
-					FlxTween.tween(item, {alpha: 0}, 1, {
-						ease: FlxEase.circOut,
-						onComplete: function(twn:FlxTween)
-						{
-							item.kill();
-						}
-					});
-				}
-			}
-	
-			FlxTween.tween(scoreText, {y: scoreText.y + 200}, 1, {
-				ease: FlxEase.circOut,
-			});
-	
-			FlxTween.tween(tip, {y: tip.y + 150}, 1, {
-				ease: FlxEase.circOut,
-			});
-	
-			FlxTween.tween(searchBar, {x: FlxG.width}, 1, {
-				ease: FlxEase.circOut,
-			});
-			FlxTween.tween(hint, {x: FlxG.width}, 1, {
-				ease: FlxEase.circOut,
-			});
-	
-			FlxTween.tween(songInfo, {y: songInfo.y - 100}, 1, {
-				ease: FlxEase.circOut,
-			});
-			difficultySelectors.forEachAlive(function(hell:FlxSprite)
-			{
-				FlxTween.tween(hell, {y: hell.y + 100}, 1, {
-					ease: FlxEase.circOut,
-				});
-			});
-	
-			persistentDraw = persistentUpdate = true;
-	
-			LoadingSubstate.load(this,[
-				() -> {
-					//Character Caching
-					for (chr in [PlayState.SONG.data.opponent,PlayState.SONG.data.player,PlayState.SONG.data.third_char]){
-						var tempChar:Character = new Character(0,0,chr);
-						tempChar.alpha = 0.00001;
-						add(tempChar);
-						characters.push(tempChar);
-					}
-				},
-				() -> {
-					//Stage Caching
-					new Stage(PlayState.SONG.data.stage, new PlayState(), true).createDaStage();
-				}
-			],["Characters", "Stage", "Clean-Up"],()->{
-				for (i in characters){
-					if (i != null) remove(i);
-				}
-				new FlxTimer().start(0.2, function(hasd:FlxTimer)
-				{
-					if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
-					playSong();
-				});
-			}, (wawas:String)->{
-				CDevPopUp.open(this,"Error","An error occured while running a task:\n-"+wawas,
-				[
-					{
-						text: "OK", 
-						callback:() -> {FlxG.switchState(new FreeplayState());}
-					}
-				], false, true);
-			});
-		} catch(e){
-			CDevPopUp.open(this,"Error","An error occured while preparing to load your song:\n-"+e.toString(),
-			[
-				{
-					text: "OK", 
-					callback:() -> {FlxG.switchState(new FreeplayState());}
-				}
-			], false, true);
+				spr.alpha = 1;
 		}
 
-	}
+		for (item in grpSongs.members) {
+			item.wasChoosed = false;
+			if (item.targetY == 0) {
+				item.lerpOnForceX = item.wasChoosed = true;
+				item.alpha = 1;
+				item.xAdd -= 70;
+			} else {
+				FlxTween.tween(item, {alpha: 0}, 1, {onComplete: (_)->item.kill()});
+			}
+		}
 
-	function playSong()
-	{
-		LoadingState.loadAndSwitchState(new PlayState());
+		for (tween in [
+			{spr:scoreText, x:scoreText.x, y: scoreText.y + 200}, // Score Text
+			{spr:tip, x:tip.x, y: tip.y + 200}, // Tip Text
+			{spr:searchBar, x:FlxG.width, y: searchBar.y}, // Search Bar
+			{spr:hint, x:FlxG.width, y: hint.y}, // Hint Text
+			{spr:songInfo, x:songInfo.x, y: songInfo.y-100}, // Song Info Text		
+		]) FlxTween.tween(tween.spr, {x:tween.x, y:tween.y}, 1,{ease:FlxEase.expoOut});
+
+		difficultySelectors.forEachAlive((hell:FlxSprite)->FlxTween.tween(hell, {y: hell.y + 100}, 1, {ease: FlxEase.expoOut}));
+
+		// Do caching stuff.
+		CDevConfig.utils.preloadPlayState(this);
 	}
 
 	function songInfoUpdate()
@@ -1033,7 +947,7 @@ class FreeplayState extends MusicBeatState
 		if (!clear)
 		{
 			if (b)
-				CoolUtil.songDifficulties = CDevConfig.utils.readChartJsons(songs[supposedlySelected].songName, b);
+				CoolUtil.songDifficulties = CDevConfig.utils.readChartDifficulties(songs[supposedlySelected].songName, b);
 			else
 				CoolUtil.songDifficulties = CoolUtil.difficultyArray;
 		}

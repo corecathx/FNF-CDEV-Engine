@@ -1,8 +1,8 @@
 {
 	"tracks": [
-		"pico",
-		"philly",
-		"blammed"
+		"Pico",
+		"Philly",
+		"Blammed"
 	],
 	"disableFreeplay": false,
 	"weekTxtImgPath": "week3",
@@ -18,7 +18,7 @@
 				140,
 				0
 			],
-			"song": "pico",
+			"song": "Pico",
 			"character": "pico",
 			"bpm": 120
 		},
@@ -28,9 +28,9 @@
 				140,
 				0
 			],
-			"bpm": 120,
+			"song": "Philly",
 			"character": "pico",
-			"song": "philly"
+			"bpm": 120
 		},
 		{
 			"colors": [
@@ -38,41 +38,41 @@
 				140,
 				0
 			],
-			"bpm": 120,
+			"song": "Blammed",
 			"character": "pico",
-			"song": "blammed"
+			"bpm": 120
 		}
 	],
 	"charSetting": [
 		{
 			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				543.5,
+				-12
+			]
+		},
+		{
+			"scale": 0.5,
 			"flipX": true,
 			"position": [
-				-32.5,
-				78.5
+				369.5,
+				177.5
 			]
 		},
 		{
 			"scale": 0.5,
 			"flipX": false,
 			"position": [
-				788.5,
-				94
-			]
-		},
-		{
-			"scale": 0.5,
-			"flipX": false,
-			"position": [
-				298.5,
-				-112
+				882.5,
+				187
 			]
 		}
 	],
 	"weekCharacters": [
+		"gf",
 		"pico",
-		"bf",
-		"gf"
+		"bf"
 	],
 	"weekName": "Pico"
 }

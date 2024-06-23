@@ -56,7 +56,7 @@ class Conductor
 
 	public static function updateSettings() {
 		offset = CDevConfig.saveData.offset;
-		safeFrames = 20;
+		safeFrames = 15;
 
 		safeZoneOffset = (safeFrames / 60) * 1000;
 	}
@@ -69,25 +69,48 @@ class Conductor
 		time_signature = [beat,step];
 	}
 
-	public static function mapBPMChanges(song:CDevChart)
-	{
+	/**
+	 * hurrghh apparently doesn't work
+	 * @param song song
+	 */
+	public static function mapBPMChanges(song:CDevChart) {
 		bpmChangeMap = [];
 
-		var curBPM:Float = song.info.bpm;
+		var current_bpm:Float = song.info.bpm;
+		var step_crochet:Float = ((60 / current_bpm) * 1000) / 4;
+		var last_changed_time:Float = 0;
+		var last_steps:Int = 0;
+	
 		for (event in song.events) {
-			if (event[0] == "Change BPM" && Std.parseFloat(event[3]) != curBPM) {
-				var time:Float = Std.parseFloat(event[2]);
-				bpmChangeMap.push({
-					stepTime: time / stepCrochet,
-					songTime: time,
-					bpm: curBPM
+			if (event[0] == "Change BPM") {
+				var data = { // easier to read, i guess
+					time: Std.parseFloat(event[2]),
+					new_bpm: Std.parseFloat(event[3])
+				};
+				if (data.new_bpm == current_bpm) continue; // if it's changing to a same bpm, ignore it
+				
+				trace("Found BPM Change at " + data.time + " changing to " + data.new_bpm);
+				// time and steps passed since last bpm change
+				var delta_steps:Int = Math.round((data.time - last_changed_time) / step_crochet);
+				last_steps += delta_steps;
+				last_changed_time = data.time;
+				
+				bpmChangeMap.push({ // add it to the array
+					stepTime: last_steps,
+					songTime: last_changed_time,
+					bpm: data.new_bpm
 				});
-				curBPM = Std.parseFloat(event[3]);
+
+				// update infos
+				current_bpm = data.new_bpm;
+				step_crochet = ((60 / current_bpm) * 1000) / 4;
 			}
 		}
-		if (bpmChangeMap.length > 0) trace("new BPM map BUDDY " + bpmChangeMap);
-	}
 
+		if (bpmChangeMap.length > 0) 
+			trace("there's " + bpmChangeMap.length + " bpm changes waiting for you.");
+	}
+	
 	public static function changeBPM(newBpm:Float) {
 		bpm = newBpm;
 		crochet = ((60 / bpm) * 1000);

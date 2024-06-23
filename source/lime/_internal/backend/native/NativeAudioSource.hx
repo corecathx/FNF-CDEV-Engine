@@ -1,6 +1,5 @@
 package lime._internal.backend.native;
 
-import cpp.vm.Gc;
 import game.system.FunkinThread;
 import haxe.Int64;
 import haxe.Timer;

@@ -5,7 +5,9 @@ import flixel.tweens.FlxTween;
 import meta.substates.WebviewSubstate;
 import openfl.Lib;
 import game.Controls.Control;
+#if !macro
 import flash.text.TextField;
+#end
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
@@ -24,7 +26,7 @@ import game.objects.*;
 class ModdingState extends meta.states.MusicBeatState
 {
 	var curSelected:Int = 0;
-	var options:Array<String> = ['Create a new mod', 'Open an existing mod', 'Install a mod', "Read the Docs"];
+	var options:Array<String> = ['Create a new mod', 'Edit a mod', 'Install a mod', "Read the Docs"];
 	var grpOptions:FlxTypedGroup<Alphabet>;
 	var menuBG:FlxSprite;
 
@@ -50,14 +52,14 @@ class ModdingState extends meta.states.MusicBeatState
 		grpOptions = new FlxTypedGroup<Alphabet>();
 		add(grpOptions);
 
+		var textSize:Int = #if desktop 34 #else 40 #end;
+		var lengthy:Float = (FlxG.height * 0.5) - ((options.length * (textSize+20)) * 0.5);
 		for (i in 0...options.length)
 		{
-			var optionText:Alphabet = new Alphabet(0, (70 * i) + 30, options[i], true, false);
-			//optionText.screenCenter();
-			optionText.isMenuItem = true;
-			optionText.isFreeplay = true;
-			optionText.targetY = i;
-			// optionText.y += (100 * (i - (options.length / 2))) + 50;
+			var optionText:Alphabet = new Alphabet(0,0,options[i], true,false,textSize);
+			optionText.screenCenter(X);
+			optionText.y = lengthy + (((textSize+20)*i));
+			optionText.ID = i;
 			grpOptions.add(optionText);
 		}
 		changeSelection();
@@ -116,7 +118,7 @@ class ModdingState extends meta.states.MusicBeatState
 			{
 				case 'Create a new mod':
 					FlxG.switchState(new NewModState());
-				case 'Open an existing mod':
+				case 'Edit a mod':
 					FlxG.switchState(new OpenExistingModState());
 				case 'Install a mod':
 					FlxG.switchState(new InstallModState());

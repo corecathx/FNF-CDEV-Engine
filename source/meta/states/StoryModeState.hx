@@ -275,65 +275,11 @@ class StoryModeState extends MusicBeatState {
                     } else {
                         bgAlphaI = 0;
                         FlxG.sound.play(Paths.sound('confirmMenu'));
-                        if (FlxG.sound.music != null) {
+                        if (FlxG.sound.music != null) 
                             FlxG.sound.music.fadeOut(0.4, 0.3);
-                        }
-                
-                        PlayState.storyPlaylist = file.data.tracks;
-                        PlayState.isStoryMode = true;
-                        PlayState.weekName = file.data.weekName;
-                        PlayState.difficultyName = diffStr;
-                        PlayState.storyDifficulty = curDiff;
-                
-                        var diffic:String = '-' + diffStr;
-                        var tryJson:Dynamic = Song.load(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
-                        if (tryJson == null && diffStr.toLowerCase() == "normal") {
-                            Log.info("Chart JSON is null, but current selected difficulty is \"normal\", hold on...");
-                            diffic = "";
-                            tryJson = Song.load(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
-                        }
-                        if (tryJson != null) Log.info("I guess it worked!"); else Log.info("Oh, it doesn't work.");
-                
-                        PlayState.SONG = tryJson;
-                        PlayState.storyWeek = curWeek;
-                        PlayState.campaignScore = 0;
-                        PlayState.fromMod = file.mod;
 
-                        persistentDraw = persistentUpdate = true;
-
-                        var characters:Array<Character> = [];
-                        LoadingSubstate.load(this,[
-                            () -> {
-                                //Character Caching
-                                for (chr in [PlayState.SONG.data.opponent,PlayState.SONG.data.player,PlayState.SONG.data.third_char]){
-                                    var tempChar:Character = new Character(0,0,chr);
-                                    tempChar.alpha = 0.00001;
-                                    add(tempChar);
-                                    characters.push(tempChar);
-                                }
-                            },
-                            () -> {
-                                //Stage Caching
-                                new Stage(PlayState.SONG.data.stage, new PlayState(), true).createDaStage();
-                            },
-                        ],["Characters", "Stage", "Clean-Up"],()->{
-                            for (i in characters){
-                                if (i != null) remove(i);
-                            }
-                            new FlxTimer().start(0.2, function(hasd:FlxTimer)
-                            {
-                                if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
-                                LoadingState.loadAndSwitchState(new PlayState(), true);
-                            });
-                        }, (wawas:String)->{
-                            CDevPopUp.open(this,"Error","An error occured while running a task:\n-"+wawas,
-                            [
-                                {
-                                    text: "OK", 
-                                    callback:() -> {FlxG.switchState(new StoryModeState());}
-                                }
-                            ], false, true);
-                        });
+                        CDevConfig.utils.loadSong(true, file.data.tracks, diffStr, curDiff, curWeek, file.data.weekName, file.mod);
+                        CDevConfig.utils.preloadPlayState(this);
                     }
                 }
                 
@@ -395,11 +341,7 @@ class StoryModeState extends MusicBeatState {
 
     function updateTrackList() {
         var cwd = WeekData.loadedWeeks[curWeek].data;
-        var trackList:Array<String> = [];
-        
-        for (track in cwd.tracks)
-            trackList.push(CDevConfig.utils.capitalize(track));
-        
+        var trackList:Array<String> = [ for (track in cwd.tracks) track ];
         trackTxt.text = "TRACKS: " + trackList.join(", ");
         intendedScore = Highscore.getWeekScore(cwd.weekName, curDiff);
     }

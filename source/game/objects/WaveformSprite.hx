@@ -37,12 +37,13 @@ class WaveformSprite extends FlxSprite
 
         makeGraphic(Std.int(width), Std.int(height), 0x00FFFFFF);
         audioSource = _audioSource;
+
     }
 
     public override function update(elapsed) {
         super.update(elapsed);
         if (audioSource == null) return;
-        if(active && audioSource.playing){
+        if (active && audioSource.playing){
             if(frametime >= 1/framerate || uncapFramerate){
                 updateWaveform();
                 frametime = 0;

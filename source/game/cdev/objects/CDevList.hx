@@ -1,13 +1,13 @@
 package game.cdev.objects;
 
+import flixel.math.FlxRect;
 import flixel.group.FlxSpriteGroup;
 
-//wip
 class CDevList extends FlxSpriteGroup {
-    var bgOutline:FlxSprite;
-    var bgSprite:FlxSprite;
+    public var bgSprite:FlxSprite;
+    public var bgLabel:FlxText;
+    public var bgArrow:FlxSprite;
 
-    var padding:Int = 10;
     var colors = {
         outline: 0xFF006EFF,
         bg: 0xFF121825
@@ -17,20 +17,22 @@ class CDevList extends FlxSpriteGroup {
         width: 1,
         height: 1
     }
-    var borderSize:Float = 1;
 
-    public var data(default, set):Array<Dynamic> = [
-        //[spriteimage, Text]
-    ];
-    
-    public var groupList:Array<Dynamic> = [
-        //[bgDrop:FlxSprite, objects:FlxSprite, a:FlxText]
-    ];
+    public var buttons:Array<CDevListSprite> = [];
 
-    public function new(nX:Float, nY:Float, nWidth:Int, nHeight:Int){
+    public var list:Array<String> = [];
+
+    public var callBack:String->Void = (str:String)->{};
+
+    public var opened:Bool = false;
+    public var curY:Float = 0;
+
+    public function new(nX:Float, nY:Float, nWidth:Int, nHeight:Int, data:Array<String>, callBack:String->Void){
         super();
+        list = data;
         sizes.width = nWidth;
         sizes.height = nHeight;
+        this.callBack = callBack;
         x = nX;
         y = nY;
         changeColor(0xFF121825, 0xFF006EFF);
@@ -38,44 +40,123 @@ class CDevList extends FlxSpriteGroup {
     }
 
     public function init(){
-        bgOutline = new FlxSprite(x,y).makeGraphic(1,1,0xFFFFFFFF);
-        bgOutline.setGraphicSize(Std.int((sizes.width+(borderSize)+(padding))), Std.int((sizes.height+(borderSize)+(padding))));
-        bgOutline.color = colors.outline;
-        add(bgOutline);
-
-        bgSprite = new FlxSprite(padding,padding).makeGraphic(1,1,0xFFFFFFFF);
-        bgSprite.setGraphicSize(Std.int((sizes.width-(borderSize)+(padding))), Std.int((sizes.height-(borderSize)+(padding))));
+        bgSprite = new FlxSprite(0,0).makeGraphic(sizes.width,sizes.height,0xFFFFFFFF);
         bgSprite.color = colors.bg;
         add(bgSprite);
+
+        bgLabel = new FlxText(0,0,sizes.width-30,"", 14);
+        bgLabel.font = FunkinFonts.CONSOLAS;
+        add(bgLabel);
+
+        bgArrow = new FlxSprite(bgLabel.x + bgLabel.width + 10, 10).loadGraphic(Paths.image("ui/dropdown","shared"));
+        bgArrow.scale.set(0.5,0.5);
+        bgArrow.updateHitbox();
+        add(bgArrow);
+
+        var yAdd:Float = sizes.height;
+        for (name in list) {
+            var spr:CDevListSprite = new CDevListSprite(0,yAdd,sizes.width, sizes.height, name, callBack);
+            spr.active = spr.visible = false;
+            spr.parent = this;
+            add(spr);
+
+            buttons.push(spr);
+            yAdd += sizes.height;
+        }
+        curY = y+sizes.height;
     }
+
+    override function update(elapsed:Float) {
+        bgLabel.setPosition(bgSprite.x + 10, bgSprite.y + (bgSprite.height-bgLabel.height)*0.5);
+
+        bgArrow.alpha = bgSprite.alpha = 0.7;
+        if (FlxG.mouse.overlaps(bgSprite)) {
+            if (FlxG.mouse.justPressed) {
+                opened = !opened;
+                onListPressed(opened);
+            } 
+            if (!FlxG.mouse.pressed){
+                bgArrow.alpha = bgSprite.alpha = 1;  
+            }
+        }
+
+        if (opened) {
+            if (FlxG.mouse.wheel != 0){
+                if (curY + (sizes.height*buttons.length) < y+(sizes.height*buttons.length))
+                    curY += FlxG.mouse.wheel * (sizes.height*0.5);
+            }
+        } else {
+            curY = y + sizes.height;
+        }
+
+        for (index=>i in buttons) {
+            i.y = FlxMath.lerp(curY+(sizes.height*index), i.y, 1-(elapsed*32));
+            i.selected = bgLabel.text == i.label.text;
+
+            var rect:FlxRect = i.clipRect != null ? i.clipRect : new FlxRect(0,0,sizes.width,sizes.height);
+
+            if (i.y < y+sizes.height) {
+                rect.y = (y+sizes.height - i.y);
+                rect.height = (i.height) - rect.y;
+            } else {
+                rect.y = 0;
+                rect.height = sizes.height;
+            }
+
+            i.clipRect = rect;
+        }
+        super.update(elapsed);
+    }
+
+    public function onListPressed(open:Bool) for (i in buttons) i.active = i.visible = open;
 
     public function changeColor(bg:FlxColor, outline:FlxColor){
         colors.bg = bg;
         colors.outline = outline;
     }
+}
 
-    function set_data(value:Array<Dynamic>):Array<Dynamic> {
-        updateObjects(value);
-        
-        return value;
+class CDevListSprite extends FlxSprite {
+    public var parent:CDevList = null;
+    public var selected:Bool = false;
+    private var colors = {
+        hover: 0xFF132853,
+        idle: 0xFF121825
+    };
+    public var label:FlxText;
+    public var callback:String->Void = (str:String)->{};
+    public function new(nX:Float, nY:Float, nWidth:Int, nHeight:Int, text:String, callb:String->Void) {
+        super(nX,nY);
+        callback = callb;
+        makeGraphic(nWidth, nHeight, FlxColor.WHITE);
+        color = colors.hover;
+
+        label = new FlxText(0,0,-1,text, 12);
+        label.font = FunkinFonts.CONSOLAS;
+        label.scrollFactor.set();
     }
 
-    function updateObjects(array:Array<Dynamic>){
-        clearAll();
+    override function draw() {
+        super.draw();
+        label.clipRect = clipRect;
+        label.setPosition(x + 15, y + (height-label.height)*0.5);
+        label.draw();
     }
 
-    function addThis(a:Array<Dynamic>){
-        for (i in a){
-            
+    override function update(elapsed:Float) {
+        if (visible && active) {
+            color = selected ? 0xFF162F64 : colors.idle;
+            if (FlxG.mouse.overlaps(this)){
+                if (FlxG.mouse.justPressed){
+                    callback(label.text);
+                    if (parent != null) parent.bgLabel.text = label.text;
+                } 
+                
+                if (!FlxG.mouse.pressed) {
+                    color = selected ? 0xFF184AAD : colors.hover;
+                }
+            }
         }
-    }
-
-    function clearAll(){
-        for (obj in groupList){
-            if (members.contains(obj[0])) remove(obj[0]);
-            if (members.contains(obj[1])) remove(obj[1]);
-            if (members.contains(obj[2])) remove(obj[2]);
-            groupList.remove(obj);
-        }
+        super.update(elapsed);
     }
 }

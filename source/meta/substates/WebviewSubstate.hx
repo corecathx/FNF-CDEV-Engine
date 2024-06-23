@@ -1,5 +1,6 @@
 package meta.substates;
 
+#if !macro
 import flixel.util.FlxColor;
 import flixel.text.FlxText;
 import flixel.FlxSprite;
@@ -83,3 +84,4 @@ class WebviewSubstate extends MusicBeatSubstate {
         FlxG.autoPause = CDevConfig.saveData.autoPause;
     }
 }
+#end

@@ -297,7 +297,7 @@ class AddStageSprite extends MusicBeatSubstate
 		displayGroup.add(txtMnaae);
 
 		var dops:Array<String> = ["beat-force", "beat", "normal"];
-		var current:String = "";
+		var current:String = "normal";
 		drop_sparrowAnimType = new UIDropDown(210, 120, UIDropDown.makeStrIdLabelArray(dops, false), function(crap:String)
 		{
 			current = dops[Std.parseInt(crap)];

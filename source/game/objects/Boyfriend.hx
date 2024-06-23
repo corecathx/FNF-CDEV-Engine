@@ -42,8 +42,8 @@ class Boyfriend extends Character
 	}
 
 	function updateHoldTimer(elapsed:Float){
-		if (PlayState.playingLeftSide)
-			return;
+		//if (PlayState.playingLeftSide)
+		//	return;
 		if (animation.curAnim.name.startsWith('sing'))
 		{
 			holdTimer += elapsed;

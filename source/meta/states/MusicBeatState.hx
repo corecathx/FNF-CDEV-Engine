@@ -27,11 +27,7 @@ class MusicBeatState extends FlxUIState {
 
 
     inline function set_curMouse(val:MouseCursor):MouseCursor return Mouse.cursor = val;
-
-    override function create() {
-        super.create();
-    }
-
+    
     override function update(elapsed:Float) {
         var oldStep:Int = curStep;
 
@@ -60,19 +56,19 @@ class MusicBeatState extends FlxUIState {
 
     private function updateCurStep():Void {
         var lastChange:BPMChangeEvent = getLastBPMChangeEvent();
-        var newSteps:Int = Std.int(lastChange.stepTime + ((Conductor.songPosition - Conductor.offset) - lastChange.songTime) / Conductor.stepCrochet);
-        
+        var newSteps:Int = Std.int(lastChange.stepTime + ((Conductor.songPosition - lastChange.songTime) / Conductor.stepCrochet));
+    
         if (!passedSteps.contains(newSteps)) {
             curStep = newSteps;
             passedSteps.push(newSteps);
             _highestPassedSteps = Std.int(Math.max(_highestPassedSteps, newSteps));
         }
     }
-
+    
     private function getLastBPMChangeEvent():BPMChangeEvent {
-        var lastChange:BPMChangeEvent = { stepTime: 0, songTime: 0, bpm: 0 };
+        var lastChange:BPMChangeEvent = { stepTime: 0, songTime: 0, bpm: 0};
         for (change in Conductor.bpmChangeMap) {
-            if (Conductor.songPosition + Conductor.offset >= change.songTime) {
+            if (Conductor.songPosition >= change.songTime) {
                 lastChange = change;
             } else {
                 break;
@@ -80,6 +76,7 @@ class MusicBeatState extends FlxUIState {
         }
         return lastChange;
     }
+    
 
     private function handleDesync():Void {
         if (Math.abs(curStep - _highestPassedSteps) >= syncingSensitivity) {

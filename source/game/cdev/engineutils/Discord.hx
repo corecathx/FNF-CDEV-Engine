@@ -4,7 +4,9 @@ import game.cdev.CDevUtils.DiscordJson;
 import game.cdev.CDevConfig;
 import Sys.sleep;
 #if DISCORD_RPC
+#if !macro
 import discord_rpc.DiscordRpc;
+#end
 #end
 
 using StringTools;

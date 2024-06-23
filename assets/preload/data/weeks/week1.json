@@ -1,8 +1,8 @@
 {
 	"tracks": [
-		"bopeebo",
-		"fresh",
-		"dadbattle"
+		"Bopeebo",
+		"Fresh",
+		"Dadbattle"
 	],
 	"disableFreeplay": false,
 	"weekTxtImgPath": "week1",
@@ -18,7 +18,7 @@
 				120,
 				255
 			],
-			"song": "bopeebo",
+			"song": "Bopeebo",
 			"character": "dad",
 			"bpm": 120
 		},
@@ -28,7 +28,7 @@
 				120,
 				255
 			],
-			"song": "fresh",
+			"song": "Fresh",
 			"character": "dad",
 			"bpm": 120
 		},
@@ -38,7 +38,7 @@
 				120,
 				255
 			],
-			"song": "dadbattle",
+			"song": "Dadbattle",
 			"character": "dad",
 			"bpm": 120
 		}
@@ -48,24 +48,24 @@
 			"scale": 0.5,
 			"flipX": false,
 			"position": [
-				72.5,
-				-145
+				448.5,
+				-74
 			]
 		},
 		{
 			"scale": 0.5,
 			"flipX": false,
 			"position": [
-				296.5,
-				-100
+				543.5,
+				-12
 			]
 		},
 		{
 			"scale": 0.5,
 			"flipX": false,
 			"position": [
-				750.5,
-				126
+				882.5,
+				187
 			]
 		}
 	],

@@ -88,7 +88,7 @@ class ChartConverter
     /**
      * Main function of this class, used by haxe.
      */
-    public static function main() {
+    public static function main():Void {
         cls();
         Sys.println("Base FNF Chart to CDEV Chart");
         var path:String = askInput("Folder path of base game charts [cdev engine assets folder required]");
@@ -107,9 +107,10 @@ class ChartConverter
             FileSystem.createDirectory(chartFolderTemp);
         }
 
-
         var wawa:Float = haxe.Timer.stamp();
+        var songCount:Int = 0;
         for (song in FileSystem.readDirectory(chartFolder)){
+            cls();
             Sys.println("Converting: " + song);
             var newPath:String = chartFolderTemp+"/"+song+"/";
             if (!FileSystem.exists(newPath)){
@@ -117,9 +118,10 @@ class ChartConverter
             }
 
             convertChart(song, chartFolder);
+            songCount++;
         }
         cls();
-        Sys.println("Finished after like "+Math.fround(haxe.Timer.stamp()-wawa)+"s..");
+        Sys.println("Finished after "+Math.fround(haxe.Timer.stamp()-wawa)+"s, converted " + songCount + " songs.");
     }
 
     /**
@@ -156,91 +158,35 @@ class ChartConverter
 		
         var lastHitSection:Bool = false;
 
-        var bpm:Float = safeJSON.bpm;
-        var crochet:Float = ((60 / bpm) * 1000); // beats in milliseconds
-        var stepCrochet:Float = crochet / 4; // steps in milliseconds
+        var curBPM:Float = safeJSON.bpm;
+        var totalPos:Float = 0;
 
-        var curTime:Float = 0;
-        var bpmChangeMap:Array<BPMChangeEvent> = [];
-
-        inline function changeBPM(newBpm:Float) {
-            bpm = newBpm;
-            crochet = ((60 / bpm) * 1000);
-            stepCrochet = crochet / 4;
-        }
-        inline function getLastBPMChangeEvent():BPMChangeEvent {
-            var lastChange:BPMChangeEvent = { stepTime: 0, songTime: 0, bpm: 0 };
-            for (change in bpmChangeMap) {
-                if (curTime >= change.songTime) {
-                    lastChange = change;
-                } else {
-                    break;
-                }
+		for (index => i in safeJSON.notes){ 
+            Sys.println("Working: " + ((index/safeJSON.notes.length)*100) + "%");
+            if (i.changeBPM && i.bpm != curBPM) {
+                events.push(["Change BPM", 0, totalPos, Std.string(i.bpm), ""]);
+                curBPM = i.bpm;
             }
-            return lastChange;
-        }
-        inline function mapBPMChanges(song:SwagSong)//, addToSongBPMTiming:Bool)
-        {
-            bpmChangeMap = [];
-    
-            var curBPM:Float = song.bpm;
-            var totalSteps:Int = 0;
-            var totalPos:Float = 0;
-            for (i in 0...song.notes.length)
-            {
-                if(song.notes[i].changeBPM && song.notes[i].bpm != curBPM)
-                {
-                    
-                    curBPM = song.notes[i].bpm;
-                    var event:BPMChangeEvent = {
-                        stepTime: totalSteps,
-                        songTime: totalPos,
-                        bpm: curBPM
-                    };
-                    bpmChangeMap.push(event);
-    
-                    //SongBPMTiming.addTiming(songTime/(((60 / curBPM) * 1000)*(totalSteps%4)),curBPM,);
-                }
-    
-                var deltaSteps:Int = song.notes[i].lengthInSteps;
-                totalSteps += deltaSteps;
-                totalPos += ((60 / curBPM) * 1000 / 4) * deltaSteps;
-            }
-            if (bpmChangeMap.length > 0) trace("new BPM map BUDDY " + bpmChangeMap);
-        }
-
-        mapBPMChanges(safeJSON);
-		for (index => i in safeJSON.notes){
-            curTime = getLastBPMChangeEvent().stepTime + (curTime - getLastBPMChangeEvent().songTime);
-            curTime += index != 0 ? (crochet*4) : 0;
-        
-            if (i.changeBPM) {
-                changeBPM(i.bpm);
-                events.push(["Change BPM", 0, curTime, Std.string(i.bpm), ""]);
-            }
-			for (j in i.sectionNotes){
-				if (i.mustHitSection){//swap the section if it's a player section.
-					var note = j;
-					note[1] = (note[1] + 4) % 8;
-					j = note;
-                    if (i.p1AltAnim) j[3] = "Alt Anim";
-				} else {
-                    if (i.altAnim) j[3] = "Alt Anim";
-                }
-
-				notes.push([j[0],j[1],j[2],(j[3]==null?"Default Note":j[3]),(j[4]==null?['','']:j[4])]);
-			}
-            // eventName, data, strumtime, val1, val2
             if (lastHitSection != i.mustHitSection) {
-                events.push(["Change Camera Focus", 0, curTime, i.mustHitSection ? "bf" : "dad", ""]);
+                events.push(["Change Camera Focus", 0, totalPos, i.mustHitSection ? "bf" : "dad", ""]);
                 lastHitSection =  i.mustHitSection;
             }
 
-			if (Reflect.hasField(i,"sectionEvents")){ // bruh
-				for (k in i.sectionEvents){
-					events.push([k[0],k[1],k[2],k[3],k[4]]);
+			for (j in i.sectionNotes){
+				if (i.mustHitSection){ //swap the section if it's a player section.
+					var note = j;
+					note[1] = (note[1] + 4) % 8;
+					j = note;
 				}
+				if (i.p1AltAnim || i.altAnim) j[3] = "Alt Anim";
+				notes.push([j[0],j[1],j[2],(j[3]==null?"Default Note":j[3]),(j[4]==null?['','']:j[4])]);
 			}
+            
+			if (Reflect.hasField(i,"sectionEvents")){ // bruh
+				for (k in i.sectionEvents) events.push([k[0],k[1],k[2],k[3],k[4]]);
+			}
+
+            totalPos += ((60 / curBPM) * 1000)*4;
 		}
 
         events.sort((a:Dynamic, b:Dynamic)->{
@@ -291,11 +237,7 @@ class ChartConverter
      * ignore anything below this comment..
      */
 
-    static function cls() {
-        for (i in 0...20){
-            Sys.println("\r");
-        }
-    }
+    static function cls() Sys.command("cls");
 
     static function askInput(ask:String):String{
         Sys.print("[?] "+ask+ " >> ");
