@@ -16,6 +16,7 @@ class ChartNote extends FlxSprite {
 
     public var isSustain:Bool = false;
 
+    public var nLabelOv:FlxText = null;
     public var nSustain:ChartNote = null;
     public var nSustainEnd:ChartNote = null;
     public var bgHighlight:FlxSprite = null;
@@ -69,6 +70,10 @@ class ChartNote extends FlxSprite {
             nSustainEnd.updateHitbox();
 
             nSustain.active = nSustainEnd.active = false;
+
+            nLabelOv = new FlxText(0,0,-1,"",30);
+            nLabelOv.setFormat(FunkinFonts.VCR, 22, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+            nLabelOv.borderSize = 1.5;
         }
 
     }
@@ -104,6 +109,17 @@ class ChartNote extends FlxSprite {
             animation.play(Note.directions[noteData%4]+"anim",true);
         }
         super.draw();
+
+        if (!isSustain) {
+            var data:Int = ChartEditor.current.getNoteTypePos(noteType);
+            nLabelOv.text = (data != -1 ? '${data}' : "");
+            nLabelOv.y = y + (height - nLabelOv.height)*0.5;
+            nLabelOv.x = x + (width - nLabelOv.width)*0.5;
+            nLabelOv.alpha = alpha;
+            nLabelOv.draw();
+        }
+
+
         if (!asDummyNote && isSelected){
             bgHighlight.x = x;
             bgHighlight.y = y+(bgHighlight.height*bgHighlight.scale.y)/2;

@@ -1,5 +1,6 @@
 package meta.debug;
 
+import game.cdev.objects.ModList;
 import game.cdev.objects.CDevChartUI;
 import lime.ui.MouseCursor;
 import flixel.addons.ui.FlxUIList;
@@ -26,6 +27,16 @@ class UIDebugState extends MusicBeatState
 	{
 		FlxG.sound.music.stop();
 		FlxG.mouse.visible = true;
+		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('aboutMenu'));
+		bg.color = CDevConfig.utils.CDEV_ENGINE_BLUE;
+		bg.scrollFactor.x = 0;
+		bg.scrollFactor.y = 0.18;
+		CDevConfig.utils.setFitScale(bg, 0.1, 0.1);
+		bg.updateHitbox();
+		bg.screenCenter();
+		bg.alpha = 0.7;
+		bg.antialiasing = CDevConfig.saveData.antialiasing;
+		add(bg);
 		previewLogo = new FlxSprite().loadGraphic(Paths.image("icon16", "shared"));
 		previewLogo.setGraphicSize(Std.int(150));
 		previewLogo.screenCenter();
@@ -65,6 +76,10 @@ class UIDebugState extends MusicBeatState
 		}
 		curTooltip = new CDevTooltip();
         add(curTooltip);
+
+		var modListTest:ModList = new ModList(200,200,400,500,10,[ for (mod in Paths.curModDir) Paths.modFile(mod) ]);
+		add(modListTest);
+
 		super.create();
 	}
 

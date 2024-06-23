@@ -1,6 +1,6 @@
 package meta.states;
 
-import game.objects.WaveformSprite;
+import game.objects.VisualizerSprite;
 import game.system.FunkinSoundFilter;
 import openfl.display.BitmapData;
 import sys.FileSystem;
@@ -184,7 +184,7 @@ class TitleState extends MusicBeatState
 	var danceLeft:Bool = false;
 	var titleText:FlxSprite;
 	var bg:FlxSprite;
-	var waveSprite:WaveformSprite;
+	var waveSprite:VisualizerSprite;
 
 	function startIntro()
 	{
@@ -206,18 +206,6 @@ class TitleState extends MusicBeatState
 		checker.scrollFactor.set(0, 0.07);
 		checker.alpha = 0.4;
 		checker.updateHitbox();
-
-		waveSprite = new WaveformSprite(0, 0, 120, 640, FlxG.sound.music);
-		waveSprite.angle = -90;
-		waveSprite.waveformDrawStep = 4;
-		waveSprite.waveformDrawNegativeSpace = 2;
-		waveSprite.framerate = CDevConfig.saveData.fpscap/2;
-		waveSprite.waveformSampleLength = 0.1;
-		waveSprite.alpha = 0.8;
-		waveSprite.scale.set(2.5, 2.5);
-        waveSprite.screenCenter();
-		waveSprite.waveformColor = CDevConfig.utils.CDEV_ENGINE_BLUE;
-		add(waveSprite);
 
 		logoBl = new FlxSprite(-50, 10);
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
@@ -306,12 +294,6 @@ class TitleState extends MusicBeatState
 			logoBlFrames = Paths.getSparrowAtlas('logoBumpin'); // nah
 		}
 
-		
-		if (initialized)
-			skipIntro();
-		else
-			initialized = true;
-
 		if (!isLoaded)
 		{
 			// used this code to avoid the song from skipping some beats
@@ -327,7 +309,19 @@ class TitleState extends MusicBeatState
 		}
 		trace("Finished loading state, " + (Timer.stamp() - startLoading) + "s elapsed.");
 
-		waveSprite.audioSource = FlxG.sound.music; // update it again
+		waveSprite = new VisualizerSprite(-50,0,FlxG.width, 300, 100, FlxG.sound.music);
+		waveSprite.y = FlxG.height - (waveSprite.height-50);
+		waveSprite.x -= FlxG.width*0.55;
+		waveSprite.color = CDevConfig.utils.CDEV_ENGINE_BLUE;
+		waveSprite.alpha = 0.2;
+		waveSprite.blend = BlendMode.ADD;
+		add(waveSprite);
+
+		if (initialized)
+			skipIntro();
+		else
+			initialized = true;
+
 		destroyLoadingText();
 	}
 

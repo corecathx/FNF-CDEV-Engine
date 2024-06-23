@@ -331,13 +331,9 @@ class SongEditor extends MusicBeatState
 				currentData.info.bpm = stepr_songBPM.value;
 				currentData.info.speed = stepr_songSpeed.value;
 				currentData.info.name = input_songName.text.trim();
-
-				var json = {
-					"song": currentData
-				};
-			
-				var data:String = Json.stringify(json, "\t");
-				File.saveContent(curSongChart + "/" + input_songName.text + ".json", data);
+				
+				var data:String = Json.stringify(currentData, "\t");
+				File.saveContent(curSongChart + "/" + input_songName.text + ".cdc", data);
 			
 				if (check_openEditor.checked) {
 					PlayState.isStoryMode = false;
@@ -374,7 +370,7 @@ class SongEditor extends MusicBeatState
 		{
 			openSubState(new DropFileSubstate(this, "jsonPATH", "json", () ->
 			{
-				currentData = Song.parseJSONshit(File.getContent(jsonPATH));
+				currentData = CDevConfig.utils.legacy_to_cdev(Song.parseJSON(File.getContent(jsonPATH)));
 				updateSettings();
 			}, resetPreviews));
 		}, true, false, 0xFF004DC0);

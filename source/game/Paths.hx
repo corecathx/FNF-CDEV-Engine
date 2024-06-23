@@ -22,7 +22,9 @@ import sys.io.File;
 import sys.FileSystem;
 #end
 
+#if !macro
 import flash.media.Sound;
+#end
 
 // Used Psych Engine's mods folder framework code.
 // Hi Shadow Mario :)
@@ -63,7 +65,7 @@ class Paths
 			var graphic:FlxGraphic = FlxG.bitmap.get(key);
 			if (graphic != null)
 			{
-				graphic.bitmap.dispose();
+				if (graphic.bitmap != null) graphic.bitmap.dispose();
 				graphic.destroy();
 				FlxG.bitmap.removeByKey(key);
 			}
@@ -74,7 +76,7 @@ class Paths
 			var graphic:FlxGraphic = FlxG.bitmap.get(key);
 			if (graphic != null)
 			{
-				graphic.bitmap.dispose();
+				if (graphic.bitmap != null) graphic.bitmap.dispose();
 				graphic.destroy();
 				FlxG.bitmap.removeByKey(key);
 			}
@@ -189,6 +191,11 @@ class Paths
 	inline static public function cdc(key:String, ?library:String)
 	{
 		return getPath('data/$CHARTS_PATH$key.cdc', TEXT, library);
+	}
+
+	inline static public function legacy_json(key:String, ?library:String)
+	{
+		return getPath('data/$CHARTS_PATH$key.json', TEXT, library);
 	}
 
 	inline static public function chartPath(key:String)
@@ -372,7 +379,7 @@ class Paths
 				//}
 
 				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
-				//newGraphic.persist = true;
+				newGraphic.persist = true;
 				FlxG.bitmap.addGraphic(newGraphic);
 				customImagesLoaded.set(key, true);
 			}
@@ -467,6 +474,17 @@ class Paths
 		return null;
 	}
 
+	inline static public function modFile(mod:String) {
+		var p = mods(mod+"/mod.json");
+		if (FileSystem.exists(p))
+		{
+			var f:ModFile = cast Json.parse(File.getContent(p));
+			return f;
+		}
+		trace("cannot find mod data in " + p);
+		return null;
+	}
+
 	inline static public function modText(key:String)
 	{
 		return 'cdev-mods/' + key + '.txt';
@@ -477,6 +495,11 @@ class Paths
 		return modFolders('data/' + CHARTS_PATH + key + '.cdc');
 	}
 
+	inline static public function mod_legacy_json(key:String)
+	{
+		return modFolders('data/' + CHARTS_PATH + key + '.json');
+	}
+		
 	inline static public function modChartPath(key:String)
 	{
 		// "key" is folder

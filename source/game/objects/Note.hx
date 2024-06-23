@@ -181,7 +181,7 @@ class Note extends FlxSprite
 				prevNote.animation.play(directions[prevNote.noteData]+'hold'); // Hold body
 
 				var sSpeed:Float = (CDevConfig.saveData.scrollSpeed == 1 && PlayState.SONG != null ? PlayState.SONG.info.speed : CDevConfig.saveData.scrollSpeed);
-				prevNote.scale.y = ((Conductor.stepCrochet+2) * (sSpeed*0.45)) / prevNote.frameHeight;
+				prevNote.scale.y = ((Conductor.stepCrochet+0.5) * (sSpeed*0.45)) / prevNote.frameHeight;
 				prevNote.updateHitbox();
 			}
 		}
@@ -194,6 +194,8 @@ class Note extends FlxSprite
 	public function loadTexture(tex:String = "notes/NOTE_assets")
 	{
 		Paths.currentMod = PlayState.fromMod;
+		frames = null;
+		animation.destroyAnimations();
 		var newSize:Int = Std.int(swagWidth);
 		if (PlayState.isPixel) { // If it's a Pixel Note / Week 6
 			if (isSustainNote) {
@@ -217,10 +219,11 @@ class Note extends FlxSprite
 
 			newSize = Std.int((width * PlayState.daPixelZoom));
 		} else { // If it's not a pixel note / week 6
-			frames = (tex == "notes/NOTE_assets" && Note.NOTE_TEXTURE != null ? Note.NOTE_TEXTURE : Paths.getSparrowAtlas(tex, "shared"));
+			if (tex != "notes/NOTE_assets") trace(Paths.getSparrowAtlas(tex) + "//"+noteType+"//"+tex);
+			frames = (tex == "notes/NOTE_assets" && Note.NOTE_TEXTURE != null ? Note.NOTE_TEXTURE : Paths.getSparrowAtlas(tex));
 			if (frames == null) {
 				Log.warn("Texture asset \"" + tex + "\" for note type \"" + noteType + "\" doesn't exist!");
-				frames = Paths.getSparrowAtlas("notes/NOTE_assets", "shared");
+				frames = Paths.getSparrowAtlas("notes/NOTE_assets");
 			}
 
 			for (i in directions) {
@@ -251,11 +254,9 @@ class Note extends FlxSprite
 		if (mustPress)
 		{
 			// The * 0.5 is so that it's easier to hit them too late, instead of too early
-			if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
-				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
-				canBeHit = true;
-			else
-				canBeHit = false;
+			canBeHit = strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
+					&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5);
+
 
 			if (strumTime < (Conductor.songPosition - 166) /* && !wasGoodHit*/)
 				tooLate = true;
@@ -270,8 +271,7 @@ class Note extends FlxSprite
 
 		if (tooLate)
 		{
-			if (alpha > 0.3)
-				alpha = 0.3;
+			if (alpha > 0.3) alpha = 0.3;
 		}
 
 		if (gotScript)
@@ -299,6 +299,12 @@ class Note extends FlxSprite
 	 */
 	public function onNoteMiss() {
 		if (gotScript) script.executeFunc("onNoteMiss", []);
+	}
+
+	public function resetProp() {
+		if (gotScript) {
+			script.destroy();
+		}
 	}
 
 	/** You should ignore anything below this comment **/
@@ -330,12 +336,12 @@ class Note extends FlxSprite
 			}
 			else
 			{
-				return [""];
+				return [];
 			}
 		}
 		else
 		{
-			return [""];
+			return [];
 		}
 
 		return notesNames;

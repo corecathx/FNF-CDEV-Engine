@@ -186,6 +186,9 @@
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
 	<haxedef name="FLX_NO_POINT_POOL"/>
 
+	<!--I don't know anymore at this point-->
+	<error value="Newer version of haxe would likely makes CDEV Engine failed to compile, please use Haxe 4.2.5" if="haxe > 4.2.5"/>
+
 	<!-- _________________________________ Custom _______________________________ -->
 	<haxeflag name="-dce" value="no" /> <!--I wonder what this does-->
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->

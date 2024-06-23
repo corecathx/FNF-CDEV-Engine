@@ -1,8 +1,8 @@
 {
 	"tracks": [
-		"spookeez",
-		"south",
-		"monster"
+		"Spookeez",
+		"South",
+		"Monster"
 	],
 	"disableFreeplay": false,
 	"weekTxtImgPath": "week2",
@@ -18,29 +18,29 @@
 				140,
 				0
 			],
-			"song": "spookeez",
+			"song": "Spookeez",
 			"character": "spooky",
 			"bpm": 120
 		},
 		{
 			"colors": [
-				250,
-				140,
-				0
+				150,
+				120,
+				255
 			],
-			"song": "south",
+			"bpm": 120,
 			"character": "spooky",
-			"bpm": 120
+			"song": "South"
 		},
 		{
 			"colors": [
-				255,
-				255,
-				0
+				150,
+				120,
+				255
 			],
-			"song": "monster",
+			"bpm": 120,
 			"character": "monster",
-			"bpm": 120
+			"song": "Monster"
 		}
 	],
 	"charSetting": [
@@ -48,31 +48,31 @@
 			"scale": 0.5,
 			"flipX": false,
 			"position": [
-				23,
-				-3.5
+				543.5,
+				-12
 			]
 		},
 		{
 			"scale": 0.5,
 			"flipX": false,
 			"position": [
-				788.5,
-				94
+				393,
+				102.5
 			]
 		},
 		{
 			"scale": 0.5,
 			"flipX": false,
 			"position": [
-				298.5,
-				-112
+				882.5,
+				187
 			]
 		}
 	],
 	"weekCharacters": [
+		"gf",
 		"spooky",
-		"bf",
-		"gf"
+		"bf"
 	],
 	"weekName": "Spooky Month"
 }

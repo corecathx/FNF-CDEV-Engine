@@ -1,5 +1,10 @@
 package game.cdev;
 
+import openfl.media.Sound;
+import game.objects.Character;
+import meta.substates.LoadingSubstate;
+import meta.states.LoadingState;
+import meta.states.PlayState;
 import game.cdev.song.CDevChart;
 import game.song.Song;
 import flixel.input.FlxPointer;
@@ -45,6 +50,15 @@ typedef DiscordJson =
 	var clientID:String; // client id, take it from discord developer portal
 	var imageKey:String; // big image
 	var imageTxt:String; // idk
+}
+
+typedef SongInit = {
+	var tracks:Array<String>;
+	var diffNum:Int;
+	var diffName:String;
+	var storyWeek:Int;
+	var mod:String;
+	@:optional var weekName:String;
 }
 
 /**
@@ -149,52 +163,28 @@ class CDevUtils
 	}
 
 	/**
-	 * Reads the `songname`'s JSON files and returns the Difficulty names.
-	 * @param songname 	The song's name.
-	 * @param mod 		Whether if it's a mod or not.
-	 * @return Array<String> 
+	 * Retrieves the difficulty names of a song from its chart files (.cdc or .json).
+	 * If both .cdc and .json files exist, it prioritizes .cdc files.
+	 * @param songName The name of the song.
+	 * @param isMod Indicates whether it's a mod or not.
+	 * @return An array containing the difficulty names.
 	 */
-	public function readChartJsons(songname:String, mod:Bool = false):Array<String>
-	{
-		// difficulties are created based on the file's filename, ex: tutorial-hard.json , the difficulty is "hard";
-		var diffs:Array<String> = [];
-		var fe:Array<String> = [];
-		var p:String = "";
-		if (!mod)
-		{
-			p = Paths.chartPath(songname);
-			fe = FileSystem.readDirectory(Paths.chartPath(songname));
-		}
-		else
-		{
-			p = Paths.modChartPath(songname);
-			fe = FileSystem.readDirectory(Paths.modChartPath(songname));
-		}
-		if (fe == null)
-			return diffs;
-		if (fe.length > 0) // my stupid ass put ">=" on the older version of the engine.
-		{
-			for (i in 0...fe.length)
-			{
-				if (fe[i].endsWith(".json"))
-				{
-					var a:String = fe[i].replace(songname, "");
-					if (a.contains("-"))
-					{
-						var splittedName:Array<String> = a.replace(".json", "").split("-");
+	public function readChartDifficulties(songName:String, isMod:Bool = false):Array<String> {
+		var diff:Array<String> = [];
+		var basePath:String = isMod ? Paths.modChartPath(songName) : Paths.chartPath(songName);
+		
+		if (!FileSystem.exists(basePath)) return diff;
+		var cdcFiles:Array<String> = FileSystem.readDirectory(basePath).filter(fileName -> fileName.endsWith(".cdc"));
+		var jsonFiles:Array<String> = FileSystem.readDirectory(basePath).filter(fileName -> fileName.endsWith(".json"));
 
-						// taking the last array
-						diffs.push(splittedName[splittedName.length - 1]);
-					}
-					else
-					{
-						diffs.push("normal+");
-					}
-				}
-			}
+		for (fileName in (cdcFiles.length > 0 ? cdcFiles : jsonFiles.length > 0 ? jsonFiles : [])) {
+			var parts:Array<String> = fileName.replace(songName, "")
+			.replace(".cdc", "").replace(".json", "").split("-");
+
+			diff.push(parts.length > 1 ? parts[parts.length - 1] : "normal");
 		}
 
-		return diffs;
+		return diff;
 	}
 
 	/**
@@ -632,42 +622,73 @@ class CDevUtils
 	}
 
 	/**
-	 * Converts a base FNF chart to CDEV Engine's chart format.
+	 * Converts a Legacy FNF chart to CDEV Engine's chart format.
 	 * @param json The JSON of your FNF Chart 
 	 * @return New CDEV Chart Object
 	 */
-	public function fnftocdev_chart(json:SwagSong):CDevChart
+	public function legacy_to_cdev(json:SwagSong):CDevChart
 	{
+		if (json == null) {
+			Log.warn("JSON is null?");
+			return CDEV_CHART_TEMPLATE;
+		}
 		var notes:Array<Dynamic> = [];
 		var events:Array<Dynamic> = [];
 		var safeJSON:SwagSong = json;
+		
+        var lastHitSection:Bool = false;
 
-		for (i in safeJSON.notes)
-		{
-			for (j in i.sectionNotes)
-			{
-				if (i.mustHitSection)
-				{ // swap the section if it's a player section.
+        var curBPM:Float = safeJSON.bpm;
+        var totalPos:Float = 0;
+
+		for (index => i in safeJSON.notes){ 
+            if (i.changeBPM && i.bpm != curBPM) {
+                events.push(["Change BPM", 0, totalPos, Std.string(i.bpm), ""]);
+                curBPM = i.bpm;
+            }
+            if (lastHitSection != i.mustHitSection) {
+                events.push(["Change Camera Focus", 0, totalPos, i.mustHitSection ? "bf" : "dad", ""]);
+                lastHitSection =  i.mustHitSection;
+            }
+
+			for (j in i.sectionNotes){
+				if (i.mustHitSection){ //swap the section if it's a player section.
 					var note = j;
 					note[1] = (note[1] + 4) % 8;
 					j = note;
 				}
-				notes.push([
-					j[0],
-					j[1],
-					j[2],
-					(j[3] == null ? "Default Note" : j[3]),
-					(j[4] == null ? ['', ''] : j[4])
-				]);
+				if (i.p1AltAnim || i.altAnim) j[3] = "Alt Anim";
+				notes.push([j[0],j[1],j[2],(j[3]==null?"Default Note":j[3]),(j[4]==null?['','']:j[4])]);
 			}
-			if (Reflect.hasField(i, "sectionEvents"))
-			{ // bruh
-				for (k in i.sectionEvents)
-				{
-					events.push([k[0], k[1], k[2], k[3], k[4]]);
-				}
+
+			if (Reflect.hasField(i,"sectionEvents")){ // bruh
+				for (k in i.sectionEvents) events.push([k[0],k[1],k[2],k[3],k[4]]);
 			}
+
+            totalPos += ((60 / curBPM) * 1000)*4;
 		}
+
+        events.sort((a:Dynamic, b:Dynamic)->{
+            var result:Int = 0;
+    
+            if (a[2] < b[2])
+                result = -1;
+            else if (a[2] > b[2])
+                result = 1;
+    
+            return result;
+        });
+
+        notes.sort((a:Dynamic, b:Dynamic)->{
+            var result:Int = 0;
+    
+            if (a[0] < b[0])
+                result = -1;
+            else if (a[0] > b[0])
+                result = 1;
+    
+            return result;
+        });
 		var cdev:CDevChart = {
 			data: {
 				player: safeJSON.player1,
@@ -681,13 +702,98 @@ class CDevUtils
 				composer: "Kawai Sprite",
 				bpm: safeJSON.bpm,
 				speed: safeJSON.speed,
-				time_signature: [4, 4], // since most of fnf songs are charted in 4/4 time signature, set this by default.
-				version: CDevConfig.engineVersion
+				time_signature: [4,4], // since most of fnf songs are charted in 4/4 time signature, set this by default.
+				version: "CDEV Chart Converter 0.1.0"
 			},
 			notes: notes,
 			events: events
 		}
 
 		return cdev;
+	}
+
+	/**
+	 * Initializing PlayState to play a song.
+	 * @param storyMode Whether if it's should be played as story mode or freeplay.
+	 * @param tracks If `storyMode` is false, just put `["yourSong"]` here.
+	 * @param diffName Difficulty Name, such as "easy", "normal", "hard".
+	 * @param diffInt Difficulty number, i forgot if this even being used in the game or not.
+	 * @param storyWeek Story Week, i also forgot this one
+	 * @param weekName Current week's name, used for saving highscores.
+	 * @param mod Current mod.
+	 */
+	public function loadSong(storyMode:Bool = false, tracks:Array<String>, diffName:String, diffInt:Int, storyWeek:Int, weekName:String, mod:String){//data:SongInit){
+		Log.info("Loading song for " + (storyMode?"Story Mode":"Freeplay")+"...");
+		// Attempt
+		if (PlayState.isStoryMode) {
+			PlayState.campaignScore = 0;
+			PlayState.weekName = weekName;
+		}
+		
+		PlayState.isStoryMode = storyMode;
+		PlayState.storyPlaylist = tracks;
+		PlayState.storyDifficulty = diffInt;
+		PlayState.storyWeek = storyWeek;
+		PlayState.fromMod = mod;
+		PlayState.difficultyName = diffName;
+
+		var diffic:String = '-' + diffName;
+		trace(PlayState.storyPlaylist[0] + diffic);
+		var tryJson:Dynamic = Song.load(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
+		if (tryJson == null && diffName.toLowerCase() == "normal") {
+			Log.info("Chart JSON is null, but current selected difficulty is \"normal\", hold on...");
+			diffic = "";
+			tryJson = Song.load(PlayState.storyPlaylist[0] + diffic, PlayState.storyPlaylist[0]);
+		}
+		if (tryJson != null) Log.info("I guess it worked!"); else Log.info("Oh, it doesn't work.");
+
+		PlayState.SONG = tryJson;
+	}
+
+	/**
+	 * Doing caching and stuff then brings you to the PlayState.
+	 * (Call this after calling `CDevConfig.utils.loadSong()`.)
+	 * @param state Current State.
+	 */
+	public function preloadPlayState(state:MusicBeatState) {
+		state.persistentDraw = state.persistentUpdate = true;
+
+		var characters:Array<Character> = [];
+		LoadingSubstate.load(state,[
+			() -> {
+				// Character Caching
+				for (chr in [PlayState.SONG.data.opponent,PlayState.SONG.data.player,PlayState.SONG.data.third_char]){
+					var tempChar:Character = new Character(0,0,chr);
+					tempChar.alpha = 0.00001;
+					characters.push(tempChar);
+				}
+				trace("Characters loaded");
+			},
+			() -> {
+				// Stage Caching
+				new Stage(PlayState.SONG.data.stage, new PlayState(), true).createDaStage();
+				trace("Stage loaded");
+			},
+			() -> {
+				// Song Caching
+				for (sound in [Paths.inst(PlayState.SONG.info.name), Paths.voices(PlayState.SONG.info.name)]) {
+					var snd:Sound = sound;
+					if (snd != null) 
+						FlxG.sound.load(snd);
+					trace("Music loaded");
+				}
+			}
+		],["Characters", "Stage", "Music", "Clean-Up"],()->{
+			for (i in characters)
+				if (i != null) i.kill();
+
+			new FlxTimer().start(0.2, function(hasd:FlxTimer)
+			{
+				if (FlxG.sound.music != null) FlxG.sound.music.fadeOut(0.2, 0);
+				LoadingState.loadAndSwitchState(new PlayState());
+			});
+		}, (wawas:String)->{
+			CDevPopUp.open(state,"Error","An error occured while running a task:\n-"+wawas,[{text: "OK" ,callback:() -> FlxG.resetState()}], false, true);
+		});
 	}
 }

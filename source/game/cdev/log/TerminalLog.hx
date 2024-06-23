@@ -7,6 +7,8 @@ package game.cdev.log;
  *
  * :3
  */
+import sys.io.File;
+import sys.FileSystem;
 import haxe.Constraints.Function;
 import haxe.PosInfos;
 
@@ -53,21 +55,20 @@ class TerminalLog
 	private static var ogTrace:Function;
 	private static var log:String = "";
 
-	/*
-		if (!FileSystem.exists('log'))
-			FileSystem.createDirectory('log');
-		Log.info('Log Written');
-		File.saveContent('log/log.txt', @:privateAccess Log.log);
-
-
-		this saves the log to `log/log.txt`
-	 */
 	public static function init():Void
 	{
 		ogTrace = haxe.Log.trace;
 		haxe.Log.trace = haxeTrace;
 		prettyPrint("CDEV Engine v" + CDevConfig.engineVersion + "\n(Logging style written by CobaltBar!)");
 		info('Logger Initialized');
+
+		//lime.app.Application
+		lime.app.Application.current.onExit.add((_)->{
+			if (!FileSystem.exists('log'))
+				FileSystem.createDirectory('log');
+			Log.info('Log Written');
+			File.saveContent('log/log.txt', @:privateAccess TerminalLog.log);	
+		});
 	}
 
 	@:keep public static inline function ansi(mode:AnsiMode, color:AnsiColor):String

@@ -1,6 +1,8 @@
 package game.settings.data;
 
+#if !macro
 import cpp.vm.Gc;
+#end
 import openfl.system.System;
 import openfl.utils.Assets;
 import meta.substates.RatingPosition;
@@ -115,11 +117,11 @@ class SettingsProperties
 				{
 					CDevConfig.setData("fpscap", CDevConfig.getData("fpscap")+daValueToAdd);
 		
-					if (CDevConfig.getData("fpscap") <= 50)
-						CDevConfig.setData("fpscap", 50);
+					if (CDevConfig.getData("fpscap") <= 24)
+						CDevConfig.setData("fpscap", 24);
 
-					if (CDevConfig.getData("fpscap") > 300)
-						CDevConfig.setData("fpscap", 300);
+					if (CDevConfig.getData("fpscap") > 1000)
+						CDevConfig.setData("fpscap", 1000);
 
 					CDevConfig.setFPS(CDevConfig.getData("fpscap"));
 				}

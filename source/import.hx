@@ -27,5 +27,10 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.sound.FlxSound;
+
+// Misc //
+#if cpp 
+import cpp.vm.Gc;
+#end
 #end
 

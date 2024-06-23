@@ -54,6 +54,14 @@ class ChartEvent extends FlxSprite
 	// put your codes here incase you want to hardcode your song events
 	public static var builtInEvents:Array<Dynamic> = [
 		[
+			"Change Camera Focus",
+			"Set the camera's focus target.\n\nValue 1: Character (dad, bf, gf)"
+		],
+		[
+			"Change BPM",
+			"Set current song's BPM.\n\nValue 1: New BPM (Float)"
+		],
+		[
 			'Add Camera Zoom',
 			"Change how much does the camera zoom should\nbe added (like M.I.L.F's \"banger\" part)\n\n Value 1: Camera to zoom (gameCam or hudCam)\nValue 2: Zoom to add to the camera (Float)"
 		],

@@ -424,7 +424,7 @@
 			19500,
 			3,
 			150,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -434,7 +434,7 @@
 			19800,
 			1,
 			450,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -444,7 +444,7 @@
 			20400,
 			2,
 			1050,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -454,7 +454,7 @@
 			22500,
 			1,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -464,7 +464,7 @@
 			23100,
 			1,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -474,7 +474,7 @@
 			23400,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -484,7 +484,7 @@
 			23700,
 			1,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -494,7 +494,7 @@
 			24000,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -504,7 +504,7 @@
 			24600,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -514,7 +514,7 @@
 			24900,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -524,7 +524,7 @@
 			25500,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -534,7 +534,7 @@
 			25800,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -544,7 +544,7 @@
 			26400,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -554,7 +554,7 @@
 			26700,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -564,7 +564,7 @@
 			27300,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -574,7 +574,7 @@
 			27600,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -584,7 +584,7 @@
 			28200,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -594,7 +594,7 @@
 			28500,
 			1,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1194,7 +1194,7 @@
 			57750,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1204,7 +1204,7 @@
 			58200,
 			2,
 			450,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1214,7 +1214,7 @@
 			58800,
 			3,
 			450,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1224,7 +1224,7 @@
 			59400,
 			2,
 			150,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1234,7 +1234,7 @@
 			59700,
 			0,
 			750,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1244,7 +1244,7 @@
 			60600,
 			2,
 			300,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1254,7 +1254,7 @@
 			61200,
 			3,
 			450,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1264,7 +1264,7 @@
 			61800,
 			2,
 			450,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1274,7 +1274,7 @@
 			62400,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1284,7 +1284,7 @@
 			63000,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1294,7 +1294,7 @@
 			63300,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1304,7 +1304,7 @@
 			63900,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1314,7 +1314,7 @@
 			64200,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1324,7 +1324,7 @@
 			64800,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1334,7 +1334,7 @@
 			65100,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1344,7 +1344,7 @@
 			65700,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1354,7 +1354,7 @@
 			66000,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1364,7 +1364,7 @@
 			66600,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1374,7 +1374,7 @@
 			66900,
 			1,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1774,7 +1774,7 @@
 			86400,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1784,7 +1784,7 @@
 			86700,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1794,7 +1794,7 @@
 			87300,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1804,7 +1804,7 @@
 			87600,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1814,7 +1814,7 @@
 			87900,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1824,7 +1824,7 @@
 			88200,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1834,7 +1834,7 @@
 			88500,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1844,7 +1844,7 @@
 			88800,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1854,7 +1854,7 @@
 			89100,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1864,7 +1864,7 @@
 			89700,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1874,7 +1874,7 @@
 			90000,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1884,7 +1884,7 @@
 			90600,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1894,7 +1894,7 @@
 			90900,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -1904,7 +1904,7 @@
 			91050,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2054,7 +2054,7 @@
 			96000,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2064,7 +2064,7 @@
 			96300,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2074,7 +2074,7 @@
 			96900,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2084,7 +2084,7 @@
 			97200,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2094,7 +2094,7 @@
 			97500,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2104,7 +2104,7 @@
 			97800,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2114,7 +2114,7 @@
 			98100,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2124,7 +2124,7 @@
 			98400,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2134,7 +2134,7 @@
 			98700,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2144,7 +2144,7 @@
 			99300,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2154,7 +2154,7 @@
 			99600,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2164,7 +2164,7 @@
 			100200,
 			3,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2174,7 +2174,7 @@
 			100500,
 			2,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""
@@ -2184,7 +2184,7 @@
 			100650,
 			0,
 			0,
-			"Default Note",
+			"Alt Anim",
 			[
 				"",
 				""

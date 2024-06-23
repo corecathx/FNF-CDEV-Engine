@@ -42,7 +42,6 @@ class CDevChartUI extends FlxSpriteGroup {
 
         ui_group = new FlxSpriteGroup();
         add(ui_group);
-        trace(ui_group);
 
         main_button_spr = new ChartUIMenu(imageFile, iconGraphic);
         main_button_spr.antialiasing = CDevConfig.saveData.antialiasing;
@@ -67,9 +66,8 @@ class CDevChartUI extends FlxSpriteGroup {
         if (FlxG.mouse.overlaps(obj) && FlxG.mouse.justPressed){
             if (main_focus != curIndex){
                 main_focus = curIndex;
-                trace("before call");
                 menuStuffs[main_focus][2](ui_group);
-                trace("after call");
+                ui_group.antialiasing = false;
             } else {
                 clear_uiGroup();
                 main_focus = -1;

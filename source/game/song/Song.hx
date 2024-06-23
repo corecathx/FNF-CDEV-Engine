@@ -31,46 +31,56 @@ typedef SwagSong =
 
 class Song
 {
-	public var song:String;
-	public var notes:Array<SwagSection>;
-	public var songEvents:Array<SongEvent>;
-	public var bpm:Float;
-	public var needsVoices:Bool = true;
-	public var speed:Float = 1;
-	public var offset:Float = 0;
-	public var stage:String = 'stage';
-
-	public var player1:String = 'bf';
-	public var player2:String = 'dad';
-	public var gfVersion:String = 'gf';
-
-	public function new(song, notes, bpm)
+	/**
+	 * Loads your chart file.
+	 * If there's no .cdc / CDEV Chart File found, it'll try to load the Legacy FNF Chart.
+	 * (Expect few stuffs missing, as that Legacy Chart file will be converted to CDEV Chart Format.)
+	 * @param json JSON file, ex: `blammed-hard`
+	 * @param folder Folder inside the `./assets/data/` folder, ex: `blammed`
+	 * @return CDevChart
+	 */
+	public static function load(json:String, ?folder:String):CDevChart
 	{
-		this.song = song;
-		this.notes = notes;
-		this.bpm = bpm;
-	}
+		var path:String = folder+"/"+json;
 
-	public static function load(jsonInput:String, ?folder:String):CDevChart
-	{
-		var rawJson = null;
-		var curPath:String = Paths.modCdc(folder+"/"+jsonInput); // Mod Folder
+		// Checking these paths for the .cdc file
+		for (file in [Paths.modCdc(path), Paths.cdc(path)]){
+			if (FileSystem.exists(file)){
+				var strJson = File.getContent(file).trim();
+				if (strJson != null) return parseCDC(strJson);
+			}
+		}
 
-		if (FileSystem.exists(curPath))
-			rawJson = File.getContent(curPath).trim();
-		if (rawJson != null) return parseJSONshit(rawJson);
+		// If it doesn't exists, try checking for Legacy FNF Charts (compability)
+		var legacy_chart:SwagSong = loadLegacy(json, folder);
+		if (legacy_chart != null) {
+			Log.warn("Using Legacy FNF Chart, expect few stuffs not working.");
+			return CDevConfig.utils.legacy_to_cdev(legacy_chart);
+		}
 
-		curPath = Paths.cdc(folder + '/' + jsonInput); // Assets Folder
-		if (FileSystem.exists(curPath))
-			rawJson = File.getContent(curPath).trim();
-
-		if (rawJson != null) return parseJSONshit(rawJson);
 		return null;
 	}
 
-	public static function parseJSONshit(rawJson:String):CDevChart
-	{
-		var swagShit:CDevChart = cast Json.parse(rawJson);
-		return swagShit;
+	public static function loadLegacy(jsonInput:String, ?folder:String):SwagSong {
+		var path:String = folder+"/"+jsonInput;
+		var check_paths:Array<String> = [
+			Paths.mod_legacy_json(path),
+			Paths.legacy_json(path)
+		];
+
+		// Checking the paths above for the .json file
+		for (file in check_paths){
+			if (FileSystem.exists(file)){
+				var strJson = File.getContent(file).trim();
+				if (strJson != null) return parseJSON(strJson);
+			}
+		}
+		return null;
 	}
+
+	public static function parseCDC(rawJson:String):CDevChart 
+		return cast Json.parse(rawJson);
+
+	public static function parseJSON(rawJson:String):SwagSong
+		return cast Json.parse(rawJson).song;
 }

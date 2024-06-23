@@ -23,6 +23,7 @@ class ModIcon extends FlxSprite
 	}
     var iconExist:Bool = false;
 	public function changeDaIcon(mod:String) {
+		iconExist = false;
 		//bruh.
 		var name:String = 'icon';
         
@@ -37,7 +38,7 @@ class ModIcon extends FlxSprite
 		//trace(file);
 
 		loadGraphic(file);
-        setGraphicSize(80,80); //keep the image size to 80x80.
+        setGraphicSize(60,60); //keep the image size to 80x80.
         updateHitbox();
 
 		antialiasing = CDevConfig.saveData.antialiasing;
@@ -49,20 +50,5 @@ class ModIcon extends FlxSprite
 
 		if (sprTracker != null)
 			setPosition(sprTracker.x + sprTracker.width + 10, sprTracker.y - 5);
-	}
-
-    function checkFile(key:String,mod:String, type:AssetType)
-    {
-        #if ALLOW_MODS
-        if (FileSystem.exists(Paths.mods(mod + '/' + key)) || FileSystem.exists(Paths.mods(key)))
-           return true;
-        #end
-    
-        if (OpenFlAssets.exists(Paths.getPath(key, type)))
-        {
-            return true;
-        }
-        return false;
-    }
-    
+	} 
 }

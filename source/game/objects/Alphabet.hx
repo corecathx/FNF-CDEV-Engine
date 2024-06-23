@@ -303,13 +303,13 @@ class Alphabet extends FlxSpriteGroup
 	//..reworking this... thing.
 	private function updatePosition(elapsed:Float):Void
 	{
+		if (FlxG.keys.justPressed.TAB && CDevConfig.saveData.testMode) trace(text + ": "+x+" , "+y);
+
 		if (!isMenuItem)
 			return;
 
 		var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, 1.3);
-		if (FlxG.keys.justPressed.TAB && CDevConfig.saveData.testMode){
-			trace(text + ": "+x+" , "+y);
-		}
+
 		if (forcePositionToScreen)
 		{
 			if (forceX == Math.NEGATIVE_INFINITY)

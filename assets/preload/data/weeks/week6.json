@@ -1,78 +1,78 @@
 {
-	"weekTxtImgPath": "week6",
-	"disableFreeplay": false,
 	"tracks": [
-		"senpai",
-		"roses",
-		"thorns"
+		"Senpai",
+		"Roses",
+		"Thorns"
 	],
+	"disableFreeplay": false,
+	"weekTxtImgPath": "week6",
 	"weekDifficulties": [
 		"easy",
 		"normal",
 		"hard"
-	],
-	"weekCharacters": [
-		"senpai",
-		"gf-pixel",
-		"bf-pixel"
-	],
-	"charSetting": [
-		{
-			"scale": 3,
-			"position": [
-				184,
-				162.5
-			],
-			"flipX": false
-		},
-		{
-			"scale": 3,
-			"position": [
-				585,
-				174
-			],
-			"flipX": false
-		},
-		{
-			"scale": 3,
-			"position": [
-				967.5,
-				277.5
-			],
-			"flipX": false
-		}
 	],
 	"freeplaySongs": [
 		{
 			"colors": [
 				220,
 				100,
-				200
+				60
 			],
-			"bpm": 120,
+			"song": "Senpai",
 			"character": "senpai",
-			"song": "senpai"
+			"bpm": 120
 		},
 		{
 			"colors": [
-				150,
-				120,
-				255
+				220,
+				100,
+				60
 			],
-			"bpm": 120,
+			"song": "Roses",
 			"character": "senpai",
-			"song": "roses"
+			"bpm": 120
 		},
 		{
 			"colors": [
-				150,
-				120,
-				255
+				140,
+				20,
+				0
 			],
-			"bpm": 120,
+			"song": "Thorns",
 			"character": "spirit",
-			"song": "thorns"
+			"bpm": 120
 		}
+	],
+	"charSetting": [
+		{
+			"scale": 3,
+			"flipX": false,
+			"position": [
+				858,
+				230
+			]
+		},
+		{
+			"scale": 3,
+			"flipX": false,
+			"position": [
+				657,
+				186.5
+			]
+		},
+		{
+			"scale": 3,
+			"flipX": false,
+			"position": [
+				1079.5,
+				332.5
+			]
+		}
+	],
+	"weekCharacters": [
+		"gf-pixel",
+		"senpai",
+		"bf-pixel"
 	],
 	"weekName": "Hating Simulator FT. Moawling"
 }

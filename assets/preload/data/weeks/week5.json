@@ -1,46 +1,15 @@
 {
-	"weekTxtImgPath": "week5",
-	"disableFreeplay": false,
 	"tracks": [
-		"cocoa",
-		"eggnog",
-		"winter-horrorland"
+		"Cocoa",
+		"Eggnog",
+		"Winter Horrorland"
 	],
+	"disableFreeplay": false,
+	"weekTxtImgPath": "week5",
 	"weekDifficulties": [
 		"easy",
 		"normal",
 		"hard"
-	],
-	"weekCharacters": [
-		"parents-christmas",
-		"bf-christmas",
-		"gf-christmas"
-	],
-	"charSetting": [
-		{
-			"scale": 0.5,
-			"position": [
-				-163,
-				-149
-			],
-			"flipX": false
-		},
-		{
-			"scale": 0.5,
-			"position": [
-				797.5,
-				106
-			],
-			"flipX": false
-		},
-		{
-			"scale": 0.5,
-			"position": [
-				297.5,
-				-74
-			],
-			"flipX": false
-		}
 	],
 	"freeplaySongs": [
 		{
@@ -49,9 +18,9 @@
 				100,
 				200
 			],
-			"bpm": 120,
+			"song": "Cocoa",
 			"character": "parents",
-			"song": "cocoa"
+			"bpm": 120
 		},
 		{
 			"colors": [
@@ -59,20 +28,51 @@
 				100,
 				200
 			],
-			"bpm": 120,
+			"song": "Eggnog",
 			"character": "parents",
-			"song": "eggnog"
+			"bpm": 120
 		},
 		{
 			"colors": [
-				220,
-				100,
-				200
+				240,
+				240,
+				0
 			],
-			"bpm": 120,
-			"character": "parents",
-			"song": "winter-horrorland"
+			"song": "Winter Horrorland",
+			"character": "monster",
+			"bpm": 120
 		}
+	],
+	"charSetting": [
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				543.5,
+				-12
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				812,
+				242
+			]
+		},
+		{
+			"scale": 0.5,
+			"flipX": false,
+			"position": [
+				882.5,
+				187
+			]
+		}
+	],
+	"weekCharacters": [
+		"gf-christmas",
+		"parents-christmas",
+		"bf-christmas"
 	],
 	"weekName": "Red Snow"
 }

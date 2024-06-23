@@ -1,5 +1,6 @@
 package meta.modding.chart_editor;
 
+import game.cdev.objects.CDevList;
 import openfl.events.IOErrorEvent;
 import openfl.events.Event;
 import openfl.net.FileReference;
@@ -38,12 +39,16 @@ import game.cdev.SongPosition;
 using StringTools;
 
 class ChartEditor extends MusicBeatState {
+    public static var current:ChartEditor = null;
     public static var grid_size:Int = 40;
     public static var separator_width:Int = 4;
     public static var note_texture:FlxAtlasFrames = null;
 
     var voiceAudio:FlxSound;
     var chart:CDevChart;
+
+    // Keyboard input fix
+    var writing_enabled:Bool = false;
 
     // Used for Reflect in CharacterList & StageList Substate.
     var character_opponent:String = "dad";
@@ -72,22 +77,29 @@ class ChartEditor extends MusicBeatState {
 
     var metronome_icon:FlxSprite;
 
+    // Groups like the note group and other stuffs
     var rendered_notes:FlxTypedGroup<ChartNote>;
     var note_sus_lengths:Array<ChartNote> = [];
     var flash_on_step:Array<Bool> = [ // erm
         false,false,false,false,
         false,false,false,false
     ];
-
     var hitted_notes:Array<ChartNote> = [];
-    var dummyNote:ChartNote;
 
-    var writing_enabled:Bool = false;
+    // Used by Player's interactions.
+    var dummyNote:ChartNote;
+    var groupSelSprite:FlxUI9SliceSprite;
+
+    //// Note Editing 
+    // Time, Data, Sustain, Type, Args. (Only modify Type and Args (dumb))
+    var _noteTypes:Array<String> = [];
+    var _spawn_noteType:String = "Default Note";
+    var _spawn_noteType_id:Int = 0;
+    var _spawn_noteArgs:Array<String> = ["",""];
 
     public function new(?fnfChart:CDevChart){
         if (fnfChart == null) fnfChart = CDevConfig.utils.CDEV_CHART_TEMPLATE;//CDevConfig.utils.CHART_TEMPLATE;
         loadChart(fnfChart);
-        note_texture = Paths.getSparrowAtlas("notes/NOTE_assets", "shared"); // cache the note texture first
         super();
     }
 
@@ -100,8 +112,13 @@ class ChartEditor extends MusicBeatState {
     }
     
     override function create(){
+        current = this;
+        note_texture = Paths.getSparrowAtlas("notes/NOTE_assets"); // cache the note texture first
         FlxG.mouse.visible = true;
         persistentUpdate = false;
+
+        loadNTList(); // Load every note type first.
+
         loadSong(chart.info.name);
         loadUI();
         loadNotes();
@@ -109,6 +126,12 @@ class ChartEditor extends MusicBeatState {
         FlxG.camera.follow(hitLine, LOCKON);
         FlxG.camera.targetOffset.y = 150;
         super.create();
+    }
+
+    function loadNTList() {
+		_noteTypes = [];
+		for (i in Note.default_notetypes) _noteTypes.push(i);
+		for (i in Note.getNoteList()) _noteTypes.push(i);
     }
 
     function loadSong(sogn:String){
@@ -167,6 +190,11 @@ class ChartEditor extends MusicBeatState {
         dummyNote.alpha = 0.7;
         add(dummyNote);
 
+        groupSelSprite = new FlxUI9SliceSprite(0,0,Paths.image("ui/select_block","shared"),new openfl.geom.Rectangle(0,0,16,16), [3, 3, 10, 10]);
+		groupSelSprite.visible = false;
+        groupSelSprite.alpha = 0.5;
+		add(groupSelSprite);
+
         createStrumNotes();
 
         opIcon = new HealthIcon(chart.data.opponent);
@@ -204,7 +232,7 @@ class ChartEditor extends MusicBeatState {
 
         menu_ui = new CDevChartUI(0,0, [
             ["file", "Access file-related actions.", menu_createFileUI], 
-            ["edit", "Editing current song's info.", menu_createEditUI], 
+            ["edit", "Chart editing related actions.", menu_createEditUI], 
             ["view", "Adjust the editor's interface.", menu_createViewUI], 
             ["playtest", "Test your chart.", menu_createPlaytestUI], 
             ["help", "Keybinds / Editor controls.", menu_createHelpUI]
@@ -224,55 +252,6 @@ class ChartEditor extends MusicBeatState {
     var buttn_new:FlxUIButton;
     var buttn_save:FlxUIButton;
     var buttn_saveAs:FlxUIButton;
-    function menu_createFileUI(parent:FlxSpriteGroup){
-        var grp:FlxSpriteGroup = new FlxSpriteGroup();
-        var font = FunkinFonts.CONSOLAS;
-
-        var text:FlxText = new FlxText(0,0,-1,"File", 18);
-        text.font = FunkinFonts.CONSOLAS;
-        grp.add(text);
-
-        buttn_new = new FlxUIButton(text.x, text.y + text.height + 2, "New", function()
-        {
-            FlxG.switchState(new ChartEditor());
-        }, true, false, FlxColor.fromRGB(70,70,70));
-        buttn_new.resize(((360) - 47), 20);
-        buttn_new.label.size = 14;
-        buttn_new.label.font = font;
-        buttn_new.label.color = FlxColor.WHITE;
-        grp.add(buttn_new);
-
-        buttn_save = new FlxUIButton(text.x, buttn_new.y + buttn_new.height + 2, "Save", function()
-        {
-            var path:String = Paths.mods('${Paths.currentMod}/data/charts/${chart.info.name}/');
-            trace("Save Path:" + path);
-            if (FileSystem.exists(path)
-                && FileSystem.isDirectory(path)){
-                // what to do
-
-            } else {
-                CDevPopUp.open(this, "Info", "We couldn't find existing chart folder for this song: "+path+"\nWe'll continue saving your chart but please specify where to save this song's chart.", [{text: "OK", callback:()->{saveUsingFReference();}}], false, true);
-            }
-        }, true, false, FlxColor.fromRGB(70,70,70));
-        buttn_save.resize(((360/2)), 20);
-        buttn_save.label.size = 14;
-        buttn_save.label.font = font;
-        buttn_save.label.color = FlxColor.WHITE;
-        grp.add(buttn_save);
-
-        buttn_saveAs = new FlxUIButton(buttn_save.x + buttn_save.width + 47, buttn_save.y, "Save As", function()
-        {
-            saveUsingFReference();
-        }, true, false, FlxColor.fromRGB(70,70,70));
-        buttn_saveAs.resize(((360/2)), 20);
-        buttn_saveAs.label.size = 14;
-        buttn_saveAs.label.font = font;
-        buttn_saveAs.label.color = FlxColor.WHITE;
-        grp.add(buttn_saveAs);
-
-        parent.add(grp);
-    }
-
     // Song Name
     var label_songname:FlxText;
     var input_songname:CDevInputText;
@@ -300,15 +279,59 @@ class ChartEditor extends MusicBeatState {
     // Note Skin
     var label_noteskin:FlxText;
     var input_noteskin:CDevInputText;
-    function menu_createEditUI(parent:FlxSpriteGroup){
+    function menu_createFileUI(parent:FlxSpriteGroup){
         var grp:FlxSpriteGroup = new FlxSpriteGroup();
         var font = FunkinFonts.CONSOLAS;
 
-        var text:FlxText = new FlxText(0,0,-1,"Edit", 18);
-        text.font = font;
+        var text:FlxText = new FlxText(0,0,-1,"File", 18);
+        text.font = FunkinFonts.CONSOLAS;
+        grp.add(text);
+
+        buttn_new = new FlxUIButton(text.x, text.y + text.height + 2, "New", function()
+        {
+            CDevPopUp.open(this, "Prompt", "Are you sure? Any unsaved progress will be lost.", [
+                {text: "CANCEL", callback:()->closeSubState()},
+                {text: "OK", callback:()->FlxG.switchState(new ChartEditor())}
+            ], false, true);
+        }, true, false, FlxColor.fromRGB(70,70,70));
+        buttn_new.resize(((360) - 47), 20);
+        buttn_new.label.size = 14;
+        buttn_new.label.font = font;
+        buttn_new.label.color = FlxColor.WHITE;
+        grp.add(buttn_new);
+
+        buttn_save = new FlxUIButton(text.x, buttn_new.y + buttn_new.height + 2, "Save", function()
+        {
+            var path:String = Paths.mods('${Paths.currentMod}/data/charts/${chart.info.name}/');
+            trace("Save Path:" + path);
+            if (FileSystem.exists(path)
+                && FileSystem.isDirectory(path)){
+                // what to do
+
+            } else {
+                CDevPopUp.open(this, "Info", "We couldn't find existing chart folder for this song: "+path+"\nWe'll continue saving your chart but please specify where to save this song's chart.", [{text: "OK", callback:()->{saveUsingFReference();}}], false, true);
+            }
+        }, true, false, FlxColor.fromRGB(70,70,70));
+        buttn_save.resize(((360/2)-47), 20);
+        buttn_save.label.size = 14;
+        buttn_save.label.font = font;
+        buttn_save.label.color = FlxColor.WHITE;
+        grp.add(buttn_save);
+
+        buttn_saveAs = new FlxUIButton(buttn_save.x + buttn_save.width + 47, buttn_save.y, "Save As", function()
+        {
+            saveUsingFReference();
+        }, true, false, FlxColor.fromRGB(70,70,70));
+        buttn_saveAs.resize(((360/2))-47, 20);
+        buttn_saveAs.label.size = 14;
+        buttn_saveAs.label.font = font;
+        buttn_saveAs.label.color = FlxColor.WHITE;
+        grp.add(buttn_saveAs);
+
+        // Straight up copypasted
 
         // Song Name //
-        label_songname = new FlxText(0,text.height + 10,100,"Song Name",14);
+        label_songname = new FlxText(0,buttn_saveAs.y + buttn_saveAs.height + 10,100,"Song Name",14);
         label_songname.font = font;
 
         input_songname = new CDevInputText(0, label_songname.y+label_songname.height+2, Std.int((360/2) - 47), chart.info.name, 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
@@ -431,7 +454,7 @@ class ChartEditor extends MusicBeatState {
 
 
         // this is terrible
-        grp.add(text);
+        //grp.add(text);
         grp.add(label_songname);
         grp.add(label_composer);
 
@@ -460,6 +483,41 @@ class ChartEditor extends MusicBeatState {
 
         grp.add(label_noteskin);
         grp.add(input_noteskin);
+
+        parent.add(grp);
+    }
+
+    var drop_noteTypes:CDevList;
+    function menu_createEditUI(parent:FlxSpriteGroup){
+        var grp:FlxSpriteGroup = new FlxSpriteGroup();
+        var font = FunkinFonts.CONSOLAS;
+
+        // # HEADER # //
+        var text:FlxText = new FlxText(0,0,-1,"Edit", 18);
+        text.font = FunkinFonts.CONSOLAS;
+        grp.add(text);
+
+        // # NOTE STUFFS # //
+        var text2:FlxText = new FlxText(text.x,text.y+text.height+10,-1,"Note Info", 16);
+        text2.font = FunkinFonts.CONSOLAS;
+        grp.add(text2);
+
+        // Note Type List
+        drop_noteTypes = new CDevList(text2.x, text2.y+text2.height + 25, 360 - 47,30,_noteTypes,(nNote:String)->{
+            dummyNote.noteType = _spawn_noteType = nNote;
+            _spawn_noteType_id = _spawn_noteType.indexOf(nNote);
+        });
+        grp.add(drop_noteTypes);
+        /*drop_noteTypes = new UIDropDown(text2.x, text2.y+text2.height + 25, UIDropDown.makeStrIdLabelArray(_noteTypes, true), (mNote:String)->
+        {
+            _spawn_noteType = _noteTypes[Std.parseInt(mNote)];
+            _spawn_noteType_id = Std.parseInt(mNote);
+        },new FlxUIDropDownHeader(Std.int((360/2) - 47)),null, null,null,font);
+        grp.add(drop_noteTypes);*/
+
+        var tempLabel:FlxText = new FlxText(drop_noteTypes.x, drop_noteTypes.y - 18, -1, "Note Type", 14);
+        tempLabel.font = font;
+        grp.add(tempLabel);
 
         parent.add(grp);
     }
@@ -494,14 +552,17 @@ class ChartEditor extends MusicBeatState {
         text.font = FunkinFonts.CONSOLAS;
         parent.add(text);
 
+        var textThing:String = ""
+        + "#[Space]#\n- Play / Resume song.\n"
+        + "#[W/S], [Up/Down], [Mouse Wheel]#\n- Adjust time position.\n"
+        + "#[A/D] or [Right/Left]#\n- Change current beat.\n"
+        + "#Hold [Shift]#\n- Multiply / Unlock mouse from grid.\n"
+        + "#[LMB]#\n- Add / Remove Note.\n"
+        + "#[LMB] + Drag#\n- Multi Select Notes."
+        + "\n#[RMB]#\n- Note Properties.";
         var actualHelp:FlxText = new FlxText(0,20,-1,"", 14);
-        actualHelp.text = ""
-        + "[Space]\n- Play / Resume song.\n"
-        + "[W/S], [Up/Down], [Mouse Wheel]\n- Adjust time position.\n"
-        + "[A/D] or [Right/Left]\n- Change current beat.\n"
-        + "Hold [Shift]\n- Multiply / Unlock mouse from grid.\n"
-        + "[LMB]\n- Add / Remove Note.\n"
-        + "[RMB]\n- Note Properties.";
+        var laWawa = new FlxTextFormat(0xFF00CCFF);
+        actualHelp.applyMarkup(textThing, [new FlxTextFormatMarkerPair(laWawa, "#")]);
         actualHelp.font = FunkinFonts.CONSOLAS;
         parent.add(actualHelp);
     }
@@ -799,6 +860,9 @@ class ChartEditor extends MusicBeatState {
     var lastMousePoint:FlxPoint = new FlxPoint();
     var lastPos:Float = 0;
 
+    var dragPosStart:FlxPoint = new FlxPoint();
+    var selection_mode:Bool = false;
+
     var currentSelectedNotes:Array<ChartNote> = [];
     function mouseControls(elapsed:Float) {
         curMouse = openfl.ui.MouseCursor.ARROW;
@@ -836,7 +900,7 @@ class ChartEditor extends MusicBeatState {
                     break;
                 }
                 if (!mouseHoveredNote){
-                    addNote([getTimeFromY(dummyNote.y),divX%8,0,"Default Note"]);
+                    addNote([getTimeFromY(dummyNote.y),divX%8,0,_spawn_noteType]);
                 }
             }
 
@@ -858,6 +922,32 @@ class ChartEditor extends MusicBeatState {
             } 
         } else {
             dummyNote.visible = false;
+        }
+
+        if (FlxG.mouse.pressed) {
+            if (Math.abs(dragPosStart.x - FlxG.mouse.x) > 5 && Math.abs(dragPosStart.x - FlxG.mouse.x) > 5) selection_mode = true;
+        } else {
+            dragPosStart.set(FlxG.mouse.x,FlxG.mouse.y);
+            selection_mode = false;
+        }
+
+        if (selection_mode) {
+            var mousePos = {
+                x: FlxG.mouse.x,
+                y: FlxG.mouse.y
+            };
+            groupSelSprite.visible = true;
+            groupSelSprite.setPosition(Math.min(mousePos.x, dragPosStart.x),Math.min(mousePos.y, dragPosStart.y));
+
+			if (FlxG.mouse.justMoved)
+				groupSelSprite.resize(Std.int(Math.abs(mousePos.x - dragPosStart.x)),Std.int(Math.abs(mousePos.y - dragPosStart.y)));		
+
+			for (note in rendered_notes.members){
+				if (note == null) continue;
+				note.isSelected = groupSelSprite.overlaps(note);
+			}
+        } else {
+            groupSelSprite.visible = false;
         }
 
         // Charter Dragging Controls
@@ -883,12 +973,18 @@ class ChartEditor extends MusicBeatState {
             if (!i.isSelected) continue;
             currentSelectedNotes.push(i);
         }
+
+        // Controls if there's any note selected
         if (currentSelectedNotes.length > 0) {
             var hasOverlap:Bool = false;
-            for (note in currentSelectedNotes){
-                note.isSelected = true;
+            for (note in currentSelectedNotes)
                 if (FlxG.mouse.overlaps(note)) hasOverlap = true;
+
+            if (FlxG.keys.justPressed.DELETE) {
+                for (note in currentSelectedNotes)
+                    removeNote(note);
             }
+
             if (hasOverlap) curMouse = openfl.ui.MouseCursor.AUTO;
             if (FlxG.mouse.justPressed){
                 if (hasOverlap){
@@ -1021,13 +1117,15 @@ class ChartEditor extends MusicBeatState {
     }
 
     function removeNote(note:ChartNote){
+        if (note == null) return;
         var rem:Array<Dynamic> = getDataFromNote(note);
         if (rem == null) {
             Log.warn("Failed removing note, can't find similar note data.");
+            note.destroy();
+            rendered_notes.remove(note,true);
             return;
         }
         chart.notes.remove(rem);
-        note.destroy();
         rendered_notes.remove(note,true);
     }
 
@@ -1071,13 +1169,7 @@ class ChartEditor extends MusicBeatState {
     }
 
     inline function saveUsingFReference(){
-        var data = {
-            "data": chart.data,
-            "info": chart.info,
-            "notes": chart.notes,
-            "events": chart.events
-        };
-        var jString:String = Json.stringify(data, "\t");
+        var jString:String = Json.stringify(chart, "\t");
         if (jString != null && jString.length > 0){
             var fr:FileReference = new FileReference();
             fr.addEventListener(Event.COMPLETE, (_)->{
@@ -1093,5 +1185,22 @@ class ChartEditor extends MusicBeatState {
         } else {
             CDevPopUp.open(this, "Error", "An error occured while generating JSON data for your chart.", [{text: "OK", callback:()->{closeSubState();}}], false, true);
         }
+    }
+
+    public function getNoteTypePos(nt:String = ""):Int
+    {
+        if (nt == "Default Note")
+            return -1;
+
+        var l:Int = 0;
+        for (i in _noteTypes)
+        {
+            if (i == nt)
+            {
+                return l;
+            }
+            l++;
+        }
+        return -1;
     }
 }

@@ -1,6 +1,6 @@
 package game.cdev;
 
-import flash.geom.Rectangle;
+#if !macro import flash.geom.Rectangle; #end
 import flixel.addons.ui.interfaces.IFlxUIClickable;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.interfaces.IHasParams;
