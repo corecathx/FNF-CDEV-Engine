@@ -49,7 +49,7 @@ class CDevConfig
 	{
 		#if windows
 		savePath = Sys.getEnv("AppData") + saveFolder;
-		#else #if android
+		#else #if mobile
 		savePath = Path.normalize(Sys.getCwd()+saveFolder);
 		#end #end
 

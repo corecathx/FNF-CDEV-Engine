@@ -2,6 +2,8 @@ package meta.states;
 
 #if android
 import game.system.native.Android;
+#elseif ios
+import game.system.native.IOS;
 #end
 import game.settings.SettingsSubState;
 import game.settings.data.SettingsProperties;
@@ -81,6 +83,21 @@ class OptionsState extends MusicBeatState
 		super.update(elapsed);
 
 		#if android
+		grpOptions.forEach(function(spr:FlxText)
+		{
+			Android.touchJustPressed(spr, function()
+			{
+				if (spr.ID != curSelected)
+				{
+					changeSelection(spr.ID, true);
+				}
+				else
+				{
+					onSelected();
+				}
+			});
+		});
+		#elseif ios
 		grpOptions.forEach(function(spr:FlxText)
 		{
 			Android.touchJustPressed(spr, function()

@@ -7,6 +7,8 @@ import game.cdev.engineutils.CDevInfoTxt;
 import flixel.input.android.FlxAndroidKey;
 import android.content.Context;
 import game.system.native.Android;
+#elseif ios
+import game.system.native.IOS;
 #end
 
 import haxe.io.Path;
@@ -82,6 +84,8 @@ class FunkinMain extends Sprite
 		#if android
 		Sys.setCwd(Path.addTrailingSlash(Context.getExternalFilesDir()));
 		Application.current.window.alert("We detected that CDEV Engine is running on Android target, expect things to crash & unstable.", "Warning");
+		#elseif ios
+		Sys.setCwd(LimeSystem.documentsDirectory);
 		#end
 
 		if (stage != null)
@@ -245,6 +249,8 @@ class FunkinMain extends Sprite
 		else
 		#elseif android
 		Android.onCrash(reportClassic, "CDEV-Engine_" + dateNow + ".txt");
+		#elseif ios
+		IOS.onCrash(reportClassic, "CDEV-Engine_" + dateNow + ".txt");
 		#end
 		{
 			// gotta call a simple message box thingie

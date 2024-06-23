@@ -11,7 +11,7 @@ import android.widget.Toast;
 #end
 import flash.system.System;
 import openfl.Lib;
-#if (sys && !ios)
+#if sys
 import sys.FileSystem;
 import sys.io.File;
 #end
