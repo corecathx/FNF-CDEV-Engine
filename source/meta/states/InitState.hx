@@ -1,5 +1,6 @@
 package meta.states;
 
+import flxanimate.FlxAnimate;
 import lime.app.Application;
 import openfl.display.Window;
 import flixel.math.FlxRect;
@@ -23,6 +24,7 @@ import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
  */
 class InitState extends MusicBeatState {
     public static var compiler_thing:Array<Dynamic> = [
+        FlxAnimate
     ];
 
     public static var status = {

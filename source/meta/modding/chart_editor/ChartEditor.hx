@@ -507,6 +507,7 @@ class ChartEditor extends MusicBeatState {
             dummyNote.noteType = _spawn_noteType = nNote;
             _spawn_noteType_id = _spawn_noteType.indexOf(nNote);
         });
+        drop_noteTypes.bgLabel.text = _spawn_noteType;
         grp.add(drop_noteTypes);
         /*drop_noteTypes = new UIDropDown(text2.x, text2.y+text2.height + 25, UIDropDown.makeStrIdLabelArray(_noteTypes, true), (mNote:String)->
         {

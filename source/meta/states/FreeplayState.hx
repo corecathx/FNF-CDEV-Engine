@@ -202,6 +202,7 @@ class FreeplayState extends MusicBeatState
 			['Randomize Chart', true, CDevConfig.saveData.randomNote],
 			['Sudden Death', true, CDevConfig.saveData.suddenDeath],
 			['Play as the opponent', true, playOnLeftSide],
+			['No hold notes', true, CDevConfig.saveData.allNotes],
 			['Scroll Speed: ', false, CDevConfig.saveData.scrollSpeed, 0.1, 10],
 			#if cpp ['Song Speed: ', false, speed, 0.1, 10], #end
 			['Health Gain Multi: ', false, CDevConfig.saveData.healthGainMulti, 1, 10],
@@ -213,6 +214,7 @@ class FreeplayState extends MusicBeatState
 			'Randomizes your chart each time you load a song.',
 			"If you miss a single note, it will trigger an instant gameover.",
 			"Whether to play on the opponent's side",
+			"Changes all hold notes with normal notes.",
 			"Change your note scroll speed.\n(If it's at 1, it will be chart dependent.)",
 			"Change the speed of your song.",
 			"Set how much health that you get from hitting a note.",
@@ -730,6 +732,8 @@ class FreeplayState extends MusicBeatState
 				CDevConfig.saveData.suddenDeath = false;
 			case 'Play as the opponent':
 				playOnLeftSide = false;
+			case 'No hold notes':
+				CDevConfig.saveData.allNotes = false;
 			case 'Scroll Speed: ':
 				CDevConfig.saveData.scrollSpeed = 1;
 			case 'Song Speed: ':
@@ -747,12 +751,14 @@ class FreeplayState extends MusicBeatState
 			['Randomize Chart', true, CDevConfig.saveData.randomNote],
 			['Sudden Death', true, CDevConfig.saveData.suddenDeath],
 			['Play as the opponent', true, playOnLeftSide],
+			['No hold notes', true, CDevConfig.saveData.allNotes],
 			['Scroll Speed: ', false, CDevConfig.saveData.scrollSpeed, 0.1, 10],
 			#if cpp ['Song Speed: ', false, speed, 0.1, 10], #end
 			['Health Gain Multi: ', false, CDevConfig.saveData.healthGainMulti, 1, 10],
 			['Health Lose Multi: ', false, CDevConfig.saveData.healthLoseMulti, 1, 10],
 			['Combo Multipiler: ', false, CDevConfig.saveData.comboMultipiler, 1, 10]
 		];
+
 
 		var theValuee:Float = FlxMath.roundDecimal(modOptions[curModSelected][2], 2);
 		grpModMenu.forEach(function(a:VCRGrpText)
@@ -772,6 +778,8 @@ class FreeplayState extends MusicBeatState
 				CDevConfig.saveData.suddenDeath = !CDevConfig.saveData.suddenDeath;
 			case 'Play as the opponent':
 				playOnLeftSide = !playOnLeftSide;
+			case 'No hold notes':
+				CDevConfig.saveData.allNotes = !CDevConfig.saveData.allNotes;
 			case 'Scroll Speed: ':
 				CDevConfig.saveData.scrollSpeed = modOptions[curModSelected][2];
 			case 'Song Speed: ':
@@ -788,12 +796,14 @@ class FreeplayState extends MusicBeatState
 			['Randomize Chart', true, CDevConfig.saveData.randomNote],
 			['Sudden Death', true, CDevConfig.saveData.suddenDeath],
 			['Play as the opponent', true, playOnLeftSide],
+			['No hold notes', true, CDevConfig.saveData.allNotes],
 			['Scroll Speed: ', false, CDevConfig.saveData.scrollSpeed, 0.1, 10],
 			#if cpp ['Song Speed: ', false, speed, 0.1, 10], #end
 			['Health Gain Multi: ', false, CDevConfig.saveData.healthGainMulti, 1, 10],
 			['Health Lose Multi: ', false, CDevConfig.saveData.healthLoseMulti, 1, 10],
 			['Combo Multipiler: ', false, CDevConfig.saveData.comboMultipiler, 1, 10]
 		];
+
 	}
 
 	function openMods()

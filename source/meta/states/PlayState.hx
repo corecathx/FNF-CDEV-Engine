@@ -91,6 +91,7 @@ class PlayState extends MusicBeatState
 	public static var comboMultiplier:Float = 1;
 	public static var songSpeed:Float = 1.0;
 	public static var playingLeftSide:Bool = false;
+	public static var noHoldNotes:Bool = false;
 
 	// Health & Time Bar objects.
 	public static var healthBarBG:FlxSprite;
@@ -125,8 +126,9 @@ class PlayState extends MusicBeatState
 
 	// Vocals objects.
 	public static var usingVoices:Bool = false; // Similar to "needsVoices" in old fnf chart format.
+	public static var usingOpponentVoices:Bool = false; // Similar to "needsVoices" in old fnf chart format.
 
-	public var vocals:FlxSound; // If opponent vocal exists, this will be used for BF.
+	public var vocals:FlxSound; // If opponent vocal exists, this will be used for Player.
 	public var vocals_opponent:FlxSound;
 
 	// Note object stuffs.
@@ -1324,6 +1326,7 @@ class PlayState extends MusicBeatState
 		comboMultiplier = CDevConfig.saveData.comboMultipiler;
 		songSpeed = FlxMath.roundDecimal(FreeplayState.speed, 2);
 		playingLeftSide = FreeplayState.playOnLeftSide;
+		noHoldNotes = CDevConfig.saveData.allNotes;
 	}
 
 	function initCutsceneScripts()
@@ -1966,24 +1969,36 @@ class PlayState extends MusicBeatState
 
 	public static var eventNames:Array<String> = [];
 
+	/**
+	 * Loads a voice track, use suffix for additional voices.
+	 * @param suffix 
+	 * @return Array<Dynamic>
+	 */
+	public function loadVoice(suffix:String = ""):Array<Dynamic> {
+		var audio:Sound = Paths.voices(SONG.info.name, suffix != "" ? '-$suffix' : "");
+		var sound:FlxSound = new FlxSound();
+		if (audio != null) {
+			sound.loadEmbedded(audio);
+		}
+		FlxG.sound.list.add(sound);
+		sound.pause();
+		return [sound, audio != null];
+	}
+
 	private function generateSong(dataPath:String):Void
 	{
 		Conductor.changeBPM(SONG.info.bpm);
 		Conductor.mapBPMChanges(SONG);
 		curSong = SONG.info.name;
 
-		var audio:Sound = Paths.voices(PlayState.SONG.info.name);
-		vocals = new FlxSound();
+		var vData = loadVoice();
+		var vOData = loadVoice("opponent");
 
-		usingVoices = false;
-		if (audio != null)
-		{
-			vocals = new FlxSound().loadEmbedded(audio);
-			usingVoices = true;
-		}
+		vocals = vData[0];
+		vocals_opponent = vOData[0];
 
-		FlxG.sound.list.add(vocals);
-		vocals.pause();
+		usingVoices = vData[1];
+		usingOpponentVoices = vOData[1];
 
 		notes = new FlxTypedGroup<Note>();
 		add(notes);
@@ -2177,7 +2192,7 @@ class PlayState extends MusicBeatState
 			{
 				FlxG.sound.music.pause();
 				vocals.pause();
-				// vocals_opponent.pause();
+				vocals_opponent.pause();
 			}
 
 			if (!inCutscene)
@@ -2296,12 +2311,12 @@ class PlayState extends MusicBeatState
 		if (FlxG.sound.music != null)
 		{
 			vocals.pause();
-			// vocals_opponent.pause();
+			vocals_opponent.pause();
 
 			FlxG.sound.music.play();
 			Conductor.songPosition = FlxG.sound.music.time;
-			vocals.time = Conductor.songPosition;
-			// vocals_opponent.time = Conductor.songPosition;
+			vocals_opponent.time = vocals.time = Conductor.songPosition;
+			vocals_opponent.play();
 			vocals.play();
 
 			updateSongPitch();
@@ -2497,6 +2512,7 @@ class PlayState extends MusicBeatState
 			paused = true;
 
 			vocals.stop();
+			vocals_opponent.stop();
 			FlxG.sound.music.stop();
 
 			var char:Character = (playingLeftSide ? dad : boyfriend);
@@ -2582,6 +2598,7 @@ class PlayState extends MusicBeatState
 			songSpeed = 1.0;
 			FlxG.sound.music.pause();
 			vocals.pause();
+			vocals_opponent.pause();
 
 			chartingMode = true;
 			// if (FlxG.keys.pressed.SHIFT)
@@ -2602,7 +2619,7 @@ class PlayState extends MusicBeatState
 			songSpeed = 1.0;
 			FlxG.sound.music.pause();
 			vocals.pause();
-
+			vocals_opponent.pause();
 			FlxG.switchState(new meta.modding.stage_editor.StageEditor(SONG.data.stage));
 
 			#if desktop
@@ -2693,6 +2710,7 @@ class PlayState extends MusicBeatState
 		if (Main.discordRPC)
 			DiscordClient.changePresence(detailsPausedText, daRPCInfo, iconRPC);
 		#end
+		FlxG.camera.followLerp = 0;
 		scripts.executeFunc('onGamePaused', []);
 		persistentUpdate = false;
 		persistentDraw = true;
@@ -3076,7 +3094,7 @@ class PlayState extends MusicBeatState
 	{
 		timeShit += elapsed;
 		if (timeShit > Conductor.crochet / 1000 && judgementText.alpha > 0)
-			judgementText.alpha -= 0.1 * elapsed;
+			judgementText.alpha -= (1-(Conductor.crochet/1000))*elapsed;
 
 		var theJudgeScale:Float = FlxMath.lerp(1, judgementText.scale.x, CDevConfig.utils.bound(1 - (elapsed * 16), 0, 1));
 		judgementText.scale.set(theJudgeScale, theJudgeScale);
@@ -3111,6 +3129,7 @@ class PlayState extends MusicBeatState
 			{
 				FlxG.sound.music.pause();
 				vocals.pause();
+				vocals_opponent.pause();
 
 				Conductor.songPosition += 10000;
 				notes.forEachAlive(function(daNote:Note)
@@ -3131,6 +3150,9 @@ class PlayState extends MusicBeatState
 
 				vocals.time = Conductor.songPosition;
 				vocals.play();
+
+				vocals_opponent.time = Conductor.songPosition;
+				vocals_opponent.play();
 			}
 
 			// instantly end the song
@@ -3267,7 +3289,7 @@ class PlayState extends MusicBeatState
 				for (index in 0...susLength+1)
 				{
 					var susNote:Note = notes.recycle(Note, nFunc);
-					susNote.load(note.time + (Conductor.stepCrochet * index) + Conductor.stepCrochet, note.data, true, lastNote, note.type, note.args);
+					susNote.load(note.time + (Conductor.stepCrochet * index) + Conductor.stepCrochet, note.data, !noHoldNotes, lastNote, note.type, note.args);
 					susNote.mainNote = mainNote;
 					susNote.mustPress = playingLeftSide ? !playerSection : playerSection;
 					susNote.scrollFactor.set();
@@ -3365,7 +3387,7 @@ class PlayState extends MusicBeatState
 
 				p2Strums.members[daNote.noteData].playAnim("confirm", true);
 
-				if (usingVoices)
+				if (!usingOpponentVoices && usingVoices)
 					vocals.volume = 1;
 
 				daNote.onNoteHit(daNote.rating, false);
@@ -3455,22 +3477,13 @@ class PlayState extends MusicBeatState
 			}
 			if (!focusingToBF)
 			{
-				if (dad.curCharacter == 'mom')
-					vocals.volume = 1;
-
 				if (SONG.info.name.toLowerCase() == 'tutorial')
-				{
 					tweenCamIn();
-				}
+			} else {
+				if (SONG.info.name.toLowerCase() == 'tutorial')
+					tweenCamOut();
 			}
 
-			if (focusingToBF)
-			{
-				if (SONG.info.name.toLowerCase() == 'tutorial')
-				{
-					tweenCamOut();
-				}
-			}
 		}
 	}
 
@@ -3636,7 +3649,9 @@ class PlayState extends MusicBeatState
 			canPause = false;
 			FlxG.sound.music.volume = 0;
 			vocals.volume = 0;
+			vocals_opponent.volume = 0;
 			vocals.kill();
+			vocals_opponent.kill();
 
 			FlxG.sound.music.onComplete = null;
 			if (!chartingMode)
@@ -3971,6 +3986,7 @@ class PlayState extends MusicBeatState
 			if (popUpCache.exists(stuff))
 				continue;
 			var imageReturn:Dynamic = Paths.image(pixelSP1 + stuff + pixelSP2, lib);
+			if (imageReturn is FlxGraphic) cast(imageReturn, FlxGraphic).persist = true;
 			popUpCache[stuff] = (imageReturn is FlxGraphic ? imageReturn : FlxGraphic.fromAssetKey(imageReturn));
 		}
 
@@ -4117,7 +4133,8 @@ class PlayState extends MusicBeatState
 			notes.forEachAlive((note:Note) -> {
 				if (!note.canBeHit || !note.mustPress) return;
 				if (note.isSustainNote && holdArray[note.noteData]) {
-					goodNoteHit(note);
+					if (Conductor.songPosition+(Conductor.stepCrochet/2)>note.strumTime) 
+						goodNoteHit(note);
 					return;
 				}
 				if (note.isSustainNote || note.tooLate || note.wasGoodHit) return;
@@ -4401,6 +4418,7 @@ class PlayState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('hitsound', 'shared'), 0.6);
 
 		note.wasGoodHit = true;
+
 		vocals.volume = 1;
 
 		note.onNoteHit(note.rating, true);
@@ -4544,7 +4562,8 @@ class PlayState extends MusicBeatState
 		super.stepHit();
 
 		if (Math.abs(FlxG.sound.music.time - (Conductor.songPosition)) > (20 * songSpeed)
-			|| (Math.abs(vocals.time - (Conductor.songPosition)) > (20 * songSpeed)))
+			|| (Math.abs(vocals.time - (Conductor.songPosition)) > (20 * songSpeed))
+			|| (Math.abs(vocals_opponent.time - (Conductor.songPosition)) > (20 * songSpeed)))
 		{
 			resyncVocals();
 		}
@@ -4773,11 +4792,21 @@ class PlayState extends MusicBeatState
 
 	public function getCameraLerp():Float
 	{
-		var followLerp:Float = (0.08 / (CDevConfig.saveData.fpscap / 60)); // CDevConfig.utils.bound((0.08 / (CDevConfig.saveData.fpscap / 60)), 0, 1);
+		var baseLerp:Float = 0.08;
+		var referenceFramerate:Float = 60.0;
+		var framerateAdjustment:Float = referenceFramerate / CDevConfig.saveData.fpscap;
+	
+		var followLerp:Float = baseLerp * framerateAdjustment;
+		
 		if (isModStage && Stage.USECUSTOMFOLLOWLERP)
-			followLerp = ((Stage.FOLLOW_LERP) / (CDevConfig.saveData.fpscap / 60)); // CDevConfig.utils.bound(((Stage.FOLLOW_LERP+0.08) / (CDevConfig.saveData.fpscap / 60)), 0, 1);
+			followLerp = Stage.FOLLOW_LERP * framerateAdjustment;
+	
 		return followLerp;
 	}
+	
+		
+		
+		
 }
 
 class PlayStateConfig

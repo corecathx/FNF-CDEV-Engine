@@ -391,6 +391,7 @@ class CDevConfig
 			healthGainMulti: 1,
 			healthLoseMulti: 1,
 			comboMultipiler: 1,
+			allNotes: false,
 
 			testMode: false,
 

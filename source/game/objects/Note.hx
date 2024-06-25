@@ -219,7 +219,6 @@ class Note extends FlxSprite
 
 			newSize = Std.int((width * PlayState.daPixelZoom));
 		} else { // If it's not a pixel note / week 6
-			if (tex != "notes/NOTE_assets") trace(Paths.getSparrowAtlas(tex) + "//"+noteType+"//"+tex);
 			frames = (tex == "notes/NOTE_assets" && Note.NOTE_TEXTURE != null ? Note.NOTE_TEXTURE : Paths.getSparrowAtlas(tex));
 			if (frames == null) {
 				Log.warn("Texture asset \"" + tex + "\" for note type \"" + noteType + "\" doesn't exist!");
