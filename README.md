@@ -24,7 +24,9 @@
 - New chart format (beta) in the Chart Editor
 
 <details>
-    <summary><h2>Building / Compiling Guide</h2></summary>
+    <summary><h2>Compiling Guide</h2></summary>
+
+## Installing requirements
 
 > If you're here to make mods without using the built-in modding support, download the source code from the [Releases](https://github.com/Core5570RYT/FNF-CDEV-Engine/releases/latest) section first.
 
@@ -60,7 +62,7 @@ Git Libraries:
 
 You should have everything ready for compiling the engine! Follow the guide below to continue!
 
-### Compiling the engine
+## Compiling the engine
 - Install Visual Studio Community.
 - In "Individual Components" tab, select:
 - - MSVC v143 - VS 2019 C++ x64/x86 build tools
