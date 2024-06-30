@@ -31,7 +31,12 @@ class CDevConfig
 	public static var window_icon_custom:Bool = false;
 	public static var debug:Bool = false;
 	public static var elapsedGameTime:Float;
+
+	#if TESTING_BUILD
+	public static var engineVersion:String = "1.7 (Testing Build)";
+	#else
 	public static var engineVersion:String = "1.7";
+	#end
 	public static var RPC_ID:String = "947735855672475679";
 	public static var utils(default, null):CDevUtils = new CDevUtils();
 

@@ -1,6 +1,5 @@
 package game.system.util;
 
-
 class FunkinNdll {
 	public static function load(path:String, name:String, args:Int, lazy:Bool){
 		trace("Trying to load NDLL: " + path);

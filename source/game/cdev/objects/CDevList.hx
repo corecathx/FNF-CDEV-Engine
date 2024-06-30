@@ -13,7 +13,7 @@ class CDevList extends FlxSpriteGroup {
         bg: 0xFF121825
     }
 
-    var sizes = {
+    public var sizes = {
         width: 1,
         height: 1
     }
@@ -81,13 +81,21 @@ class CDevList extends FlxSpriteGroup {
         }
 
         if (opened) {
-            if (FlxG.mouse.wheel != 0){
-                if (curY + (sizes.height*buttons.length) < y+(sizes.height*buttons.length))
-                    curY += FlxG.mouse.wheel * (sizes.height*0.5);
+            var totalHeight = sizes.height * buttons.length;
+            
+            if (totalHeight > sizes.height) {
+                if (FlxG.mouse.wheel != 0) {
+                    var maxY = y + sizes.height - totalHeight;
+                    curY += FlxG.mouse.wheel * (sizes.height * 0.5);
+                    curY = Math.max(maxY, Math.min(y + sizes.height, curY));
+                }
+            } else {
+                curY = y + sizes.height;
             }
         } else {
             curY = y + sizes.height;
         }
+        
 
         for (index=>i in buttons) {
             i.y = FlxMath.lerp(curY+(sizes.height*index), i.y, 1-(elapsed*32));

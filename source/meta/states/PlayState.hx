@@ -2329,6 +2329,9 @@ class PlayState extends MusicBeatState
 		CDevConfig.utils.setSoundPitch(FlxG.sound.music, songSpeed);
 		if (vocals != null && vocals.playing)
 			CDevConfig.utils.setSoundPitch(vocals, songSpeed);
+
+		if (vocals_opponent != null && vocals_opponent.playing)
+			CDevConfig.utils.setSoundPitch(vocals_opponent, songSpeed);
 	}
 
 	private var paused:Bool = false;
@@ -2460,6 +2463,7 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
+			//Conductor.songPosition = FlxG.sound.music.time;
 			Conductor.songPosition += (FlxG.elapsed * 1000) * songSpeed;
 			// Conductor.songPosition = FlxG.sound.music.time;
 			Conductor.rawTime = FlxG.sound.music.time;
@@ -3986,8 +3990,10 @@ class PlayState extends MusicBeatState
 			if (popUpCache.exists(stuff))
 				continue;
 			var imageReturn:Dynamic = Paths.image(pixelSP1 + stuff + pixelSP2, lib);
-			if (imageReturn is FlxGraphic) cast(imageReturn, FlxGraphic).persist = true;
-			popUpCache[stuff] = (imageReturn is FlxGraphic ? imageReturn : FlxGraphic.fromAssetKey(imageReturn));
+			var casted:FlxGraphic = (imageReturn is FlxGraphic ? cast imageReturn : FlxGraphic.fromAssetKey(imageReturn));
+			casted.persist = true;
+			casted.destroyOnNoUse = false;
+			popUpCache[stuff] = casted;
 		}
 
 		if (!setting)

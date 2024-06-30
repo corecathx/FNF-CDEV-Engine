@@ -270,6 +270,9 @@ class SettingsProperties
 			new BaseSettings("Bitmap Test", ["", ""], "asdasdasd.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
 				if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new meta.debug.BitmapState());
 			}, function(){},"", false),
+			new BaseSettings("Bitmap Test", ["", ""], "asdasdasd.", SettingsType.MIXED, function(elapsed:Float, bs:BaseSettings){
+				if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new meta.debug.BitmapListState());
+			}, function(){},"", false),
 		]);
 	}
 

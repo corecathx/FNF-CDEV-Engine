@@ -53,6 +53,8 @@
 	<define name="CRASH_HANDLER" if="windows || mobile"/>
 	<define name="USE_VIDEOS" if="cpp"/>
 	<define name="DARK_MODE_WINDOW"/>
+
+	<!--<define name="TESTING_BUILD"/>-->
 	
 	<haxelib name="DISCORD_RPC" if="desktop"/>
 

@@ -4,6 +4,7 @@ import lime.media.openal.AL;
 
 /**
  * Sound Filter class for CDEV Engine.
+ * - Known bug: sometimes not working
  */
 class FunkinSoundFilter
 {

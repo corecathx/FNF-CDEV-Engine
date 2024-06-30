@@ -40,8 +40,10 @@ class ChartNote extends FlxSprite {
         strumTime = noteArray[0];
         noteData = noteArray[1];
         holdLength = noteArray[2];
-        noteType = noteArray[3];
-        noteArgs = noteArray[4];
+        if (noteArray[3] != null)
+            noteType = noteArray[3];
+        if (noteArray[4] != null)
+            noteArgs = noteArray[4];
         rawData = noteArray;
 
         this.isSustain = isSustain;

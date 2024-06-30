@@ -26,37 +26,6 @@ function update(elapsed) {
     // 'elapsed' - Float - How many times does this Function called.
     PlayState.iconP1.angle = FlxMath.lerp(0,PlayState.iconP1.angle,FlxMath.bound(1-(elapsed*12),0,1));
     PlayState.iconP2.angle = FlxMath.lerp(0,PlayState.iconP2.angle,FlxMath.bound(1-(elapsed*12),0,1));
-
-    for (i in 0...PlayState.playerStrums.members.length){
-        if (CDevConfig.saveData.downscroll){
-            PlayState.playerStrums.members[i].y = FlxMath.lerp(FlxG.height - 160,PlayState.playerStrums.members[i].y, FlxMath.bound(1 - (elapsed * 6), 0 , 1));
-        } else{
-            PlayState.playerStrums.members[i].y = FlxMath.lerp(70,PlayState.playerStrums.members[i].y, FlxMath.bound(1 - (elapsed * 6), 0 , 1));
-        }
-        
-    }
-
-    for (i in 0...PlayState.p2Strums.members.length){
-        if (CDevConfig.saveData.downscroll){
-            PlayState.p2Strums.members[i].y = FlxMath.lerp(FlxG.height - 160,PlayState.p2Strums.members[i].y, FlxMath.bound(1 - (elapsed * 6), 0 , 1));
-        } else{
-            PlayState.p2Strums.members[i].y = FlxMath.lerp(70,PlayState.p2Strums.members[i].y, FlxMath.bound(1 - (elapsed * 6), 0 , 1));
-        }
-    }
-}
-
-function p1NoteHit(noteData,isSustain) {
-    // Executed when the player hits a note.
-    // 'noteData' - Integer - The note data. [0 (Left), 1 (Down), 2 (Up), 3 (Right)]
-    // 'isSustain' - Boolean - Is it a sustain note?
-
-    if (!isSustain){
-        if (CDevConfig.saveData.downscroll){
-            PlayState.playerStrums.members[noteData].y += 20;
-        } else{
-            PlayState.playerStrums.members[noteData].y -= 20;  
-        }
-    }
 }
 
 function onNoteMiss(noteData) {
@@ -64,21 +33,6 @@ function onNoteMiss(noteData) {
     // 'noteData' - Integer - The note data. [0 (Left), 1 (Down), 2 (Up), 3 (Right)]
 
     PlayState.camHUD.shake(0.009,0.2);
-}
-
-function p2NoteHit(noteData,isSustain) {
-    // Executed when the opponent hits a note.
-    // 'noteData' - Integer - The note data. [0 (Left), 1 (Down), 2 (Up), 3 (Right)]
-    // 'isSustain' - Boolean - Is it a sustain note?
-
-    if (!isSustain){
-        if (CDevConfig.saveData.downscroll){
-            PlayState.p2Strums.members[noteData].y += 20;
-        } else{
-            PlayState.p2Strums.members[noteData].y -= 20;  
-        }
-    }
-        
 }
 
 function stepHit(curStep) {

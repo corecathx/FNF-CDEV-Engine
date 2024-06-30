@@ -482,6 +482,7 @@ class CDevUtils
 		return false;
 	}
 
+	// origin: psych engine
 	public function getColor(sprite:FlxSprite):FlxColor
 	{
 		var color:Map<Int, Int> = [];
@@ -494,13 +495,9 @@ class CDevUtils
 				if (pixelColor != 0)
 				{
 					if (color.exists(pixelColor))
-					{
 						color[pixelColor] = color[pixelColor] + 1;
-					}
 					else if (color[pixelColor] != 13520687 - (2 * 13520687))
-					{
 						color[pixelColor] = 1;
-					}
 				}
 			}
 		}
@@ -651,13 +648,14 @@ class CDevUtils
                 lastHitSection =  i.mustHitSection;
             }
 
-			for (j in i.sectionNotes){
-				if (i.mustHitSection){ //swap the section if it's a player section.
+			for (j in i.sectionNotes) {
+				if (i.mustHitSection) { //swap the section if it's a player section.
 					var note = j;
 					note[1] = (note[1] + 4) % 8;
 					j = note;
 				}
-				if (i.p1AltAnim || i.altAnim) j[3] = "Alt Anim";
+				if (i.p1AltAnim || i.altAnim) 
+					j[3] = "Alt Anim";
 				notes.push([j[0],j[1],j[2],(j[3]==null?"Default Note":j[3]),(j[4]==null?['','']:j[4])]);
 			}
 
@@ -795,5 +793,21 @@ class CDevUtils
 		}, (wawas:String)->{
 			CDevPopUp.open(state,"Error","An error occured while running a task:\n-"+wawas,[{text: "OK" ,callback:() -> FlxG.resetState()}], false, true);
 		});
+	}
+
+	/**
+	 * Loads a voice track, use suffix for additional voices.
+	 * @param suffix 
+	 * @return Array<Dynamic>
+	 */
+	public function loadVoice(song:String, suffix:String = "", ?addToList:Bool = true):FlxSound {
+		var audio:Sound = Paths.voices(song, suffix != "" ? '-$suffix' : "");
+		var sound:FlxSound = new FlxSound();
+		if (audio != null)
+			sound.loadEmbedded(audio);
+        if (addToList)
+		    FlxG.sound.list.add(sound);
+		sound.pause();
+		return sound;
 	}
 }
