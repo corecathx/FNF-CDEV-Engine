@@ -24,6 +24,8 @@ class ChartNote extends FlxSprite {
     public var asDummyNote:Bool = false;
     public var isSelected:Bool = false;
 
+    public var animData:Int = 0;
+
     public function new(nX:Float = 0, nY:Float = 0)
     {
         super(nX,nY);
@@ -38,7 +40,7 @@ class ChartNote extends FlxSprite {
      */
     public function init(noteArray:Array<Dynamic>, isSustain:Bool){
         strumTime = noteArray[0];
-        noteData = noteArray[1];
+        animData = noteData = noteArray[1];
         holdLength = noteArray[2];
         if (noteArray[3] != null)
             noteType = noteArray[3];
@@ -93,7 +95,7 @@ class ChartNote extends FlxSprite {
             nSustain.x = x + (width - nSustain.width) * 0.5;
             nSustain.y = y + ChartEditor.grid_size;
             nSustain.alpha = alpha*0.7;
-            nSustain.animation.play("hold"+Note.directions[noteData%4], true);
+            nSustain.animation.play("hold"+Note.directions[animData%4], true);
             nSustain.setGraphicSize(ChartEditor.grid_size/2.5, Std.int(ChartEditor.grid_size*((holdLength-(Conductor.stepCrochet*2)) / Conductor.stepCrochet)));
             nSustain.updateHitbox();
             nSustain.draw();
@@ -101,14 +103,14 @@ class ChartNote extends FlxSprite {
             nSustainEnd.x = nSustain.x;
             nSustainEnd.y = Math.floor(nSustain.y + nSustain.height);
             nSustainEnd.alpha = nSustain.alpha;
-            nSustainEnd.animation.play("end"+Note.directions[noteData%4], true);
+            nSustainEnd.animation.play("end"+Note.directions[animData%4], true);
             nSustainEnd.setGraphicSize(ChartEditor.grid_size/2.5, Std.int(ChartEditor.grid_size/1.8));
             nSustainEnd.updateHitbox();
             nSustainEnd.draw();
         }
 
         if (!isSustain){
-            animation.play(Note.directions[noteData%4]+"anim",true);
+            animation.play(Note.directions[animData%4]+"anim",true);
         }
         super.draw();
 

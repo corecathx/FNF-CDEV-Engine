@@ -38,15 +38,10 @@ typedef ChartData = {
 /**
  * BASE GAME CHART INFOS
  */
-typedef SongEvent =
-{
-	var name:String; // dumb
-}
 typedef SwagSong =
 {
 	var song:String;
 	var notes:Array<SwagSection>;
-	var songEvents:Array<SongEvent>;
 	var bpm:Float;
 	var needsVoices:Bool;
 	var speed:Float;

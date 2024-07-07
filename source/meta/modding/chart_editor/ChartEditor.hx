@@ -1,5 +1,6 @@
 package meta.modding.chart_editor;
 
+import game.objects.ChartEvent;
 import game.cdev.objects.CDevList;
 import openfl.events.IOErrorEvent;
 import openfl.events.Event;
@@ -37,6 +38,13 @@ import game.cdev.song.CDevChart;
 import game.cdev.SongPosition;
 
 using StringTools;
+
+// I might add more event editing modes sooner if i got ideas lol
+enum abstract EventEditMode(Int) {
+    //var SIDEBAR = 0;
+    var HIDDEN = 0;
+    var VISIBLE = 1;
+}
 
 class ChartEditor extends MusicBeatState {
     // Public stuffs
@@ -91,6 +99,8 @@ class ChartEditor extends MusicBeatState {
 
     // Groups like the note group and other stuffs
     var rendered_notes:FlxTypedGroup<ChartNote>;
+    var rendered_events:FlxTypedGroup<ChartEvent>;
+
     var note_sus_lengths:Array<ChartNote> = [];
     var flash_on_step:Array<Bool> = [ // erm
         false,false,false,false,
@@ -108,6 +118,9 @@ class ChartEditor extends MusicBeatState {
     var _spawn_noteType:String = "Default Note";
     var _spawn_noteType_id:Int = 0;
     var _spawn_noteArgs:Array<String> = ["",""];
+
+    //// Event Editing
+    var _event_mode:EventEditMode = HIDDEN;
 
     public function new(?fnfChart:CDevChart, ?difficulty:String){
         if (fnfChart == null) fnfChart = CDevConfig.utils.CDEV_CHART_TEMPLATE;//CDevConfig.utils.CHART_TEMPLATE;
@@ -195,6 +208,9 @@ class ChartEditor extends MusicBeatState {
 
         rendered_notes = new FlxTypedGroup<ChartNote>();
         add(rendered_notes);
+
+        rendered_events = new FlxTypedGroup<ChartEvent>();
+        add(rendered_events);
 
         hitLine = new FlxSprite().makeGraphic(Std.int(grid.width),5,FlxColor.WHITE);
         hitLine.y = getYFromTime(0);
@@ -772,6 +788,8 @@ class ChartEditor extends MusicBeatState {
         updateFlashLogic();
         updateChartData();
 
+        eventsUpdateLogic();
+
         checkChartFile(elapsed);
     }
 
@@ -852,8 +870,13 @@ class ChartEditor extends MusicBeatState {
                 }
             }
         }
-        for (spr in 0...opStrum.members.length)
-            opStrum.members[spr].y = plStrum.members[spr].y = hitLine.y;
+        for (spr in 0...opStrum.members.length){
+            var playerObject:StrumArrow = plStrum.members[spr];
+            var opponentObject:StrumArrow = opStrum.members[spr];
+            opponentObject.y = playerObject.y = hitLine.y;
+            opponentObject.alpha = playerObject.alpha = (FlxG.sound.music.playing ? 1 : 0.5);
+        }
+
     }
 
     var passedStep:Int = 0;
@@ -892,34 +915,57 @@ class ChartEditor extends MusicBeatState {
         noteSpawnLogic();
     }
 
-    function noteSpawnLogic(){
-        var intMeasure:Int = Std.int(currentMeasure);
-
-        inline function kill_me(note:ChartNote){
-            note_sus_lengths.remove(note);
-            note.destroy();
-            rendered_notes.remove(note,true);
-        }
-        // Destroy Logic
-        rendered_notes.forEachAlive((note:ChartNote) -> {
-            if (getMeasureFromTime(note.strumTime) <= intMeasure - 2) {
-                kill_me(note);
-            } else if (getMeasureFromTime(note.strumTime) >= intMeasure + 2){
-                kill_me(note);
+    function eventsUpdateLogic() {
+        var currentStatus:String = grid.target_isPlayer ? "bf" : "dad"; //"dad";
+        rendered_events.forEachAlive((event:ChartEvent)->{
+            if (event.EVENT_NAME == "Change Camera Focus") {
+                if (Conductor.songPosition > event.time) {
+                    currentStatus = event.value1.toLowerCase().trim();
+                    return;
+                }
             }
         });
 
-        // Add Logic -- Load notes from the next section
-        var fullSection = (Conductor.crochet*Conductor.time_signature[0]);
-        var startTime = (fullSection * (intMeasure+1));
-        var new_notelist:Array<Dynamic> = getNoteListFromMeasure(startTime);
+        grid.changeTarget((currentStatus == "bf"));
+    }
 
-        for (note in new_notelist) addNote(note, true);
-
-        chart.notes.sort((n1:Dynamic, n2:Dynamic) ->
-        {
-            return FlxSort.byValues(FlxSort.ASCENDING, n1[0], n2[0]);
+    function noteSpawnLogic(){
+        var intMeasure:Int = Std.int(currentMeasure);
+    
+        // Helper function to kill notes and events
+        inline function killItem(item:Dynamic, listToRemoveFrom:FlxTypedGroup<Dynamic>){
+            item.destroy();
+            listToRemoveFrom.remove(item, true);
+        }
+    
+        // Destroy Logic
+        var measureThresholdLow = intMeasure - 2;
+        var measureThresholdHigh = intMeasure + 2;
+    
+        rendered_notes.forEachAlive((note:ChartNote) -> {
+            var noteMeasure = getMeasureFromTime(note.strumTime);
+            if (noteMeasure <= measureThresholdLow || noteMeasure >= measureThresholdHigh) {
+                killItem(note, rendered_notes);
+            }
         });
+    
+        rendered_events.forEachAlive((event:ChartEvent) -> {
+            var eventMeasure = getMeasureFromTime(event.time);
+            if (eventMeasure <= measureThresholdLow || eventMeasure >= measureThresholdHigh) {
+                killItem(event, rendered_events);
+            }
+        });
+    
+        // Add Logic -- Load notes and events from the next section
+        var fullSection = (Conductor.crochet * Conductor.time_signature[0]);
+        var startTime = (fullSection * (intMeasure + 1));
+    
+        for (note in getNoteListFromMeasure(startTime)) addNote(note, true);
+        for (event in getEventListFromMeasure(startTime)) addEvent(event, true);
+    
+        // Sort notes and events
+        chart.notes.sort((n1:Dynamic, n2:Dynamic) -> FlxSort.byValues(FlxSort.ASCENDING, n1[0], n2[0]));
+        chart.events.sort((n1:Dynamic, n2:Dynamic) -> FlxSort.byValues(FlxSort.ASCENDING, n1[2], n2[2]));
     }
 
     function metronomeLogic(){
@@ -946,7 +992,10 @@ class ChartEditor extends MusicBeatState {
         var largeMode = FlxG.keys.pressed.SHIFT; // ...lol
 
         // Main Controls, such as Return to PlayState, Playtest, etc
-		if (FlxG.keys.justPressed.ENTER) FlxG.switchState(new PlayState());
+		if (FlxG.keys.justPressed.ENTER) {
+            PlayState.SONG = chart;
+            FlxG.switchState(new PlayState());
+        }
 
         // Play & Pause controls
         if (FlxG.keys.justPressed.SPACE){
@@ -996,44 +1045,143 @@ class ChartEditor extends MusicBeatState {
     var lastPos:Float = 0;
 
     var dragPosStart:FlxPoint = new FlxPoint();
-    var selection_mode:Bool = false;
 
     var currentSelectedNotes:Array<ChartNote> = [];
 
-    var showTimer:Float = 0;
-    var hoveredSomething:Bool = false;
-    function mouseControls(elapsed:Float) {
-        curMouse = openfl.ui.MouseCursor.ARROW;
+    var control_overlap = {
+        notes: {
+            status: false,
+            object: null
+        },
+        selected_notes: false, // When mouse overlaps selected notes
+        grid_empty_space: false, // Overlaps empty space in grid (used for note addition)
+        block_select: false, // Used for the selection mode / lmb drag
+        note_adjust: false
+    };
 
-        // This was put here to avoid the note gets selected twice
+    var noteYPositions:Array<Float> = [];
+
+    function mouseControls(elapsed:Float) {
+        if (curMouse != openfl.ui.MouseCursor.ARROW)
+            curMouse = openfl.ui.MouseCursor.ARROW; // set this by default
+
+        if (!FlxG.mouse.pressed) {
+            dragPosStart.set(FlxG.mouse.x, FlxG.mouse.y);
+        }
+
+        // Note overlap check
+        control_overlap.notes.status = false;
+        control_overlap.notes.object = null;  
+        for (note in rendered_notes.members) {
+            if (note == null) continue;
+            if (!FlxG.mouse.overlaps(note)) continue;
+            control_overlap.notes.status = true;
+            control_overlap.notes.object = note;  
+            break;   
+        }
+
         // Controls if there's any note selected
+        control_overlap.selected_notes = false;
         if (currentSelectedNotes.length > 0) {
-            var hasOverlap:Bool = false;
-            for (note in currentSelectedNotes){
+            // Overlap checking
+            for (note in currentSelectedNotes) {
                 if (note == null) continue;
-                try{
-                    if (FlxG.mouse.overlaps(note)) hasOverlap = true;
-                } catch(e) {
+
+                try {
+                    if (FlxG.mouse.overlaps(note)) {
+                        control_overlap.selected_notes = true;
+                        break; // Exit loop early if an overlap is found
+                    }
+                } catch (e:Dynamic) {
                     Log.warn("Caught error: " + e.toString());
                 }
-
             }
 
+            // If Delete key is pressed, remove every selected note.
             if (FlxG.keys.justPressed.DELETE) {
-                for (note in currentSelectedNotes)
+                for (note in currentSelectedNotes) {
                     removeNote(note);
+                }
+                clearSelectedNotes();
             }
 
-            if (hasOverlap) curMouse = openfl.ui.MouseCursor.AUTO;
-            if (FlxG.mouse.justPressed){
-                if (hasOverlap){
+            // If mouse overlaps one of the notes...
+            if (!control_overlap.block_select) {
+                if (control_overlap.selected_notes) {
+                    curMouse = openfl.ui.MouseCursor.AUTO;
+    
+                    if (FlxG.mouse.pressed) {
+                        control_overlap.note_adjust = true;
+                    }
+                }
+                    // When starting the drag, store the initial y-positions of the notes
+                if (control_overlap.note_adjust && FlxG.mouse.justPressed) {
+                    noteYPositions = [];
+                    for (note in currentSelectedNotes) {
+                        noteYPositions.push(note.y);
+                    }
+                }
+
+                if (control_overlap.note_adjust) {               
+                    curMouse = openfl.ui.MouseCursor.HAND;
+                
+                    if (FlxG.mouse.pressed) {
+                        for (i in 0...currentSelectedNotes.length) {
+                            var note = currentSelectedNotes[i];
+                            var initialY = noteYPositions[i];
+                            
+                            var newX = grid.x + (note.noteData * grid_size) + (FlxG.mouse.x - dragPosStart.x);
+                            var newY = initialY + (FlxG.mouse.y - dragPosStart.y);
                     
-                    // open note properties thing...
-                    trace("selected twice");
-                } else {
-                    clearSelectedNotes();
+                            note.setPosition(newX, newY);
+                            note.x = FlxMath.bound(note.x, grid.x, grid.x + (grid_size * 7) + separator_width);
+                            note.animData = Math.floor((note.x - grid.x) / grid_size);
+                        }
+                    }
+
+
+                    if (FlxG.mouse.justReleased) {
+                        control_overlap.note_adjust = false;
+                        var newNotes:Array<Dynamic> = [];
+                        var firstNote:ChartNote = currentSelectedNotes[0];
+    
+                        for (index => note in currentSelectedNotes) {
+                            var fNoteTime:Float = Math.round(getTimeFromY(firstNote.y) / Conductor.stepCrochet) * Conductor.stepCrochet;
+                        
+                            var fNoteOffset:Float = firstNote.strumTime - fNoteTime;
+                            var timeOffset:Float = (note == firstNote ? 0 : (note.strumTime - fNoteOffset - fNoteTime));
+                            final nTime:Float = fNoteTime + timeOffset;
+                            final nData:Int = Math.floor((note.x - grid.x) / grid_size) % 8;
+                            final nHold:Float = note.holdLength;
+                            final nType:String = note.noteType;
+                            final nArgs:Array<String> = note.noteArgs;
+                            var data:Array<Dynamic> = [nTime, nData, nHold, nType, nArgs];
+                        
+                            newNotes.push(data);
+                            removeNote(note);
+                        }
+                        
+    
+                        clearSelectedNotes();
+    
+                        for (i in newNotes) {
+                            addNote(i);
+                        }
+                    }
                 }
             }
+
+            if (!control_overlap.note_adjust) {
+                if (FlxG.mouse.justPressed) {
+                    if (control_overlap.selected_notes) {
+                        // Open note properties thing...
+                        trace("selected twice");
+                    } else {
+                        clearSelectedNotes();
+                    }
+                }
+            }
+
         }
 
         // Basic Charter Controls, Add & Remove notes, drag note sustain, and dummy note / preview note
@@ -1041,9 +1189,11 @@ class ChartEditor extends MusicBeatState {
             dummyNote.visible = !FlxG.mouse.pressed && !FlxG.mouse.pressedRight;
             
             var divY = Math.floor(FlxG.mouse.y / grid_size);
-            var divX = Math.floor(FlxG.mouse.x / grid_size) - 12; // offset.
+            var divX = Math.floor((FlxG.mouse.x - grid.x) / grid_size); // offset.
+            var event_area:Bool = divX > 7;
+            var player_area:Bool = divX > 3;
             
-            var gridXOffset = divX > 3 ? separator_width : 0;
+            var gridXOffset = (event_area ? separator_width*2 : (player_area ? separator_width : 0));
             var nX:Float = grid.x + gridXOffset + divX * grid_size;
             
             dummyNote.x = nX;
@@ -1053,22 +1203,22 @@ class ChartEditor extends MusicBeatState {
             else
                 dummyNote.y = divY * grid_size;
             
-            dummyNote.noteData = divX % 4;
+            dummyNote.animData = dummyNote.noteData = divX % 4;
 
             /**
              * No note hovered: Add a new note
              * Note hovered: set as selected
              * clicked on that selected note: Open note properties window
              */
-            if (FlxG.mouse.justPressed){
-                var mouseHoveredNote:Bool = false;
+            control_overlap.grid_empty_space = false;
+            if (FlxG.mouse.justPressed && !control_overlap.selected_notes){
                 for (n in rendered_notes.members){
                     if (!FlxG.mouse.overlaps(n)) continue;
-                    mouseHoveredNote = true;
+                    control_overlap.grid_empty_space = true;
                     n.isSelected = true;
                     break;
                 }
-                if (!mouseHoveredNote){
+                if (!control_overlap.grid_empty_space){
                     addNote([getTimeFromY(dummyNote.y) ,divX%8, 0 ,_spawn_noteType, _spawn_noteArgs]);
                 }
             }
@@ -1080,46 +1230,65 @@ class ChartEditor extends MusicBeatState {
                 }
             }
 
-            if (FlxG.mouse.pressed && recently_added_note != null && new_noteObject != null){
-                var supposedlyY:Float = Math.floor(getYFromTime(recently_added_note[0]));
-                recently_added_note[2] = Math.max(Conductor.stepCrochet * Math.floor(((FlxG.mouse.y - supposedlyY)) / grid_size),0);
-                if (recently_added_note[2] != last_hold_addition) {
-                    new_noteObject.holdLength = last_hold_addition = recently_added_note[2];
-                }
+            if (!control_overlap.selected_notes) {
+                if (FlxG.mouse.pressed && recently_added_note != null && new_noteObject != null){
+                    var supposedlyY:Float = Math.floor(getYFromTime(recently_added_note[0]));
+                    recently_added_note[2] = Math.max(Conductor.stepCrochet * Math.floor(((FlxG.mouse.y - supposedlyY)) / grid_size),0);
+                    if (recently_added_note[2] != last_hold_addition) {
+                        new_noteObject.holdLength = last_hold_addition = recently_added_note[2];
+                    }
+                } else{
+                    last_hold_addition = 0;
+                } 
             } else{
                 last_hold_addition = 0;
+                recently_added_note = null;
+                new_noteObject = null;
             } 
         } else {
             dummyNote.visible = false;
         }
 
-        if (FlxG.mouse.pressed) {
-            if (Math.abs(dragPosStart.x - FlxG.mouse.x) > 5 && Math.abs(dragPosStart.x - FlxG.mouse.x) > 5) selection_mode = true;
+        // Note selection thing (lmb drag) //
+        if (!control_overlap.note_adjust) {
+            if (FlxG.mouse.pressed) {
+                if (Math.abs(dragPosStart.x - FlxG.mouse.x) > 5 && Math.abs(dragPosStart.y - FlxG.mouse.y) > 5)
+                    control_overlap.block_select = true;
+            } else {
+                control_overlap.block_select = false;
+            }
+            
+            if (control_overlap.block_select) {
+                var mousePos = {
+                    x: FlxG.mouse.x,
+                    y: FlxG.mouse.y
+                };
+            
+                groupSelSprite.visible = true;
+                groupSelSprite.setPosition(
+                    Math.min(mousePos.x, dragPosStart.x),
+                    Math.min(mousePos.y, dragPosStart.y)
+                );
+            
+                if (FlxG.mouse.justMoved) {
+                    groupSelSprite.resize(
+                        Std.int(Math.abs(mousePos.x - dragPosStart.x)),
+                        Std.int(Math.abs(mousePos.y - dragPosStart.y))
+                    );
+                }
+            
+                for (note in rendered_notes.members) {
+                    if (note != null) note.isSelected = groupSelSprite.overlaps(note);
+                }
+            } else {
+                groupSelSprite.visible = false;
+            }        
         } else {
-            dragPosStart.set(FlxG.mouse.x,FlxG.mouse.y);
-            selection_mode = false;
+            control_overlap.block_select = false;
         }
 
-        if (selection_mode) {
-            var mousePos = {
-                x: FlxG.mouse.x,
-                y: FlxG.mouse.y
-            };
-            groupSelSprite.visible = true;
-            groupSelSprite.setPosition(Math.min(mousePos.x, dragPosStart.x),Math.min(mousePos.y, dragPosStart.y));
 
-			if (FlxG.mouse.justMoved)
-				groupSelSprite.resize(Std.int(Math.abs(mousePos.x - dragPosStart.x)),Std.int(Math.abs(mousePos.y - dragPosStart.y)));		
-
-			for (note in rendered_notes.members){
-				if (note == null) continue;
-				note.isSelected = groupSelSprite.overlaps(note);
-			}
-        } else {
-            groupSelSprite.visible = false;
-        }
-
-        // Charter Dragging Controls
+        // Charter Dragging Controls //
         if (FlxG.mouse.justPressedMiddle){
             FlxG.sound.music.pause();
             playerVoice.pause();
@@ -1137,14 +1306,19 @@ class ChartEditor extends MusicBeatState {
         if (FlxG.mouse.justReleasedMiddle)
             setAllSoundTime(getTimeFromY(hitLine.y));
 
+        // Selected Note List update //
         currentSelectedNotes = [];
         for (i in rendered_notes.members){
             if (!i.isSelected) continue;
             currentSelectedNotes.push(i);
         }
+
+        // Tooltip thing // 
         updateTooltip(elapsed);
     }
 
+    var showTimer:Float = 0;
+    var hoveredSomething:Bool = false;
     function updateTooltip(elapsed:Float) {
         var tooltip_objects:Array<Dynamic> = []; // [Object, Title, Description]
     
@@ -1158,6 +1332,13 @@ class ChartEditor extends MusicBeatState {
                 "\nTime: " + note.strumTime +
                 (haveArgs ? "\nArguments: " + note.noteArgs : "") +
                 (isSustain ? "\nSustain Length: " + note.holdLength : "")
+            ]);
+        });
+
+        rendered_events.forEachAlive((event:ChartEvent) -> {
+            tooltip_objects.push([event, event.EVENT_NAME,
+                "Value 1: " + event.value1
+                +"\nValue 2: " + event.value2
             ]);
         });
     
@@ -1208,7 +1389,7 @@ class ChartEditor extends MusicBeatState {
 
         plIcon.scale.set(sizeUpdate, sizeUpdate);
         plIcon.updateHitbox();
-        plIcon.setPosition((grid.x + (grid_size * 4)) + (150 / 2) + ((150 / 2) * plIcon.scale.x) + 40, 145);
+        plIcon.setPosition((grid.x + (grid_size*4)) + (150 / 2) + ((150 / 2) * plIcon.scale.x) + 40, 145);
         updateHeads();
     }
 
@@ -1264,13 +1445,22 @@ class ChartEditor extends MusicBeatState {
 
     function loadNotes(){
         for (i in 0...15) rendered_notes.add(new ChartNote()).kill();
+        for (i in 0...15) rendered_events.add(new ChartEvent(0,0,true)).kill();
 
-        //dumb code but ehhh
+        // Notes
         for (i in getNoteListFromMeasure(0)){
-            addNote(i);
+            addNote(i, true);
         }
         for (i in getNoteListFromMeasure((Conductor.crochet*Conductor.time_signature[0]))){
-            addNote(i);
+            addNote(i, true);
+        }
+
+        // Events
+        for (i in getEventListFromMeasure(0)){
+            addEvent(i, true);
+        }
+        for (i in getEventListFromMeasure((Conductor.crochet*Conductor.time_signature[0]))){
+            addEvent(i, true);
         }
     }
 
@@ -1296,6 +1486,20 @@ class ChartEditor extends MusicBeatState {
         }
     }
 
+    function addEvent(data:Array<Dynamic>, ?onlyVisual:Bool = false) {
+        if (data == null) return;
+        if (!onlyVisual) {
+            chart.events.push(data);
+        }
+
+        var gridXOffset = data[1] > 3 ? (ChartEditor.grid_size * 4) + separator_width : 0;
+        var nX:Float = grid.x + gridXOffset + (grid_size * (data[1] % 4));
+        var n:ChartEvent = rendered_events.recycle(ChartEvent,()->{return new ChartEvent(0,0,true);});
+        n.prepare(data);
+        n.setPosition(nX, getYFromTime(n.time));
+        rendered_events.add(n);
+    }
+
     function removeNote(note:ChartNote){
         if (note == null) return;
         var rem:Array<Dynamic> = getDataFromNote(note);
@@ -1306,6 +1510,7 @@ class ChartEditor extends MusicBeatState {
             return;
         }
         chart.notes.remove(rem);
+        note.destroy();
         rendered_notes.remove(note,true);
     }
 
@@ -1325,6 +1530,18 @@ class ChartEditor extends MusicBeatState {
                 getThis.push(i);
             }
 
+        }
+        return getThis;
+    }
+
+    function getEventListFromMeasure(time:Float):Array<Dynamic> {
+        var getThis:Array<Dynamic> = [];
+        for (i in chart.events){
+            var startPoint:Float = time;
+            var endPoint:Float = startPoint + (Conductor.crochet*Conductor.time_signature[0]);
+            if (i[2] >= startPoint && i[2] <= endPoint) {
+                getThis.push(i);
+            }
         }
         return getThis;
     }

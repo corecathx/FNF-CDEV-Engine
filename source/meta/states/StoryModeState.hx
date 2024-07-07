@@ -242,14 +242,15 @@ class StoryModeState extends MusicBeatState {
                 
                     for (track in file.data.tracks) {
                         Paths.currentMod = file.mod;
+                        track = track.toLowerCase().replace(" " , "-"); // dumbass
                         var chartPath:String = '$track/';
                         var trackPath:String = '$track-$diffStr';
                 
                         var paths:Array<String> = [
                             Paths.modCdc(chartPath + trackPath),
                             Paths.cdc(chartPath + trackPath),
-                            Paths.modCdc(chartPath + track),
-                            Paths.cdc(chartPath + track)
+                            Paths.mod_legacy_json(chartPath + track),
+                            Paths.legacy_json(chartPath + track)
                         ];
                 
                         var foundNothing:Bool = true;
@@ -260,9 +261,8 @@ class StoryModeState extends MusicBeatState {
                             }
                         }
                 
-                        if (foundNothing) {
+                        if (foundNothing)
                             missingSongs.push(chartPath + trackPath);
-                        }
                     }
                 
                     if (missingSongs.length > 0) {

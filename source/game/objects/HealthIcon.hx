@@ -21,6 +21,11 @@ class HealthIcon extends FlxSprite
 	private var isPlayer:Bool = false;
 	public var hasWinningIcon:Bool = false;
 
+	/**
+	 * Disable this if you don't want `this` HealthIcon zoom on beat.
+	 */
+	public var beatAnim:Bool = true;
+
 	var first_x:Float = 0;
 	var first_y:Float = 0;
 	public var add_y:Float = 0;

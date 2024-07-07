@@ -194,7 +194,7 @@ class InstallModState extends meta.states.MusicBeatState
 		enable_all.resize(Std.int(listBox.nWidth/2)-5,20);
 		add(enable_all);
 
-		var disable_all:FlxUIButton = new FlxUIButton(enable_all.x+enable_all.width+15,enable_all.y, "Delete All", ()->{
+		var disable_all:FlxUIButton = new FlxUIButton(enable_all.x+enable_all.width+15,enable_all.y, "Disable All", ()->{
 			resetMods();
 		},true, false, 0xffbd0000);
 		disable_all.resize(Std.int(listBox.nWidth/2)-10,20);

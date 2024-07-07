@@ -1,31 +1,10 @@
 package game.objects;
 
-import lime.app.Application;
-import openfl.geom.Point;
-import openfl.geom.Rectangle;
-import flixel.util.FlxAxes;
-import flixel.addons.text.FlxTypeText;
-import haxe.Json;
-import flixel.util.FlxTimer;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.tweens.FlxTween;
-import flixel.tweens.FlxEase;
-import flixel.sound.FlxSound;
-import game.cdev.script.ScriptSupport;
-import openfl.Assets;
-import flixel.system.FlxAssets;
-import meta.modding.ModPaths;
-import flixel.FlxG;
+import meta.modding.chart_editor.ChartEditor;
 import openfl.display.BitmapData;
-import meta.states.PlayState;
-import haxe.io.Path;
+import flixel.graphics.FlxGraphic;
 import game.cdev.script.HScript;
-import game.cdev.CDevConfig;
-import flixel.math.FlxMath;
-import flixel.util.FlxColor;
-import flixel.text.FlxText;
 import flixel.FlxSprite;
-import flixel.group.FlxSpriteGroup;
 
 #if sys
 import sys.io.File;
@@ -34,24 +13,9 @@ import sys.FileSystem;
 
 using StringTools;
 
-typedef SongEvent =
-{
-	var name:String; // dumb
-}
-
 class ChartEvent extends FlxSprite
 {
-	public var EVENT_NAME:String = '';
-	public var time:Float = 0;
-	public var data:Int = 0;
-
-	public var value1:String = '';
-	public var value2:String = '';
-
-	public var script:HScript = null;
-	public var mod:String = '';
-
-	// put your codes here incase you want to hardcode your song events
+	// Put your codes here incase you want to hardcode your song events
 	public static var builtInEvents:Array<Dynamic> = [
 		[
 			"Change Camera Focus",
@@ -91,13 +55,46 @@ class ChartEvent extends FlxSprite
 		]
 	];
 
+	public var EVENT_NAME:String = '';
+	public var time:Float = 0;
+	public var data:Int = 0;
+
+	public var value1:String = '';
+	public var value2:String = '';
+
+	public var mod:String = '';
+
+	var chartMode:Bool = false;
+
 	public function new(strumTime:Float, noteData:Int, ?charting:Bool = false)
 	{
-		this.time = strumTime;
-		this.data = noteData;
 		super(x, y);
-		if (charting)
-			loadGraphic(Paths.image('eventIcon', "shared"));
+		time = strumTime;
+		data = noteData;
+		chartMode = charting;
+	}
+
+	public function prepare(info:Array<Dynamic>) {
+		if (info == null) {
+			Log.warn("Initializing ChartEvent object with null data, what??");
+			return;
+		}
+		EVENT_NAME = info[0];
+		data = info[1];
+		time = info[2];
+		value1 = info[3];
+		value2 = info[4];
+
+		if (chartMode){
+			var graphicy = Paths.image("ui/event/"+EVENT_NAME, "shared");
+			if (graphicy == null) 
+				graphicy = Paths.image("ui/event/Default", "shared");
+
+			loadGraphic(graphicy);
+			setGraphicSize(ChartEditor.grid_size,ChartEditor.grid_size);
+			updateHitbox();
+		}
+
 	}
 
 	public static function getEventNames():Array<String>

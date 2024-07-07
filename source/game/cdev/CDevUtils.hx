@@ -74,7 +74,6 @@ class CDevUtils
 	public final CHART_TEMPLATE:SwagSong = {
 		song: 'Your Song',
 		notes: [],
-		songEvents: [],
 		bpm: 150,
 		needsVoices: true,
 		player1: 'bf',
@@ -111,7 +110,7 @@ class CDevUtils
 	 */
 	public var RPC_TEMPLATE:DiscordJson = {
 		clientID: CDevConfig.RPC_ID,
-		imageKey: 'icon',
+		imageKey: 'icon17',
 		imageTxt: 'CDEV Engine v' + CDevConfig.engineVersion
 	};
 
@@ -650,9 +649,7 @@ class CDevUtils
 
 			for (j in i.sectionNotes) {
 				if (i.mustHitSection) { //swap the section if it's a player section.
-					var note = j;
-					note[1] = (note[1] + 4) % 8;
-					j = note;
+					j[1] = (j[1] + 4) % 8;
 				}
 				if (i.p1AltAnim || i.altAnim) 
 					j[3] = "Alt Anim";
