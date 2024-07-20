@@ -285,9 +285,15 @@ class FlxSound extends FlxBasic
 	{
 		if (!playing)
 			return;
-			
-		_time = _channel.position;
 		
+		// Testings
+		//_time += elapsed*1000;
+
+		//if (Math.abs(_channel.position-_time) > 100) { //just in case it went terribly offsynced
+			_time = _channel.position;
+			//_time = FlxMath.lerp(_channel.position,_time,1-(elapsed*20));
+		//}
+
 		var radialMultiplier:Float = 1.0;
 		
 		// Distance-based volume control

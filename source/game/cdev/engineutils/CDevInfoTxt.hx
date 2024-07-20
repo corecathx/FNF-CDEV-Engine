@@ -109,6 +109,7 @@ class CDevInfoTxt extends TextField
 	public function getConductor():String {
 		var con:String = "// Conductor //"
 			+ '\n- Song Position : ${Conductor.songPosition}'
+            + '\n- FlxSound Time : ${(FlxG.sound.music == null ? 0 : FlxG.sound.music.time)}'
 			+ '\n- Beats         : ${Conductor.curBeat}'
             + '\n- Steps         : ${Conductor.curStep}'
             + '\n- BPM           : ${Conductor.bpm}';

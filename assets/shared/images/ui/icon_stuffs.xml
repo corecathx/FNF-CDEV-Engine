@@ -2,15 +2,15 @@
 <TextureAtlas imagePath="icon_stuffs.png">
 	<!-- Created with Adobe Animate version 21.0.6.41649 -->
 	<!-- http://www.adobe.com/products/animate.html -->
-	<SubTexture name="burg0000" x="145" y="92" width="19" height="19"/>
-	<SubTexture name="edit0000" x="41" y="63" width="17" height="27"/>
-	<SubTexture name="file0000" x="110" y="61" width="25" height="25"/>
-	<SubTexture name="help0000" x="10" y="63" width="21" height="33"/>
+	<SubTexture name="burg0000" x="10" y="94" width="19" height="19"/>
+	<SubTexture name="edit0000" x="45" y="63" width="17" height="27"/>
+	<SubTexture name="song0000" x="110" y="61" width="27" height="26"/>
+	<SubTexture name="help0000" x="147" y="61" width="21" height="33"/>
 	<SubTexture name="ic_archive_mod0000" x="73" y="10" width="53" height="41"/>
 	<SubTexture name="ic_mod_active0000" x="181" y="53" width="33" height="33"/>
 	<SubTexture name="ic_mod_disabled0000" x="181" y="10" width="35" height="33"/>
 	<SubTexture name="ic_open_explorer0000" x="10" y="10" width="53" height="43"/>
 	<SubTexture name="ic_remove_mod0000" x="136" y="10" width="35" height="41"/>
 	<SubTexture name="playtest0000" x="73" y="61" width="27" height="29"/>
-	<SubTexture name="view0000" x="145" y="61" width="25" height="21"/>
+	<SubTexture name="view0000" x="10" y="63" width="25" height="21"/>
 </TextureAtlas>

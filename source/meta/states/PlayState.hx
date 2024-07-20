@@ -1139,6 +1139,74 @@ class PlayState extends MusicBeatState
 		{
 			heldKeys.set(e.keyCode, true);
 			setInputStatus(true, e.keyCode);
+			doNoteCheck();
+		}
+	}
+
+	function doNoteCheck() {
+		if (inCutscene) return;
+		if (!pressArray.contains(true) || !generatedMusic) return;
+
+		playingLeftSide ? dad.holdTimer = 0 : boyfriend.holdTimer = 0;
+
+		var possibleNotes:Array<Note> = [];
+		var directions:Array<Bool> = [false, false, false, false];
+		
+		// hmm
+		notes.forEachAlive((note:Note) -> {
+			if (!note.canBeHit || !note.mustPress) return;
+			if (note.isSustainNote && holdArray[note.noteData]) {
+				if (Conductor.songPosition+(Conductor.stepCrochet/2)>note.strumTime) 
+					goodNoteHit(note);
+				return;
+			}
+			if (note.isSustainNote || note.tooLate || note.wasGoodHit) return;
+			if (directions[note.noteData]) {
+				for (pNote in possibleNotes) {
+					if (pNote.noteData != note.noteData) continue;
+					if (Math.abs(note.strumTime - pNote.strumTime) < 10) {
+						note.kill();
+						notes.remove(note, true);
+						note.destroy();
+						return;
+					} else if (note.strumTime < pNote.strumTime) {
+						possibleNotes.remove(pNote);
+						possibleNotes.push(note);
+						return;
+					}
+				}
+			} else {
+				possibleNotes.push(note);
+				directions[note.noteData] = true;
+			}
+		});
+		
+		possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+
+		var blockNote:Bool = false;
+
+		for (index => press in pressArray) if (press && !directions[index]) blockNote = true;
+		
+		if (possibleNotes.length > 0 && !blockNote) {
+			if (!CDevConfig.saveData.ghost) {
+				for (i in 0...pressArray.length) {
+					if (pressArray[i] && !directions[i]) noteMiss(i);
+				}
+			}
+			for (note in possibleNotes) {
+				if (pressArray[note.noteData]) goodNoteHit(note);
+			}
+		} else if (!CDevConfig.saveData.ghost) {
+			for (i in 0...pressArray.length) {
+				if (pressArray[i]) noteMiss(i);
+			}
+		}
+		
+		if (possibleNotes.length > 0 && !blockNote && CDevConfig.saveData.ghost && !CDevConfig.saveData.botplay) {
+			if (pressedNotes > 4)
+				noteMiss(0);
+			else
+				pressedNotes++;
 		}
 	}
 
@@ -2354,7 +2422,6 @@ class PlayState extends MusicBeatState
 	private var paused:Bool = false;
 	var startedCountdown:Bool = false;
 	var canPause:Bool = false;
-	var crap:Float = 0;
 	var bgL:Bool = false;
 	var songStarted = false;
 
@@ -2472,7 +2539,7 @@ class PlayState extends MusicBeatState
 		{
 			//Conductor.songPosition = FlxG.sound.music.time;
 			Conductor.songPosition += (FlxG.elapsed * 1000) * songSpeed;
-			// Conductor.songPosition = FlxG.sound.music.time;
+			//Conductor.songPosition = FlxG.sound.music.time;
 			Conductor.rawTime = FlxG.sound.music.time;
 			if (!paused)
 			{
@@ -2699,13 +2766,9 @@ class PlayState extends MusicBeatState
 		botplayTxt.screenCenter(X);
 		botplayTxt.alpha = 0;
 
-		if (SONG != null && songStarted && FlxG.sound.music.playing)
-		{
+		if (SONG != null && songStarted && FlxG.sound.music.playing) {
 			if (CDevConfig.saveData.botplay)
-			{
-				crap += SONG.info.bpm * elapsed;
-				botplayTxt.alpha = Math.abs(Math.sin((Conductor.songPosition / 1000) * (Conductor.bpm / 60)));
-			}
+				botplayTxt.alpha = 0.5 + (Math.sin((Conductor.songPosition*2)/Conductor.crochet)*0.5);
 		}
 
 		if (CDevConfig.saveData.botplay)
@@ -3370,7 +3433,7 @@ class PlayState extends MusicBeatState
 			// Y position based on time difference
 			if (daNote.followY)
 			{
-				var noteDiff:Float = Conductor.songPosition - daNote.strumTime;
+				var noteDiff:Float = Conductor.songPosition - (daNote.strumTime);
 				var noteScroll:Float = strum.noteScroll - strum.noteScroll * 2; // used for up & down scroll
 				var noteSpeed:Float = FlxMath.roundDecimal(scrSpd == 1 ? SONG.info.speed * noteScroll : scrSpd * noteScroll, 2) * 0.45; // note speed
 				daNote.y = strum.y + (noteDiff * noteSpeed);
@@ -3820,6 +3883,7 @@ class PlayState extends MusicBeatState
 
 	function songEventHandler()
 	{
+		if (FlxG.sound.music == null) return;
 		for (i in 0...eventList.length)
 		{
 			var daEvent:ChartEvent = eventList[i];
@@ -4111,71 +4175,8 @@ class PlayState extends MusicBeatState
 					goodNoteHit(daNote);
 			});
 		}
-	
-		if (pressArray.contains(true) && generatedMusic) {
-			playingLeftSide ? dad.holdTimer = 0 : boyfriend.holdTimer = 0;
-	
-			var possibleNotes:Array<Note> = [];
-			var directions:Array<Bool> = [false, false, false, false];
-			
-			// hmm
-			notes.forEachAlive((note:Note) -> {
-				if (!note.canBeHit || !note.mustPress) return;
-				if (note.isSustainNote && holdArray[note.noteData]) {
-					if (Conductor.songPosition+(Conductor.stepCrochet/2)>note.strumTime) 
-						goodNoteHit(note);
-					return;
-				}
-				if (note.isSustainNote || note.tooLate || note.wasGoodHit) return;
-				if (directions[note.noteData]) {
-					for (pNote in possibleNotes) {
-						if (pNote.noteData != note.noteData) continue;
-						if (Math.abs(note.strumTime - pNote.strumTime) < 10) {
-							note.kill();
-							notes.remove(note, true);
-							note.destroy();
-							return;
-						} else if (note.strumTime < pNote.strumTime) {
-							possibleNotes.remove(pNote);
-							possibleNotes.push(note);
-							return;
-						}
-					}
-				} else {
-					possibleNotes.push(note);
-					directions[note.noteData] = true;
-				}
-			});
-			
-			possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
-	
-			var blockNote:Bool = false;
 
-			for (index => press in pressArray) if (press && !directions[index]) blockNote = true;
-			
-			if (possibleNotes.length > 0 && !blockNote) {
-				if (!CDevConfig.saveData.ghost) {
-					for (i in 0...pressArray.length) {
-						if (pressArray[i] && !directions[i]) noteMiss(i);
-					}
-				}
-				for (note in possibleNotes) {
-					if (pressArray[note.noteData]) goodNoteHit(note);
-				}
-			} else if (!CDevConfig.saveData.ghost) {
-				for (i in 0...pressArray.length) {
-					if (pressArray[i]) noteMiss(i);
-				}
-			}
-			
-			if (possibleNotes.length > 0 && !blockNote && CDevConfig.saveData.ghost && !CDevConfig.saveData.botplay) {
-				if (pressedNotes > 4)
-					noteMiss(0);
-				else
-					pressedNotes++;
-			}
-					
-		}
+		// Press note function have been moved to `doNoteCheck()`
 	
 		if (CDevConfig.saveData.botplay) {
 			notes.forEachAlive(function(daNote:Note) {
@@ -4278,7 +4279,8 @@ class PlayState extends MusicBeatState
 			songScore -= 10;
 			accuracyScore -= 30;
 
-			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+			var snd = FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+			snd.onComplete = snd.stop;
 
 			var animToPlay:String = singAnimationNames[direction] + "miss";
 			var char:Character = (!playingLeftSide ? boyfriend : dad);

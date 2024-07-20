@@ -1,51 +1,50 @@
 package meta.modding.chart_editor;
 
-import game.objects.ChartEvent;
-import game.cdev.objects.CDevList;
-import openfl.events.IOErrorEvent;
+import haxe.Json;
+import sys.io.File;
+import sys.FileSystem;
+
 import openfl.events.Event;
+import openfl.events.IOErrorEvent;
 import openfl.net.FileReference;
-import meta.substates.StageListSubstate;
-import meta.substates.CharacterListSubstate;
+
 import flixel.ui.FlxButton;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUIAssets;
 import flixel.addons.ui.FlxUIButton;
-import game.cdev.UIDropDown;
+import flixel.addons.ui.FlxUIGroup;
+import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxInputText;
-import flixel.addons.ui.FlxUIGroup;
-import flixel.group.FlxGroup;
-import game.cdev.objects.CDevInputText;
-import flixel.addons.ui.FlxUIInputText;
-import flixel.util.FlxSort;
-import game.cdev.objects.CDevTooltip;
-import game.cdev.objects.CDevChartUI;
 import flixel.graphics.frames.FlxAtlasFrames;
-import game.objects.Note;
-import game.objects.StrumArrow;
+import flixel.group.FlxGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import haxe.Json;
-import meta.modding.char_editor.CharacterData.CharData;
-import sys.io.File;
-import sys.FileSystem;
+import flixel.group.FlxSpriteGroup;
+import flixel.util.FlxSort;
+
+import game.cdev.SongPosition;
+import game.cdev.objects.CDevChartUI;
+import game.cdev.objects.CDevInputText;
+import game.cdev.objects.CDevList;
+import game.cdev.objects.CDevTooltip;
+import game.cdev.song.CDevChart;
+import game.objects.ChartEvent;
 import game.objects.FunkinBar;
 import game.objects.HealthIcon;
-import meta.states.PlayState;
-import flixel.group.FlxSpriteGroup;
+import game.objects.Note;
+import game.objects.StrumArrow;
 import game.song.Song;
-import game.cdev.song.CDevChart;
-import game.cdev.SongPosition;
+
+import meta.modding.char_editor.CharacterData.CharData;
+import meta.states.PlayState;
+import meta.substates.CharacterListSubstate;
+import meta.substates.StageListSubstate;
 
 using StringTools;
 
-// I might add more event editing modes sooner if i got ideas lol
-enum abstract EventEditMode(Int) {
-    //var SIDEBAR = 0;
-    var HIDDEN = 0;
-    var VISIBLE = 1;
-}
-
+/**
+ * Chart Editor is a place where you could make your own Funkin Charts.
+ **/
 class ChartEditor extends MusicBeatState {
     // Public stuffs
     public static var current:ChartEditor = null;
@@ -119,8 +118,13 @@ class ChartEditor extends MusicBeatState {
     var _spawn_noteType_id:Int = 0;
     var _spawn_noteArgs:Array<String> = ["",""];
 
+    var _events:Array<Dynamic> = [];
+    var _spawn_eventName:String = "No Events Found.";
+    var _spawn_eventName_id:Int = 0;
+    var _spawn_eventArgs:Array<String> = ["",""];
+
     //// Event Editing
-    var _event_mode:EventEditMode = HIDDEN;
+    var _editingEvents:Bool = false;
 
     public function new(?fnfChart:CDevChart, ?difficulty:String){
         if (fnfChart == null) fnfChart = CDevConfig.utils.CDEV_CHART_TEMPLATE;//CDevConfig.utils.CHART_TEMPLATE;
@@ -145,7 +149,7 @@ class ChartEditor extends MusicBeatState {
         FlxG.mouse.visible = true;
         persistentUpdate = false;
 
-        loadNTList(); // Load every note type first.
+        loadLists(); // Load every note type first.
 
         loadSong(chart.info.name);
         loadUI();
@@ -156,13 +160,18 @@ class ChartEditor extends MusicBeatState {
         super.create();
     }
 
-    function loadNTList() {
+    function loadLists() {
 		_noteTypes = [];
 		for (i in Note.default_notetypes) _noteTypes.push(i);
 		for (i in Note.getNoteList()) _noteTypes.push(i);
+
+        _events = [];
+        for (i in ChartEvent.builtInEvents) _events.push(i);
+        for (event in ChartEvent.getEventNames()) {
+            _events.push([event,ChartEvent.getEventDescription(event)]);
+        }
+        trace("Lists loaded");
     }
-
-
 
     function loadSong(sogn:String){
         if (FlxG.sound.music != null)
@@ -265,8 +274,8 @@ class ChartEditor extends MusicBeatState {
         add(metronome_icon);
 
         menu_ui = new CDevChartUI(0,0, [
-            ["file", "Access file-related actions.", menu_createFileUI], 
-            ["edit", "Chart editing related actions.", menu_createEditUI], 
+            ["song", "Access chart / song data & info actions.", menu_createFileUI], 
+            ["edit", "Chart notes / events editing related actions.", menu_createEditUI], 
             ["view", "Adjust the editor's interface.", menu_createViewUI], 
             ["playtest", "Test your chart.", menu_createPlaytestUI], 
             ["help", "Keybinds / Editor controls.", menu_createHelpUI]
@@ -331,7 +340,7 @@ class ChartEditor extends MusicBeatState {
         var grp:FlxSpriteGroup = new FlxSpriteGroup();
         var font = FunkinFonts.CONSOLAS;
 
-        var text:FlxText = new FlxText(0,0,-1,"File", 18);
+        var text:FlxText = new FlxText(0,0,-1,"Song", 18);
         text.font = FunkinFonts.CONSOLAS;
         grp.add(text);
 
@@ -599,67 +608,110 @@ class ChartEditor extends MusicBeatState {
     // Arguments 2
     var label_notearg2:FlxText;
     var input_notearg2:CDevInputText;
+    // Event Mode: Description
+    var label_eventDesc:FlxText;
+    // Switching
+    var switch_button:FlxUIButton;
     function menu_createEditUI(parent:FlxSpriteGroup){
         var grp:FlxSpriteGroup = new FlxSpriteGroup();
         var font = FunkinFonts.CONSOLAS;
 
-        // # HEADER # //
-        var text:FlxText = new FlxText(0,0,-1,"Edit", 18);
-        text.font = FunkinFonts.CONSOLAS;
-        grp.add(text);
+        var mode:String = "";
+        var nextMode:String = "";
 
-        // # NOTE STUFFS # //
-        var text2:FlxText = new FlxText(text.x,text.y+text.height+10,-1,"Note Info", 16);
-        text2.font = FunkinFonts.CONSOLAS;
-        grp.add(text2);
+        function _subcreateUI() {
+            mode = _editingEvents ? "Event" : "Note";
+            nextMode = _editingEvents ? "Note" : "Event";
+            
+            // # HEADER # //
+            var text:FlxText = new FlxText(0,0,-1,"Edit", 18);
+            text.font = FunkinFonts.CONSOLAS;
+            grp.add(text);
 
-        // Note Type List
-        drop_noteTypes = new CDevList(text2.x, text2.y+text2.height + 25, 360 - 47,30,_noteTypes,(nNote:String)->{
-            dummyNote.noteType = _spawn_noteType = nNote;
-            _spawn_noteType_id = _spawn_noteType.indexOf(nNote);
-        });
-        drop_noteTypes.bgLabel.text = _spawn_noteType;
+            // # NOTE STUFFS # //
+            var text2:FlxText = new FlxText(text.x,text.y+text.height+10,-1,mode+" Info", 16);
+            text2.font = FunkinFonts.CONSOLAS;
+            grp.add(text2);
 
-        var tempLabel:FlxText = new FlxText(drop_noteTypes.x, drop_noteTypes.y - 18, -1, "Note Type", 14);
-        tempLabel.font = font;
-        grp.add(tempLabel);
+            // Note Type List
+            var nameList:Array<String> = _noteTypes;
+            if (_editingEvents) 
+                nameList = [ for (e in _events) e[0] ];
+            drop_noteTypes = new CDevList(text2.x, text2.y+text2.height + 25, 360 - 47,30,nameList,(name:String)->{
+                if (!_editingEvents) {
+                    dummyNote.noteType = _spawn_noteType = name;
+                    _spawn_noteType_id = nameList.indexOf(name);
+                } else {
+                    _spawn_eventName = name;   
+                    _spawn_eventName_id = nameList.indexOf(name);   
+                    label_eventDesc.text = _events[_spawn_eventName_id][1];    
+                }
+            });
+            drop_noteTypes.bgLabel.text = !_editingEvents ? _spawn_noteType : _spawn_eventName;
 
-        // Arguments
-        var tempLabel:FlxText = new FlxText(drop_noteTypes.x, drop_noteTypes.y+drop_noteTypes.sizes.height + 10, -1, "Arguments", 14);
-        tempLabel.font = font;
-        grp.add(tempLabel);
+            var tempLabel:FlxText = new FlxText(drop_noteTypes.x, drop_noteTypes.y - 18, -1, mode+" Type", 14);
+            tempLabel.font = font;
+            grp.add(tempLabel);
 
-        // Arg1
-        label_notearg1 = new FlxText(tempLabel.x,tempLabel.y + tempLabel.height + 2,100,"Value 1",14);
-        label_notearg1.font = font;
-        grp.add(label_notearg1);
+            // Arguments
+            var tempLabel:FlxText = new FlxText(drop_noteTypes.x, drop_noteTypes.y+drop_noteTypes.sizes.height + 10, -1, "Arguments", 14);
+            tempLabel.font = font;
+            grp.add(tempLabel);
 
-        input_notearg1 = new CDevInputText(0, label_notearg1.y+label_notearg1.height+2, 360 - 47, _spawn_noteArgs[0], 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-        input_notearg1.font = font;
-        input_notearg1.size = label_notearg1.size;
-        input_notearg1.onTextChanged = (nText:String) -> {
-            _spawn_noteArgs[0] = nText;
+            // Arg1
+            label_notearg1 = new FlxText(tempLabel.x,tempLabel.y + tempLabel.height + 2,100,"Value 1",14);
+            label_notearg1.font = font;
+            grp.add(label_notearg1);
+
+            input_notearg1 = new CDevInputText(0, label_notearg1.y+label_notearg1.height+2, 360 - 47, _spawn_noteArgs[0], 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
+            input_notearg1.font = font;
+            input_notearg1.size = label_notearg1.size;
+            input_notearg1.onTextChanged = (nText:String) -> {
+                _spawn_noteArgs[0] = nText;
+            }
+            input_notearg1.onFocus = onBoxChangedFocus;
+            grp.add(input_notearg1);
+    
+            // Arg2
+            label_notearg2 = new FlxText(tempLabel.x,input_notearg1.y + input_notearg1.height + 2,100,"Value 2",14);
+            label_notearg2.font = font;
+            grp.add(label_notearg2);
+
+            input_notearg2 = new CDevInputText(0, label_notearg2.y+label_notearg2.height+2, 360 - 47, _spawn_noteArgs[1], 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
+            input_notearg2.font = font;
+            input_notearg2.size = label_notearg2.size;
+            input_notearg2.onTextChanged = (nText:String) -> {
+                _spawn_noteArgs[1] = nText;
+            }
+            input_notearg2.onFocus = onBoxChangedFocus;
+            grp.add(input_notearg2);
+
+            label_eventDesc = new FlxText(input_notearg2.x,input_notearg2.y + input_notearg2.height + 10,360-47,_editingEvents?"Event Description will appear here.":"",12);
+            label_eventDesc.font = font;
+            grp.add(label_eventDesc);
+            label_eventDesc.text = _editingEvents?_events[_spawn_eventName_id][1]:"";
+
+            // Switch mode
+            switch_button = new FlxUIButton(text.x, 480 - 47, "Switch to "+nextMode+" editing mode.", function()
+            {
+                FlxG.sound.play(Paths.sound("clickText", "shared"), 0.7);
+                _editingEvents = !_editingEvents;
+                parent.remove(grp,true);
+                grp.destroy();
+                grp = new FlxSpriteGroup();
+                trace("recreating ui");
+                _subcreateUI();
+            }, true, false, FlxColor.fromRGB(70,70,70));
+            switch_button.resize(360-47, 20);
+            switch_button.label.size = 14;
+            switch_button.label.font = font;
+            switch_button.label.color = FlxColor.WHITE;
+            grp.add(switch_button);
+            grp.add(drop_noteTypes);
+            parent.add(grp);
         }
-        input_notearg1.onFocus = onBoxChangedFocus;
-        grp.add(input_notearg1);
-   
-        // Arg2
-        label_notearg2 = new FlxText(tempLabel.x,input_notearg1.y + input_notearg1.height + 2,100,"Value 2",14);
-        label_notearg2.font = font;
-        grp.add(label_notearg2);
-
-        input_notearg2 = new CDevInputText(0, label_notearg2.y+label_notearg2.height+2, 360 - 47, _spawn_noteArgs[1], 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-        input_notearg2.font = font;
-        input_notearg2.size = label_notearg2.size;
-        input_notearg2.onTextChanged = (nText:String) -> {
-            _spawn_noteArgs[1] = nText;
-        }
-        input_notearg2.onFocus = onBoxChangedFocus;
-        grp.add(input_notearg2);
-
-        grp.add(drop_noteTypes);
-   
-        parent.add(grp);
+        trace("UI has created (for the first time)");
+        _subcreateUI();
     }
 
     function onBoxChangedFocus(focus:Bool) {
@@ -769,9 +821,7 @@ class ChartEditor extends MusicBeatState {
                 Conductor.songPosition = FlxG.sound.music.time;
         }
 
-        keyboardControls(elapsed);
-        infoTextUpdate();
-
+        // Post Update... updates.
         if (!FlxG.mouse.pressedMiddle){
             if (FlxG.sound.music.playing){
                 hitLine.y = getYFromTime(Conductor.songPosition);
@@ -779,18 +829,27 @@ class ChartEditor extends MusicBeatState {
                 hitLine.y = FlxMath.lerp(getYFromTime(Conductor.songPosition), hitLine.y, 1-(elapsed*15));
             }
         }
-
-        updateIconProperties();
-        metronomeLogic();
-        super.update(elapsed);
+    
+        // Controls Related Updates
+        keyboardControls(elapsed);
         mouseControls(elapsed);
-        simulateStepBeat();
+
+        // UI Updates
+        infoTextUpdate();
+        metronomeLogic();
+        updateIconProperties();
         updateFlashLogic();
+         
+        // Synchronization Thingies
+        simulateStepBeat();
+
+        // File Related Updates
         updateChartData();
-
-        eventsUpdateLogic();
-
         checkChartFile(elapsed);
+  
+        // Events Related Stuffs
+        eventsUpdateLogic();
+        super.update(elapsed);
     }
 
     function updateChartData(){
@@ -917,16 +976,30 @@ class ChartEditor extends MusicBeatState {
 
     function eventsUpdateLogic() {
         var currentStatus:String = grid.target_isPlayer ? "bf" : "dad"; //"dad";
+        var found:Bool = false;
         rendered_events.forEachAlive((event:ChartEvent)->{
+            event.alpha = 0;
+            if (_editingEvents) {
+                event.alpha = 1;
+            }
             if (event.EVENT_NAME == "Change Camera Focus") {
                 if (Conductor.songPosition > event.time) {
                     currentStatus = event.value1.toLowerCase().trim();
+                    found = true;
                     return;
                 }
             }
         });
-
         grid.changeTarget((currentStatus == "bf"));
+    }
+
+    function notesUpdateLogic() {
+        rendered_notes.forEachAlive((note:ChartNote)->{
+            note.alpha = 1;
+            if (_editingEvents) {
+                note.alpha = 0;
+            }
+        });
     }
 
     function noteSpawnLogic(){
@@ -1135,6 +1208,7 @@ class ChartEditor extends MusicBeatState {
                     
                             note.setPosition(newX, newY);
                             note.x = FlxMath.bound(note.x, grid.x, grid.x + (grid_size * 7) + separator_width);
+                            note.y = FlxMath.bound(note.y, grid.y, grid.y + grid.height);
                             note.animData = Math.floor((note.x - grid.x) / grid_size);
                         }
                     }
@@ -1150,12 +1224,9 @@ class ChartEditor extends MusicBeatState {
                         
                             var fNoteOffset:Float = firstNote.strumTime - fNoteTime;
                             var timeOffset:Float = (note == firstNote ? 0 : (note.strumTime - fNoteOffset - fNoteTime));
-                            final nTime:Float = fNoteTime + timeOffset;
-                            final nData:Int = Math.floor((note.x - grid.x) / grid_size) % 8;
-                            final nHold:Float = note.holdLength;
-                            final nType:String = note.noteType;
-                            final nArgs:Array<String> = note.noteArgs;
-                            var data:Array<Dynamic> = [nTime, nData, nHold, nType, nArgs];
+                            note.strumTime = fNoteTime + timeOffset;
+                            note.noteData = Math.floor((note.x - grid.x) / grid_size) % 8;
+                            var data:Array<Dynamic> = getNoteClone(note);
                         
                             newNotes.push(data);
                             removeNote(note);
@@ -1372,9 +1443,7 @@ class ChartEditor extends MusicBeatState {
     function clearSelectedNotes(){
         while (currentSelectedNotes.length>0){
             for (i in currentSelectedNotes){
-                if (i != null) {
-                    i.isSelected = false;
-                }
+                if (i != null) i.isSelected = false;
                 currentSelectedNotes.remove(i);
             }
         }
@@ -1464,9 +1533,9 @@ class ChartEditor extends MusicBeatState {
         }
     }
 
-    function addNote(data:Array<Dynamic>, ?onlyVisual:Bool = false) {
-        if (data == null) return;
-        if (data[1] < 0 || data[1] > 8) return;
+    function addNote(data:Array<Dynamic>, ?onlyVisual:Bool = false):ChartNote {
+        if (data == null) return null;
+        if (data[1] < 0 || data[1] > 8) return null;
         if (!onlyVisual) {
             chart.notes.push(data);
             recently_added_note = chart.notes[chart.notes.length-1];
@@ -1477,13 +1546,11 @@ class ChartEditor extends MusicBeatState {
         var n:ChartNote = rendered_notes.recycle(ChartNote);
         n.setPosition(nX, getYFromTime(data[0]));
         n.init(data, false);
-        rendered_notes.add(n);
-
         new_noteObject = n;
 
-        if (n.holdLength > 0){
-            note_sus_lengths.push(n);
-        }
+        if (n.holdLength > 0) note_sus_lengths.push(n);
+
+        return rendered_notes.add(n);
     }
 
     function addEvent(data:Array<Dynamic>, ?onlyVisual:Bool = false) {
@@ -1546,25 +1613,6 @@ class ChartEditor extends MusicBeatState {
         return getThis;
     }
 
-    inline function getMeasureFromTime(time:Float):Float {
-        return time / (Conductor.crochet*Conductor.time_signature[0]);
-    }
-
-    inline function getYFromTime(t:Float):Float {
-        return ((grid_size * 16) * ((t)/(Conductor.crochet*Conductor.time_signature[0])));
-    }
-
-    inline function getTimeFromY(y:Float):Float {
-        return (y / ((grid_size * 16) / (Conductor.crochet * Conductor.time_signature[0])));
-    }
-    
-    inline function mouseOnGrid():Bool {
-        return FlxG.mouse.x > grid.x
-        && FlxG.mouse.x < grid.x + grid.width
-        && FlxG.mouse.y > grid.y
-        && FlxG.mouse.y < grid.y + grid.height;
-    }
-
     inline function saveUsingFReference(){
         var jString:String = Json.stringify(chart, "\t");
         if (jString != null && jString.length > 0){
@@ -1582,6 +1630,13 @@ class ChartEditor extends MusicBeatState {
         } else {
             CDevPopUp.open(this, "Error", "An error occured while generating JSON data for your chart.", [{text: "OK", callback:()->{closeSubState();}}], false, true);
         }
+    }
+
+    /**
+     * Returns a note data copy from ChartNote object. 
+     */
+    function getNoteClone(note:ChartNote):Array<Dynamic> {
+        return [note.strumTime, note.noteData, note.holdLength, note.noteType, note.noteArgs];
     }
 
     function loadChartFile(sName:String) {
@@ -1728,5 +1783,39 @@ class ChartEditor extends MusicBeatState {
             l++;
         }
         return -1;
+    }
+
+    /** 
+     * Anything below this comment is just bunch of inline functions
+     * and stuffs that required for the chart editor.
+     */
+     
+    /**
+     * Converts time in milliseconds to measures.
+     * @param time Time in milliseconds.
+     * @return Number of measures.
+     */
+    inline function getMeasureFromTime(time:Float):Float {
+        return time / (Conductor.crochet * Conductor.time_signature[0]);
+    }
+
+    /**
+     * Converts time to a Y-coordinate based on the chart grid.
+     * @param t Time in milliseconds.
+     * @return Corresponding Y-coordinate.
+     */
+    inline function getYFromTime(t:Float):Float {
+        return ((grid_size * 16) * ((t) / (Conductor.crochet * Conductor.time_signature[0])));
+    }
+
+    inline function getTimeFromY(y:Float):Float {
+        return (y / ((grid_size * 16) / (Conductor.crochet * Conductor.time_signature[0])));
+    }
+    
+    inline function mouseOnGrid():Bool {
+        return FlxG.mouse.x > grid.x
+        && FlxG.mouse.x < grid.x + grid.width
+        && FlxG.mouse.y > grid.y
+        && FlxG.mouse.y < grid.y + grid.height;
     }
 }
