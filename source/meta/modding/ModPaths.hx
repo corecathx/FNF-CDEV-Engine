@@ -1,11 +1,8 @@
 package meta.modding;
 
-
-import game.system.FunkinBitmap;
 import lime.graphics.Image;
-import meta.states.PlayState;
-import openfl.utils.Assets;
-import openfl.display.Bitmap;
+import game.system.FunkinBitmap;
+import game.ImageUtils;
 import lime.utils.AssetType;
 import flixel.graphics.FlxGraphic;
 import game.Paths;
@@ -59,19 +56,14 @@ class ModPaths
 		var path:String = 'cdev-mods/$mod/images/$key.png';
 		if (FileSystem.exists(path))
 		{
-			var data:Image = Image.fromBytes(File.getBytes(path));
-			var newBitmap:BitmapData = null;
-
-			if (CDevConfig.saveData.gpuBitmap)
-			{
+			var image:Image = Image.fromFile(path);
+			var newBitmap:BitmapData = null;//BitmapData.fromFile(file);
+			if (CDevConfig.saveData.gpuBitmap) {
 				newBitmap = new FunkinBitmap(0, 0, true, 0);
-				@:privateAccess newBitmap.__fromImage(data);
+				@:privateAccess newBitmap.__fromImage(image);
+			} else {
+				newBitmap = BitmapData.fromImage(image);
 			}
-			else
-			{
-				newBitmap = BitmapData.fromImage(data);
-			}
-
 			var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
 			newGraphic.persist = true;
 			FlxG.bitmap.addGraphic(newGraphic);

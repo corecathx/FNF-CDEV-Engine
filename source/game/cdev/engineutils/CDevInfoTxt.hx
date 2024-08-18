@@ -1,5 +1,7 @@
 package game.cdev.engineutils;
 
+import openfl.utils.Assets;
+import openfl.text.Font;
 import flixel.FlxSubState;
 import openfl.display3D.Context3D;
 import flixel.FlxG;
@@ -28,7 +30,7 @@ class CDevInfoTxt extends TextField
 
 		selectable = false;
 		var mobileMulti:Float = #if mobile 1.5; #else 1; #end
-		defaultTextFormat = new TextFormat(FunkinFonts.VCR, Std.int(14*mobileMulti), inCol, false);
+		defaultTextFormat = new TextFormat(FunkinFonts.JETBRAINS, Std.int(12*mobileMulti), inCol, false);
         visible = false;
         background = true;
         backgroundColor = 0x69000000;

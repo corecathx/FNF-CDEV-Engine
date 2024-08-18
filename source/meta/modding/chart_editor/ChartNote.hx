@@ -26,6 +26,8 @@ class ChartNote extends FlxSprite {
 
     public var animData:Int = 0;
 
+    public var dontDraw:Bool = false;
+
     public function new(nX:Float = 0, nY:Float = 0)
     {
         super(nX,nY);
@@ -91,46 +93,48 @@ class ChartNote extends FlxSprite {
             bgHighlight.draw();
         }
 
-        if (!isSustain && holdLength > 0) {
-            nSustain.x = x + (width - nSustain.width) * 0.5;
-            nSustain.y = y + ChartEditor.grid_size;
-            nSustain.alpha = alpha*0.7;
-            nSustain.animation.play("hold"+Note.directions[animData%4], true);
-            nSustain.setGraphicSize(ChartEditor.grid_size/2.5, Std.int(ChartEditor.grid_size*((holdLength-(Conductor.stepCrochet*2)) / Conductor.stepCrochet)));
-            nSustain.updateHitbox();
-            nSustain.draw();
-
-            nSustainEnd.x = nSustain.x;
-            nSustainEnd.y = Math.floor(nSustain.y + nSustain.height);
-            nSustainEnd.alpha = nSustain.alpha;
-            nSustainEnd.animation.play("end"+Note.directions[animData%4], true);
-            nSustainEnd.setGraphicSize(ChartEditor.grid_size/2.5, Std.int(ChartEditor.grid_size/1.8));
-            nSustainEnd.updateHitbox();
-            nSustainEnd.draw();
-        }
-
-        if (!isSustain){
-            animation.play(Note.directions[animData%4]+"anim",true);
-        }
-        super.draw();
-
-        if (!isSustain) {
-            var data:Int = ChartEditor.current.getNoteTypePos(noteType);
-            nLabelOv.text = (data != -1 ? '${data}' : "");
-            nLabelOv.y = y + (height - nLabelOv.height)*0.5;
-            nLabelOv.x = x + (width - nLabelOv.width)*0.5;
-            nLabelOv.alpha = alpha;
-            nLabelOv.draw();
-        }
-
-
-        if (!asDummyNote && isSelected){
-            bgHighlight.x = x;
-            bgHighlight.y = y+(bgHighlight.height*bgHighlight.scale.y)/2;
-            bgHighlight.alpha = alpha * 0.5;
-            bgHighlight.setGraphicSize(ChartEditor.grid_size, height+(!isSustain && holdLength>0?nSustain.height+nSustainEnd.height:0));
-            bgHighlight.color = CDevConfig.utils.CDEV_ENGINE_BLUE;
-            bgHighlight.draw();
+        if (!dontDraw) {
+            if (!isSustain && holdLength > 0) {
+                nSustain.x = x + (width - nSustain.width) * 0.5;
+                nSustain.y = y + ChartEditor.grid_size;
+                nSustain.alpha = alpha*0.7;
+                nSustain.animation.play("hold"+Note.directions[animData%4], true);
+                nSustain.setGraphicSize(ChartEditor.grid_size/2.5, Std.int(ChartEditor.grid_size*((holdLength-(Conductor.stepCrochet*2)) / Conductor.stepCrochet)));
+                nSustain.updateHitbox();
+                nSustain.draw();
+    
+                nSustainEnd.x = nSustain.x;
+                nSustainEnd.y = Math.floor(nSustain.y + nSustain.height);
+                nSustainEnd.alpha = nSustain.alpha;
+                nSustainEnd.animation.play("end"+Note.directions[animData%4], true);
+                nSustainEnd.setGraphicSize(ChartEditor.grid_size/2.5, Std.int(ChartEditor.grid_size/1.8));
+                nSustainEnd.updateHitbox();
+                nSustainEnd.draw();
+            }
+    
+            if (!isSustain){
+                animation.play(Note.directions[animData%4]+"anim",true);
+            }
+            super.draw();
+    
+            if (!isSustain) {
+                var data:Int = ChartEditor.current.getNoteTypePos(noteType);
+                nLabelOv.text = (data != -1 ? '${data}' : "");
+                nLabelOv.y = y + (height - nLabelOv.height)*0.5;
+                nLabelOv.x = x + (width - nLabelOv.width)*0.5;
+                nLabelOv.alpha = alpha;
+                nLabelOv.draw();
+            }
+    
+    
+            if (!asDummyNote && isSelected){
+                bgHighlight.x = x;
+                bgHighlight.y = y+(bgHighlight.height*bgHighlight.scale.y)/2;
+                bgHighlight.alpha = alpha * 0.5;
+                bgHighlight.setGraphicSize(ChartEditor.grid_size, height+(!isSustain && holdLength>0?nSustain.height+nSustainEnd.height:0));
+                bgHighlight.color = CDevConfig.utils.CDEV_ENGINE_BLUE;
+                bgHighlight.draw();
+            }
         }
     }
 }

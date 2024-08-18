@@ -1,13 +1,11 @@
 package game.system;
 
-import flixel.FlxG;
 import lime.graphics.Image;
 import openfl.geom.Rectangle;
 import openfl.display.BitmapData;
 import lime.graphics.cairo.CairoImageSurface;
 
-class FunkinBitmap extends BitmapData
-{
+class FunkinBitmap extends BitmapData {
 	@:noCompletion private override function __fromImage(image:#if lime Image #else Dynamic #end):Void
 	{
 		#if lime
@@ -30,21 +28,19 @@ class FunkinBitmap extends BitmapData
 			__isValid = true;
 			readable = true;
 
-			lock();
-			getTexture(FlxG.stage.context3D);
-			getSurface();
+			if(FlxG.stage.context3D != null) {
+				lock();
+				getTexture(FlxG.stage.context3D);
+				getSurface();
 
-			readable = true;
-			this.image = null;
-
-			// @:privateAccess
-			// if (FlxG.bitmap.__doNotDelete)
-			// 	MemoryUtil.clearMinor();
+				readable = true;
+				this.image = null;
+			}
 		}
 		#end
 	}
 
-	@:dox(hide) public override function getSurface():#if lime CairoImageSurface #else Dynamic #end
+	public override function getSurface():#if lime CairoImageSurface #else Dynamic #end
 	{
 		#if lime
 		if (__surface == null)

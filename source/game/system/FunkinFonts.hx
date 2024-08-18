@@ -10,4 +10,5 @@ class FunkinFonts {
     public static var VCR:String = "VCR OSD Mono";
     public static var PIXEL:String = 'Pixel Arial 11 Bold';
     public static var DIFF:String = 'Pah';
+    public static var JETBRAINS:String = "JetBrains Mono NL Bold";
 }

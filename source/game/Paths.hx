@@ -1,12 +1,12 @@
 package game;
 
+import game.system.FunkinBitmap;
 import flixel.graphics.FlxGraphic;
 import flixel.FlxG;
 import flixel.graphics.frames.FlxAtlasFrames;
 
 import lime.graphics.Image;
 
-import game.system.FunkinBitmap;
 import game.cdev.CDevMods.ModFile;
 
 import haxe.Json;
@@ -355,29 +355,19 @@ class Paths
 	// hi shadow mario.
 	static public function addCustomGraphic(key:String):FlxGraphic
 	{
-		if (FileSystem.exists(modImages(key)))
+		var file:String = modImages(key);
+		if (FileSystem.exists(file))
 		{
 			if (!customImagesLoaded.exists(key))
 			{
-				var newBitmap = null;
-				/*if (FlxG.stage.context3D != null){
-					var tempPNG:BitmapData = BitmapData.fromFile(modImages(key));
-					var tex = FlxG.stage.context3D.createTexture(tempPNG.width,tempPNG.height,BGRA, false);
-					tex.uploadFromBitmapData(tempPNG);
-					tempPNG.dispose();
-					tempPNG = null;
-					newBitmap = BitmapData.fromTexture(tex);
-				} else {
-					trace("Failed getting texture for " + key);*/
-					var data = Image.fromFile(modImages(key));
-					newBitmap = BitmapData.fromImage(data);
-					if (CDevConfig.saveData.gpuBitmap)
-					{
-						newBitmap = new FunkinBitmap(0, 0, true, 0);
-						@:privateAccess newBitmap.__fromImage(data);
-					}
-				//}
-
+				var image:Image = Image.fromFile(file);
+				var newBitmap:BitmapData = null;//BitmapData.fromFile(file);
+                if (CDevConfig.saveData.gpuBitmap) {
+                    newBitmap = new FunkinBitmap(0, 0, true, 0);
+					@:privateAccess newBitmap.__fromImage(image);
+                } else {
+                    newBitmap = BitmapData.fromImage(image);
+                }
 				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
 				newGraphic.persist = true;
 				FlxG.bitmap.addGraphic(newGraphic);

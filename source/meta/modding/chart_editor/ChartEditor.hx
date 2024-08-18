@@ -107,6 +107,8 @@ class ChartEditor extends MusicBeatState {
     ];
     var hitted_notes:Array<ChartNote> = [];
 
+    var hitted_events:Array<ChartEvent> = [];
+
     // Used by Player's interactions.
     var dummyNote:ChartNote;
     var groupSelSprite:FlxUI9SliceSprite;
@@ -667,7 +669,10 @@ class ChartEditor extends MusicBeatState {
             input_notearg1.font = font;
             input_notearg1.size = label_notearg1.size;
             input_notearg1.onTextChanged = (nText:String) -> {
-                _spawn_noteArgs[0] = nText;
+                if (_editingEvents)
+                    _spawn_eventArgs[0] = nText;
+                else
+                    _spawn_noteArgs[0] = nText;
             }
             input_notearg1.onFocus = onBoxChangedFocus;
             grp.add(input_notearg1);
@@ -681,7 +686,10 @@ class ChartEditor extends MusicBeatState {
             input_notearg2.font = font;
             input_notearg2.size = label_notearg2.size;
             input_notearg2.onTextChanged = (nText:String) -> {
-                _spawn_noteArgs[1] = nText;
+                if (_editingEvents)
+                    _spawn_eventArgs[1] = nText;
+                else
+                    _spawn_noteArgs[1] = nText;
             }
             input_notearg2.onFocus = onBoxChangedFocus;
             grp.add(input_notearg2);
@@ -692,7 +700,7 @@ class ChartEditor extends MusicBeatState {
             label_eventDesc.text = _editingEvents?_events[_spawn_eventName_id][1]:"";
 
             // Switch mode
-            switch_button = new FlxUIButton(text.x, 480 - 47, "Switch to "+nextMode+" editing mode.", function()
+            switch_button = new FlxUIButton(text.x, 480 - (47*2), "Switch to "+nextMode+" editing mode.", function()
             {
                 FlxG.sound.play(Paths.sound("clickText", "shared"), 0.7);
                 _editingEvents = !_editingEvents;
@@ -899,35 +907,63 @@ class ChartEditor extends MusicBeatState {
         metronome_icon.setPosition(grid.x - (metronome_icon.width + 20), FlxG.height - (metronome_icon.height+20));
     }
 
+    inline function _flashStrum(dataRaw:Int) {
+        (dataRaw > 3 ? plStrum : opStrum).members[dataRaw % 4].playAnim("confirm", true);
+    }
     function updateFlashLogic(){
         if (FlxG.sound.music.playing){
-            for (note in rendered_notes){
-                if (note == null) continue;
-                if (hitLine.y > note.y && !hitted_notes.contains(note)){
-                    var nData:Int = note.noteData;
-                    var curStrum:FlxTypedGroup<StrumArrow> = (nData > 3 ? plStrum : opStrum);
-                    curStrum.members[nData % 4].playAnim("confirm", true);
+            rendered_events.forEachAlive((event:ChartEvent) -> {
+                event.alpha = 0;
+                if (!_editingEvents) return;
+                    
+                event.alpha = hitted_events.contains(event) ? 0.6 : 1;
+                if (hitLine.y > event.y && !hitted_events.contains(event)){
+                    _flashStrum(event.data);
+                    hitted_events.push(event);
+                }
+            });
 
-                    note.alpha = 0.6;
+            rendered_notes.forEachAlive((note:ChartNote) -> {
+                note.alpha = 0;
+                if (_editingEvents) return;
+                    
+                note.alpha = hitted_notes.contains(note) ? 0.6 : 1;
+                if (hitLine.y > note.y && !hitted_notes.contains(note)){
+                    _flashStrum(note.noteData);
                     hitted_notes.push(note);
                 }
+            });
+
+            if (!_editingEvents) {
+                for (sus in note_sus_lengths) {
+                    if (sus == null) continue;
+                    if (Conductor.songPosition > sus.strumTime
+                        && Conductor.songPosition < sus.strumTime + sus.holdLength){
+                        flash_on_step[sus.noteData] = true;
+                    }
+                }    
             }
 
-            for (sus in note_sus_lengths) {
-                if (sus == null) continue;
-                if (Conductor.songPosition > sus.strumTime
-                    && Conductor.songPosition < sus.strumTime + sus.holdLength){
-                    flash_on_step[sus.noteData] = true;
-                }
-            }
         } else {
-            for (note in rendered_notes){
-                if (note == null) continue;
+            rendered_events.forEachAlive((event:ChartEvent) -> {
+                event.alpha = 0;
+                if (!_editingEvents) return;
+                    
+                event.alpha = hitted_events.contains(event) ? 0.6 : 1;
+                if (hitLine.y < event.y && hitted_events.contains(event)){
+                    hitted_events.remove(event);
+                }
+            });
+
+            rendered_notes.forEachAlive((note:ChartNote) -> {
+                note.alpha = 0;
+                if (_editingEvents) return;
+                    
+                note.alpha = hitted_notes.contains(note) ? 0.6 : 1;
                 if (hitLine.y < note.y && hitted_notes.contains(note)){
-                    note.alpha = 1;
                     hitted_notes.remove(note);
                 }
-            }
+            });
         }
         for (spr in 0...opStrum.members.length){
             var playerObject:StrumArrow = plStrum.members[spr];
@@ -935,7 +971,6 @@ class ChartEditor extends MusicBeatState {
             opponentObject.y = playerObject.y = hitLine.y;
             opponentObject.alpha = playerObject.alpha = (FlxG.sound.music.playing ? 1 : 0.5);
         }
-
     }
 
     var passedStep:Int = 0;
@@ -978,10 +1013,6 @@ class ChartEditor extends MusicBeatState {
         var currentStatus:String = grid.target_isPlayer ? "bf" : "dad"; //"dad";
         var found:Bool = false;
         rendered_events.forEachAlive((event:ChartEvent)->{
-            event.alpha = 0;
-            if (_editingEvents) {
-                event.alpha = 1;
-            }
             if (event.EVENT_NAME == "Change Camera Focus") {
                 if (Conductor.songPosition > event.time) {
                     currentStatus = event.value1.toLowerCase().trim();
@@ -1257,6 +1288,7 @@ class ChartEditor extends MusicBeatState {
 
         // Basic Charter Controls, Add & Remove notes, drag note sustain, and dummy note / preview note
         if (mouseOnGrid()) {
+            dummyNote.dontDraw = _editingEvents;
             dummyNote.visible = !FlxG.mouse.pressed && !FlxG.mouse.pressedRight;
             
             var divY = Math.floor(FlxG.mouse.y / grid_size);
@@ -1290,14 +1322,25 @@ class ChartEditor extends MusicBeatState {
                     break;
                 }
                 if (!control_overlap.grid_empty_space){
-                    addNote([getTimeFromY(dummyNote.y) ,divX%8, 0 ,_spawn_noteType, _spawn_noteArgs]);
+                    if (!_editingEvents) {
+                        addNote([getTimeFromY(dummyNote.y) ,divX%8, 0 ,_spawn_noteType, _spawn_noteArgs]);
+                    } else {
+                        addEvent([_spawn_eventName, divX%8, getTimeFromY(dummyNote.y), _spawn_eventArgs[0], _spawn_eventArgs[1]]);
+                    }
                 }
             }
 
             if (FlxG.mouse.pressedRight){
-                for (n in rendered_notes.members){
-                    if (!FlxG.mouse.overlaps(n)) continue;
-                    removeNote(n);
+                if (!_editingEvents) {
+                    for (n in rendered_notes.members){
+                        if (!FlxG.mouse.overlaps(n)) continue;
+                        removeNote(n);
+                    }
+                } else {
+                    for (n in rendered_events.members){
+                        if (!FlxG.mouse.overlaps(n)) continue;
+                        removeEvent(n);
+                    }
                 }
             }
 
@@ -1581,9 +1624,30 @@ class ChartEditor extends MusicBeatState {
         rendered_notes.remove(note,true);
     }
 
+    function removeEvent(event:ChartEvent){
+        if (event == null) return;
+        var rem:Array<Dynamic> = getDataFromEvent(event);
+        if (rem == null) {
+            Log.warn("Failed removing event, can't find similar event data.");
+            event.destroy();
+            rendered_events.remove(event,true);
+            return;
+        }
+        chart.events.remove(rem);
+        event.destroy();
+        rendered_events.remove(event,true);
+    }
+
     function getDataFromNote(note:ChartNote):Array<Dynamic> {
         for (n in chart.notes){
             if (n == note.rawData) return n;
+        }
+        return null;
+    }
+
+    function getDataFromEvent(event:ChartEvent):Array<Dynamic> {
+        for (e in chart.events){
+            if (e == event.rawData) return e;
         }
         return null;
     }

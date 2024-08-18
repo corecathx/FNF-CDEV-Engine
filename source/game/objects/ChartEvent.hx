@@ -64,6 +64,8 @@ class ChartEvent extends FlxSprite
 
 	public var mod:String = '';
 
+	public var rawData:Dynamic = ["",0,0,"",""];
+
 	var chartMode:Bool = false;
 
 	public function new(strumTime:Float, noteData:Int, ?charting:Bool = false)
@@ -79,6 +81,7 @@ class ChartEvent extends FlxSprite
 			Log.warn("Initializing ChartEvent object with null data, what??");
 			return;
 		}
+		rawData = info;
 		EVENT_NAME = info[0];
 		data = info[1];
 		time = info[2];
@@ -87,10 +90,13 @@ class ChartEvent extends FlxSprite
 
 		if (chartMode){
 			var graphicy = Paths.image("ui/event/"+EVENT_NAME, "shared");
-			if (graphicy == null) 
-				graphicy = Paths.image("ui/event/Default", "shared");
-
-			loadGraphic(graphicy);
+			if (graphicy is FlxGraphic && graphicy != null) {
+				loadGraphic(graphicy);
+			} else if (graphicy is String) {
+				loadGraphic(graphicy);
+			} else {
+				loadGraphic(Paths.image("ui/event/Default", "shared"));
+			}
 			setGraphicSize(ChartEditor.grid_size,ChartEditor.grid_size);
 			updateHitbox();
 		}

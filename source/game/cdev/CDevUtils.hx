@@ -758,9 +758,18 @@ class CDevUtils
 			() -> {
 				// Character Caching
 				for (chr in [PlayState.SONG.data.opponent,PlayState.SONG.data.player,PlayState.SONG.data.third_char]){
-					var tempChar:Character = new Character(0,0,chr);
-					tempChar.alpha = 0.00001;
-					characters.push(tempChar);
+					var path:String = Paths.modChar(chr);
+					if (!FileSystem.exists(path))
+						path = Paths.char(chr);
+					if (!FileSystem.exists(path))
+						path = Paths.char('bf');
+			
+					var parsedJSON = cast Json.parse(File.getContent(path));
+			
+					var spritePath:String = 'images/' + parsedJSON.spritePath + '.txt';
+					var frames = Assets.exists(Paths.getPath(spritePath, TEXT)) ?
+							 Paths.getPackerAtlas(parsedJSON.spritePath, 'shared') :
+							 Paths.getSparrowAtlas(parsedJSON.spritePath, 'shared');
 				}
 				trace("Characters loaded");
 			},

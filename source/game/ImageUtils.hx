@@ -1,5 +1,9 @@
 package game;
 
+
+import flixel.graphics.FlxGraphic;
+import sys.FileSystem;
+import openfl.display3D.textures.RectangleTexture;
 import flixel.math.FlxRect;
 import openfl.display.Sprite;
 import openfl.geom.Point;
@@ -17,6 +21,8 @@ typedef BitmapDrawThing = {
  * Helper class mainly for BitmapData stuffs
  */
 class ImageUtils {
+    public static var gpu(default, null):TextureCache = new TextureCache();
+
     /**
      * This function lets you combine your BitmapData mess to a single BitmapData.
      * @param list_bitmap idk, read BitmapDrawThing
@@ -85,5 +91,56 @@ class ImageUtils {
         clippedBitmap.copyPixels(canvas, new Rectangle(offsetX, offsetY, width, height), new Point(0, 0));
         return clippedBitmap;
     }
-    
+}
+
+@:structInit
+private class TextureCacheEntry {
+    public var texture:RectangleTexture;
+    public var bitmap:BitmapData;
+
+    public function dispose():Void {
+        if (texture != null) texture.dispose();
+        if (bitmap != null) {
+            bitmap.dispose();
+            bitmap.disposeImage();
+        }
+        texture = null;
+        bitmap = null;
+    }
+}
+
+class TextureCache {
+    public var loadedGraphics:Map<String, TextureCacheEntry> = [];
+
+    public function new():Void {}
+
+	public function cacheBitmap(file:String, ?bitmap:BitmapData = null)
+    {
+        if(bitmap == null)
+        {
+            if (FileSystem.exists(file))
+                bitmap = BitmapData.fromFile(file);
+
+            if(bitmap == null) return null;
+        }
+
+        var texEntry:TextureCacheEntry = {texture: null, bitmap: null};
+        if (CDevConfig.saveData.gpuBitmap)
+        {
+            var texture:RectangleTexture = FlxG.stage.context3D.createRectangleTexture(bitmap.width, bitmap.height, BGRA, true);
+            texture.uploadFromBitmapData(bitmap);
+            bitmap.image.data = null;
+            bitmap.dispose();
+            bitmap.disposeImage();
+            bitmap = BitmapData.fromTexture(texture);
+            
+            texEntry.texture = texture;
+        }
+        var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, false, file);
+        newGraphic.persist = true;
+        newGraphic.destroyOnNoUse = false;
+        texEntry.bitmap = bitmap;
+        loadedGraphics.set(file, texEntry);
+        return newGraphic;
+    }
 }

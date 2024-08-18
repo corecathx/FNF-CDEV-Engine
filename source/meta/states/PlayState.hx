@@ -133,7 +133,6 @@ class PlayState extends MusicBeatState
 
 	// Note object stuffs.
 	public static var notes:FlxTypedGroup<Note>;
-	public static var holds:FlxTypedGroup<Note>;
 
 	// Events object stuffs.
 	public var eventList:Array<ChartEvent> = [];
@@ -2110,11 +2109,11 @@ class PlayState extends MusicBeatState
 			eventList.push(event);
 
 			// onEventLoaded will only be called once.
-			if (!calledEvents.contains(eventName))
-			{
-				scripts.executeFunc("onEventLoaded", [event.EVENT_NAME, event.value1, event.value2]);
-				calledEvents.push(eventName);
-			}
+			//if (!calledEvents.contains(eventName))
+			//{
+			scripts.executeFunc("onEventLoaded", [event.EVENT_NAME, event.value1, event.value2]);
+			//	calledEvents.push(eventName);
+			//}
 		}
 
 		eventList.sort((a:ChartEvent, b:ChartEvent) -> FlxSort.byValues(FlxSort.ASCENDING, a.time, b.time));
@@ -3442,12 +3441,13 @@ class PlayState extends MusicBeatState
 				{
 					var distance:Float = Conductor.stepCrochet * noteSpeed;
 					var isHoldEnd:Bool = daNote.animation.curAnim.name.endsWith('holdend');
+					var tailOffset:Float = strum.noteScroll > 0 ? -1 : 1; // hmm
 					if (strum.noteScroll > 0) // Upscroll
 						daNote.y += distance * 0.5;
 					else if (!isHoldEnd)
 						daNote.y -= (distance * 0.5) + (-daNote.height);
 					else
-						daNote.y += ((distance * 1.5) - (daNote.height));
+						daNote.y += ((distance * 1.5) - (daNote.height)) + tailOffset;
 					StrumArrow.checkRects(daNote, strum);
 				}
 			}
@@ -4157,6 +4157,8 @@ class PlayState extends MusicBeatState
 		if (dad != null)
 			dad.destroy();
 
+		gf = dad = boyfriend = null;
+
 		if (stageHandler != null)
 			stageHandler.destroy();
 	}
@@ -4596,11 +4598,15 @@ class PlayState extends MusicBeatState
 	{
 		super.beatHit();
 
-		/*if (generatedMusic)
+		if (generatedMusic)
 		{
-			if (curBeat % 4 == 0)
-				notes.sort(FlxSort.byY, CDevConfig.saveData.downscroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
-		}*/
+			//if (curBeat % 4 == 0)
+				notes.sort((i, n1, n2)->{
+					if (n1.strumTime == n2.strumTime)
+						return n1.isSustainNote ? 1 : -1;
+					return FlxSort.byValues(FlxSort.DESCENDING, n1.strumTime, n2.strumTime);
+				});
+		}
 
 		if (SONG.notes[Math.floor(curStep / 16)] != null)
 		{

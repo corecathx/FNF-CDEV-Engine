@@ -37,6 +37,7 @@ class CDevConfig
 	#else
 	public static var engineVersion:String = "1.7";
 	#end
+	public static var versionLevel:Int = VersionLevel.fromString(engineVersion);
 	public static var RPC_ID:String = "947735855672475679";
 	public static var utils(default, null):CDevUtils = new CDevUtils();
 

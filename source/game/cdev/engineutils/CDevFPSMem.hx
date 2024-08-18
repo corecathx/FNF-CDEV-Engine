@@ -47,7 +47,7 @@ class CDevFPSMem extends TextField
 
 		selectable = false;
 		var mobileMulti:Float = #if mobile 1.5; #else 1; #end
-		defaultTextFormat = new TextFormat(FunkinFonts.VCR, Std.int(14*mobileMulti), inCol, false);
+		defaultTextFormat = new TextFormat(FunkinFonts.JETBRAINS, Std.int(12*mobileMulti), inCol, false);
 		text = "FPS: ";
 		times = [];
 		autoSize = LEFT;
@@ -116,6 +116,6 @@ class CDevFPSMem extends TextField
 
 	function applySizes(){
 		if ((CDevConfig.saveData.performTxt == "fps-mem" || CDevConfig.saveData.performTxt == "fps"))
-			this.setTextFormat(new TextFormat(FunkinFonts.VCR, 16, 0xFFFFFF),0,Std.string(times.length).length);
+			this.setTextFormat(new TextFormat(null, 16, 0xFFFFFF),0,Std.string(times.length).length);
 	}
 }

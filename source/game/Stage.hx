@@ -390,9 +390,9 @@ class Stage
 		Log.info("Destroying stage...");
 		for (i in play.stageGroup.members){
 			if (i == null) continue;
+			play.stageGroup.remove(i);
 			if (["bf","gf", "dad"].contains(i.type)) continue;
 			i.destroy();
-			play.stageGroup.remove(i);
 		}
 		beatHit_sprites = [];
 		beatHit_force_sprites = [];

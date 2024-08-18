@@ -20,9 +20,16 @@ class Note extends FlxSprite
 {
 	public static var default_notetypes:Array<String> = ["Default Note", "Alt Anim", "No Animation", "GF Note"];
 	public static var NOTE_TEXTURE:FlxAtlasFrames = null;
-	public static var noteScale:Float = 0.65;
+
 	public static var defaultGraphicSize:Float = 160;
+	public static var noteScale(default,set):Float = 0.62;
+	static function set_noteScale(val:Float):Float {
+		swagWidth = defaultGraphicSize * val;
+		return noteScale = val;
+	}
 	public static var swagWidth:Float = defaultGraphicSize * noteScale; // Parent note size after scaling
+
+
 	public static var directions:Array<String> = ["purple", "blue", "green", "red"];
 
 	// avoid repetitive missing note type file warnings

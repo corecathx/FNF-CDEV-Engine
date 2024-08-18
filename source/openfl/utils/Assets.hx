@@ -1,9 +1,7 @@
 package openfl.utils;
 
-// code originally used on Codename Engine
-// modified for usage in CDEV Engine
-import game.cdev.CDevConfig;
 import game.system.FunkinBitmap;
+
 import openfl.utils._internal.Log;
 import openfl.display.BitmapData;
 import openfl.display.MovieClip;
@@ -90,17 +88,16 @@ class Assets
 		@usage		var bitmap = new Bitmap (Assets.getBitmapData ("image.png"));
 		@param	id		The ID or asset path for the bitmap
 		@param	useCache		(Optional) Whether to allow use of the asset cache (Default: true)
-		@param	useCache		Whenever the image should be immediately pushed to GPU.
 		@return		A new BitmapData object
 	**/
-	public static function getBitmapData(id:String, useCache:Bool = true, pushToGPU:Bool = true):BitmapData
+	public static function getBitmapData(id:String, useCache:Bool = true):BitmapData
 	{
 		#if (lime && tools && !display)
 		if (useCache && cache.enabled && cache.hasBitmapData(id))
 		{
 			var bitmapData = cache.getBitmapData(id);
 
-			if (isValidBitmapData(bitmapData) && (pushToGPU || bitmapData.readable))
+			if (isValidBitmapData(bitmapData))
 			{
 				return bitmapData;
 			}
@@ -113,13 +110,13 @@ class Assets
 			#if flash
 			var bitmapData = image.src;
 			#else
-			var bitmapData:BitmapData = null;
-			if (pushToGPU && CDevConfig.saveData.gpuBitmap) {
-				bitmapData = new FunkinBitmap(0, 0, true, 0);
-				bitmapData.__fromImage(image);
-			} else {
-				bitmapData = BitmapData.fromImage(image);
-			}
+            var bitmapData:BitmapData = null;
+            if (CDevConfig.saveData.gpuBitmap) {
+                bitmapData = new FunkinBitmap(0, 0, true, 0);
+                bitmapData.__fromImage(image);
+            } else {
+                bitmapData = BitmapData.fromImage(image);
+            }
 			#end
 
 			if (useCache && cache.enabled)
@@ -498,12 +495,12 @@ class Assets
 				var bitmapData = image.src;
 				#else
 				var bitmapData:BitmapData = null;
-				if (CDevConfig.saveData.gpuBitmap) {
-					bitmapData = new FunkinBitmap(0, 0, true, 0);
+                if (CDevConfig.saveData.gpuBitmap) {
+                    bitmapData = new FunkinBitmap(0, 0, true, 0);
 					bitmapData.__fromImage(image);
-				} else {
-					bitmapData = BitmapData.fromImage(image);
-				}
+                } else {
+                    bitmapData = BitmapData.fromImage(image);
+                }
 				#end
 
 				if (useCache && cache.enabled)
@@ -613,6 +610,10 @@ class Assets
 				}
 				else
 				{
+					// TODO: after Lime 8.2.0 is released, use conditional
+					// compilation to call LimeAssets.removeLibrary(name, false)
+					// since that is a new public API
+					@:privateAccess LimeAssets.libraries.remove(name);
 					_library = new AssetLibrary();
 					_library.__proxy = library;
 					LimeAssets.registerLibrary(name, _library);
