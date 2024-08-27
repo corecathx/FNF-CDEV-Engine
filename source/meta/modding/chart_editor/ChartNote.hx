@@ -37,8 +37,8 @@ class ChartNote extends FlxSprite {
 
     /**
      * Start initializing the note.
-     * @param noteArray Note array from CDevChart's `notes` array. (what am i saying)
-     * @return } hm
+     * @param noteArray Note array from CDevChart's `notes` array.
+     * @return 
      */
     public function init(noteArray:Array<Dynamic>, isSustain:Bool){
         strumTime = noteArray[0];
@@ -52,13 +52,12 @@ class ChartNote extends FlxSprite {
 
         this.isSustain = isSustain;
 
-        frames = ChartEditor.note_texture;
+        frames = Paths.getSparrowAtlas("notes/NOTE_assets");
 
-        for (i in Note.directions) {
-            animation.addByPrefix(i+"anim", i+"0", 24);
-            animation.addByPrefix("end"+i, (i == "purple" ? "pruple end hold" : i+" hold end"), 24);
-            animation.addByPrefix("hold"+i, i+" hold piece", 24);
-        }
+        var i:String = Note.directions[noteData%4];
+        animation.addByPrefix(i+"anim", i+"0", 24);
+        animation.addByPrefix("end"+i, (i == "purple" ? "pruple end hold" : i+" hold end"), 24);
+        animation.addByPrefix("hold"+i, i+" hold piece", 24);
 
         antialiasing = CDevConfig.saveData.antialiasing;
         setGraphicSize(ChartEditor.grid_size,ChartEditor.grid_size);

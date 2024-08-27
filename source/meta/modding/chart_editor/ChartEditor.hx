@@ -52,7 +52,6 @@ class ChartEditor extends MusicBeatState {
     public static var current:ChartEditor = null;
     public static var grid_size:Int = 40;
     public static var separator_width:Int = 4;
-    public static var note_texture:FlxAtlasFrames = null;
 
     // Sound Objects
     var playerVoice:FlxSound;
@@ -155,7 +154,6 @@ class ChartEditor extends MusicBeatState {
     
     override function create(){
         current = this;
-        note_texture = Paths.getSparrowAtlas("notes/NOTE_assets"); // cache the note texture first
         FlxG.mouse.visible = true;
         persistentUpdate = false;
 
@@ -755,9 +753,9 @@ class ChartEditor extends MusicBeatState {
     var check_disableIcons:FlxUICheckBox;
 
     function menu_createViewUI(parent:FlxSpriteGroup){
+        var grp:FlxSpriteGroup = new FlxSpriteGroup();
         inline function makeCheckBox(nX:Float,nY:Float,label:String, lWidth:Int, callback:Void->Void) {
-            final obj = new FlxUICheckBox(nX,nY,null,null,label,lWidth,[],callback);
-            obj.scale.set(1.1,1.1);
+            var obj = new FlxUICheckBox(nX,nY,null,null,label,lWidth,[],callback);
             obj.button.label.font = FunkinFonts.JETBRAINS;
             obj.button.label.size = 13;
             obj.button.label.color = FlxColor.WHITE;
@@ -766,19 +764,20 @@ class ChartEditor extends MusicBeatState {
         var text:FlxText = new FlxText(0,0,-1,"View", 16);
         text.font = FunkinFonts.JETBRAINS;
         text.active = false;
-        parent.add(text);
+        grp.add(text);
 
         var text2:FlxText = new FlxText(0,20,-1,"Adjust the editor's UI.", 13);
         text2.font = FunkinFonts.JETBRAINS;
         text2.active = false;
-        parent.add(text2);
+        grp.add(text2);
 
         var yStart = text2.y + text.height + 10;
 
         check_disableIcons = makeCheckBox(0,yStart,"Character Icons",300,()->{
             settings.view.icons = check_disableIcons.checked;
         });
-        parent.add(check_disableIcons);
+        grp.add(check_disableIcons);
+        parent.add(grp);
     }
 
     function menu_createPlaytestUI(parent:FlxSpriteGroup){
@@ -821,7 +820,7 @@ class ChartEditor extends MusicBeatState {
             ["static", "arrow<A>"],
             ["confirm", "<a> confirm"],
         ];
-        var tex = note_texture;
+        var tex = Paths.getSparrowAtlas("notes/NOTE_assets");
         for (i in 0...2){
             for (ind => dir in ["left", "down", "up", "right"]){
                 var spr:StrumArrow = new StrumArrow(grid.x+(grid_size*ind),0);
@@ -1554,7 +1553,7 @@ class ChartEditor extends MusicBeatState {
     {
         plIcon.visible = opIcon.visible = plIcon.active = opIcon.active = settings.view.icons;
         if (!settings.view.icons) return;
-        
+
         var sizeUpdate = 0.8-(((Conductor.songPosition % (Conductor.crochet))/Conductor.crochet)*0.2);
         opIcon.scale.set(sizeUpdate, sizeUpdate);
         opIcon.updateHitbox();
@@ -1639,7 +1638,7 @@ class ChartEditor extends MusicBeatState {
 
         var gridXOffset = data[1] > 3 ? (ChartEditor.grid_size * 4) + separator_width : 0;
         var nX:Float = grid.x + gridXOffset + (grid_size * (data[1] % 4));
-        var n:ChartNote = rendered_notes.recycle(ChartNote);
+        var n:ChartNote = new ChartNote();//rendered_notes.recycle(ChartNote);
         n.setPosition(nX, getYFromTime(data[0]));
         n.init(data, false);
         new_noteObject = n;
@@ -1650,6 +1649,7 @@ class ChartEditor extends MusicBeatState {
     }
 
     function addEvent(data:Array<Dynamic>, ?onlyVisual:Bool = false) {
+        //return;
         if (data == null) return;
         if (!onlyVisual) {
             chart.events.push(data);
