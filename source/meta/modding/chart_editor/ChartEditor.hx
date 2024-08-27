@@ -751,14 +751,20 @@ class ChartEditor extends MusicBeatState {
     }
 
     var check_disableIcons:FlxUICheckBox;
+    var check_metronome:FlxUICheckBox;
+    var check_strumNotes:FlxUICheckBox;
+    var check_strumLine:FlxUICheckBox;
 
     function menu_createViewUI(parent:FlxSpriteGroup){
         var grp:FlxSpriteGroup = new FlxSpriteGroup();
-        inline function makeCheckBox(nX:Float,nY:Float,label:String, lWidth:Int, callback:Void->Void) {
+        inline function makeCheckBox(nX:Float,nY:Float,label:String, lWidth:Int, callback:Void->Void,checked:Bool) {
             var obj = new FlxUICheckBox(nX,nY,null,null,label,lWidth,[],callback);
+            obj.box.color = FlxColor.fromRGB(70,70,70);
+            obj.mark.replaceColor(FlxColor.BLACK, FlxColor.WHITE);
             obj.button.label.font = FunkinFonts.JETBRAINS;
-            obj.button.label.size = 13;
+            obj.button.label.size = 11;
             obj.button.label.color = FlxColor.WHITE;
+            obj.checked = checked;
             return obj;
         }
         var text:FlxText = new FlxText(0,0,-1,"View", 16);
@@ -775,8 +781,25 @@ class ChartEditor extends MusicBeatState {
 
         check_disableIcons = makeCheckBox(0,yStart,"Character Icons",300,()->{
             settings.view.icons = check_disableIcons.checked;
-        });
+        },settings.view.icons);
         grp.add(check_disableIcons);
+        
+        check_metronome = makeCheckBox(0,yStart+22,"Metronome",300,()->{
+            settings.view.metronome = check_metronome.checked;
+        },settings.view.metronome);
+        grp.add(check_metronome);
+
+        check_strumNotes = makeCheckBox(0,yStart+(22*2),"Note Receptors",300,()->{
+            settings.view.strum_notes = check_strumNotes.checked;
+        },settings.view.strum_notes);
+        grp.add(check_strumNotes);
+
+        check_strumLine = makeCheckBox(0,yStart+(22*3),"Strum Line",300,()->{
+            settings.view.strum_line = check_strumLine.checked;
+        },settings.view.strum_line);
+        grp.add(check_strumLine);
+
+
         parent.add(grp);
     }
 
@@ -875,6 +898,8 @@ class ChartEditor extends MusicBeatState {
             timePercent = (Conductor.songPosition / FlxG.sound.music.length);
         }
 
+        hitLine.visible = settings.view.strum_line;
+
         if (!FlxG.mouse.pressedMiddle){
             if (FlxG.sound.music.playing){
                 hitLine.y = getYFromTime(Conductor.songPosition);
@@ -957,6 +982,12 @@ class ChartEditor extends MusicBeatState {
         (dataRaw > 3 ? plStrum : opStrum).members[dataRaw % 4].playAnim("confirm", true);
     }
     function updateFlashLogic(){
+        for (spr in 0...opStrum.members.length){
+            var playerObject:StrumArrow = plStrum.members[spr];
+            var opponentObject:StrumArrow = opStrum.members[spr];
+            opponentObject.visible = opponentObject.active = playerObject.visible = playerObject.active = settings.view.strum_notes;
+        }
+        if (!settings.view.strum_notes) return;
         if (FlxG.sound.music.playing){
             rendered_events.forEachAlive((event:ChartEvent) -> {
                 event.alpha = 0;
@@ -1123,6 +1154,8 @@ class ChartEditor extends MusicBeatState {
     }
 
     function metronomeLogic(){
+        metronome_icon.visible = metronome_icon.active = settings.view.metronome;
+        if (!settings.view.metronome) return;
         metronome_icon.animation.play(Math.floor(Conductor.songPosition / Conductor.crochet) % 2 == 0 ? "left" : "right", true);
         if (metronome_icon.animation.curAnim != null)
             metronome_icon.animation.curAnim.curFrame = Std.int(((Conductor.songPosition % (Conductor.crochet)) / (Conductor.crochet))*metronome_icon.animation.curAnim.numFrames);
