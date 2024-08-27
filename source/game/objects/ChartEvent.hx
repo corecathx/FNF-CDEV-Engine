@@ -89,18 +89,22 @@ class ChartEvent extends FlxSprite
 		value2 = info[4];
 
 		if (chartMode){
-			var graphicy = Paths.image("ui/event/"+EVENT_NAME, "shared");
-			if (graphicy is FlxGraphic && graphicy != null) {
-				loadGraphic(graphicy);
-			} else if (graphicy is String) {
-				loadGraphic(graphicy);
-			} else {
-				loadGraphic(Paths.image("ui/event/Default", "shared"));
+			var graphicy:Dynamic = Paths.image("ui/event/"+EVENT_NAME, "shared");
+			if (graphicy is String && !eventListContains(EVENT_NAME)) {
+				graphicy = Paths.image("ui/event/Default", "shared");
 			}
+			loadGraphic(graphicy);
 			setGraphicSize(ChartEditor.grid_size,ChartEditor.grid_size);
 			updateHitbox();
 		}
 
+	}
+	
+	public static function eventListContains(name:String) {
+		for (i in builtInEvents) {
+			if (i[0] == name) return true;
+		}
+		return false;
 	}
 
 	public static function getEventNames():Array<String>

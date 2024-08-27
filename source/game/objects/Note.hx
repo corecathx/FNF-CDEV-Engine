@@ -100,7 +100,7 @@ class Note extends FlxSprite
 	 * @param noteTyp Note Type
 	 * @param noteArg Note Arguments / Parameters
 	 */
-	public function load(time:Float, data:Int, isSustain:Bool = false, lastNote:Note = null, ?noteTyp:String = "Default Note", ?noteArg:Array<String>)
+	public function load(time:Float, data:Int, isSustain:Bool = false, lastNote:Note = null, ?noteTyp:String = "Default Note", ?noteArg:Array<String>, ?noteSkin:String)
 	{
 		prevNote = (lastNote == null) ? this : lastNote;
 		isSustainNote = isSustain;
@@ -144,7 +144,7 @@ class Note extends FlxSprite
 		}
 		else
 		{
-			loadTexture("notes/NOTE_assets");
+			loadTexture(noteSkin != null ? noteSkin : "notes/NOTE_assets");
 			initialize();
 			if (noteType == "No Animation")
 				noAnim = true;

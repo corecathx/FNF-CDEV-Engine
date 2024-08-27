@@ -414,6 +414,7 @@ class CDevConfig
 			gpuBitmap: false,
 			cameraFix: true,
 			nativeMemory: false,
+			hide_chartWarn: false
 		}
 		return save;
 	}

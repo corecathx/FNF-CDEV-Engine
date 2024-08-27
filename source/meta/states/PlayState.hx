@@ -369,15 +369,17 @@ class PlayState extends MusicBeatState
 		Paths.currentMod = fromMod;
 		initCutsceneScripts();
 
-		switch (SONG.info.name.toLowerCase())
-		{
-			case 'senpai':
-				dialogue = CoolUtil.coolTextFile(Paths.dialogTxt('senpai/senpaiDialogue'));
-			case 'roses':
-				dialogue = CoolUtil.coolTextFile(Paths.dialogTxt('roses/rosesDialogue'));
-			case 'thorns':
-				dialogue = CoolUtil.coolTextFile(Paths.dialogTxt('thorns/thornsDialogue'));
+		if (isStoryMode) {
+			switch (SONG.info.name.toLowerCase()) {
+				case 'senpai':
+					dialogue = CoolUtil.coolTextFile(Paths.dialogTxt('senpai/senpaiDialogue'));
+				case 'roses':
+					dialogue = CoolUtil.coolTextFile(Paths.dialogTxt('roses/rosesDialogue'));
+				case 'thorns':
+					dialogue = CoolUtil.coolTextFile(Paths.dialogTxt('thorns/thornsDialogue'));
+			}
 		}
+
 
 		// actually calculating stuff lmao
 		var overallWidth:Float = Note.swagWidth * 4;
@@ -861,7 +863,8 @@ class PlayState extends MusicBeatState
 		{
 			try
 			{
-				Note.NOTE_TEXTURE = Paths.getSparrowAtlas("notes/NOTE_assets", "shared");
+				var noteTex:String = SONG.data.note_skin;
+				Note.NOTE_TEXTURE = Paths.getSparrowAtlas(noteTex != null ? noteTex : "notes/NOTE_assets", "shared");
 			}
 			catch (e)
 			{
@@ -3360,7 +3363,7 @@ class PlayState extends MusicBeatState
 			var playerSection:Bool = songNotes[1] > 3;
 
 			var mainNote:Note = notes.recycle(Note, nFunc);
-			mainNote.load(note.time, note.data, false, null, note.type, note.args);
+			mainNote.load(note.time, note.data, false, null, note.type, note.args, SONG.data.note_skin);
 			mainNote.scrollFactor.set();
 			mainNote.mustPress = playingLeftSide ? !playerSection : playerSection;
 			mainNote.onNoteSpawn();
@@ -3374,7 +3377,7 @@ class PlayState extends MusicBeatState
 				for (index in 0...susLength+1)
 				{
 					var susNote:Note = notes.recycle(Note, nFunc);
-					susNote.load(note.time + (Conductor.stepCrochet * index) + Conductor.stepCrochet, note.data, !noHoldNotes, lastNote, note.type, note.args);
+					susNote.load(note.time + (Conductor.stepCrochet * index) + Conductor.stepCrochet, note.data, !noHoldNotes, lastNote, note.type, note.args, SONG.data.note_skin);
 					susNote.mainNote = mainNote;
 					susNote.mustPress = playingLeftSide ? !playerSection : playerSection;
 					susNote.scrollFactor.set();

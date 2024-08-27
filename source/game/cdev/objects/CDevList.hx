@@ -45,7 +45,7 @@ class CDevList extends FlxSpriteGroup {
         add(bgSprite);
 
         bgLabel = new FlxText(0,0,sizes.width-30,"", 14);
-        bgLabel.font = FunkinFonts.CONSOLAS;
+        bgLabel.font = FunkinFonts.JETBRAINS;
         add(bgLabel);
 
         bgArrow = new FlxSprite(bgLabel.x + bgLabel.width + 10, 10).loadGraphic(Paths.image("ui/dropdown","shared"));
@@ -140,7 +140,7 @@ class CDevListSprite extends FlxSprite {
         color = colors.hover;
 
         label = new FlxText(0,0,-1,text, 12);
-        label.font = FunkinFonts.CONSOLAS;
+        label.font = FunkinFonts.JETBRAINS;
         label.scrollFactor.set();
     }
 
