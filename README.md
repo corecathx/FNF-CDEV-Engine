@@ -89,7 +89,7 @@ Now you know how to build the engine, enjoy!
         <h2>Modding Documentation</h2>
     </summary>
 
-If you prefer not to modify source codes, consider using the built-in modding feature. Read the [Documentation](https://core5570ryt.github.io/FNF-CDEV-Engine/) to understand how it works.
+If you prefer not to modify source codes, consider using the built-in modding feature. Read the [Documentation](https://corecathx.github.io/FNF-CDEV-Engine/) to understand how it works.
 
 </details>
 

@@ -103,7 +103,6 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
-		trace(openfl.utils.Assets.list(FONT));
 		checkGitHubVersion();
 		FlxG.camera.zoom = cameraInitialZoom;
 		curWacky = FlxG.random.getObject(getIntroTextShit());

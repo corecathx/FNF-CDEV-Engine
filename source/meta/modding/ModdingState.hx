@@ -26,7 +26,7 @@ import game.objects.*;
 class ModdingState extends meta.states.MusicBeatState
 {
 	var curSelected:Int = 0;
-	var options:Array<String> = ['Create a new mod', 'Edit a mod', 'Install a mod', "Read the Docs"];
+	var options:Array<String> = ['Create a new mod', 'Edit a mod', 'Install a mod'];
 	var grpOptions:FlxTypedGroup<Alphabet>;
 	var menuBG:FlxSprite;
 

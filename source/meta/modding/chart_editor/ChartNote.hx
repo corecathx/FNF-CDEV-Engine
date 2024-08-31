@@ -1,11 +1,13 @@
 package meta.modding.chart_editor;
 
+import flixel.graphics.frames.FlxAtlasFrames;
 import game.objects.Note;
 
 /**
  * A dummy note that's used on the Chart Editor
  */
 class ChartNote extends FlxSprite {
+    public static var CACHED_GRAPHIC:FlxAtlasFrames = null;
     public var strumTime:Float = 0;
     public var noteData:Int = 0;
     public var holdLength:Float = 0;
@@ -31,6 +33,9 @@ class ChartNote extends FlxSprite {
     public function new(nX:Float = 0, nY:Float = 0)
     {
         super(nX,nY);
+        if (ChartNote.CACHED_GRAPHIC == null) {
+            ChartNote.CACHED_GRAPHIC = Paths.getSparrowAtlas("notes/NOTE_assets");
+        }
         bgHighlight = new FlxSprite().makeGraphic(ChartEditor.grid_size,1,FlxColor.WHITE);
         bgHighlight.active = false;
     }
@@ -40,7 +45,7 @@ class ChartNote extends FlxSprite {
      * @param noteArray Note array from CDevChart's `notes` array.
      * @return 
      */
-    public function init(noteArray:Array<Dynamic>, isSustain:Bool){
+    public function init(noteArray:Array<Dynamic>, isSustain:Bool, ?parent:ChartNote){
         strumTime = noteArray[0];
         animData = noteData = noteArray[1];
         holdLength = noteArray[2];
@@ -52,12 +57,17 @@ class ChartNote extends FlxSprite {
 
         this.isSustain = isSustain;
 
-        frames = Paths.getSparrowAtlas("notes/NOTE_assets");
+        if (parent != null) 
+            frames = parent.frames;
+        else 
+            frames = ChartNote.CACHED_GRAPHIC;//Paths.getSparrowAtlas("notes/NOTE_assets");
 
         var i:String = Note.directions[noteData%4];
         animation.addByPrefix(i+"anim", i+"0", 24);
-        animation.addByPrefix("end"+i, (i == "purple" ? "pruple end hold" : i+" hold end"), 24);
-        animation.addByPrefix("hold"+i, i+" hold piece", 24);
+        if (isSustain) {
+            animation.addByPrefix("end"+i, (i == "purple" ? "pruple end hold" : i+" hold end"), 24);
+            animation.addByPrefix("hold"+i, i+" hold piece", 24);
+        }
 
         antialiasing = CDevConfig.saveData.antialiasing;
         setGraphicSize(ChartEditor.grid_size,ChartEditor.grid_size);
@@ -65,12 +75,12 @@ class ChartNote extends FlxSprite {
 
         if (!isSustain){
             nSustain = new ChartNote();
-            nSustain.init([strumTime + Conductor.stepCrochet,noteData, 0, noteType, noteArgs], true);
+            nSustain.init([strumTime + Conductor.stepCrochet,noteData, 0, noteType, noteArgs], true, this);
             nSustain.setGraphicSize(ChartEditor.grid_size/2.5, Std.int(ChartEditor.grid_size*((holdLength-(Conductor.stepCrochet*2)) / Conductor.stepCrochet)));
             nSustain.updateHitbox();
 
             nSustainEnd = new ChartNote();
-            nSustainEnd.init([Conductor.stepCrochet,noteData, 0, noteType, noteArgs], true);
+            nSustainEnd.init([Conductor.stepCrochet,noteData, 0, noteType, noteArgs], true, this);
             nSustainEnd.setGraphicSize(ChartEditor.grid_size/2.5, Std.int(ChartEditor.grid_size/1.8));
             nSustainEnd.updateHitbox();
 
@@ -135,5 +145,17 @@ class ChartNote extends FlxSprite {
                 bgHighlight.draw();
             }
         }
+    }
+
+    override function destroy() {
+        if (nSustain != null)
+            nSustain.destroy();
+        if (nSustainEnd != null)
+            nSustainEnd.destroy();
+        if (bgHighlight != null)
+            bgHighlight.destroy();
+        if (nLabelOv != null)
+            nLabelOv.destroy();
+        super.destroy();
     }
 }

@@ -754,6 +754,8 @@ class ChartEditor extends MusicBeatState {
     var check_metronome:FlxUICheckBox;
     var check_strumNotes:FlxUICheckBox;
     var check_strumLine:FlxUICheckBox;
+    var check_grid:FlxUICheckBox;
+    var check_stagePreview:FlxUICheckBox;
 
     function menu_createViewUI(parent:FlxSpriteGroup){
         var grp:FlxSpriteGroup = new FlxSpriteGroup();
@@ -799,6 +801,17 @@ class ChartEditor extends MusicBeatState {
         },settings.view.strum_line);
         grp.add(check_strumLine);
 
+        check_grid = makeCheckBox(0,yStart+(22*4),"Grid",300,()->{
+            settings.view.grid = check_grid.checked;
+            grid.visible = grid.active = settings.view.grid;
+        },settings.view.grid);
+        grp.add(check_grid);
+
+        check_stagePreview = makeCheckBox(0,yStart+(22*6),"Stage Preview",300,()->{
+            settings.use_stage_preview = check_stagePreview.checked;
+            grid.visible = grid.active = settings.use_stage_preview;
+        },settings.use_stage_preview);
+        grp.add(check_stagePreview);
 
         parent.add(grp);
     }
@@ -881,7 +894,7 @@ class ChartEditor extends MusicBeatState {
             if (i % 16 == 0 || i % 4 == 0) {
                 var curTime:Float = Conductor.stepCrochet * i;
                 var spr:FlxSprite = new FlxSprite();
-                spr.makeGraphic(Std.int(grid.width), (i % 16 == 0 ? 5 : 2), (i % 16 == 0 ? 0xA4000000 : 0xA4FFFFFF));
+                spr.makeGraphic(Std.int(grid.width), (i % 16 == 0 ? 5 : 2), (i % 16 == 0 ? 0xA4008CFF : 0xA4FFFFFF));
                 spr.y = getYFromTime(curTime);
                 spr.active = false;
                 beatDividers.add(spr);
@@ -927,7 +940,24 @@ class ChartEditor extends MusicBeatState {
   
         // Events Related Stuffs
         eventsUpdateLogic();
+
+        // Others
+        timeBarSeek();
+        
         super.update(elapsed);
+    }
+
+    function timeBarSeek() {
+        timeBar.alpha = 0.7;
+        if (!FlxG.mouse.overlaps(timeBar)) 
+            return;
+        timeBar.alpha = 1;
+
+        if (FlxG.mouse.pressed) {
+            var curPos:Float = FlxG.mouse.x / timeBar.width;
+            var timeSeeked:Float = FlxG.sound.music.length * curPos;
+            setAllSoundTime(timeSeeked);
+        }
     }
 
     function updateChartData(){
@@ -981,75 +1011,83 @@ class ChartEditor extends MusicBeatState {
     inline function _flashStrum(dataRaw:Int) {
         (dataRaw > 3 ? plStrum : opStrum).members[dataRaw % 4].playAnim("confirm", true);
     }
-    function updateFlashLogic(){
-        for (spr in 0...opStrum.members.length){
-            var playerObject:StrumArrow = plStrum.members[spr];
-            var opponentObject:StrumArrow = opStrum.members[spr];
-            opponentObject.visible = opponentObject.active = playerObject.visible = playerObject.active = settings.view.strum_notes;
+    function updateFlashLogic() {
+        inline function changeStatus(objects:Array<Dynamic>, status:Bool) {
+            for (obj in objects) {
+                var sprite:FlxSprite = cast(obj, FlxSprite);
+                sprite.active = sprite.visible = status;
+            }
         }
-        if (!settings.view.strum_notes) return;
-        if (FlxG.sound.music.playing){
-            rendered_events.forEachAlive((event:ChartEvent) -> {
-                event.alpha = 0;
-                if (!_editingEvents) return;
-                    
-                event.alpha = hitted_events.contains(event) ? 0.6 : 1;
-                if (hitLine.y > event.y && !hitted_events.contains(event)){
-                    _flashStrum(event.data);
-                    hitted_events.push(event);
-                }
-            });
-
-            rendered_notes.forEachAlive((note:ChartNote) -> {
-                note.alpha = 0;
-                if (_editingEvents) return;
-                    
-                note.alpha = hitted_notes.contains(note) ? 0.6 : 1;
-                if (hitLine.y > note.y && !hitted_notes.contains(note)){
-                    _flashStrum(note.noteData);
-                    hitted_notes.push(note);
-                }
-            });
-
-            if (!_editingEvents) {
-                for (sus in note_sus_lengths) {
-                    if (sus == null) continue;
-                    if (Conductor.songPosition > sus.strumTime
-                        && Conductor.songPosition < sus.strumTime + sus.holdLength){
-                        flash_on_step[sus.noteData] = true;
+    
+        var strumVisible = settings.view.strum_notes;
+        var isMusicPlaying = FlxG.sound.music.playing;
+        var hitLineY = hitLine.y;
+    
+        if (strumVisible) {
+            for (i in 0...opStrum.members.length) {
+                var player:StrumArrow = plStrum.members[i];
+                var opponent:StrumArrow = opStrum.members[i];
+    
+                player.y = opponent.y = hitLineY;
+                player.alpha = opponent.alpha = isMusicPlaying ? 1 : 0.5;
+            }
+            changeStatus(opStrum.members, true);
+            changeStatus(plStrum.members, true);
+        } else {
+            changeStatus(opStrum.members, false);
+            changeStatus(plStrum.members, false);
+            return;
+        }
+    
+        var editingEvents = _editingEvents;
+        var eventAlpha = editingEvents ? 0 : 1;
+        var noteAlpha = editingEvents ? 0 : 1;
+    
+        rendered_events.forEachAlive((event:ChartEvent) -> {
+            event.active = false;
+            event.alpha = hitted_events.contains(event) ? 0.6 : eventAlpha;
+        });
+    
+        rendered_notes.forEachAlive((note:ChartNote) -> {
+            note.active = false;
+            note.alpha = hitted_notes.contains(note) ? 0.6 : noteAlpha;
+        });
+    
+        if (isMusicPlaying) {
+            if (editingEvents) {
+                rendered_events.forEachAlive((event:ChartEvent) -> {
+                    if (hitLineY > event.y && !hitted_events.contains(event)) {
+                        _flashStrum(event.data);
+                        hitted_events.push(event);
                     }
-                }    
+                });
+            } else {
+                rendered_notes.forEachAlive((note:ChartNote) -> {
+                    if (hitLineY > note.y && !hitted_notes.contains(note)) {
+                        _flashStrum(note.noteData);
+                        hitted_notes.push(note);
+                    }
+                });
+            }
+    
+            for (sus in note_sus_lengths) {
+                if (sus != null && Conductor.songPosition > sus.strumTime && Conductor.songPosition < sus.strumTime + sus.holdLength)
+                    flash_on_step[sus.noteData] = true;
+            }
+        } else if (!isMusicPlaying) {
+            if (!editingEvents) {
+                rendered_notes.forEachAlive((note:ChartNote) -> {
+                    if (hitLineY < note.y && hitted_notes.contains(note)) hitted_notes.remove(note);
+                });
+            } else {
+                rendered_events.forEachAlive((event:ChartEvent) -> {
+                    if (hitLineY < event.y && hitted_events.contains(event)) hitted_events.remove(event);
+                });
             }
 
-        } else {
-            rendered_events.forEachAlive((event:ChartEvent) -> {
-                event.alpha = 0;
-                if (!_editingEvents) return;
-                    
-                event.alpha = hitted_events.contains(event) ? 0.6 : 1;
-                if (hitLine.y < event.y && hitted_events.contains(event)){
-                    hitted_events.remove(event);
-                }
-            });
-
-            rendered_notes.forEachAlive((note:ChartNote) -> {
-                note.alpha = 0;
-                if (_editingEvents) return;
-                    
-                note.alpha = hitted_notes.contains(note) ? 0.6 : 1;
-                if (hitLine.y < note.y && hitted_notes.contains(note)){
-                    hitted_notes.remove(note);
-                }
-            });
         }
-        for (spr in 0...opStrum.members.length){
-            var playerObject:StrumArrow = plStrum.members[spr];
-            var opponentObject:StrumArrow = opStrum.members[spr];
-            opponentObject.y = playerObject.y = hitLine.y;
-            opponentObject.alpha = playerObject.alpha = (FlxG.sound.music.playing ? 1 : 0.5);
-        }
-    }
-
+    }    
+    
     var passedStep:Int = 0;
     var passedBeat:Int = 0;
     var passedMeasure:Int = 0;
@@ -1197,6 +1235,18 @@ class ChartEditor extends MusicBeatState {
                 playerVoice.play();
                 opponentVoice.play();
             }
+        }
+
+        // To start and end song controls
+        var toStartPressed:Bool = (FlxG.keys.justPressed.HOME || FlxG.keys.justPressed.PAGEUP);
+        var toEndPressed:Bool = (FlxG.keys.justPressed.END || FlxG.keys.justPressed.PAGEDOWN);
+        if (toStartPressed || toEndPressed) {
+            if (FlxG.sound.music.playing) {
+                FlxG.sound.music.pause();
+                playerVoice.pause();
+                opponentVoice.pause();
+            }
+            setAllSoundTime(toStartPressed ? 0 : FlxG.sound.music.length);
         }
 
         // Scrolling controls
@@ -1671,7 +1721,7 @@ class ChartEditor extends MusicBeatState {
 
         var gridXOffset = data[1] > 3 ? (ChartEditor.grid_size * 4) + separator_width : 0;
         var nX:Float = grid.x + gridXOffset + (grid_size * (data[1] % 4));
-        var n:ChartNote = new ChartNote();//rendered_notes.recycle(ChartNote);
+        var n:ChartNote = rendered_notes.recycle(ChartNote);
         n.setPosition(nX, getYFromTime(data[0]));
         n.init(data, false);
         new_noteObject = n;
@@ -1701,13 +1751,13 @@ class ChartEditor extends MusicBeatState {
         var rem:Array<Dynamic> = getDataFromNote(note);
         if (rem == null) {
             Log.warn("Failed removing note, can't find similar note data.");
-            //note.destroy();
+            note.destroy();
             note.kill();
             rendered_notes.remove(note,true);
             return;
         }
         chart.notes.remove(rem);
-        //note.destroy();
+        note.destroy();
         note.kill();
         rendered_notes.remove(note,true);
     }

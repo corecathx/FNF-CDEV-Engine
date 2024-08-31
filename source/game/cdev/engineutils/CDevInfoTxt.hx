@@ -88,7 +88,6 @@ class CDevInfoTxt extends TextField
                 pgpu = Std.string(FlxG.stage.context3D.gl.getParameter(FlxG.stage.context3D.gl.RENDERER)).split("/")[0].trim();
                 if(Context3D.__glMemoryTotalAvailable != -1) {
 					var vRAMBytes:Float = cast(FlxG.stage.context3D.gl.getParameter(openfl.display3D.Context3D.__glMemoryTotalAvailable), Float)*1024;
-                    trace(vRAMBytes);
 					if (vRAMBytes == 1000 || vRAMBytes == 1 || vRAMBytes <= 0)
 						Log.error("Init Error: Can't get VRAM data.");
 					else{
