@@ -14,46 +14,12 @@ import haxe.PosInfos;
 
 using StringTools;
 
-enum abstract AnsiMode(Int)
-{
-	var RESET = 0;
-	var BOLD = 1;
-	var DIM = 2;
-	var ITALIC = 3;
-	var UNDERLINE = 4;
-	var BLINKING = 5;
-	var INVERT = 7;
-	var INVISIBLE = 8;
-	var STRIKETHROUGH = 9;
-}
-
-enum abstract AnsiColor(Int)
-{
-	var BLACK = 30;
-	var RED = 31;
-	var GREEN = 32;
-	var YELLOW = 33;
-	var BLUE = 34;
-	var MAGENTA = 35;
-	var CYAN = 36;
-	var WHITE = 37;
-	var HIGHINTENSITY_BLACK = 90;
-	var HIGHINTENSITY_RED = 91;
-	var HIGHINTENSITY_GREEN = 92;
-	var HIGHINTENSITY_YELLOW = 93;
-	var HIGHINTENSITY_BLUE = 94;
-	var HIGHINTENSITY_MAGENTA = 95;
-	var HIGHINTENSITY_CYAN = 96;
-	var HIGHINTENSITY_WHITE = 97;
-	var RESET = 0;
-}
-
 class TerminalLog
 {
 	// https://gist.github.com/martinwells/5980517
 	// https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
 	private static var ogTrace:Function;
-	private static var log:String = "";
+	private static var log:Array<String> = [];
 
 	public static function init():Void
 	{
@@ -62,47 +28,39 @@ class TerminalLog
 		prettyPrint("CDEV Engine v" + CDevConfig.engineVersion + "\n(Logging style written by CobaltBar!)");
 		info('Logger Initialized');
 
-		//lime.app.Application
-		lime.app.Application.current.onExit.add((_)->{
+		// lime.app.Application
+		lime.app.Application.current.onExit.add((_) ->
+		{
 			if (!FileSystem.exists('log'))
 				FileSystem.createDirectory('log');
 			Log.info('Log Written');
-			File.saveContent('log/log.txt', @:privateAccess TerminalLog.log);	
+			File.saveContent('log/log.txt', @:privateAccess TerminalLog.log.join('\n'));
 		});
 	}
 
-	@:keep public static inline function ansi(mode:AnsiMode, color:AnsiColor):String
-		return '\033[${mode};${color}m';
+	@:keep static inline function ansi(color:Int):String
+		return '\033[38;5;${color}m';
 
 	@:keep static inline function haxeTrace(value:Dynamic, ?pos:PosInfos):Void
-		print(value, 'TRACE', BOLD, HIGHINTENSITY_BLUE, pos);
+		print(value, 'TRACE', 75, pos);
 
 	@:keep public static inline function error(value:Dynamic, ?pos:PosInfos):Void
-		print(value, 'ERROR', BOLD, RED, pos);
+		print(value, 'ERROR', 160, pos);
 
 	@:keep public static inline function warn(value:Dynamic, ?pos:PosInfos):Void
-		print(value, 'WARN', BOLD, YELLOW, pos);
+		print(value, 'WARN', 184, pos);
 
 	@:keep public static inline function info(value:Dynamic, ?pos:PosInfos):Void
-		print(value, 'INFO', BOLD, CYAN, pos);
+		print(value, 'INFO', 45, pos);
 
 	@:keep public static inline function script(value:Dynamic, ?pos:PosInfos):Void
-		print(value, 'SCRIPT', BOLD, MAGENTA, pos);
+		print(value, 'SCRIPT', 128, pos);
 
-	@:keep static inline function print(value:Dynamic, level:String, mode:AnsiMode, color:AnsiColor, ?pos:PosInfos):Void
+	@:keep static inline function print(value:Dynamic, level:String, color:Int, ?pos:PosInfos):Void
 	{
-		var msg:String = '${ansi(RESET, BLUE)}[${ansi(RESET, CYAN)}${DateTools.format(Date.now(), '%H:%M:%S')}';
-		if (pos != null)
-			msg += '${ansi(RESET, BLUE)} - ${ansi(BOLD, WHITE)}${pos.fileName.replace("source/", "")}:${pos.lineNumber}';
-		msg += '${ansi(RESET, BLUE)}]';
-		msg = (msg.rpad(' ', 90) + '${ansi(mode, color)}${level}: ').rpad(' ', 95) + '${ansi(RESET, color)}$value${ansi(RESET, RESET)}';
-		Sys.println(msg);
-
-		var logMsg:String = '[${DateTools.format(Date.now(), '%H:%M:%S')}';
-		if (pos != null)
-			logMsg += ' - ${pos.fileName}:${pos.lineNumber}';
-		logMsg += '] ${level}: $value\n';
-		log += logMsg;
+		var msg = '${ansi(33)}[${ansi(45)}${DateTools.format(Date.now(), '%H:%M:%S')} - ${ansi(255)}${pos.fileName.replace("source/", "")}:${pos.lineNumber}${ansi(33)}]';
+		Sys.println(msg = '${msg.rpad(' ', 90)}${ansi(color)}$level: $value\033[0;0m');
+		log.push('[${DateTools.format(Date.now(), '%H:%M:%S')} ${pos.fileName}:${pos.lineNumber}] $level: $value');
 	}
 
 	public static function prettyPrint(text:String)
@@ -121,7 +79,7 @@ class TerminalLog
 		Sys.println('|$header|');
 		for (line in lines)
 		{
-			Sys.println('|   ${ansi(RESET, CYAN) + centerText(line, length) + ansi(RESET, WHITE)}   |');
+			Sys.println('|   ${ansi(45) + centerText(line, length) + ansi(255)}   |');
 		}
 		Sys.println('|$header|');
 	}
