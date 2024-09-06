@@ -9,7 +9,8 @@ import lime.media.AudioSource;
 
 using funkin.vis.grig.audio.lime.UInt8ArrayTools;
 
-class Bar {
+class Bar
+{
 	public var value:Float;
 	public var peak:Float;
 
@@ -46,75 +47,122 @@ class SpectralAnalyzer
 		this.vis = new FFTVisualization();
 
 		blackmanWindow.resize(fftN);
-		for (i in 0...fftN) {
+		for (i in 0...fftN)
+		{
 			blackmanWindow[i] = calculateBlackmanWindow(i, fftN);
 		}
 	}
 
-	public function getLevels():Array<Bar>
+	public function getLevels(?levels:Array<Bar>):Array<Bar>
 	{
+		if (levels != null)
+			levels = [];
 		var numOctets = Std.int(audioSource.buffer.bitsPerSample / 8);
-		var wantedLength = fftN * numOctets * numChannels;
+		var wantedLength = fftN * numOctets * audioSource.buffer.channels;
 		var startFrame = currentFrame;
 		startFrame -= startFrame % numOctets;
-		var data:FastUInt8Array = audioSource.buffer.data;
-		var segment = data.subarray(startFrame, Utils.min(startFrame + wantedLength, audioSource.buffer.data.length));
-		var signal = segment.toInterleaved(audioSource.buffer.bitsPerSample);
+		var segment = audioSource.buffer.data.subarray(startFrame, min(startFrame + wantedLength, audioSource.buffer.data.length));
+		var signal = getSignal(segment, audioSource.buffer.bitsPerSample);
 
-		if (numChannels > 1) {
-			var mixed = new Array<Float>();
-			mixed.resize(Std.int(signal.length / numChannels));
-			for (i in 0...mixed.length) {
+		if (audioSource.buffer.channels > 1)
+		{
+			var mixed:Array<Float> = [];
+			mixed.resize(Std.int(signal.length / audioSource.buffer.channels));
+			for (i in 0...mixed.length)
+			{
 				mixed[i] = 0.0;
-				for (c in 0...numChannels) {
-					mixed[i] += 0.7 * signal[i*numChannels+c];
+				for (c in 0...audioSource.buffer.channels)
+				{
+					mixed[i] += 0.7 * signal[i * audioSource.buffer.channels + c];
 				}
 				mixed[i] *= blackmanWindow[i];
 			}
 			signal = mixed;
 		}
 
-		// trace(signal);
-
 		var range = 16;
 		var freqs = fft.calcFreq(signal);
 		var bars = vis.makeLogGraph(freqs, barCount, 40, range);
 
-		if (bars.length > barHistories.length) {
-			barHistories.resize(bars.length);
-		}
+		if (bars.length - 1 > barHistories.length)
+			barHistories.resize(bars.length - 1);
 
-		var levels = new Array<Bar>();
-		levels.resize(bars.length);
-		for (i in 0...bars.length) {
-			if (barHistories[i] == null) barHistories[i] = new RecentPeakFinder();
+		levels.resize(bars.length - 1);
+		for (i in 0...bars.length - 1)
+		{
+			if (barHistories[i] == null)
+				barHistories[i] = new RecentPeakFinder();
 			var recentValues = barHistories[i];
 			var value = bars[i] / range;
 
 			// slew limiting
 			var lastValue = recentValues.lastValue;
-			if (maxDelta > 0.0) {
-				var delta = Utils.clamp(value - lastValue, -1 * maxDelta, maxDelta);
+			if (maxDelta > 0.0)
+			{
+				var delta = clamp(value - lastValue, -1 * maxDelta, maxDelta);
 				value = lastValue + delta;
 			}
 			recentValues.push(value);
 
 			var recentPeak = recentValues.peak;
 
-			levels[i] = new Bar(value, recentPeak);
+			if (levels[i] != null)
+			{
+				levels[i].value = value;
+				levels[i].peak = recentPeak;
+			}
+			else
+				levels[i] = new Bar(value, recentPeak);
 		}
 		return levels;
 	}
 
-	private inline function get_currentFrame():Int
+	// Prevents a memory leak by reusing array
+	var _buffer:Array<Float> = [];
+
+	function getSignal(data:lime.utils.UInt8Array, bitsPerSample:Int):Array<Float>
 	{
-		return Std.int(FlxMath.remapToRange(FlxG.sound.music.time, 0, FlxG.sound.music.length, 0, audioSource.buffer.data.length));
+		switch (bitsPerSample)
+		{
+			case 8:
+				_buffer.resize(data.length);
+				for (i in 0...data.length)
+					_buffer[i] = data[i] / 128.0;
+
+			case 16:
+				_buffer.resize(Std.int(data.length / 2));
+				for (i in 0..._buffer.length)
+					_buffer[i] = data.getInt16(i * 2) / 32767.0;
+
+			case 24:
+				_buffer.resize(Std.int(data.length / 3));
+				for (i in 0..._buffer.length)
+					_buffer[i] = data.getInt24(i * 3) / 8388607.0;
+
+			case 32:
+				_buffer.resize(Std.int(data.length / 4));
+				for (i in 0..._buffer.length)
+					_buffer[i] = data.getInt32(i * 4) / 2147483647.0;
+
+			default:
+				trace('Unknown integer audio format');
+		}
+		return _buffer;
 	}
 
+	@:generic
+	static inline function clamp<T:Float>(val:T, min:T, max:T):T
+		return val <= min ? min : val >= max ? max : val;
+
+	@:generic
+	static public inline function min<T:Float>(x:T, y:T):T
+		return x > y ? y : x;
+
+	private inline function get_currentFrame():Int
+		return Std.int(FlxMath.remapToRange(FlxG.sound.music.time, 0, FlxG.sound.music.length, 0, audioSource.buffer.data.length));
+
 	private inline function get_numChannels():Int
-	{
 		return audioSource.buffer.channels;
-	}
 
 	static function calculateBlackmanWindow(n:Int, fftN:Int)
 	{

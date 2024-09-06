@@ -42,9 +42,10 @@ class VisualizerSprite extends FlxSpriteGroup
         analyzer = new SpectralAnalyzer(audioSource._channel.__audioSource, bands, 0.04, 0);
     }
         
+    var levels:Array<Bar> = [];
     override function update(wawa:Float)
     {
-        var levels = analyzer.getLevels();
+        levels = analyzer.getLevels(levels);
 
         var grp = members.length;
         var lvls = levels.length;

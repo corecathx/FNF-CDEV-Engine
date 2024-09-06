@@ -19,6 +19,8 @@ class CDevInfoTxt extends TextField
 {
 	public static var current:CDevInfoTxt = null;
 
+    public static var stateInfo:String = "";
+
     public var wholeSystem:String = "";
 
 	public function new(inX:Float = 10.0, inY:Float = 10.0, inCol:Int = 0x000000)
@@ -50,7 +52,7 @@ class CDevInfoTxt extends TextField
 	}
 
     public function getText(){
-        return getFormatted([wholeSystem,getConductor(),getFlixel(),getLibVersion()]);
+        return getFormatted([wholeSystem,getConductor(),getFlixel(),getLibVersion(),getStateInfo()]);
     }
 
     public function getFormatted(array:Array<String>){
@@ -148,6 +150,11 @@ class CDevInfoTxt extends TextField
             + '\n- Lime     : ${limeVer}'
             + '\n- OpenFL   : ${openVer}';
         return lib;
+    }
+
+    public function getStateInfo() {
+        if (stateInfo == "") return "";
+        return "// State Info //\n"+stateInfo;
     }
 
     public function getSubstate(wa:FlxSubState):FlxSubState {

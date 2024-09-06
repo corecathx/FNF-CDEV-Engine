@@ -1,5 +1,6 @@
 package meta.modding.chart_editor;
 
+import game.cdev.engineutils.CDevInfoTxt;
 import flixel.addons.ui.FlxUICheckBox;
 import flixel.ui.FlxBar;
 import haxe.Json;
@@ -535,7 +536,7 @@ class ChartEditor extends MusicBeatState {
 
         buttn_stage = new FlxUIButton(label_stage.x, label_stage.y + label_stage.height + 2, "Change", function()
         {
-            openSubState(new StageListSubstate(this,"current_stage"));
+            openSubState(new StageListSubstate(this,"current_stage", settings.use_stage_preview));
         }, true, false, FlxColor.fromRGB(70,70,70));
         buttn_stage.resize(input_composer.width, 20);
         buttn_stage.label.size = 13;
@@ -807,9 +808,8 @@ class ChartEditor extends MusicBeatState {
         },settings.view.grid);
         grp.add(check_grid);
 
-        check_stagePreview = makeCheckBox(0,yStart+(22*6),"Stage Preview",300,()->{
+        check_stagePreview = makeCheckBox(0,yStart+(22*6),"Stage Preview [EXPERIMENTAL]",600,()->{
             settings.use_stage_preview = check_stagePreview.checked;
-            grid.visible = grid.active = settings.use_stage_preview;
         },settings.use_stage_preview);
         grp.add(check_stagePreview);
 
@@ -903,6 +903,9 @@ class ChartEditor extends MusicBeatState {
     }
 
     override function update(elapsed:Float){
+        CDevInfoTxt.stateInfo = ""
+        + "- Hitted Notes / Events   : " + (hitted_notes.length + " / " + hitted_events.length)
+        + "\n- Rendered Notes / Events : " + (rendered_notes.length + " / " + rendered_events.length);
         if (FlxG.sound.music != null){
             if (FlxG.sound.music.playing)
                 Conductor.songPosition = FlxG.sound.music.time;
@@ -945,6 +948,12 @@ class ChartEditor extends MusicBeatState {
         timeBarSeek();
         
         super.update(elapsed);
+    }
+
+    override function destroy() {
+        CDevInfoTxt.stateInfo = "";
+        ChartNote.CACHED_GRAPHIC = null;
+        super.destroy();
     }
 
     function timeBarSeek() {
@@ -1040,7 +1049,7 @@ class ChartEditor extends MusicBeatState {
         }
     
         var editingEvents = _editingEvents;
-        var eventAlpha = editingEvents ? 0 : 1;
+        var eventAlpha = editingEvents ? 1 : 0;
         var noteAlpha = editingEvents ? 0 : 1;
     
         rendered_events.forEachAlive((event:ChartEvent) -> {
@@ -1074,17 +1083,9 @@ class ChartEditor extends MusicBeatState {
                 if (sus != null && Conductor.songPosition > sus.strumTime && Conductor.songPosition < sus.strumTime + sus.holdLength)
                     flash_on_step[sus.noteData] = true;
             }
-        } else if (!isMusicPlaying) {
-            if (!editingEvents) {
-                rendered_notes.forEachAlive((note:ChartNote) -> {
-                    if (hitLineY < note.y && hitted_notes.contains(note)) hitted_notes.remove(note);
-                });
-            } else {
-                rendered_events.forEachAlive((event:ChartEvent) -> {
-                    if (hitLineY < event.y && hitted_events.contains(event)) hitted_events.remove(event);
-                });
-            }
-
+        } else {
+            hitted_notes = [];
+            hitted_events = [];
         }
     }    
     
@@ -1165,21 +1166,21 @@ class ChartEditor extends MusicBeatState {
     
         rendered_notes.forEachAlive((note:ChartNote) -> {
             var noteMeasure = getMeasureFromTime(note.strumTime);
-            if (noteMeasure <= measureThresholdLow || noteMeasure >= measureThresholdHigh) {
+            if (noteMeasure < measureThresholdLow) {
                 killItem(note, rendered_notes);
             }
         });
     
         rendered_events.forEachAlive((event:ChartEvent) -> {
             var eventMeasure = getMeasureFromTime(event.time);
-            if (eventMeasure <= measureThresholdLow || eventMeasure >= measureThresholdHigh) {
+            if (eventMeasure < measureThresholdLow) {
                 killItem(event, rendered_events);
             }
         });
     
         // Add Logic -- Load notes and events from the previous and next section
         var sectionTime:Float = Conductor.crochet * Conductor.time_signature[0];
-        var times:Array<Float> = [sectionTime * (intMeasure - 1), sectionTime * (intMeasure + 1)];
+        var times:Array<Float> = [sectionTime * (intMeasure + 1)];
 
         for (time in times) {
             for (note in getNoteListFromMeasure(time)) addNote(note, true);

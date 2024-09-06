@@ -86,11 +86,12 @@ class ChartNote extends FlxSprite {
 
             nSustain.active = nSustainEnd.active = false;
 
-            nLabelOv = new FlxText(0,0,-1,"",30);
-            nLabelOv.setFormat(FunkinFonts.VCR, 22, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-            nLabelOv.borderSize = 1.5;
+            if (noteType != "Default Note") {
+                nLabelOv = new FlxText(0,0,-1,"",30);
+                nLabelOv.setFormat(FunkinFonts.VCR, 22, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+                nLabelOv.borderSize = 1.5;
+            }
         }
-
     }
 
     override function draw():Void {
@@ -126,7 +127,7 @@ class ChartNote extends FlxSprite {
             }
             super.draw();
     
-            if (!isSustain) {
+            if (!isSustain && noteType != "Default Note") {
                 var data:Int = ChartEditor.current.getNoteTypePos(noteType);
                 nLabelOv.text = (data != -1 ? '${data}' : "");
                 nLabelOv.y = y + (height - nLabelOv.height)*0.5;

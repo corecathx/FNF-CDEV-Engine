@@ -26,8 +26,10 @@ class StageListSubstate extends MusicBeatSubstate {
     var field_to_find:String = "";
 
     var allLoaded:Bool = false;
-    public function new(parentState:Dynamic,field:String){
+    var shouldRenderPreview:Bool = false;
+    public function new(parentState:Dynamic,field:String, shouldRenderPreview:Bool = false){
         super();
+        this.shouldRenderPreview = shouldRenderPreview;
         parent_state = parentState;
         field_to_find = field;
 
@@ -48,44 +50,49 @@ class StageListSubstate extends MusicBeatSubstate {
         loadLabel.screenCenter();
         add(loadLabel);
 
-        FunkinThread.doTask([
-            ()->{
-                var directories = [Paths.getPreloadPath('data/stages/'),Paths.mods('${Paths.currentMod}/data/stages/')];
-                var stageList:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
-                for (curDirectory in directories)
+        if (shouldRenderPreview) {
+            FunkinThread.doTask([
+                loadObjects
+            ],(_)->{},()->{
+                for (n in buttList){
+                    butt_group.add(n);
+                }
+                loadLabel.destroy();
+                remove(loadLabel);
+                allLoaded = true;
+            }, (error:String)->{
+                close();
+            });
+        } else {
+            loadObjects();
+        }
+    }
+
+    function loadObjects() {
+        var directories = [Paths.getPreloadPath('data/stages/'),Paths.mods('${Paths.currentMod}/data/stages/')];
+        var stageList:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
+        for (curDirectory in directories)
+        {
+            if (FileSystem.exists(curDirectory))
+            {
+                for (file in FileSystem.readDirectory(curDirectory))
                 {
-                    if (FileSystem.exists(curDirectory))
+                    var path = haxe.io.Path.join([curDirectory, file]);
+                    if (!FileSystem.isDirectory(path) && file.endsWith('.json'))
                     {
-                        for (file in FileSystem.readDirectory(curDirectory))
-                        {
-                            var path = haxe.io.Path.join([curDirectory, file]);
-                            if (!FileSystem.isDirectory(path) && file.endsWith('.json'))
-                            {
-                                var charToCheck:String = file.substr(0, file.length - 5);
-                                stageList.push(charToCheck);
-                            }
-                        }
+                        var charToCheck:String = file.substr(0, file.length - 5);
+                        stageList.push(charToCheck);
                     }
                 }
-        
-                for (index => name in stageList) {
-                    var n = new StageListSprite(0, 20 + (120 * index), name);
-                    n.scrollFactor.set();
-                    n.active = false;
-                    buttList.push(n);
-                }
             }
-        ],(_)->{},()->{
-            for (n in buttList){
-                butt_group.add(n);
-            }
-            loadLabel.destroy();
-            remove(loadLabel);
-            allLoaded = true;
-        }, (error:String)->{
-            close();
-        });
+        }
 
+        for (index => name in stageList) {
+            var n = new StageListSprite(0, 20 + (120 * index), name, shouldRenderPreview);
+            n.scrollFactor.set();
+            n.active = false;
+            buttList.push(n);
+        }
     }
 
     override function update(elapsed:Float) {
@@ -130,12 +137,15 @@ class StageListSprite extends FlxSprite {
     public var label:FlxText;
     var supposedSizeWidth:Int = Std.int(FlxG.width*0.5);
     var supposedSizeHeight:Int = 100;
-    public function new(nX:Float, nY:Float, name:String){
+    public function new(nX:Float, nY:Float, name:String, genPrev:Bool = false){
         super(nX,nY);
         label = new FlxText(0,0,-1,name,32);
         label.setFormat(FunkinFonts.VCR, 32, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
         label.scrollFactor.set();
-        generatePreview();
+        if (genPrev)
+            generatePreview();
+        else
+            makeGraphic(supposedSizeWidth, supposedSizeHeight, 0xFF000000);
     }
 
     override function destroy() {
