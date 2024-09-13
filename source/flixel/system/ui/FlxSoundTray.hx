@@ -90,7 +90,7 @@ class FlxSoundTray extends Sprite
 		text.gridFitType = GridFitType.PIXEL;
 		#else
 		#end
-		var dtf:TextFormat = new TextFormat(FunkinFonts.VCR, 10, 0xffffff);
+		var dtf:TextFormat = new TextFormat(FunkinFonts.JETBRAINS, 7, 0xffffff);
 		dtf.align = TextFormatAlign.CENTER;
 		text.defaultTextFormat = dtf;
 		addChild(text);
@@ -200,7 +200,7 @@ class FlxSoundTray extends Sprite
 		var globalVolume:Int = Math.round(FlxG.sound.volume * 10);
 		if (FlxG.sound.muted) globalVolume = 0;
 
-        text.text = FlxG.sound.muted ? "MUTED" : "MASTER";
+        text.text = FlxG.sound.muted ? "MUTED" : "MASTER " + Std.int(FlxG.sound.volume*100) + "%";
 
 		for (i in 0..._bars.length)
 		{
