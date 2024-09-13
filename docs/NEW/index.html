@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>FNF CDEV Engine</title>
+        <link rel="stylesheet" href="./styles.css">
+        <link rel="icon" type="image/x-icon" href="./res/images/funkin_icon.png">
+    </head>
+    <body>
+        <div class="header">
+            <div class="logo-header">
+                <img src="./res/images/funkin_icon.png" height="30px" alt="FNF_ICON_16">
+                <h1>FNF': CDEV Engine</h1>
+            </div>
+            <div class="buttons">
+                <a href="https://gamebanana.com/mods/346832" target="_blank" rel="noopener noreferrer" class="tooltip-trigger" data-tooltip="Download">
+                    <img src="https://www.svgrepo.com/show/491220/download.svg" alt="Download">
+                </a>
+                <a href="./docs.html" target="_blank" rel="noopener noreferrer" class="tooltip-trigger" data-tooltip="Documentation">
+                    <img src="https://www.svgrepo.com/show/201676/documentation-document.svg" alt="Documentation">
+                </a>
+                <div class="full-vertical"></div>
+                <a href="https://github.com/corecathx/FNF-CDEV-Engine" target="_blank" rel="noopener noreferrer" class="tooltip-trigger" data-tooltip="GitHub">
+                    <img src="https://www.svgrepo.com/show/521688/github.svg" alt="GitHub">
+                </a>
+            </div>
+        </div>
+        <div class="content">
+            <div class="bgCDEV">
+                <img class="cdev-logo" src="./res/images/cdev-logo.png" alt="CDEV Engine Logo">
+            </div>
+            <div class="mainContent">
+                <h1>Friday Night Funkin': CDEV Engine</h1> <hr>
+                <p>
+                    <b>CDEV Engine</b> is a Friday Night Funkin' Engine intended to fix issues
+                    with the base game while also adding lot of features, built off <b>Friday Night Funkin' v0.2.7.1</b>.
+                </p>
+                <h2>DevNotes</h2> <hr>
+                <p>
+                    <ul dir="auto">
+                        <li><b>Supported Platforms</b>: Currently, CDEV Engine is supported only on Windows.</li>
+                        <li><b>Contact</b>: If you have any issues, feel free to contact me on <a href="https://discord.com/users/694791036094119996" rel="nofollow">Discord</a> or join the <a href="https://discord.com/invite/w8sFmXsFpk" rel="nofollow">CDEV Engine Public Discord Server</a>.</li>
+                        <li><b>Feedback</b>: All feedback is appreciated, and contributions are welcome!</li>
+                    </ul>
+                </p>
+                <h2>Features</h2> <hr>
+                <p>
+                    <ul dir="auto">
+                        <li>Modding Tools (Character Editor, Stage Editor, and Week Editor)</li>
+                        <li>Dark Mode (Light mode hurts)</li>
+                        <li>Custom States (Experimental)</li>
+                        <li>Support for mid-song events, custom notes/note types, and noteskins</li>
+                        <li>HScript support</li>
+                        <li>Entire game UI rework</li>
+                        <li>Customizable settings (Down/Up Scroll, Ghost Tapping, etc.)</li>
+                        <li>Song modifiers</li>
+                        <li>Improved Input System</li>
+                        <li>Second vocals support</li>
+                        <li>New chart format (beta) in the Chart Editor</li>
+                    </ul>
+                </p>
+                <h2>Documentation</h2> <hr>
+                <p>
+                    Press <a href="./docs.html">here</a> to read CDEV Engine's Docs.
+                </p>
+            </div>
+        </div>
+        <div class="footer">
+            <p style="font-size: 14px; color:gray;">
+                2024 - CoreCat<br>
+                Friday Night Funkin' by FunkinCrew
+            </p>
+        </div>
+        
+        <!-- Tooltip hooray -->
+        <div class="tooltip">
+            <p>Tooltip Text Here</p>
+        </div>
+    </body>
+
+    <script src="./script.js"></script>
+    <script>
+        // particles funny
+        document.addEventListener('DOMContentLoaded', () => {
+            let bg = document.querySelector('.bgCDEV');
+            let curCount = 0;
+            let maxParticles = 20;
+
+            function makeParticle() {
+                if (curCount > maxParticles) return;
+
+                let particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+                bg.appendChild(particle);
+                curCount++;
+
+                // Remove particle after animation ends
+                particle.addEventListener('animationend', () => {
+                    particle.remove();
+                    curCount--;
+                });
+            }
+
+            setInterval(makeParticle, 100);
+        });
+    </script>
+</html>

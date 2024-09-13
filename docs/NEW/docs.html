@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>FNF CDEV Engine</title>
+        <link rel="stylesheet" href="./styles.css">
+        <link rel="icon" type="image/x-icon" href="./res/images/funkin_icon.png">
+    </head>
+    <body>
+        <div class="header">
+            <div class="logo-header">
+                <img src="./res/images/funkin_icon.png" height="30px" alt="FNF_ICON_16">
+                <h1>FNF': CDEV Engine</h1>      
+            </div>
+            <div class="buttons">
+                <a href="https://gamebanana.com/mods/346832" target="_blank" rel="noopener noreferrer" class="tooltip-trigger" data-tooltip="Download">
+                    <img src="https://www.svgrepo.com/show/491220/download.svg" alt="Download">
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="tooltip-trigger" data-tooltip="Documentation">
+                    <img src="https://www.svgrepo.com/show/201676/documentation-document.svg" alt="Documentation">
+                </a>
+                <div class="full-vertical"></div>
+                <a href="https://github.com/corecathx/FNF-CDEV-Engine" target="_blank" rel="noopener noreferrer" class="tooltip-trigger" data-tooltip="GitHub">
+                    <img src="https://www.svgrepo.com/show/521688/github.svg" alt="GitHub">
+                </a>
+            </div>
+        </div>
+        <div class="content">
+            <h1 id="doc-title">Title here</h1>
+            <p id="doc-desc">The documentation description will be written here based of the json file.</p>
+            <p id="doc-guide" style="font-size: 14px; color:gray">small text informing something</p>
+            <ul id="doc-list">
+            </ul>
+        </div>
+        <div class="footer">
+            <p style="font-size: 14px; color:gray;">
+                2024 - CoreCat<br>
+                Friday Night Funkin' by FunkinCrew
+            </p>
+        </div>
+        
+        <!-- Tooltip hooray -->
+        <div class="tooltip">
+            <p>Tooltip Text Here</p>
+        </div>
+    </body>
+
+    <script src="./script.js"></script>
+    <script>
+        function loadDocs(jsonUrl) {
+            fetch(jsonUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let fieldGrp = document.getElementById('doc-list');
+    
+                    document.getElementById('doc-title').textContent = data.title;
+                    document.getElementById('doc-desc').textContent = data.desc;
+                    document.getElementById('doc-guide').textContent = data.guide;
+    
+                    fieldGrp.innerHTML = '';
+    
+                    data.fields.forEach(field => {
+                        let grpItem = document.createElement('li');
+                        let code = document.createElement('pre');
+    
+                        let newThing = field.type.replace(/</g, "ANOTHERSTART").replace(/>/g,"ANOTHEREND")
+                        let nameFormat = `<span class="vari">${field.name}</span>`;
+                        let typeFormat = `<span class="clas">${newThing.replace("ANOTHERSTART", '<span style="color:white;">&lt;</span>').replace("ANOTHEREND", '<span style="color:white;">&gt;</span>')}</span>`;
+                        code.innerHTML = `<span>${nameFormat}:${typeFormat}</span>`;
+                        
+                        let desc = document.createElement('p');
+                        desc.textContent = field.desc;
+    
+                        grpItem.appendChild(code);
+                        grpItem.appendChild(desc);
+    
+                        fieldGrp.appendChild(grpItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching the JSON:', error);
+                });
+        }
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDocs('./docs/playstate.json');
+        });
+    </script>    
+</html>
