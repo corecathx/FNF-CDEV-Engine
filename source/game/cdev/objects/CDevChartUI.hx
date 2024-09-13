@@ -13,7 +13,7 @@ class CDevChartUI extends FlxSpriteGroup {
 
     var button_burg:FlxSprite;
 
-    var isOpen:Bool = false;
+    public var isOpen:Bool = false;
 
     var intended_size:Float = 0;
     var intended_height:Float = 0;
@@ -79,7 +79,7 @@ class CDevChartUI extends FlxSpriteGroup {
     function clear_uiGroup(){
         while (ui_group.members.length != 0){
             for (i in ui_group.members){
-                //if (i != null) i.destroy();
+                if (i != null) i.destroy();
                 ui_group.members.remove(i);
             }
         }
@@ -106,7 +106,7 @@ class CDevChartUI extends FlxSpriteGroup {
 
         intended_size = (isOpen ? big_width : initial_size);
         intended_height = (main_focus != -1 ? big_height : initial_size);
-
+        
         extendable_bg.resize(Std.int(FlxMath.lerp(intended_size, extendable_bg.width, 1-(elapsed*16))),Std.int(FlxMath.lerp(intended_height, extendable_bg.height, 1-(elapsed*16))));
         extendable_bg.x = main_button_spr.x - (extendable_bg.width - initial_size);
         extendable_bg.y = main_button_spr.y - (extendable_bg.height - initial_size);
@@ -141,6 +141,13 @@ class CDevChartUI extends FlxSpriteGroup {
         if (extendable_bg != null) extendable_bg.destroy();
         if (main_button_spr != null) main_button_spr.destroy();
         super.destroy();
+    }
+
+    override function get_width():Float {
+        return extendable_bg.width;
+    }
+    override function get_height():Float {
+        return extendable_bg.height;
     }
 }
 
