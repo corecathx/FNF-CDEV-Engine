@@ -4079,6 +4079,14 @@ class PlayState extends MusicBeatState
 		}
 		rating.updateHitbox();
 
+		if (setting)
+			add(rating);
+		else
+		{
+			sRating = rating;
+			add(sRating);
+		}
+
 		var seperatedScore:Array<Int> = [];
 
 		var comboString:String = Std.string(combo);
@@ -4130,14 +4138,6 @@ class PlayState extends MusicBeatState
 			}
 
 			daLoop++;
-		}
-
-		if (setting)
-			add(rating);
-		else
-		{
-			sRating = rating;
-			add(sRating);
 		}
 
 		if (setting)

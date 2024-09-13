@@ -123,19 +123,22 @@ class CDevInfoTxt extends TextField
     public function getFlixel():String {
         how = 0;
         var bmp:Int = 0;
+        var drawCount:Int = 0;
         @:privateAccess{
+            drawCount = 0;//FlxG.game.debugger.stats.drawCallsCount;
             for (a in FlxG.bitmap._cache.keys())
                 bmp++;
         }
         var e = getSubstate(FlxG.state.subState);
         var sub:String = (e != null ? '\n| - Substate : ${Type.getClassName(Type.getClass(e))} ${how>0?'(Nested: $how)' : ''}':'');
         var fli:String = "// Flixel //"
-            + '\n- Version  : ${FlxG.VERSION}'
-            + '\n- State    : ${Type.getClassName(Type.getClass(FlxG.state))}'
+            + '\n- Version    : ${FlxG.VERSION}'
+            + '\n- State      : ${Type.getClassName(Type.getClass(FlxG.state))}'
             + sub
-            + '\n- Sounds   : ${FlxG.sound.list.length}'
-            + '\n- Bitmaps  : ${bmp}'
-            + '\n- Objects  : ${FlxG.state.members.length}';
+            + '\n- Sounds     : ${FlxG.sound.list.length}'
+            + '\n- Bitmaps    : ${bmp}'
+            + '\n- Objects    : ${FlxG.state.members.length}'
+            + '\n- Draw Count : ${drawCount}';
         return fli;
     }
 

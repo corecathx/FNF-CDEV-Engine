@@ -48,6 +48,7 @@ class StageListSubstate extends MusicBeatSubstate {
         loadLabel.borderQuality = 5;
         loadLabel.scrollFactor.set();
         loadLabel.screenCenter();
+        loadLabel.active = false;
         add(loadLabel);
 
         if (shouldRenderPreview) {
@@ -65,6 +66,12 @@ class StageListSubstate extends MusicBeatSubstate {
             });
         } else {
             loadObjects();
+            for (n in buttList){
+                butt_group.add(n);
+            }
+            loadLabel.destroy();
+            remove(loadLabel);
+            allLoaded = true;
         }
     }
 
