@@ -1,0 +1,10 @@
+Since CDEV Engine (finally) getting a rewrite, I've changed how the Source Code folder structure looks like here
+(my attempt of organizing things...)
+
+1. [Folder] files - Where to put assets for the engine
+   There's 2 folders inside of it for now, which is "assets" and "mods" and i think it's clear enough
+   of what are these folders for.
+2. [Folder] res   - Every required assets to build the engine, such as app icon.
+3. [Folder] src   - Whole source code of the engine.
+
+that's all bye lol
