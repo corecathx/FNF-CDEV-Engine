@@ -19,5 +19,8 @@ class PlayState extends State
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		if (FlxG.keys.justPressed.SPACE) {
+			FlxG.switchState(new DebugState());
+		}
 	}
 }

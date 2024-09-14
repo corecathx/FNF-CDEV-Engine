@@ -24,6 +24,10 @@
 	<!--Mobile-specific-->
 	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" />
 
+	<!-- _____________________________ CDEV Engine Defines ____________________________ -->
+	<!-- Comment this to disable: Dark Mode window. -->
+	<define name="DARK_MODE_WINDOW"/>
+
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<set name="BUILD_DIR" value="export" />

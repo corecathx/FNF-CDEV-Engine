@@ -16,6 +16,7 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+		new Conductor();
 		addChild(new Game());
 		addChild(new StatsDisplay(10,10,0xFFFFFF));
 		trace("CDEV Engine is ready :3");

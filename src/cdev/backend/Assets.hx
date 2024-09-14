@@ -1,5 +1,7 @@
 package cdev.backend;
 
+import sys.io.File;
+import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
 
@@ -56,6 +58,31 @@ class Assets {
 
         return n;
     }
+
+	/**
+	 * Returns Atlas Frames based of `file`'s sparrow atlas XML and PNG file.
+	 * @param file Your sparrow atlas filename.
+	 * @return FlxAtlasFrames
+	 */
+	public static function sparrowAtlas(file:String):FlxAtlasFrames {
+		inline function failed(message:String) {
+			trace(message);
+			return null;
+		}
+		var graphic:FlxGraphic = image(file);
+		if (graphic == null) 
+			failed("Graphic is null.");
+
+		var xmlPath:String = '$_IMAGE_PATH/$file.xml';
+		if (!FileSystem.exists(xmlPath)) 
+			failed("XML couldn't be found.");
+
+		var xml:String = File.getContent('$_IMAGE_PATH/$file.xml');
+		if (xml.length == 0) 
+			failed("XML is invalid.");
+
+		return FlxAtlasFrames.fromSparrow(graphic,xml);
+	}
 
     /**
 	 * Returns a sound file
