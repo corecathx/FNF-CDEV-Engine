@@ -1,5 +1,9 @@
 package cdev.backend;
 
+import sys.io.File;
+import haxe.Json;
+import sys.FileSystem;
+import openfl.media.Sound;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 
@@ -9,6 +13,48 @@ using StringTools;
  * Contains useful functions used by the Engine.
  */
 class Utils {
+    public static function loadSong(songName:String, diff:String):{inst:Sound, voices:Array<Sound>, chart:Chart} {
+        // Initial checking if the song folder exists.
+        var path:String = '${Assets._SONG_PATH}/$songName';
+        if (!FileSystem.exists(path)) {
+            trace("Song could not be found.");
+            return null;
+        }
+
+        // Checking Inst file.
+        var inst:Sound = Assets._sound_file('$path/Inst.ogg');
+        if (inst == null) {
+            trace("Inst audio could not be loaded.");
+            return null;
+        }
+
+        // Checking Voice files.
+        var voices:Array<Sound> = [];
+        for (files in FileSystem.readDirectory(path)) {
+            if (FileSystem.isDirectory(path+"/"+files)) 
+                continue;
+            if (files.startsWith("Voices") && files.endsWith(".ogg")){
+                voices.push(Assets._sound_file('$path/${files.replace(".ogg","")}.ogg'));
+            }
+
+        }
+
+        // Checking chart file.
+        var chartPath:String = '$path/charts/$diff.json';
+        if (!FileSystem.exists(chartPath)) {
+            trace("Chart file not found: "+chartPath);
+            return null;
+        }
+
+        var chart:Chart = Chart.convertLegacy(Json.parse(File.getContent(chartPath)).song);
+
+        // very smart.
+        return {
+            inst: inst,
+            voices: voices,
+            chart: chart
+        }
+    }
     /**
 	 * Converts bytes int to formatted sizes. (ex: 10 MB, 100 GB, 1000 TB, etc)
 	 * @param bytes		Bytes number that will be converted

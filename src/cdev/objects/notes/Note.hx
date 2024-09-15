@@ -21,13 +21,24 @@ class Note extends Sprite {
 
     public var time:Float = 0;
     public var data:Int = 0;
+    public var hitable(get,never):Bool;
+    function get_hitable() {
+        return time > Conductor.current.time - (Conductor.current.safe_zone_offset * 1.5)
+            && time < Conductor.current.time + (Conductor.current.safe_zone_offset * 0.5);
+    }
+    public var invalid(get,never):Bool;
+    function get_invalid() {
+        return time < (Conductor.current.time - 166);
+    }
 
-    public function new(time:Float, data:Int) {
+    public function new() {
         super();
+        frames = Assets.sparrowAtlas("notes/NOTE_assets");
+    }
+
+    public function init(time:Float, data:Int) {
         this.time = time;
         this.data = data;
-
-        frames = Assets.sparrowAtlas("notes/NOTE_assets");
 
         var _colorData:String = animColor[data];
         addAnim(_colorData+"Scroll", _colorData+"0", 24);
@@ -35,10 +46,12 @@ class Note extends Sprite {
 
         setGraphicSize(scaleWidth);
         updateHitbox();
+
+        y = -1000; //make sure it's completely offscreen.
     }
 
     public function follow(receptor:ReceptorNote) {
         x = receptor.x;
-        y = receptor.y - (Conductor.current.time - time) * (receptor.speed * receptor.scrollMult);
+        y = receptor.y - ((Conductor.current.time - time) * (receptor.speed * receptor.scrollMult))*0.45;
     }
 }

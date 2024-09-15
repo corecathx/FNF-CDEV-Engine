@@ -1,5 +1,7 @@
 package cdev.backend;
 
+import lime.media.vorbis.VorbisFile;
+import lime.media.AudioBuffer;
 import sys.io.File;
 import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.display.BitmapData;
@@ -14,11 +16,13 @@ import sys.FileSystem;
  */
 class Assets {
     /** Path to asset folders, modify only if necessary. **/
-    public inline static var _ASSET_PATH:String = "./assets";
+    @:noCompletion public inline static var _ASSET_PATH:String = "./assets";
 
-    public inline static var _FONT_PATH:String  = '$_ASSET_PATH/fonts';
-    inline public static var _IMAGE_PATH:String = '$_ASSET_PATH/images';
-    inline public static var _SOUND_PATH:String = '$_ASSET_PATH/sounds';
+    @:noCompletion inline public static var _FONT_PATH:String  = '$_ASSET_PATH/fonts';
+    @:noCompletion inline public static var _IMAGE_PATH:String = '$_ASSET_PATH/images';
+    @:noCompletion inline public static var _SOUND_PATH:String = '$_ASSET_PATH/sounds';
+
+	@:noCompletion inline public static var _SONG_PATH:String  = '$_ASSET_PATH/songs';
 
     // Trackers for loaded assets. //
 	public static var loaded_images:Map<String, FlxGraphic> = new Map();
@@ -26,7 +30,6 @@ class Assets {
 
     /** Shortcut to access game fonts. **/
     public static var fonts(default, null):Fonts = new Fonts();
-
 
 	/**
 	 * Loads a font file.
@@ -101,7 +104,7 @@ class Assets {
 			return null;
 
 		if (!loaded_sounds.exists(path))
-			loaded_sounds.set(path, Sound.fromFile(path));
+			loaded_sounds.set(path, Sound.fromAudioBuffer(AudioBuffer.fromVorbisFile(VorbisFile.fromFile(path))));
 
 		return loaded_sounds.get(path);
 	}
@@ -111,7 +114,7 @@ class Assets {
  * Contains fonts used in the game.
  */
 class Fonts {
-    public var JETBRAINS(default, null):String = Assets.font("jetbrains");
+    public var JETBRAINS(default, null):String = Assets.font("jbm");
     public var VCR(default, null):String = Assets.font("vcr");
     public function new() {}
 }

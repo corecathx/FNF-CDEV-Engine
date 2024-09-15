@@ -1,7 +1,9 @@
 // Soon
+import cdev.Config;
 import cdev.backend.Conductor;
 import cdev.backend.Assets;
 import cdev.backend.Utils;
+import cdev.backend.Controls;
 import cdev.backend.States.State;
 import cdev.backend.States.SubState;
 import cdev.backend.engine.Game;

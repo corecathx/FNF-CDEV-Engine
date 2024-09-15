@@ -33,7 +33,7 @@ class Conductor {
     /** Hit window frame size **/
 	public var safe_frames:Float = 20;
 
-    /** Hitable area for tiles. **/
+    /** Hitable area for notes. **/
     public var safe_zone_offset:Float = Math.floor((20 / 60) * 1000);
 
     /** Will be called on each beat tick changes. **/

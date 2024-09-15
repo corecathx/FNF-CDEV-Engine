@@ -28,11 +28,16 @@
 	<!-- Comment this to disable: Dark Mode window. -->
 	<define name="DARK_MODE_WINDOW"/>
 
+	<!-- Comment this to disable: Crash Handler. -->
+	<!-- <define name="CRASH_HANDLER" if="windows"/> -->
+
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<set name="BUILD_DIR" value="export" />
 	<source path="src" />
 	<assets path="files/assets" rename="assets"/> <!-- "Simple" files managing. -->
+
+	<assets path='files/cdev-crash_handler.exe' rename='cdev-crash_handler.exe' embed='false' if="windows"/>
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
@@ -48,6 +53,9 @@
 	<!--<haxelib name="nape-haxe4" />-->
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
+
+	<haxedef name="HXCPP_CHECK_POINTER" if="CRASH_HANDLER" />
+	<haxedef name="HXCPP_STACK_LINE" if="CRASH_HANDLER" />
 
 	<!--Remove the legacy health system-->
 	<haxedef name="FLX_NO_HEALTH" />

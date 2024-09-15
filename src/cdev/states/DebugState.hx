@@ -1,38 +1,49 @@
 package cdev.states;
 
+import cdev.backend.audio.SoundGroup;
+import cdev.objects.notes.NoteLoader;
 import cdev.objects.notes.StrumLine;
 import cdev.objects.notes.Note;
 
 class DebugState extends State {
-    var strumline:StrumLine;
+    var playerStrums:StrumLine;
+    var opponentStrums:StrumLine;
+    var sounds:SoundGroup;
+
+    var noteLoader:NoteLoader;
     override function create() {
-        strumline = new StrumLine((FlxG.width-(Note.scaleWidth*Note.directions.length))*0.5,100,false);
-        add(strumline);
+        var strumCount:Float = 2;
+        var maxPlayField:Float = FlxG.width / strumCount;
+        var strumWidth:Float = Note.scaleWidth*Note.directions.length;
+        var centerX:Float = (maxPlayField-strumWidth)*0.5;
+
+        var scrollThing:Float = (FlxG.height-Note.scaleWidth)-70;
+        opponentStrums = new StrumLine(centerX,70,true);
+        add(opponentStrums);
+
+        playerStrums = new StrumLine((FlxG.width*0.5)+centerX,scrollThing,false);
+        playerStrums.scrollMult = -1;
+        add(playerStrums);
+
+        var song = Utils.loadSong("Roses Erect", "hard");
+
+        sounds = new SoundGroup(song.inst,song.voices);
+        add(sounds);
+        sounds.play();
+
+        noteLoader = new NoteLoader([opponentStrums, playerStrums],song.chart);
+        add(noteLoader);
+
+        Conductor.current.updateBPM(song.chart.info.bpm);
+        Conductor.current.onBeatTick.add(()->{
+            if (Conductor.current.current_beats % 4 == 0) FlxG.camera.zoom += 0.05;
+            FlxG.camera.zoom += 0.015;
+        });
         super.create();
     }
 
     override function update(elapsed:Float) {
-        Conductor.current.time += (elapsed*1000);
-        var keyPressed:Array<Bool> = [
-            FlxG.keys.justPressed.S,
-            FlxG.keys.justPressed.D,
-            FlxG.keys.justPressed.K,
-            FlxG.keys.justPressed.L
-        ];
-        var keyReleased:Array<Bool> = [
-            FlxG.keys.justReleased.S,
-            FlxG.keys.justReleased.D,
-            FlxG.keys.justReleased.K,
-            FlxG.keys.justReleased.L
-        ];
-
-        if (keyPressed.contains(true)){
-            for (index => key in keyPressed) {
-                if (key) 
-                    strumline.addNote(new Note(Conductor.current.time+1500,index));
-            }
-        }
-
         super.update(elapsed);
+        FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, 1-(elapsed*6));
     }
 }
