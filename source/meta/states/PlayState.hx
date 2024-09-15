@@ -2032,9 +2032,11 @@ class PlayState extends MusicBeatState
 			vocals.play();
 		}
 
-		FlxAnimationController.animSpeed = songSpeed;
+		// FlxAnimationController.animSpeed = songSpeed;
+		FlxG.animationTimeScale = songSpeed;
 		FlxG.sound.music.onComplete = ()->{
 			trace("Song should be ended by now.");
+			FlxG.animationTimeScale = 1;
 			endSong();
 		};
 
@@ -2509,7 +2511,8 @@ class PlayState extends MusicBeatState
 	/**Used for updating the Conductor class.**/
 	public function conductorUpdate(elapsed:Float)
 	{
-		FlxAnimationController.animSpeed = songSpeed;
+		//FlxAnimationController.animSpeed = songSpeed;
+		FlxG.animationTimeScale = songSpeed;
 		if (startingSong)
 		{
 			if (startedCountdown)
@@ -2528,8 +2531,8 @@ class PlayState extends MusicBeatState
 								if (i != null)
 								{
 									var spr = cast(i, FlxSprite);
-									if (spr.animation != null)
-										spr.animation.useAnimSpeed = true;
+									//if (spr.animation != null)
+									//	spr.animation.useAnimSpeed = true;
 								}
 							}
 						}
