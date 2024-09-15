@@ -63,7 +63,13 @@ class ChartNote extends FlxSprite {
             frames = ChartNote.CACHED_GRAPHIC;//Paths.getSparrowAtlas("notes/NOTE_assets");
 
         var i:String = Note.directions[noteData%4];
-        animation.addByPrefix(i+"anim", i+"0", 24);
+        if (!asDummyNote) {
+            animation.addByPrefix(i+"anim", i+"0", 24);
+        } else {
+            for (o in Note.directions)
+                animation.addByPrefix(o+"anim", o+"0", 24);
+        }
+
         if (isSustain) {
             animation.addByPrefix("end"+i, (i == "purple" ? "pruple end hold" : i+" hold end"), 24);
             animation.addByPrefix("hold"+i, i+" hold piece", 24);

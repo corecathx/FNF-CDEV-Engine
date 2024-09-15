@@ -1,5 +1,6 @@
 package meta.modding.chart_editor;
 
+import flixel.addons.ui.FlxUISlider;
 import game.cdev.engineutils.CDevInfoTxt;
 import flixel.addons.ui.FlxUICheckBox;
 import flixel.ui.FlxBar;
@@ -57,6 +58,8 @@ class ChartEditor extends MusicBeatState {
     // Sound Objects
     var playerVoice:FlxSound;
     var opponentVoice:FlxSound;
+    var hit_sound:FlxSound;
+    var metronome_tick:FlxSound;
 
     // Chart-Related Variables
     public var chart:CDevChart;
@@ -120,9 +123,6 @@ class ChartEditor extends MusicBeatState {
     var _spawn_eventName_id:Int = 0;
     var _spawn_eventArgs:Array<String> = ["", ""];
 
-    // Editing Mode
-    var _editingEvents:Bool = false;
-
     // Editor Settings
     var settings = {
         view: {
@@ -133,7 +133,13 @@ class ChartEditor extends MusicBeatState {
             strum_notes: true,
         },
         use_stage_preview: false,
-        hitsound: false
+        hitsound: false,
+        metronome_tick: false,
+        editing_events: false,
+        playtest: {
+            asPlayer: false,
+            testing: false
+        }
     }
 
     public function new(?fnfChart:CDevChart, ?difficulty:String){
@@ -164,6 +170,9 @@ class ChartEditor extends MusicBeatState {
         loadUI();
         initChart();
 
+        hit_sound = preloadSound("clapsfx",0.6);
+        metronome_tick = preloadSound("metronome",0.8);
+
         FlxG.camera.follow(hitLine, LOCKON);
         FlxG.camera.targetOffset.y = 200;
 
@@ -184,6 +193,13 @@ class ChartEditor extends MusicBeatState {
         }
 
         super.create();
+    }
+
+    function preloadSound(audio:String, volume:Float):FlxSound {
+        var a:FlxSound = FlxG.sound.play(Paths.sound(audio), volume,false,null,false);
+        a.time = 0;
+        a.pause();
+        return a;
     }
 
     function loadLists() {
@@ -370,31 +386,48 @@ class ChartEditor extends MusicBeatState {
         text.font = FunkinFonts.JETBRAINS;
         grp.add(text);
 
-        buttn_new = new FlxUIButton(text.x, text.y + text.height + 2, "New", function()
-        {
-            CDevPopUp.open(this, "Prompt", "Are you sure? Any unsaved progress will be lost.", [
+        inline function makeButton(nX:Float, nY:Float, nWidth:Float, nHeight:Float, label:String, callback:Void->Void) {
+            var obj:FlxUIButton = new FlxUIButton(nX,nY,label,callback,true,false,FlxColor.fromRGB(70,70,70));
+            obj.resize(nWidth, nHeight);
+            obj.label.size = 13;
+            obj.label.font = font;
+            obj.label.color = FlxColor.WHITE;
+            obj.label.active = false;
+            return obj;
+        }
+
+        inline function makeLabel(nX:Float, nY:Float, nWidth:Float, label:String) {
+            var obj:FlxText = new FlxText(nX, nY,Std.int(nWidth),label,13);
+            obj.font = FunkinFonts.JETBRAINS;
+            obj.active = false;
+            return obj;
+        }
+
+
+        inline function makeTextBox(nX:Float, nY:Float, nWidth:Float, text:String, callback:String->Void){
+            var obj:CDevInputText = new CDevInputText(nX, nY, Std.int(nWidth), text, 13, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
+            obj.font = FunkinFonts.JETBRAINS;
+            obj.onTextChanged = callback;
+            return obj;
+        }
+
+        var maxSize:Int = 360-47; // The box's inner area
+        var yStart = text.y + text.height + 2; // Where objects Y Position should start
+        var xMiddle:Float = maxSize/2+10; // Middle position of the box.
+        var childHalf:Int = Std.int((maxSize/2)-47);
+          
+        buttn_new = makeButton(0, yStart, childHalf, 20, "New", ()->{
+            CDevPopUp.open(this, "Prompt", "You're about to create a new chart, any unsaved progress will be discarded.", [
                 {text: "CANCEL", callback:()->closeSubState()},
                 {text: "OK", callback:()->FlxG.switchState(new ChartEditor())}
             ], false, true);
-        }, true, false, FlxColor.fromRGB(70,70,70));
-        buttn_new.resize(((360/2)-47), 20);
-        buttn_new.label.size = 13;
-        buttn_new.label.font = font;
-        buttn_new.label.color = FlxColor.WHITE;
+        });
         grp.add(buttn_new);
-
-        buttn_open = new FlxUIButton(buttn_new.x + buttn_new.width + 47, buttn_new.y, "Open", function()
-        {
-            saveUsingFReference();
-        }, true, false, FlxColor.fromRGB(70,70,70));
-        buttn_open.resize(((360/2))-47, 20);
-        buttn_open.label.size = 13;
-        buttn_open.label.font = font;
-        buttn_open.label.color = FlxColor.WHITE;
+        
+        buttn_open = makeButton(buttn_new.x + buttn_new.width + 47, buttn_new.y, childHalf, 20, "Open", saveUsingFReference);
         grp.add(buttn_open);
 
-        buttn_save = new FlxUIButton(text.x, buttn_new.y + buttn_new.height + 2, "Save", function()
-        {
+        buttn_save = makeButton(0, buttn_new.y + buttn_new.height + 2, childHalf, 20, "Save", ()->{
             var path:String = Paths.mods('${Paths.currentMod}/data/charts/${chart.info.name}/');
             trace("Save Path:" + path);
             if (FileSystem.exists(path) && FileSystem.isDirectory(path)){
@@ -404,6 +437,8 @@ class ChartEditor extends MusicBeatState {
                         callback:()->{
                             var jString:String = Json.stringify(chart, "\t");
                             File.saveContent(path+chart.info.name+".cdc", jString);
+                            FlxG.sound.play(Paths.sound("confirmMenu"),0.7);
+                            closeSubState();
                         }
                     },
                     {
@@ -416,46 +451,23 @@ class ChartEditor extends MusicBeatState {
             } else {
                 CDevPopUp.open(this, "Info", "We couldn't find existing chart folder for this song: "+path+"\nWe'll continue saving your chart but please specify where to save this song's chart.", [{text: "OK", callback:()->{saveUsingFReference();}}], false, true);
             }
-        }, true, false, FlxColor.fromRGB(70,70,70));
-        buttn_save.resize(((360/2)-47), 20);
-        buttn_save.label.size = 13;
-        buttn_save.label.font = font;
-        buttn_save.label.color = FlxColor.WHITE;
+        });
         grp.add(buttn_save);
 
-        buttn_saveAs = new FlxUIButton(buttn_save.x + buttn_save.width + 47, buttn_save.y, "Save As", function()
-        {
-            saveUsingFReference();
-        }, true, false, FlxColor.fromRGB(70,70,70));
-        buttn_saveAs.resize(((360/2))-47, 20);
-        buttn_saveAs.label.size = 13;
-        buttn_saveAs.label.font = font;
-        buttn_saveAs.label.color = FlxColor.WHITE;
+        buttn_saveAs = makeButton(buttn_save.x + buttn_save.width + 47, buttn_save.y, childHalf, 20, "Save As", saveUsingFReference);
         grp.add(buttn_saveAs);
 
-        // Straight up copypasted
-
         // Song Name //
-        label_songname = new FlxText(0,buttn_saveAs.y + buttn_saveAs.height + 10,100,"Song Name",13);
-        label_songname.font = font;
-
-        input_songname = new CDevInputText(0, label_songname.y+label_songname.height+2, Std.int((360/2) - 47), chart.info.name, 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-        input_songname.font = font;
-        input_songname.size = label_songname.size;
-        input_songname.onTextChanged = (nText:String) -> {
+        label_songname = makeLabel(0,buttn_saveAs.y + buttn_saveAs.height + 10,100,"Song Name");
+        input_songname = makeTextBox(0, label_songname.y+label_songname.height+2, childHalf, chart.info.name, (nText:String) -> {
             chart.info.name = nText;
-        }
+        });
 
         // Composer //
-        label_composer = new FlxText(0,input_songname.y + input_songname.height + 2,100,"Composer",13);
-        label_composer.font = font;
-
-        input_composer = new CDevInputText(0, label_composer.y+label_composer.height+2, Std.int((360/2) - 47), chart.info.composer, 16, FlxColor.WHITE, FlxColor.fromRGB(70, 70, 70));
-        input_composer.font = font;
-        input_composer.size = label_composer.size;
-        input_composer.onTextChanged = (nText:String) -> {
+        label_composer = makeLabel(0,input_songname.y + input_songname.height + 2,100,"Composer");
+        input_composer = makeTextBox(0, label_composer.y+label_composer.height+2, childHalf, chart.info.composer, (nText:String) -> {
             chart.info.composer = nText;
-        }
+        });
 
         // BPM // 
         label_bpm = new FlxText(label_songname.x+input_songname.width+20,label_songname.y,100,"BPM",13);
@@ -646,8 +658,8 @@ class ChartEditor extends MusicBeatState {
         var nextMode:String = "";
 
         function _subcreateUI() {
-            mode = _editingEvents ? "Event" : "Note";
-            nextMode = _editingEvents ? "Note" : "Event";
+            mode = settings.editing_events ? "Event" : "Note";
+            nextMode = settings.editing_events ? "Note" : "Event";
             
             // # HEADER # //
             var text:FlxText = new FlxText(0,0,-1,"Edit", 16);
@@ -661,10 +673,10 @@ class ChartEditor extends MusicBeatState {
 
             // Note Type List
             var nameList:Array<String> = _noteTypes;
-            if (_editingEvents) 
+            if (settings.editing_events) 
                 nameList = [ for (e in _events) e[0] ];
             drop_noteTypes = new CDevList(text2.x, text2.y+text2.height + 25, 360 - 47,30,nameList,(name:String)->{
-                if (!_editingEvents) {
+                if (!settings.editing_events) {
                     dummyNote.noteType = _spawn_noteType = name;
                     _spawn_noteType_id = nameList.indexOf(name);
                 } else {
@@ -673,7 +685,7 @@ class ChartEditor extends MusicBeatState {
                     label_eventDesc.text = _events[_spawn_eventName_id][1];    
                 }
             });
-            drop_noteTypes.bgLabel.text = !_editingEvents ? _spawn_noteType : _spawn_eventName;
+            drop_noteTypes.bgLabel.text = !settings.editing_events ? _spawn_noteType : _spawn_eventName;
 
             var tempLabel:FlxText = new FlxText(drop_noteTypes.x, drop_noteTypes.y - 16, -1, mode+" Type", 13);
             tempLabel.font = font;
@@ -693,7 +705,7 @@ class ChartEditor extends MusicBeatState {
             input_notearg1.font = font;
             input_notearg1.size = label_notearg1.size;
             input_notearg1.onTextChanged = (nText:String) -> {
-                if (_editingEvents)
+                if (settings.editing_events)
                     _spawn_eventArgs[0] = nText;
                 else
                     _spawn_noteArgs[0] = nText;
@@ -710,7 +722,7 @@ class ChartEditor extends MusicBeatState {
             input_notearg2.font = font;
             input_notearg2.size = label_notearg2.size;
             input_notearg2.onTextChanged = (nText:String) -> {
-                if (_editingEvents)
+                if (settings.editing_events)
                     _spawn_eventArgs[1] = nText;
                 else
                     _spawn_noteArgs[1] = nText;
@@ -718,20 +730,19 @@ class ChartEditor extends MusicBeatState {
             input_notearg2.onFocus = onBoxChangedFocus;
             grp.add(input_notearg2);
 
-            label_eventDesc = new FlxText(input_notearg2.x,input_notearg2.y + input_notearg2.height + 10,360-47,_editingEvents?"Event Description will appear here.":"",13);
+            label_eventDesc = new FlxText(input_notearg2.x,input_notearg2.y + input_notearg2.height + 10,360-47,settings.editing_events?"Event Description will appear here.":"",13);
             label_eventDesc.font = font;
             grp.add(label_eventDesc);
-            label_eventDesc.text = _editingEvents?_events[_spawn_eventName_id][1]:"";
+            label_eventDesc.text = settings.editing_events?_events[_spawn_eventName_id][1]:"";
 
             // Switch mode
             switch_button = new FlxUIButton(text.x, 480 - (47*2), "Switch to "+nextMode+" editing mode.", function()
             {
                 FlxG.sound.play(Paths.sound("clickText", "shared"), 0.7);
-                _editingEvents = !_editingEvents;
+                settings.editing_events = !settings.editing_events;
                 parent.remove(grp,true);
                 grp.destroy();
                 grp = new FlxSpriteGroup();
-                trace("recreating ui");
                 _subcreateUI();
             }, true, false, FlxColor.fromRGB(70,70,70));
             switch_button.resize(360-47, 20);
@@ -757,6 +768,17 @@ class ChartEditor extends MusicBeatState {
     var check_strumLine:FlxUICheckBox;
     var check_grid:FlxUICheckBox;
     var check_stagePreview:FlxUICheckBox;
+    var check_hitsound:FlxUICheckBox;
+    var check_metronome_tick:FlxUICheckBox;
+
+    var slider_opponent_volume:FlxUISlider;
+    var slider_player_volume:FlxUISlider;
+    var slider_song_volume:FlxUISlider;
+
+    var slider_hitsound_volume:FlxUISlider;
+    var slider_metronome_volume:FlxUISlider;
+
+    var slider_playback_rate:FlxUISlider;
 
     function menu_createViewUI(parent:FlxSpriteGroup){
         var grp:FlxSpriteGroup = new FlxSpriteGroup();
@@ -767,7 +789,18 @@ class ChartEditor extends MusicBeatState {
             obj.button.label.font = FunkinFonts.JETBRAINS;
             obj.button.label.size = 11;
             obj.button.label.color = FlxColor.WHITE;
+            obj.button.label.active = false;
             obj.checked = checked;
+            return obj;
+        }
+        inline function makeSlider(nX:Float, nY:Float, label:String, object:Dynamic, variable:String,min:Float,max:Float,nWidth:Float,nHeight:Float) {
+            var obj:FlxUISlider = new FlxUISlider(object,variable,nX,nY,min,max,Std.int(nWidth), Std.int(nHeight), 5, FlxColor.WHITE, FlxColor.WHITE);
+            obj.value = 1;
+            obj.nameLabel.text = label;
+            obj.nameLabel.font = obj.minLabel.font = obj.maxLabel.font = obj.valueLabel.font = FunkinFonts.JETBRAINS;
+            obj.nameLabel.size = obj.minLabel.size = obj.maxLabel.size = obj.valueLabel.size = 11;
+            obj.nameLabel.color = obj.minLabel.color = obj.maxLabel.color = obj.valueLabel.color = FlxColor.WHITE;
+            obj.nameLabel.active = obj.minLabel.active = obj.maxLabel.active = obj.valueLabel.active = false;
             return obj;
         }
         var text:FlxText = new FlxText(0,0,-1,"View", 16);
@@ -781,49 +814,140 @@ class ChartEditor extends MusicBeatState {
         grp.add(text2);
 
         var yStart = text2.y + text.height + 10;
+        var maxSize:Int = 360-47;
+        var middleBox:Float = maxSize/2+10;
 
-        check_disableIcons = makeCheckBox(0,yStart,"Character Icons",300,()->{
+        check_disableIcons = makeCheckBox(0,yStart,"Character Icons",150,()->{
             settings.view.icons = check_disableIcons.checked;
         },settings.view.icons);
         grp.add(check_disableIcons);
         
-        check_metronome = makeCheckBox(0,yStart+22,"Metronome",300,()->{
+        check_metronome = makeCheckBox(middleBox,yStart,"Metronome",150,()->{
             settings.view.metronome = check_metronome.checked;
         },settings.view.metronome);
         grp.add(check_metronome);
 
-        check_strumNotes = makeCheckBox(0,yStart+(22*2),"Note Receptors",300,()->{
+        check_strumNotes = makeCheckBox(0,yStart+22,"Note Receptors",150,()->{
             settings.view.strum_notes = check_strumNotes.checked;
         },settings.view.strum_notes);
         grp.add(check_strumNotes);
 
-        check_strumLine = makeCheckBox(0,yStart+(22*3),"Strum Line",300,()->{
+        check_strumLine = makeCheckBox(middleBox,yStart+22,"Strum Line",150,()->{
             settings.view.strum_line = check_strumLine.checked;
         },settings.view.strum_line);
         grp.add(check_strumLine);
 
-        check_grid = makeCheckBox(0,yStart+(22*4),"Grid",300,()->{
+        check_grid = makeCheckBox(0,yStart+(22*2),"Grid",150,()->{
             settings.view.grid = check_grid.checked;
-            grid.visible = grid.active = settings.view.grid;
+            beatDividers.visible = grid.visible = grid.active = settings.view.grid;
         },settings.view.grid);
         grp.add(check_grid);
 
-        check_stagePreview = makeCheckBox(0,yStart+(22*6),"Stage Preview [EXPERIMENTAL]",600,()->{
+        check_stagePreview = makeCheckBox(middleBox,yStart+(22*2),"Stage Preview [BETA]",150,()->{
             settings.use_stage_preview = check_stagePreview.checked;
         },settings.use_stage_preview);
         grp.add(check_stagePreview);
 
+        check_hitsound = makeCheckBox(0,yStart+(22*3),"Hitsound",150,()->{
+            settings.hitsound = check_hitsound.checked;
+        },settings.hitsound);
+        grp.add(check_hitsound);
+
+        check_metronome_tick = makeCheckBox(middleBox,yStart+(22*3),"Metronome Tick",150,()->{
+            settings.metronome_tick = check_metronome_tick.checked;
+        },settings.metronome_tick);
+        grp.add(check_metronome_tick);
+
+        slider_song_volume = makeSlider(0,yStart+(22*4),"Instrumental Volume", FlxG.sound.music,"volume",0,1,maxSize,20);
+        grp.add(slider_song_volume); 
+
+        slider_player_volume = makeSlider(0,yStart+(22*7),"P1 Volume", playerVoice,"volume",0,1,(maxSize/2)-10,20);
+        grp.add(slider_player_volume); 
+
+        slider_opponent_volume = makeSlider(middleBox,yStart+(22*7),"P2 Volume", opponentVoice,"volume",0,1,(maxSize/2)-20,20);
+        grp.add(slider_opponent_volume); 
+
+        slider_playback_rate = makeSlider(0,yStart+(22*10),"Playback Rate", FlxG.sound.music,"pitch",0.1,10,maxSize,20);
+        slider_playback_rate.callback = (val:Float) -> {
+            opponentVoice.pitch = playerVoice.pitch = FlxG.sound.music.pitch;
+        }
+        grp.add(slider_playback_rate);
+
+        slider_hitsound_volume = makeSlider(0,yStart+(22*13),"Hitsound Volume", hit_sound,"volume",0,1,(maxSize/2)-10,20);
+        grp.add(slider_hitsound_volume); 
+
+        slider_metronome_volume = makeSlider(middleBox,yStart+(22*13),"Metronome Volume", metronome_tick,"volume",0,1,(maxSize/2)-20,20);
+        grp.add(slider_metronome_volume); 
+
         parent.add(grp);
     }
 
+    var button_play_player:FlxUIButton;
+    var button_play_opponent:FlxUIButton;
+    var check_inEditor:FlxUIButton;
     function menu_createPlaytestUI(parent:FlxSpriteGroup){
+        var grp:FlxSpriteGroup = new FlxSpriteGroup();
+
+        inline function makeButton(nX:Float, nY:Float, nWidth:Float, nHeight:Float, label:String, callback:Void->Void) {
+            var obj:FlxUIButton = new FlxUIButton(nX,nY,label,callback,true,false,FlxColor.fromRGB(70,70,70));
+            obj.resize(nWidth, nHeight);
+            obj.label.size = 13;
+            obj.label.font = FunkinFonts.JETBRAINS;
+            obj.label.color = FlxColor.WHITE;
+            obj.label.active = false;
+            return obj;
+        }
+
+        inline function makeLabel(nX:Float, nY:Float, nWidth:Float, label:String) {
+            var obj:FlxText = new FlxText(nX, nY,Std.int(nWidth),label,13);
+            obj.font = FunkinFonts.JETBRAINS;
+            obj.active = false;
+            return obj;
+        }
+
+        inline function startPlaytest(player:Bool = false) {
+            settings.playtest.asPlayer = player;
+            settings.playtest.testing = true;
+            menu_ui.isOpen = false;
+            settings.editing_events = false;
+        } 
+        
         var text:FlxText = new FlxText(0,0,-1,"Playtest", 16);
         text.font = FunkinFonts.JETBRAINS;
-        parent.add(text);
+        grp.add(text);
 
-        var text:FlxText = new FlxText(0,20,-1,"Things to add:\n- From start.\n- From current time.\n\nmake playtest works in the chart editor", 13);
-        text.font = FunkinFonts.JETBRAINS;
-        parent.add(text);
+        var text2:FlxText = new FlxText(0,text.y + text.height + 2,-1,"Test your chart!", 13);
+        text2.font = FunkinFonts.JETBRAINS;
+        grp.add(text2);
+
+        var text3:FlxText = new FlxText(text2.x + text2.width+2,text2.y+text2.height,-1,"(and make sure it's humanly playable.)", 9);
+        text3.color = FlxColor.GRAY;
+        text3.font = FunkinFonts.JETBRAINS;
+        text3.y -= text3.height;
+        grp.add(text3);
+
+        var yStart = text2.y+text2.height+10;
+        var maxSize:Int = 360-47; // The box's inner area
+        var xMiddle:Float = maxSize/2+10; // Middle position of the box.
+        var childHalf:Int = Std.int((maxSize/2)-(47/2));
+
+        var labelBig:FlxText = makeLabel(0,yStart,maxSize,"Play as...");
+        labelBig.alignment = FlxTextAlign.CENTER;
+        grp.add(labelBig);
+
+        trace("passed");
+
+        button_play_opponent = makeButton(0,yStart+22,childHalf, 20, "Opponent",()->{
+            startPlaytest(false);
+        });
+        grp.add(button_play_opponent);
+
+        button_play_player = makeButton(xMiddle,yStart+22,childHalf, 20, "Player",()->{
+            startPlaytest(true);
+        });
+        grp.add(button_play_player);
+
+        parent.add(grp);
     }
 
     function menu_createHelpUI(parent:FlxSpriteGroup){
@@ -854,6 +978,7 @@ class ChartEditor extends MusicBeatState {
 
         var bros:Array<Dynamic> = [
             ["static", "arrow<A>"],
+            ["press", "<a> press"],
             ["confirm", "<a> confirm"],
         ];
         var tex = Paths.getSparrowAtlas("notes/NOTE_assets");
@@ -869,6 +994,7 @@ class ChartEditor extends MusicBeatState {
                 }
                 spr.playAnim(bros[0][0], true);
                 spr.animation.finishCallback = (name:String) -> {
+                    if (settings.playtest.testing) return;
                     if (name == "confirm") spr.playAnim(bros[0][0], true);
                 }
                 spr.antialiasing = CDevConfig.saveData.antialiasing;
@@ -888,6 +1014,7 @@ class ChartEditor extends MusicBeatState {
 
     function createBeatDividers(){
         beatDividers = new FlxSpriteGroup(grid.x);
+        beatDividers.active = false;
         add(beatDividers);
 
         for (i in 0...Std.int(FlxG.sound.music.length / Conductor.stepCrochet)) {
@@ -902,7 +1029,12 @@ class ChartEditor extends MusicBeatState {
         }        
     }
 
+    var zoomVal:Float = 1;
+    var targetOffsetY:Float = 200;
     override function update(elapsed:Float){
+        FlxG.camera.zoom = FlxMath.lerp(zoomVal, FlxG.camera.zoom, 1-(elapsed*12));
+        FlxG.camera.targetOffset.y = FlxMath.lerp(targetOffsetY, FlxG.camera.targetOffset.y, 1-(elapsed*12));
+
         CDevInfoTxt.stateInfo = ""
         + "- Hitted Notes / Events   : " + (hitted_notes.length + " / " + hitted_events.length)
         + "\n- Rendered Notes / Events : " + (rendered_notes.length + " / " + rendered_events.length);
@@ -924,9 +1056,20 @@ class ChartEditor extends MusicBeatState {
             }
         }
     
-        // Controls Related Updates
-        keyboardControls(elapsed);
-        mouseControls(elapsed);
+        // Controls Related Updates also playtest stuff
+        if (!settings.playtest.testing) {
+            keyboardControls(elapsed);
+            mouseControls(elapsed);
+            zoomVal = 1;
+        } else {
+            keyboardControls_playtest();
+            if (controls.BACK) {
+                settings.playtest.testing = false;
+                menu_ui.isOpen = true;
+            }
+            zoomVal = 1.5;
+        }
+
 
         // UI Updates
         infoTextUpdate();
@@ -950,22 +1093,104 @@ class ChartEditor extends MusicBeatState {
         super.update(elapsed);
     }
 
+    function keyboardControls_playtest() {
+        var isPlayer:Int = settings.playtest.asPlayer ? 4 : 0;
+        var pressArray:Array<Bool> = [
+            controls.LEFT_P, controls.DOWN_P, controls.UP_P, controls.RIGHT_P,
+        ];
+        var releaseArray:Array<Bool> = [
+            controls.LEFT_R, controls.DOWN_R, controls.UP_R, controls.RIGHT_R,
+        ];
+        
+        if (releaseArray.contains(true)) {
+            for (index => key in releaseArray) {
+                if (key) _flashStrum(isPlayer+index, "static");
+            }
+        }
+
+        if (!pressArray.contains(true)) return;
+
+        for (index => key in pressArray) {
+            if (key) _flashStrum(isPlayer+index, "press");
+        }
+
+        var possibleNotes:Array<ChartNote> = [];
+        var directions:Array<Bool> = [false, false, false, false];
+        
+        rendered_notes.forEachAlive((note:ChartNote)->{
+            var canHit:Bool = note.strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
+                           && note.strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5);
+            var tooLate:Bool = note.strumTime < (Conductor.songPosition - 166);
+
+            if (!canHit || tooLate) return;
+            if ((settings.playtest.asPlayer && note.noteData < 4)
+                || (!settings.playtest.asPlayer && note.noteData > 3)) return;
+            if (note.noteData < isPlayer) return;
+            if (directions[note.noteData%4]) {
+                for (pNote in possibleNotes) {
+                    if (pNote.noteData != note.noteData) continue;
+                    if (Math.abs(note.strumTime - pNote.strumTime) < 10) {
+                        note.kill();
+                        rendered_notes.remove(note, true);
+                        note.destroy();
+                        return;
+                    } else if (note.strumTime < pNote.strumTime) {
+                        possibleNotes.remove(pNote);
+                        possibleNotes.push(note);
+                        return;
+                    }
+                }
+            } else {
+                possibleNotes.push(note);
+                directions[note.noteData%4] = true;
+            }
+        });
+        
+        possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+
+        var blockNote:Bool = false;
+
+        for (index => press in pressArray) if (press && !directions[index]) blockNote = true;
+        
+        if (possibleNotes.length > 0 && !blockNote) {
+            for (note in possibleNotes) {
+                if (pressArray[note.noteData%4]) onNoteHit(note);
+            }
+        }
+    }
+
+    function onNoteHit(note:ChartNote) {
+        note.kill();
+        rendered_notes.remove(note, true);
+        note.destroy();
+        _flashStrum(note.noteData);
+    }
+
     override function destroy() {
         CDevInfoTxt.stateInfo = "";
         ChartNote.CACHED_GRAPHIC = null;
         super.destroy();
     }
 
+    var seekingTimeBar:Bool = false;
     function timeBarSeek() {
         timeBar.alpha = 0.7;
-        if (!FlxG.mouse.overlaps(timeBar)) 
-            return;
-        timeBar.alpha = 1;
+        if (FlxG.mouse.overlaps(timeBar)) {
+            if (FlxG.mouse.pressed)
+                seekingTimeBar = true;
+        }
 
-        if (FlxG.mouse.pressed) {
-            var curPos:Float = FlxG.mouse.x / timeBar.width;
-            var timeSeeked:Float = FlxG.sound.music.length * curPos;
-            setAllSoundTime(timeSeeked);
+        if (seekingTimeBar) {
+            timeBar.alpha = 1;
+            if (FlxG.mouse.justMoved) {
+                var curPos:Float = FlxG.mouse.x / timeBar.width;
+                var timeSeeked:Float = FlxG.sound.music.length * curPos;
+                setAllSoundTime(timeSeeked);
+            }
+
+            if (FlxG.mouse.justReleased) {
+                seekingTimeBar = false;
+            }
         }
     }
 
@@ -975,13 +1200,15 @@ class ChartEditor extends MusicBeatState {
         chart.data.third_char = character_thirdchar;
         chart.data.stage = current_stage;
 
-        if (buttn_dadchar != null)
+        inline function notNull(obj) return (obj != null && obj.label != null);
+
+        if (notNull(buttn_dadchar))
             buttn_dadchar.label.text = chart.data.opponent;
-        if (buttn_bfchar != null)
+        if (notNull(buttn_bfchar))
             buttn_bfchar.label.text = chart.data.player;
-        if (buttn_thirdchar != null)
+        if (notNull(buttn_thirdchar))
             buttn_thirdchar.label.text = chart.data.third_char;
-        if (buttn_stage != null)
+        if (notNull(buttn_stage))
             buttn_stage.label.text = chart.data.stage;
     }
 
@@ -1007,7 +1234,7 @@ class ChartEditor extends MusicBeatState {
         + '\nSteps: ${currentStep}'
         + '\nMeasures: ${FlxMath.roundDecimal(currentMeasure, 2)}'
         + '\nBPM: ${chart.info.bpm}'
-        + '\nEditing: ${_editingEvents ? "Events" : "Notes"}'
+        + '\nEditing: ${settings.editing_events ? "Events" : "Notes"}'
         + dur;
 
         if (infoTxt.text != currentText) {
@@ -1017,8 +1244,8 @@ class ChartEditor extends MusicBeatState {
         }
     }
 
-    inline function _flashStrum(dataRaw:Int) {
-        (dataRaw > 3 ? plStrum : opStrum).members[dataRaw % 4].playAnim("confirm", true);
+    inline function _flashStrum(dataRaw:Int, ?anim:String = "confirm") {
+        (dataRaw > 3 ? plStrum : opStrum).members[dataRaw % 4].playAnim(anim, true);
     }
     function updateFlashLogic() {
         inline function changeStatus(objects:Array<Dynamic>, status:Bool) {
@@ -1038,7 +1265,13 @@ class ChartEditor extends MusicBeatState {
                 var opponent:StrumArrow = opStrum.members[i];
     
                 player.y = opponent.y = hitLineY;
-                player.alpha = opponent.alpha = isMusicPlaying ? 1 : 0.5;
+                if (!settings.playtest.testing) 
+                    player.alpha = opponent.alpha = isMusicPlaying ? 1 : 0.5;
+                else {
+                    player.alpha = settings.playtest.asPlayer ? 1 : 0.4;
+                    opponent.alpha = !settings.playtest.asPlayer ? 1 : 0.4;
+                }
+
             }
             changeStatus(opStrum.members, true);
             changeStatus(plStrum.members, true);
@@ -1047,34 +1280,52 @@ class ChartEditor extends MusicBeatState {
             changeStatus(plStrum.members, false);
             return;
         }
-    
-        var editingEvents = _editingEvents;
-        var eventAlpha = editingEvents ? 1 : 0;
-        var noteAlpha = editingEvents ? 0 : 1;
+
+        var eventAlpha = settings.editing_events ? 1 : 0;
+        var noteAlpha = settings.editing_events ? 0 : 1;
     
         rendered_events.forEachAlive((event:ChartEvent) -> {
             event.active = false;
-            event.alpha = hitted_events.contains(event) ? 0.6 : eventAlpha;
+            event.alpha = settings.editing_events ? 1 : 0;
         });
     
         rendered_notes.forEachAlive((note:ChartNote) -> {
-            note.active = false;
-            note.alpha = hitted_notes.contains(note) ? 0.6 : noteAlpha;
+            if (!settings.playtest.testing){
+                note.active = false;
+                note.alpha = settings.editing_events ? 0 : 1;
+            } else {
+                if (settings.playtest.asPlayer){
+                    if (note.noteData > 3)
+                        note.alpha = 1;
+                    else 
+                        note.alpha = 0.3;
+                } else {
+                    if (note.noteData < 4)
+                        note.alpha = 1;
+                    else 
+                        note.alpha = 0.3;
+                }
+            }
         });
     
-        if (isMusicPlaying) {
-            if (editingEvents) {
+        if (isMusicPlaying && !settings.playtest.testing) {
+            if (settings.editing_events) {
                 rendered_events.forEachAlive((event:ChartEvent) -> {
-                    if (hitLineY > event.y && !hitted_events.contains(event)) {
+                    if (getMeasureFromTime(event.time) < Std.int(currentMeasure)) return;
+                    if (Conductor.songPosition > event.time && !hitted_events.contains(event)) {
                         _flashStrum(event.data);
                         hitted_events.push(event);
+                        
+                        if (settings.hitsound) playPreloadedSound(hit_sound);
                     }
                 });
             } else {
                 rendered_notes.forEachAlive((note:ChartNote) -> {
-                    if (hitLineY > note.y && !hitted_notes.contains(note)) {
+                    if (getMeasureFromTime(note.strumTime) < Std.int(currentMeasure)) return;
+                    if (Conductor.songPosition > note.strumTime && !hitted_notes.contains(note)) {
                         _flashStrum(note.noteData);
                         hitted_notes.push(note);
+                        if (settings.hitsound) playPreloadedSound(hit_sound);
                     }
                 });
             }
@@ -1088,6 +1339,13 @@ class ChartEditor extends MusicBeatState {
             hitted_events = [];
         }
     }    
+
+    function playPreloadedSound(obj:FlxSound, ?pitch:Float = 1) {
+        obj.pause();
+        obj.time = 0;
+        obj.pitch = pitch;
+        obj.play();
+    }
     
     var passedStep:Int = 0;
     var passedBeat:Int = 0;
@@ -1105,7 +1363,7 @@ class ChartEditor extends MusicBeatState {
     function virtualStepHit(){
         passedStep = currentStep;
 
-        if (FlxG.sound.music.playing){
+        if (FlxG.sound.music.playing && !settings.editing_events){
             for (ind => yes in flash_on_step){
                 if (!yes) continue;
                 var curStrum:FlxTypedGroup<StrumArrow> = (ind > 3 ? plStrum : opStrum);
@@ -1118,10 +1376,22 @@ class ChartEditor extends MusicBeatState {
 
     function virtualBeatHit(){
         passedBeat = currentBeat;
+
+        if (settings.playtest.testing) {
+            if (passedBeat % 4 == 0) {
+                FlxG.camera.zoom += 0.035;
+            }
+        }
+
+        if (FlxG.sound.music.playing && settings.metronome_tick) {
+            playPreloadedSound(metronome_tick, passedBeat % 4 == 0 ? 1.15 : 1);
+        }
     }
 
     function measureChanging(){
         passedMeasure = Std.int(currentMeasure);
+        hitted_notes = [];
+        hitted_events = [];
         noteSpawnLogic();
     }
 
@@ -1143,7 +1413,7 @@ class ChartEditor extends MusicBeatState {
     function notesUpdateLogic() {
         rendered_notes.forEachAlive((note:ChartNote)->{
             note.alpha = 1;
-            if (_editingEvents) {
+            if (settings.editing_events) {
                 note.alpha = 0;
             }
             note.active = false;
@@ -1195,6 +1465,7 @@ class ChartEditor extends MusicBeatState {
     function metronomeLogic(){
         metronome_icon.visible = metronome_icon.active = settings.view.metronome;
         if (!settings.view.metronome) return;
+        if (Conductor.songPosition < 0) return;
         metronome_icon.animation.play(Math.floor(Conductor.songPosition / Conductor.crochet) % 2 == 0 ? "left" : "right", true);
         if (metronome_icon.animation.curAnim != null)
             metronome_icon.animation.curAnim.curFrame = Std.int(((Conductor.songPosition % (Conductor.crochet)) / (Conductor.crochet))*metronome_icon.animation.curAnim.numFrames);
@@ -1429,7 +1700,7 @@ class ChartEditor extends MusicBeatState {
 
         // Basic Charter Controls, Add & Remove notes, drag note sustain, and dummy note / preview note
         if (mouseOnGrid()) {
-            dummyNote.dontDraw = _editingEvents;
+            dummyNote.dontDraw = settings.editing_events;
             dummyNote.visible = !FlxG.mouse.pressed && !FlxG.mouse.pressedRight;
             
             var divY = Math.floor(FlxG.mouse.y / grid_size);
@@ -1463,7 +1734,7 @@ class ChartEditor extends MusicBeatState {
                     break;
                 }
                 if (!control_overlap.grid_empty_space){
-                    if (!_editingEvents) {
+                    if (!settings.editing_events) {
                         addNote([getTimeFromY(dummyNote.y) ,divX%8, 0 ,_spawn_noteType, _spawn_noteArgs]);
                     } else {
                         addEvent([_spawn_eventName, divX%8, getTimeFromY(dummyNote.y), _spawn_eventArgs[0], _spawn_eventArgs[1]]);
@@ -1472,7 +1743,7 @@ class ChartEditor extends MusicBeatState {
             }
 
             if (FlxG.mouse.pressedRight){
-                if (!_editingEvents) {
+                if (!settings.editing_events) {
                     for (n in rendered_notes.members){
                         if (!FlxG.mouse.overlaps(n)) continue;
                         removeNote(n);
@@ -1505,7 +1776,7 @@ class ChartEditor extends MusicBeatState {
         }
 
         // Note selection thing (lmb drag) //
-        if (!control_overlap.note_adjust) {
+        if (!control_overlap.note_adjust && !seekingTimeBar && !FlxG.mouse.overlaps(menu_ui)) {
             if (FlxG.mouse.pressed) {
                 if (Math.abs(dragPosStart.x - FlxG.mouse.x) > 5 && Math.abs(dragPosStart.y - FlxG.mouse.y) > 5)
                     control_overlap.block_select = true;
@@ -1638,7 +1909,7 @@ class ChartEditor extends MusicBeatState {
         plIcon.visible = opIcon.visible = plIcon.active = opIcon.active = settings.view.icons;
         if (!settings.view.icons) return;
 
-        var sizeUpdate = 0.8-(((Conductor.songPosition % (Conductor.crochet))/Conductor.crochet)*0.2);
+        var sizeUpdate = Conductor.songPosition < 0 ? 0.8 : (0.8 - (FlxEase.quartOut((Conductor.songPosition % Conductor.crochet) / Conductor.crochet)*0.2));
         opIcon.scale.set(sizeUpdate, sizeUpdate);
         opIcon.updateHitbox();
         opIcon.setPosition(grid.x - (150 / 2) - ((150 / 2) * opIcon.scale.x)-20, 95);

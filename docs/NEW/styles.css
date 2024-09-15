@@ -1,0 +1,224 @@
+/* Font Family */
+@font-face {
+    font-family: Ubuntu;
+    src: url("./res/fonts/Ubuntu-Regular.ttf");
+}
+
+/* Basic Stuff */
+html {
+    width: 100dvw;
+    overflow-x: hidden;
+}
+
+body {
+    width: 90%;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    background-color: rgb(20,20,20);
+    color: white;
+    font-family: Ubuntu;
+}
+
+/* Actual Styling */
+
+.full-vertical {
+    height: 80%;
+    width: 2px;
+    background-color: white;
+    margin-left: 20px;
+    margin-top:auto;
+    margin-bottom:auto;
+}
+
+/* Header / NavBar Stuff */
+.header {
+    display: flex;
+}
+.header > .buttons{
+    margin-left: auto;
+    display: flex;
+}
+.header > .buttons > a {
+    margin-left: auto;
+    display: flex;
+    margin-left:15px;
+    cursor: pointer;
+    text-decoration: none;
+    transform: scale(1,1);
+    color:white;
+    transition: transform 0.2s ease-out;
+}
+
+.header > .buttons > a:hover {
+    transform: scale(1.2,1.2);
+}
+
+.header > .buttons > a > img {
+    height: 30px;
+    filter: invert(100%);
+    margin-top:auto;
+    margin-bottom:auto;
+}
+
+.header > .logo-header > img {
+    image-rendering: pixelated;
+    margin-top:auto;
+    margin-bottom:auto;
+}
+.header > .logo-header > h1 {
+    margin-top:auto;
+    margin-bottom:auto;
+    margin-left: 20px;
+    font-size: 20px;
+}
+.header > .logo-header {
+    display: flex;
+}
+
+.tooltip {
+    position: absolute;
+    top:0px;
+    left: 0px;
+    background-color: rgb(30,30,30);
+    width: fit-content;
+    padding: 5px;
+    border: 1px rgba(255, 255, 255, 0.164) solid;
+    opacity: 0%;
+    transition: opacity 0.2s;
+    pointer-events: none; /* Ensures it’s not interactive */
+}
+
+.tooltip > p {
+    font-size: 14px;
+    margin: 0px;
+}
+
+.content {
+    margin-top: 20px
+}
+
+.bgCDEV {
+    width: 100%;
+    height: 30vh;
+    position: relative;
+    overflow: hidden; /* Ensures no scrollbar appears */
+    background: linear-gradient(0deg, rgb(13, 55, 145), rgb(20, 20, 20));
+    animation: scroll 10s linear infinite; /* Adjust duration as needed */
+}
+
+.bgCDEV::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("./res/images/checker.png");
+    background-blend-mode: overlay;
+    opacity: 0.02;
+    animation: scroll 10s linear infinite;
+    z-index: 1;
+}
+
+.particle {
+    position: absolute;
+    width: 5px;
+    height: 5px; 
+    background: white;
+    opacity: 0.5;
+    pointer-events: none;
+    animation: moveUp 5s linear infinite;
+}
+
+.cdev-logo {
+    position: absolute;
+    height: 70%;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    animation: logoBumpin 1s cubic-bezier(0,.54,.1,.99) infinite;
+}
+
+.mainContent {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mainContent > h1 {
+    font-size: 28px;
+    text-align: center;
+}
+.mainContent > p {
+    font-size: 18px;
+}
+a {
+    color: #008cff;
+    text-decoration: none;
+}
+
+hr {
+    border: none;
+    height: 1px;
+    color: rgb(73, 73, 73);
+    background-color: rgb(73, 73, 73);
+}
+.footer {
+    text-align: center;
+    height: 80px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.footer > p {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+/* Syntax Highlighting */
+.func { color: #DCDCAA; }
+.vari { color: #9CDCFE; }
+.clas { color: #4EC9B0; }
+.param { color: #FFFFFF; }
+.val { color: #569CD6; }
+.com { color: #608B4E; }
+.str { color: #CE9178; }
+
+pre {
+    display: block;
+    overflow-x: auto;
+    font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+    font-size: 14px;
+    color: #FFFFFF;
+}
+
+
+@keyframes logoBumpin {
+    from {
+        transform: translate(-50%,-50%) scale(1.1,1.1);
+    }
+    to {
+        transform: translate(-50%,-50%) scale(1,1);
+    }
+}
+
+@keyframes moveUp {
+    from {
+        transform: translateY(100vh) rotate(0deg) scale(1,1);
+    }
+    to {
+        transform: translateY(-100%) rotate(360deg) scale(0.5,0.5);
+    }
+}
+
+
+@keyframes scroll {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: -100% -100%; /* Adjust for the direction of scrolling */
+    }
+}

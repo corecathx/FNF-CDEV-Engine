@@ -1,0 +1,367 @@
+{
+    "title": "PlayState",
+    "desc": "PlayState is the primary game state where the Funkin gameplay occurs.",
+    "guide": "To access these fields in your Song Script, use PlayState.{field_name_here} to access them.",
+    "fields": [
+        {
+            "name": "current",
+            "type": "PlayState",
+            "desc": "Current instance of PlayState."
+        },
+        {
+            "name": "config",
+            "type": "PlayStateConfig",
+            "desc": "Configuration class for PlayState."
+        },
+        {
+            "name": "dad",
+            "type": "Character",
+            "desc": "Character instance for the dad."
+        },
+        {
+            "name": "gf",
+            "type": "Character",
+            "desc": "Character instance for girlfriend."
+        },
+        {
+            "name": "boyfriend",
+            "type": "Boyfriend",
+            "desc": "Character instance for boyfriend."
+        },
+        {
+            "name": "curStage",
+            "type": "String",
+            "desc": "Current stage being played."
+        },
+        {
+            "name": "SONG",
+            "type": "CDevChart",
+            "desc": "Current song chart data."
+        },
+        {
+            "name": "isStoryMode",
+            "type": "Bool",
+            "desc": "Indicates if story mode is active."
+        },
+        {
+            "name": "storyWeek",
+            "type": "Int",
+            "desc": "The current week being played in story mode."
+        },
+        {
+            "name": "storyPlaylist",
+            "type": "Array<String>",
+            "desc": "Playlist of songs for the current story week."
+        },
+        {
+            "name": "storyDifficulty",
+            "type": "Int",
+            "desc": "The difficulty level of the story mode."
+        },
+        {
+            "name": "campaignScore",
+            "type": "Int",
+            "desc": "Score for the campaign mode."
+        },
+        {
+            "name": "weekName",
+            "type": "String",
+            "desc": "Name of the current story week."
+        },
+        {
+            "name": "fromMod",
+            "type": "String",
+            "desc": "The mod source of the current play state."
+        },
+        {
+            "name": "scripts",
+            "type": "ScriptData",
+            "desc": "Scripts loaded for the current song, including global scripts."
+        },
+        {
+            "name": "intro_cutscene_script",
+            "type": "CDevScript",
+            "desc": "Script for the introduction cutscene."
+        },
+        {
+            "name": "outro_cutscene_script",
+            "type": "CDevScript",
+            "desc": "Script for the outro cutscene."
+        },
+        {
+            "name": "randomNote",
+            "type": "Bool",
+            "desc": "Indicates if random note modifier is enabled."
+        },
+        {
+            "name": "suddenDeath",
+            "type": "Bool",
+            "desc": "Indicates if sudden death mode is enabled."
+        },
+        {
+            "name": "scrSpd",
+            "type": "Float",
+            "desc": "Scrolling speed for the notes."
+        },
+        {
+            "name": "healthGainMulti",
+            "type": "Float",
+            "desc": "Multiplier for health gain."
+        },
+        {
+            "name": "healthLoseMulti",
+            "type": "Float",
+            "desc": "Multiplier for health loss."
+        },
+        {
+            "name": "comboMultiplier",
+            "type": "Float",
+            "desc": "Multiplier for combo points."
+        },
+        {
+            "name": "songSpeed",
+            "type": "Float",
+            "desc": "Speed of the current song."
+        },
+        {
+            "name": "playingLeftSide",
+            "type": "Bool",
+            "desc": "Indicates if the player is playing on the left side."
+        },
+        {
+            "name": "noHoldNotes",
+            "type": "Bool",
+            "desc": "Indicates if hold notes are disabled."
+        },
+        {
+            "name": "healthBarBG",
+            "type": "FlxSprite",
+            "desc": "Background sprite for the health bar."
+        },
+        {
+            "name": "healthBar",
+            "type": "FunkinBar",
+            "desc": "Health bar instance."
+        },
+        {
+            "name": "timeBarBG",
+            "type": "FlxSprite",
+            "desc": "Background sprite for the time bar."
+        },
+        {
+            "name": "timeBar",
+            "type": "FlxBar",
+            "desc": "Time bar instance."
+        },
+        {
+            "name": "timeBarText",
+            "type": "FlxText",
+            "desc": "Text display for the time bar."
+        },
+        {
+            "name": "iconP1",
+            "type": "HealthIcon",
+            "desc": "Health icon for player 1."
+        },
+        {
+            "name": "iconP2",
+            "type": "HealthIcon",
+            "desc": "Health icon for player 2."
+        },
+        {
+            "name": "botplayTxt",
+            "type": "FlxText",
+            "desc": "Text display for botplay mode."
+        },
+        {
+            "name": "scoreTxt",
+            "type": "FlxText",
+            "desc": "Text display for the score."
+        },
+        {
+            "name": "ratingPosition",
+            "type": "FlxPoint",
+            "desc": "Position of the rating display."
+        },
+        {
+            "name": "comboPosition",
+            "type": "FlxPoint",
+            "desc": "Position of the combo display."
+        },
+        {
+            "name": "usingVoices",
+            "type": "Bool",
+            "desc": "Indicates if vocals are being used."
+        },
+        {
+            "name": "usingOpponentVoices",
+            "type": "Bool",
+            "desc": "Indicates if opponent vocals are being used."
+        },
+        {
+            "name": "notes",
+            "type": "FlxTypedGroup<Note>",
+            "desc": "Group of notes in the current song."
+        },
+        {
+            "name": "strumXpos",
+            "type": "Float",
+            "desc": "X position of the strum line."
+        },
+        {
+            "name": "accuracy",
+            "type": "Float",
+            "desc": "Accuracy of the player's performance."
+        },
+        {
+            "name": "misses",
+            "type": "Int",
+            "desc": "Number of misses in the current song."
+        },
+        {
+            "name": "health",
+            "type": "Float",
+            "desc": "Current health of the player."
+        },
+        {
+            "name": "sick",
+            "type": "Int",
+            "desc": "Number of 'Sick' hits."
+        },
+        {
+            "name": "good",
+            "type": "Int",
+            "desc": "Number of 'Good' hits."
+        },
+        {
+            "name": "bad",
+            "type": "Int",
+            "desc": "Number of 'Bad' hits."
+        },
+        {
+            "name": "shit",
+            "type": "Int",
+            "desc": "Number of 'Shit' hits."
+        },
+        {
+            "name": "scoreTxtDiv",
+            "type": "String",
+            "desc": "Divider for score text formatting."
+        },
+        {
+            "name": "defaultCamZoom",
+            "type": "Float",
+            "desc": "Default camera zoom level."
+        },
+        {
+            "name": "defaultHudZoom",
+            "type": "Float",
+            "desc": "Default HUD zoom level."
+        },
+        {
+            "name": "chartingMode",
+            "type": "Bool",
+            "desc": "Indicates if charting mode is enabled."
+        },
+        {
+            "name": "enableNoteTween",
+            "type": "Bool",
+            "desc": "Indicates if note tweening is enabled."
+        },
+        {
+            "name": "enableCountdown",
+            "type": "Bool",
+            "desc": "Indicates if the countdown is enabled."
+        },
+        {
+            "name": "enableEditors",
+            "type": "Bool",
+            "desc": "Indicates if editor keybinds are enabled."
+        },
+        {
+            "name": "strumLineNotes",
+            "type": "FlxTypedGroup<StrumArrow>",
+            "desc": "Group of strum line notes."
+        },
+        {
+            "name": "playerStrums",
+            "type": "FlxTypedGroup<StrumArrow>",
+            "desc": "Group of strum arrows for the player."
+        },
+        {
+            "name": "p2Strums",
+            "type": "FlxTypedGroup<StrumArrow>",
+            "desc": "Group of strum arrows for player 2."
+        },
+        {
+            "name": "camHUD",
+            "type": "CDevCamera",
+            "desc": "Camera for the HUD."
+        },
+        {
+            "name": "camSustain",
+            "type": "CDevCamera",
+            "desc": "Camera for sustain notes."
+        },
+        {
+            "name": "camGame",
+            "type": "CDevCamera",
+            "desc": "Main gameplay camera."
+        },
+        {
+            "name": "camFollow",
+            "type": "FlxObject",
+            "desc": "Object that the camera is currently following."
+        },
+        {
+            "name": "cameraPosition",
+            "type": "FlxObject",
+            "desc": "Additional position offset for the camera."
+        },
+        {
+            "name": "camZooming",
+            "type": "Bool",
+            "desc": "Indicates if the camera is currently zooming."
+        },
+        {
+            "name": "forceCameraPos",
+            "type": "Bool",
+            "desc": "Indicates if the camera position is forced."
+        },
+        {
+            "name": "camPosForced",
+            "type": "Array<Float>",
+            "desc": "Array for forced camera position."
+        },
+        {
+            "name": "currentFocus",
+            "type": "String",
+            "desc": "Indicates which character the camera is currently focused on."
+        },
+        {
+            "name": "focusingToBF",
+            "type": "Bool",
+            "desc": "Indicates if the camera is focusing on boyfriend."
+        },
+        {
+            "name": "stageHandler",
+            "type": "Stage",
+            "desc": "The stage handler instance."
+        },
+        {
+            "name": "daPixelZoom",
+            "type": "Float",
+            "desc": "Scaling for pixel art assets."
+        },
+        {
+            "name": "isPixel",
+            "type": "Bool",
+            "desc": "Indicates if the current stage uses pixel art."
+        },
+        {
+            "name": "difficultyName",
+            "type": "String",
+            "desc": "Name of the current difficulty setting."
+        }
+    ]
+}
