@@ -14,6 +14,9 @@ class StrumLine extends FlxSpriteGroup {
     /** Receptors of this Strum Line. **/
     public var receptors:FlxTypedSpriteGroup<ReceptorNote>;
 
+    /** Note Splashes of this Strum Line. **/
+    public var splashes:FlxTypedSpriteGroup<Splash>;
+
     /** Whether to automatically hit the notes. **/
     public var cpu(default,set):Bool = false;
 
@@ -37,8 +40,15 @@ class StrumLine extends FlxSpriteGroup {
         notes.active = false;
         add(notes);
 
+        splashes = new FlxTypedSpriteGroup<Splash>();
+        add(splashes);
+
+        var _tSplash:Splash = new Splash();
+        _tSplash.alpha = 0;
+        splashes.add(_tSplash);
+
         for (index => dir in Note.directions) {
-            var spr:ReceptorNote = new ReceptorNote(Note.scaleWidth*index,0,dir);
+            var spr:ReceptorNote = new ReceptorNote(Note.scaleWidth*index, 0, dir, this);
             receptors.add(spr);
         }
 
@@ -85,13 +95,9 @@ class StrumLine extends FlxSpriteGroup {
     
             notes.forEachAlive((note:Note) -> {
                 if (!note.hitable || note.invalid) return;
-    
-                // Check if a note with the same data is already considered
                 if (directions[note.data]) {
                     for (pNote in possibleNotes) {
                         if (pNote.data != note.data) continue;
-    
-                        // Remove any note with a higher time difference and keep the closer one
                         if (note.time < pNote.time) {
                             possibleNotes.remove(pNote);
                             possibleNotes.push(note);
@@ -99,26 +105,21 @@ class StrumLine extends FlxSpriteGroup {
                         }
                     }
                 } else {
-                    // Add the first note found with this data
                     possibleNotes.push(note);
                     directions[note.data] = true;
                 }
             });
-    
-            // Sort notes by time, so the earlier ones get hit first
+
             possibleNotes.sort((a, b) -> Std.int(a.time - b.time));
     
             var blockNote:Bool = false;
     
-            // Block notes if no direction was pressed
             for (index => press in pressedKeys) if (press && !directions[index]) blockNote = true;
     
-            // Hit the notes only if no blocking condition exists
             if (possibleNotes.length > 0 && !blockNote) {
                 for (note in possibleNotes) {
                     if (pressedKeys[note.data]) {
                         _onNoteHit(note);
-                        break;  // Stop after the first hit to avoid hitting multiple notes
                     }
                 }
             }
@@ -134,7 +135,15 @@ class StrumLine extends FlxSpriteGroup {
         onNoteHit.dispatch(note);
 
         getReceptor(note.data).playAnim("confirm",true);
+        _spawnSplash(note);
         killNote(note);
+    }
+
+    function _spawnSplash(note:Note) {
+        var splash:Splash = splashes.recycle(Splash, ()->{return new Splash();});
+        var receptor:ReceptorNote = getReceptor(note.data);
+        splash.setPosition(receptor.x, receptor.y);
+        splash.init(note);
     }
 
     function _onNoteMiss(note:Note) {

@@ -13,6 +13,9 @@ using StringTools;
  * Contains useful functions used by the Engine.
  */
 class Utils {
+    public static var engineColor = {
+        primary: 0xFF0060FF
+    }
     public static function loadSong(songName:String, diff:String):{inst:Sound, voices:Array<Sound>, chart:Chart} {
         // Initial checking if the song folder exists.
         var path:String = '${Assets._SONG_PATH}/$songName';
@@ -22,6 +25,7 @@ class Utils {
         }
 
         // Checking Inst file.
+        trace("Loading: Inst.ogg");
         var inst:Sound = Assets._sound_file('$path/Inst.ogg');
         if (inst == null) {
             trace("Inst audio could not be loaded.");
@@ -29,6 +33,7 @@ class Utils {
         }
 
         // Checking Voice files.
+        trace("Loading: Voice files");
         var voices:Array<Sound> = [];
         for (files in FileSystem.readDirectory(path)) {
             if (FileSystem.isDirectory(path+"/"+files)) 
@@ -40,14 +45,17 @@ class Utils {
         }
 
         // Checking chart file.
+        trace("Loading: Chart " + diff + ".json");
         var chartPath:String = '$path/charts/$diff.json';
         if (!FileSystem.exists(chartPath)) {
             trace("Chart file not found: "+chartPath);
             return null;
         }
 
+        trace("Converting Chart...");
         var chart:Chart = Chart.convertLegacy(Json.parse(File.getContent(chartPath)).song);
 
+        trace("Returning Data...");
         // very smart.
         return {
             inst: inst,

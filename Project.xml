@@ -24,12 +24,16 @@
 	<!--Mobile-specific-->
 	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" />
 
-	<!-- _____________________________ CDEV Engine Defines ____________________________ -->
+	<!-- _____________________________ CDEV Engine Defines & Settings ____________________________ -->
 	<!-- Comment this to disable: Dark Mode window. -->
 	<define name="DARK_MODE_WINDOW"/>
 
 	<!-- Comment this to disable: Crash Handler. -->
-	<!-- <define name="CRASH_HANDLER" if="windows"/> -->
+	<define name="CRASH_HANDLER" if="windows"/>
+
+	<!-- Ignore this... -->
+	<prebuild haxe="res/compiler/Prebuild.hx"/>
+	<postbuild haxe="res/compiler/Postbuild.hx"/>
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
@@ -56,6 +60,7 @@
 
 	<haxedef name="HXCPP_CHECK_POINTER" if="CRASH_HANDLER" />
 	<haxedef name="HXCPP_STACK_LINE" if="CRASH_HANDLER" />
+	<haxedef name="HXCPP_GC_BIG_BLOCKS"/>
 
 	<!--Remove the legacy health system-->
 	<haxedef name="FLX_NO_HEALTH" />

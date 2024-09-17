@@ -41,7 +41,7 @@ class StatsDisplay extends TextField
 		current = this;
 
 		selectable = false;
-		defaultTextFormat = new TextFormat(Assets.fonts.JETBRAINS, 12, nColor, false);
+		defaultTextFormat = new TextFormat(Assets.fonts.JETBRAINS, 13, nColor, false);
 		autoSize = LEFT;
 	}
 
@@ -81,8 +81,8 @@ class StatsDisplay extends TextField
 
 	}
 	
-	var _fps_format:TextFormat = new TextFormat(null, 16, 0xFFFFFF);
-	var _other_format:TextFormat = new TextFormat(null, 10, 0x707070);
+	var _fps_format:TextFormat = new TextFormat(null, 17, 0xFFFFFF);
+	var _other_format:TextFormat = new TextFormat(null, 11, 0x707070);
 	function applyFormatting() {
 		// The gray text thing
 		Utils.applyTextFieldMarkup(this,text,[

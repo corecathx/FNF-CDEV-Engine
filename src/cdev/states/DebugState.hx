@@ -16,9 +16,10 @@ class DebugState extends State {
         var maxPlayField:Float = FlxG.width / strumCount;
         var strumWidth:Float = Note.scaleWidth*Note.directions.length;
         var centerX:Float = (maxPlayField-strumWidth)*0.5;
-
         var scrollThing:Float = (FlxG.height-Note.scaleWidth)-70;
-        opponentStrums = new StrumLine(centerX,70,true);
+
+        opponentStrums = new StrumLine(centerX,scrollThing,true);
+        opponentStrums.scrollMult = -1;
         add(opponentStrums);
 
         playerStrums = new StrumLine((FlxG.width*0.5)+centerX,scrollThing,false);
@@ -37,7 +38,6 @@ class DebugState extends State {
         Conductor.current.updateBPM(song.chart.info.bpm);
         Conductor.current.onBeatTick.add(()->{
             if (Conductor.current.current_beats % 4 == 0) FlxG.camera.zoom += 0.05;
-            FlxG.camera.zoom += 0.015;
         });
         super.create();
     }
@@ -45,5 +45,8 @@ class DebugState extends State {
     override function update(elapsed:Float) {
         super.update(elapsed);
         FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, 1-(elapsed*6));
+        if (FlxG.keys.justPressed.B) {
+            playerStrums.cpu = !playerStrums.cpu;
+        }
     }
 }

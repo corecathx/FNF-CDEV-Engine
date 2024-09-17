@@ -14,8 +14,11 @@ class ReceptorNote extends Sprite {
     /** Scroll multiplier, also used to determine upscroll & downscroll. **/
     public var scrollMult:Float = 1;
     public var speed:Float = 1;
-    public function new(nX:Float, nY:Float, direction:NoteDirection) {
+
+    public var strumline:StrumLine;
+    public function new(nX:Float, nY:Float, direction:NoteDirection, ?strumline:StrumLine) {
         super(nX,nY);
+        this.strumline = strumline;
         var animArray:Array<Array<String>> = [
             ["static", "arrow<A>"],
             ["pressed", "<a> press"],

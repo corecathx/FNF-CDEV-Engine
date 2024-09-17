@@ -21,6 +21,7 @@ class Assets {
     @:noCompletion inline public static var _FONT_PATH:String  = '$_ASSET_PATH/fonts';
     @:noCompletion inline public static var _IMAGE_PATH:String = '$_ASSET_PATH/images';
     @:noCompletion inline public static var _SOUND_PATH:String = '$_ASSET_PATH/sounds';
+    @:noCompletion inline public static var _MUSIC_PATH:String = '$_ASSET_PATH/sounds';
 
 	@:noCompletion inline public static var _SONG_PATH:String  = '$_ASSET_PATH/songs';
 
@@ -95,6 +96,13 @@ class Assets {
 	inline public static function sound(name:String):Sound return _sound_file('$_SOUND_PATH/$name.ogg');
 
 	/**
+	 * Returns your music file
+	 * @param path The music's file name (without extension)
+	 * @return Sound
+	 */
+	inline public static function music(name:String):Sound return _sound_file('$_MUSIC_PATH/$name.ogg');
+
+	/**
 	 * [INTERNAL] Loads a sound file
 	 * @param path Path to the sound file
 	 * @return Sound
@@ -104,7 +112,7 @@ class Assets {
 			return null;
 
 		if (!loaded_sounds.exists(path))
-			loaded_sounds.set(path, Sound.fromAudioBuffer(AudioBuffer.fromVorbisFile(VorbisFile.fromFile(path))));
+			loaded_sounds.set(path, Sound.fromFile(path));
 
 		return loaded_sounds.get(path);
 	}

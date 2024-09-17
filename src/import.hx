@@ -1,5 +1,6 @@
 // Soon
 import cdev.Config;
+import cdev.EnginePrefs;
 import cdev.backend.Conductor;
 import cdev.backend.Assets;
 import cdev.backend.Utils;

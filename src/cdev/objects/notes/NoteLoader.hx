@@ -39,16 +39,15 @@ class NoteLoader extends FlxBasic {
 				break;
 
 			// If the last note properties is the same as current note, skip this note.
-			if (_lastNote != null && _lastNote.time == songNotes.time && _lastNote.data == songNotes.data) {
+			if (_lastNote != null && _lastNote.time == songNotes.time && _lastNote.data == songNotes.data && _lastNote.strum == songNotes.strum) {
 				_currentNote++;
 				break;
 			}
             var parent:StrumLine = getStrum(songNotes.strum);
 
-			var nFunc:Void->Note = () -> return new Note();
-            var note:Note = new Note();
-            note.init(songNotes.time, songNotes.data);
-            getStrum(songNotes.strum).addNote(note);
+            var note:Note = new Note(parent.getReceptor(songNotes.data));
+            note.init(songNotes.time, songNotes.data, songNotes.length);
+            parent.addNote(note);
 
 			_currentNote++;
 

@@ -1,5 +1,11 @@
 package cdev.objects;
 
+import flixel.util.FlxColor;
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.system.FlxAssets.FlxGraphicAsset;
+
+typedef SpriteGroup = FlxTypedSpriteGroup<Sprite>;
+
 /**
  * Sprite is just FlxSprite but with additional helper functions.
  */
@@ -8,6 +14,14 @@ class Sprite extends FlxSprite {
      * Contains an animation specific offsets.
      */
     public var animOffsets:Map<String,Array<Float>> = [];
+
+    public function new(nX:Float = 0, nY:Float = 0, ?nGraphic:FlxGraphicAsset) {
+        super(nX,nY);
+        if (nGraphic != null) 
+            loadGraphic(nGraphic);
+
+        antialiasing = EnginePrefs.antialiasing;
+    }
 
     /**
      * A shortcut to `animation.addByPrefix`.
@@ -42,5 +56,9 @@ class Sprite extends FlxSprite {
         } else {
             offset.set(0, 0);
         }
+    }
+
+    override function makeGraphic(Width:Int, Height:Int, Color:FlxColor = FlxColor.WHITE, Unique:Bool = false, ?Key:String):Sprite {
+        return cast super.makeGraphic(Width, Height, Color, Unique, Key);
     }
 }

@@ -22,5 +22,8 @@ class PlayState extends State
 		if (FlxG.keys.justPressed.SPACE) {
 			FlxG.switchState(new DebugState());
 		}
+		if (FlxG.keys.justPressed.ENTER) {
+			FlxG.switchState(new MainMenuState());
+		}
 	}
 }

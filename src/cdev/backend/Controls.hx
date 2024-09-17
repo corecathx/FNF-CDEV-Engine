@@ -84,7 +84,6 @@ class Controls {
             var parsed:Array<FlxKey> = [FlxKey.fromString(fieldVal[0]), FlxKey.fromString(fieldVal[1])];
             keyboardBinds.set(key, parsed);
         }
-        trace(keyboardBinds);
     }
 
 	static function justPressed(key:String):Bool
