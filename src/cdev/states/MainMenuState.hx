@@ -1,11 +1,13 @@
 package cdev.states;
 
+import flixel.text.FlxText.FlxTextFormat;
+import flixel.text.FlxText.FlxTextFormatMarkerPair;
 import flixel.FlxObject;
 import flixel.graphics.frames.FlxAtlasFrames;
 
 class MainMenuState extends State {
     var options:Array<{name:String,callback:Void->Void}> = [
-        {name: "storymode", callback:() -> trace("story")},
+        {name: "storymode", callback:() -> FlxG.switchState(new DebugState())},
         {name: "freeplay", callback:() -> trace("free")},
         {name: "options", callback:() -> trace("options")},
         {name: "credits", callback:() -> trace("credits")},
@@ -14,6 +16,7 @@ class MainMenuState extends State {
 
     var bg:Sprite;
     var optionGrp:SpriteGroup;
+    var infoText:Text;
 
     var _camFollow:FlxObject;
     var _followPoint:{x:Float,y:Float,xAdd:Float, yAdd:Float} = {x:0.0,y:0.0,xAdd:0.0,yAdd:0.0};
@@ -57,6 +60,11 @@ class MainMenuState extends State {
         var bottomBar:Sprite = new Sprite(0,FlxG.height-_barHeight).makeGraphic(FlxG.width, _barHeight, 0xFF000000);
         bottomBar.scrollFactor.set();
         add(bottomBar);
+
+        // Texts //
+        infoText = new Text(0,25,"[Info should be here.]",RIGHT);
+        infoText.scrollFactor.set();
+        add(infoText);
         
         // Camera Related Stuffs //
         _followPoint.x = FlxG.width*0.5; _followPoint.y = 20;
@@ -74,6 +82,7 @@ class MainMenuState extends State {
     override function update(elapsed:Float) {
         _updateCamera(elapsed);
         _updateControls();
+        _updateObjects();
         super.update(elapsed);
     }
 
@@ -87,6 +96,27 @@ class MainMenuState extends State {
     function _updateControls() {
         if (Controls.UI_UP_P) currentSelection -= 1;
         if (Controls.UI_DOWN_P) currentSelection += 1;
+        if (Controls.ACCEPT) {
+            FlxG.sound.music.stop();
+            options[currentSelection].callback();
+        }
+    }
+
+    // don't mind this.
+    var __inf_text_large_format:FlxTextFormat = new FlxTextFormat(Utils.engineColor.primary);
+    function _updateObjects() {
+        // Info text // 
+        var _now:Date = Date.now();
+        var _localTime:String = '${StringTools.lpad(_now.getHours()+'','0',2)}:${StringTools.lpad(_now.getMinutes()+'','0',2)}';
+
+        var __infTxt:String = ""
+        + 'CDEV Engine has been running for #${Utils.getTimeFormat(Game._ACTIVE_TIME*1000)}#\n'
+        + 'It is currently #${_localTime}#.';
+
+        infoText.applyMarkup(__infTxt,[
+            new FlxTextFormatMarkerPair(__inf_text_large_format, "#")
+        ]);
+        infoText.x = (FlxG.width - infoText.width) - 20;
     }
 
     function set_currentSelection(val:Int):Int {

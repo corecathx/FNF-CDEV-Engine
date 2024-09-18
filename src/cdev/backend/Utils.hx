@@ -160,5 +160,30 @@ class Utils {
         }
     }
     
+	/**
+	 * Returns HH:MM:SS time format from miliseconds.
+	 * @param ms Miliseconds to convert.
+	 * @return String - Formatted time.
+	 */
+	public static function getTimeFormat(ms:Float):String
+    {
+        var inSeconds:Int = Math.floor(ms / 1000);
+        var secs:String = '' + inSeconds % 60;
+        var mins:String = "" + Math.floor(inSeconds / 60)%60;
+        var hour:String = '' + Math.floor((inSeconds / 3600))%24; 
+        if (inSeconds < 0)
+            inSeconds = 0;
+        if (ms < 0)
+            ms = 0;
 
+        if (secs.length < 2)
+            secs = '0' + secs;
+
+        var shit:String = mins + ":" + secs;
+        if (hour != "0"){
+            if (mins.length < 2) mins = "0"+ mins;
+            shit = hour+":"+mins + ":" + secs;
+        }
+        return shit;
+    }
 }

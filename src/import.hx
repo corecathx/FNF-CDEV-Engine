@@ -8,6 +8,7 @@ import cdev.backend.Controls;
 import cdev.backend.States.State;
 import cdev.backend.States.SubState;
 import cdev.backend.engine.Game;
+import cdev.objects.Text;
 import cdev.objects.Sprite;
 
 import flixel.FlxG;

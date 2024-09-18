@@ -21,7 +21,7 @@ class Assets {
     @:noCompletion inline public static var _FONT_PATH:String  = '$_ASSET_PATH/fonts';
     @:noCompletion inline public static var _IMAGE_PATH:String = '$_ASSET_PATH/images';
     @:noCompletion inline public static var _SOUND_PATH:String = '$_ASSET_PATH/sounds';
-    @:noCompletion inline public static var _MUSIC_PATH:String = '$_ASSET_PATH/sounds';
+    @:noCompletion inline public static var _MUSIC_PATH:String = '$_ASSET_PATH/music';
 
 	@:noCompletion inline public static var _SONG_PATH:String  = '$_ASSET_PATH/songs';
 
