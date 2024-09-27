@@ -48,8 +48,8 @@ class Note extends Sprite {
         this.length = length;
 
         var _colorData:String = animColor[data];
-        addAnim(_colorData+"Scroll", _colorData+"0", 24);
-        playAnim(_colorData+"Scroll",true);
+        addAnim("idle", _colorData+"0", 24);
+        playAnim("idle",true);
 
         setGraphicSize(scaleWidth);
         updateHitbox();

@@ -24,35 +24,36 @@ class NoteLoader extends FlxBasic {
     var _lastNoteData:Int = 0;
 	var _lastNote:Dynamic = null;
     override function update(elapsed:Float) {
-        /** Better Note Spawning System**/
-		var notesPerFrame:Int = 100;
-		while (_currentNote < chart.notes.length && notesPerFrame > 0)
+        var maxTimeDiff:Float = 1500 / FlxMath.roundDecimal(chart.info.speed, 2);
+		while (_currentNote < chart.notes.length)
 		{
-			var songNotes:Dynamic = chart.notes[_currentNote];
+			var songNote:Dynamic = chart.notes[_currentNote];
 
-			if (songNotes.data < 0) {
-				_currentNote++;
-				break;
+            var timeDiff:Float = songNote.time - Conductor.current.time;
+            
+			if (songNote.data < 0) {
+				_currentNote++; break;
 			}
-
-			if (songNotes.time - Conductor.current.time > 1500 / FlxMath.roundDecimal(chart.info.speed,2))
+			if (timeDiff > maxTimeDiff)
 				break;
+            
+            //if (timeDiff < 0) {
+            //    _currentNote++; continue;
+            //}
 
-			// If the last note properties is the same as current note, skip this note.
-			if (_lastNote != null && _lastNote.time == songNotes.time && _lastNote.data == songNotes.data && _lastNote.strum == songNotes.strum) {
-				_currentNote++;
-				break;
+            // hi Sword352
+			if (_lastNote != null && _lastNote.time == songNote.time && _lastNote.data == songNote.data && _lastNote.strum == songNote.strum) {
+				_currentNote++; continue;
 			}
-            var parent:StrumLine = getStrum(songNotes.strum);
+            var parent:StrumLine = getStrum(songNote.strum);
 
-            var note:Note = new Note(parent.getReceptor(songNotes.data));
-            note.init(songNotes.time, songNotes.data, songNotes.length);
+            var note:Note = new Note(parent.getReceptor(songNote.data));
+            note.init(songNote.time, songNote.data, songNote.length);
             parent.addNote(note);
 
 			_currentNote++;
 
-			_lastNote = songNotes;
-			notesPerFrame--;
+			_lastNote = songNote;
 		}
         super.update(elapsed);
     }

@@ -57,7 +57,7 @@ class MainMenuState extends State {
         var topBar:Sprite = new Sprite().makeGraphic(FlxG.width, _barHeight, 0xFF000000);
         topBar.scrollFactor.set();
         add(topBar);
-        var bottomBar:Sprite = new Sprite(0,FlxG.height-_barHeight).makeGraphic(FlxG.width, _barHeight, 0xFF000000);
+        var bottomBar:Sprite = cast new Sprite(0,FlxG.height-_barHeight).loadGraphic(topBar.graphic);
         bottomBar.scrollFactor.set();
         add(bottomBar);
 
@@ -111,7 +111,7 @@ class MainMenuState extends State {
 
         var __infTxt:String = ""
         + 'CDEV Engine has been running for #${Utils.getTimeFormat(Game._ACTIVE_TIME*1000)}#\n'
-        + 'It is currently #${_localTime}#.';
+        + 'It is currently #${_localTime}#';
 
         infoText.applyMarkup(__infTxt,[
             new FlxTextFormatMarkerPair(__inf_text_large_format, "#")

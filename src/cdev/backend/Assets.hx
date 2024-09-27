@@ -26,8 +26,10 @@ class Assets {
 	@:noCompletion inline public static var _SONG_PATH:String  = '$_ASSET_PATH/songs';
 
     // Trackers for loaded assets. //
-	public static var loaded_images:Map<String, FlxGraphic> = new Map();
-	public static var loaded_sounds:Map<String, Sound> = new Map();
+	public static var loaded_images:Map<String, FlxGraphic> = [];
+	public static var loaded_sounds:Map<String, Sound> = [];
+
+	public static var loaded_atlases:Map<String, FlxAtlasFrames> = [];
 
     /** Shortcut to access game fonts. **/
     public static var fonts(default, null):Fonts = new Fonts();
@@ -73,6 +75,10 @@ class Assets {
 			trace(message);
 			return null;
 		}
+		if (loaded_atlases.exists(file))
+			return loaded_atlases.get(file);
+
+		trace("Loading new Atlas Frames for: " + file);
 		var graphic:FlxGraphic = image(file);
 		if (graphic == null) 
 			failed("Graphic is null.");
@@ -85,7 +91,8 @@ class Assets {
 		if (xml.length == 0) 
 			failed("XML is invalid.");
 
-		return FlxAtlasFrames.fromSparrow(graphic,xml);
+		loaded_atlases.set(file, FlxAtlasFrames.fromSparrow(graphic,xml));
+		return loaded_atlases.get(file);
 	}
 
     /**

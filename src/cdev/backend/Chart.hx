@@ -140,10 +140,9 @@ class Chart {
             }
 
             totalPos += ((60 / curBPM) * 1000)*4;
-            trace("Finished: " + FlxMath.roundDecimal((index / safeJSON.notes.length)*100,2) + "%");
         }
 
-        trace("Converted all notes & events. Sorting: Events");
+        trace("Converted all notes & events. Sorting...");
         events.sort((a:Dynamic, b:Dynamic)->{
             var result:Int = 0;
     
@@ -155,7 +154,6 @@ class Chart {
             return result;
         });
 
-        trace("Sorting: Notes");
         notes.sort((a:Dynamic, b:Dynamic)->{
             var result:Int = 0;
     
@@ -167,7 +165,6 @@ class Chart {
             return result;
         });
 
-        trace("Packing everyting to CDEV Chart...");
         var cdev:Chart = {
             data: {
                 player: safeJSON.player1,

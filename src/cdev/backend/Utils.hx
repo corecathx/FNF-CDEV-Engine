@@ -25,7 +25,7 @@ class Utils {
         }
 
         // Checking Inst file.
-        trace("Loading: Inst.ogg");
+        trace("Loading Instrumental");
         var inst:Sound = Assets._sound_file('$path/Inst.ogg');
         if (inst == null) {
             trace("Inst audio could not be loaded.");
@@ -33,7 +33,7 @@ class Utils {
         }
 
         // Checking Voice files.
-        trace("Loading: Voice files");
+        trace("Loading Voice files");
         var voices:Array<Sound> = [];
         for (files in FileSystem.readDirectory(path)) {
             if (FileSystem.isDirectory(path+"/"+files)) 
@@ -45,7 +45,7 @@ class Utils {
         }
 
         // Checking chart file.
-        trace("Loading: Chart " + diff + ".json");
+        trace("Loading Chart: " + diff + ".json");
         var chartPath:String = '$path/charts/$diff.json';
         if (!FileSystem.exists(chartPath)) {
             trace("Chart file not found: "+chartPath);

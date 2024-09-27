@@ -26,7 +26,7 @@ class DebugState extends State {
         playerStrums.scrollMult = -1;
         add(playerStrums);
 
-        var song = Utils.loadSong("Roses Erect", "hard");
+        var song = Utils.loadSong("Twiddlefinger", "hard");
 
         sounds = new SoundGroup(song.inst,song.voices);
         add(sounds);
