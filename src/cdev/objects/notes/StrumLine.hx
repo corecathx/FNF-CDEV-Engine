@@ -70,11 +70,19 @@ class StrumLine extends FlxSpriteGroup {
                 note.hit = true;
             }
         
-            if (!note.hit && note.invalid) {
+            var _maxTime:Float = note.time + note.length + Conductor.current.step_ms;
+            if (!note.hit && note.invalid && !note.missed) {
                 _onNoteMiss(note);
             }
         
-            if (note.hit && note.time + note.length < Conductor.current.time) {
+            if (note.length > 0 && note.missed) {
+                note.alpha = 0.3;
+                if (_maxTime < Conductor.current.time) {
+                    killNote(note);
+                }
+            }
+
+            if (note.hit && _maxTime < Conductor.current.time) {
                 killNote(note);
             }
         });
@@ -151,7 +159,9 @@ class StrumLine extends FlxSpriteGroup {
 
     function _onNoteMiss(note:Note) {
         onNoteMiss.dispatch(note);
-        killNote(note);
+        note.missed = true;
+        if (note.length == 0) 
+            killNote(note);
     }
 
     function killNote(note:Note) {

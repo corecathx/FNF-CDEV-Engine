@@ -28,6 +28,7 @@ class Note extends Sprite {
     public var receptor:ReceptorNote = null;
 
     public var hit:Bool = false;
+    public var missed:Bool = false;
 
     public var hitable(get,never):Bool;
     function get_hitable() {
@@ -45,7 +46,7 @@ class Note extends Sprite {
     public function new(receptor:ReceptorNote) {
         super();
         this.receptor = receptor;
-        frames = Assets.sparrowAtlas("notes/NOTE_assets");
+        frames = Assets.sparrowAtlas("notes/Gem_NOTE_assets");
     }
 
     public function init(time:Float, data:Int, length:Float) {
@@ -68,7 +69,7 @@ class Note extends Sprite {
         }
 
         
-        y = -1000; //make sure it's completely offscreen.
+        x = y = -1000; //make sure it's completely offscreen.
     }
 
     override function draw() {

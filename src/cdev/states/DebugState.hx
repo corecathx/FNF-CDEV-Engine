@@ -20,15 +20,15 @@ class DebugState extends State {
         var up:Float = 70;
         var down:Float = (FlxG.height-Note.scaleWidth)-up;
 
-        opponentStrums = new StrumLine(centerX,down,true);
-        opponentStrums.scrollMult = -1;
+        opponentStrums = new StrumLine(centerX,up,true);
+        opponentStrums.scrollMult = 1;
         add(opponentStrums);
 
         playerStrums = new StrumLine((FlxG.width*0.5)+centerX,down,false);
         playerStrums.scrollMult = -1;
         add(playerStrums);
 
-        var song = Utils.loadSong("Test Chart", "hard");
+        var song = Utils.loadSong("Twiddlefinger", "hard");
 
         sounds = new SoundGroup(song.inst,song.voices);
         add(sounds);
@@ -40,14 +40,13 @@ class DebugState extends State {
         Conductor.current.updateBPM(song.chart.info.bpm);
         Conductor.current.onBeatTick.add(()->{
             if (Conductor.current.current_beats % 4 == 0) FlxG.camera.zoom += 0.05;
-            FlxG.camera.zoom += 0.025;
         });
         super.create();
     }
 
     override function update(elapsed:Float) {
         super.update(elapsed);
-        FlxG.camera.zoom = FlxMath.lerp(0.7, FlxG.camera.zoom, 1-(elapsed*6));
+        FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, 1-(elapsed*6));
         if (FlxG.keys.justPressed.B) {
             playerStrums.cpu = !playerStrums.cpu;
         }

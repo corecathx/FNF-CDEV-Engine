@@ -1,5 +1,6 @@
 package cdev.objects.notes;
 
+import flixel.math.FlxRect;
 import flixel.graphics.frames.FlxFrame;
 import flixel.addons.display.FlxTiledSprite;
 import flixel.addons.display.FlxBackdrop;
@@ -36,6 +37,9 @@ class Sustain extends FlxTiledSprite {
         tailEnd.updateHitbox();
     }
     
+    /**
+     * hi so uhh this code is awful
+     */
     override function draw() {
         var receptor:ReceptorNote = parent.receptor;
         var isDownscroll:Bool = receptor.scrollMult < 0;
@@ -46,26 +50,32 @@ class Sustain extends FlxTiledSprite {
             xR: receptor.x + ((parent.width - width) * 0.5),
             yR: receptor.y + (parent.height * 0.5),
         }
-        var sustainHeight:Float = (parent.length * (receptor.speed * Math.abs(receptor.scrollMult) * Note.pixel_per_ms)) - tailScaleHeight;
+        var sustainHeight:Float = (parent.length * (receptor.speed * Math.abs(receptor.scrollMult) * Note.pixel_per_ms));
     
         x = sustainPos.xP;
         y = sustainPos.yP - (isDownscroll ? height : 0);
-        alpha = 0.7;
+        alpha = parent.alpha * 0.7;
     
         width = scaleWidth;
+        var clip:Float = sustainHeight;
         if (parent.hit) {
             // Clipping Effect //
             var lenDiff = (parent.length - (Conductor.current.time - parent.time));
-            var clip:Float = FlxMath.bound(lenDiff * (receptor.speed * Math.abs(receptor.scrollMult) * Note.pixel_per_ms), 0, sustainHeight);
-            height = clip;
+            clip = FlxMath.bound(lenDiff * (receptor.speed * Math.abs(receptor.scrollMult) * Note.pixel_per_ms), - tailScaleHeight, sustainHeight);
+            height = Math.abs(clip);
     
             // Lock Position //
             var bound:{low:Null<Float>, high:Null<Float>} = {
                 low: !isDownscroll ? sustainPos.yR : null,
-                high: isDownscroll ? sustainPos.yR - height : null, // Fix for downscroll to lock correctly
+                high: isDownscroll ? sustainPos.yR - height : null,
             }
-            var value:Float = sustainPos.yP - (isDownscroll ? height : 0); // Adjust value for downscroll
+            var value:Float = sustainPos.yP - (isDownscroll ? height : 0);
             y = FlxMath.bound(value,bound.low,bound.high);
+            if (clip < 0) {
+                y += isDownscroll ? height : -height;
+                visible = false;
+            }
+
             if (!isDownscroll) 
                 scrollY = sustainPos.yP - y;
     
@@ -73,12 +83,32 @@ class Sustain extends FlxTiledSprite {
             height = sustainHeight;
         }
     
-        super.draw();
+        if (visible) super.draw();
     
         tailEnd.x = x;
-        tailEnd.y = isDownscroll ? y - tailEnd.height : y + height;
+        tailEnd.y = isDownscroll ? (clip > 0 ? y - tailEnd.height : y+height-tailEnd.height) : (clip > 0 ? y + height : y);
         tailEnd.flipY = isDownscroll;
         tailEnd.alpha = alpha;
+
+        if (clip < 0) {
+            var swagRect:FlxRect = tailEnd.clipRect;
+			if (swagRect == null) 
+				swagRect = new FlxRect(0, 0, isDownscroll ? tailEnd.frameWidth : tailEnd.width / tailEnd.scale.x, tailEnd.frameHeight);
+
+			if (isDownscroll) {
+				if (tailEnd.y + tailEnd.height >= sustainPos.yR){
+					swagRect.height = (sustainPos.yR - tailEnd.y) / tailEnd.scale.y;
+					swagRect.y = tailEnd.frameHeight - swagRect.height;
+				}
+			} else {
+				if (tailEnd.y <= sustainPos.yR){
+					swagRect.y = (sustainPos.yR - tailEnd.y) / tailEnd.scale.y;
+					swagRect.height = (tailEnd.height / tailEnd.scale.y) - swagRect.y;
+				}
+			}
+			tailEnd.clipRect = swagRect;
+        }
+
         tailEnd.draw();
     }    
     

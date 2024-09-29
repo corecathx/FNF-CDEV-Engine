@@ -46,7 +46,7 @@ class NoteLoader extends FlxBasic {
                 _currentNote++; continue;
             }
             // hi Sword
-            if (_lastNote != null && (_lastNote.time == songNote.time && _lastNote.data == songNote.data && _lastNote.strum == songNote.strum || Math.abs(songNote.time - _lastNote.time) < 0.25)) {
+            if (_lastNote != null && _lastNote.time == songNote.time && _lastNote.data == songNote.data && _lastNote.strum == songNote.strum && Math.abs(songNote.time - _lastNote.time) > 0.25) {
                 _skippedNotes[songNote.strum]++;
                 _currentNote++; continue;
             }
