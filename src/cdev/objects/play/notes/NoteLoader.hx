@@ -1,4 +1,4 @@
-package cdev.objects.notes;
+package cdev.objects.play.notes;
 
 import cdev.backend.Chart;
 import flixel.FlxBasic;

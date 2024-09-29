@@ -1,4 +1,4 @@
-package cdev.objects.notes;
+package cdev.objects.play.notes;
 
 import flixel.util.FlxSignal;
 import flixel.group.FlxSpriteGroup;
@@ -16,6 +16,9 @@ class StrumLine extends FlxSpriteGroup {
 
     /** Note Splashes of this Strum Line. **/
     public var splashes:FlxTypedSpriteGroup<Splash>;
+    
+    /** Characters that are attached to this Strum Line. **/
+    public var characters:Array<Character> = [];
 
     /** Whether to automatically hit the notes. **/
     public var cpu(default,set):Bool = false;
@@ -146,6 +149,7 @@ class StrumLine extends FlxSpriteGroup {
         onNoteHit.dispatch(note);
 
         getReceptor(note.data).playAnim("confirm",true);
+        _character_playAnim('sing${Note.directions[note.data]}', true);
         _spawnSplash(note);
         note.hit = true;
     }
@@ -169,6 +173,14 @@ class StrumLine extends FlxSpriteGroup {
         notes.remove(note);
         note.kill();
     }
+
+    function _character_playAnim(name:String, force:Bool) {
+        if (characters.length == 0) return;
+        for (char in characters) {
+            if (char == null) continue;
+            char.playAnim(name,force);
+        }
+    } 
 
     public function addNote(n:Note) {
         notes.add(n);

@@ -1,4 +1,4 @@
-package cdev.objects.notes;
+package cdev.objects.play.notes;
 
 class Splash extends Sprite {
     var _anims:Array<Array<String>> = [

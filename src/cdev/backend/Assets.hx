@@ -1,15 +1,20 @@
 package cdev.backend;
 
-import lime.media.vorbis.VorbisFile;
-import lime.media.AudioBuffer;
+import haxe.Json;
+import sys.FileSystem;
 import sys.io.File;
+import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
+import cdev.objects.play.Character.CharacterData;
 
-import flixel.graphics.FlxGraphic;
 
-import sys.FileSystem;
+typedef CharacterAssets = {
+	atlas:FlxAtlasFrames,
+	icon:FlxGraphic,
+	data:CharacterData
+}
 
 /**
  * Helper class for accessing game assets like images, fonts, and audio.
@@ -17,6 +22,9 @@ import sys.FileSystem;
 class Assets {
     /** Path to asset folders, modify only if necessary. **/
     @:noCompletion public inline static var _ASSET_PATH:String = "./assets";
+
+	@:noCompletion inline public static var _DATA_PATH:String  = '$_ASSET_PATH/data';
+	@:noCompletion inline public static var _CHARACTER_PATH:String  = '$_DATA_PATH/characters';
 
     @:noCompletion inline public static var _FONT_PATH:String  = '$_ASSET_PATH/fonts';
     @:noCompletion inline public static var _IMAGE_PATH:String = '$_ASSET_PATH/images';
@@ -46,8 +54,8 @@ class Assets {
 	 * @param file Image file name
 	 * @return FlxGraphic (Warning: might return null)
 	 */
-	public static function image(file:String):FlxGraphic {
-        var path:String = '$_IMAGE_PATH/$file.png';
+	public static function image(file:String, ?customPath:Bool = false):FlxGraphic {
+        var path:String = customPath ? '$file.png' : '$_IMAGE_PATH/$file.png';
 
         if (!FileSystem.exists(path))
             return null;
@@ -70,7 +78,7 @@ class Assets {
 	 * @param file Your sparrow atlas filename.
 	 * @return FlxAtlasFrames
 	 */
-	public static function sparrowAtlas(file:String):FlxAtlasFrames {
+	public static function sparrowAtlas(file:String, ?customPath:Bool = false):FlxAtlasFrames {
 		inline function failed(message:String) {
 			trace(message);
 			return null;
@@ -79,20 +87,54 @@ class Assets {
 			return loaded_atlases.get(file);
 
 		trace("Loading new Atlas Frames for: " + file);
-		var graphic:FlxGraphic = image(file);
+		var graphic:FlxGraphic = image(file, customPath);
 		if (graphic == null) 
 			failed("Graphic is null.");
 
-		var xmlPath:String = '$_IMAGE_PATH/$file.xml';
+		var xmlPath:String = customPath?'$file.xml' : '$_IMAGE_PATH/$file.xml';
 		if (!FileSystem.exists(xmlPath)) 
 			failed("XML couldn't be found.");
 
-		var xml:String = File.getContent('$_IMAGE_PATH/$file.xml');
+		var xml:String = File.getContent(customPath?'$file.xml':'$_IMAGE_PATH/$file.xml');
 		if (xml.length == 0) 
 			failed("XML is invalid.");
 
 		loaded_atlases.set(file, FlxAtlasFrames.fromSparrow(graphic,xml));
 		return loaded_atlases.get(file);
+	}
+
+	/**
+	 * Returns character asset files.
+	 * @param name Character's name.
+	 * @return CharacterAssets
+	 */
+	public static function character(name:String):CharacterAssets {
+		inline function failed(message:String) {
+			trace(message);
+			return null;
+		}
+		var path:String = '${_CHARACTER_PATH}/$name';
+		trace(path);
+		if (!FileSystem.exists(path) || !FileSystem.isDirectory(path)) 
+			failed("Character path is non-existent.");
+
+		var atlas:FlxAtlasFrames = sparrowAtlas('$path/sprite', true);
+		if (atlas == null)
+			failed("Could not found sparrow atlas file.");
+
+		var icon:FlxGraphic = image('$path/icon.png', true);
+		if (icon == null)
+			failed("Could not found icon.png file.");
+
+		var data:CharacterData = cast Json.parse(File.getContent('$path/config.json'));
+		if (data == null) 
+			failed("Could not get character configuration data.");
+
+		return {
+			atlas: atlas,
+			icon: icon,
+			data: data,
+		}
 	}
 
     /**

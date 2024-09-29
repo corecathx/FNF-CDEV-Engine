@@ -1,6 +1,6 @@
-package cdev.objects.notes;
+package cdev.objects.play.notes;
 
-import cdev.objects.notes.ReceptorNote.NoteDirection;
+import cdev.objects.play.notes.ReceptorNote.NoteDirection;
 
 /**
  * Note object of Funkin.

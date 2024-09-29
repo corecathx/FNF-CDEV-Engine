@@ -1,4 +1,4 @@
-package cdev.objects.notes;
+package cdev.objects.play.notes;
 
 import flixel.math.FlxRect;
 import flixel.graphics.frames.FlxFrame;
@@ -93,7 +93,7 @@ class Sustain extends FlxTiledSprite {
         if (clip < 0) {
             var swagRect:FlxRect = tailEnd.clipRect;
 			if (swagRect == null) 
-				swagRect = new FlxRect(0, 0, isDownscroll ? tailEnd.frameWidth : tailEnd.width / tailEnd.scale.x, tailEnd.frameHeight);
+				swagRect = FlxRect.get(0, 0, isDownscroll ? tailEnd.frameWidth : tailEnd.width / tailEnd.scale.x, tailEnd.frameHeight);
 
 			if (isDownscroll) {
 				if (tailEnd.y + tailEnd.height >= sustainPos.yR){

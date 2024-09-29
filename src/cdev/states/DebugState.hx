@@ -1,9 +1,10 @@
 package cdev.states;
 
+import cdev.objects.play.Character;
 import cdev.backend.audio.SoundGroup;
-import cdev.objects.notes.NoteLoader;
-import cdev.objects.notes.StrumLine;
-import cdev.objects.notes.Note;
+import cdev.objects.play.notes.NoteLoader;
+import cdev.objects.play.notes.StrumLine;
+import cdev.objects.play.notes.Note;
 
 class DebugState extends State {
     var playerStrums:StrumLine;
@@ -11,6 +12,8 @@ class DebugState extends State {
     var sounds:SoundGroup;
 
     var noteLoader:NoteLoader;
+
+    var playerChar:Character;
     override function create() {
         var strumCount:Float = 2;
         var maxPlayField:Float = FlxG.width / strumCount;
@@ -20,12 +23,17 @@ class DebugState extends State {
         var up:Float = 70;
         var down:Float = (FlxG.height-Note.scaleWidth)-up;
 
+        playerChar = new Character(0,0,"bf",false);
+        playerChar.screenCenter();
+        add(playerChar);
+
         opponentStrums = new StrumLine(centerX,up,true);
         opponentStrums.scrollMult = 1;
         add(opponentStrums);
 
         playerStrums = new StrumLine((FlxG.width*0.5)+centerX,down,false);
         playerStrums.scrollMult = -1;
+        playerStrums.characters.push(playerChar);
         add(playerStrums);
 
         var song = Utils.loadSong("Twiddlefinger", "hard");
@@ -40,6 +48,7 @@ class DebugState extends State {
         Conductor.current.updateBPM(song.chart.info.bpm);
         Conductor.current.onBeatTick.add(()->{
             if (Conductor.current.current_beats % 4 == 0) FlxG.camera.zoom += 0.05;
+            playerChar.dance();
         });
         super.create();
     }

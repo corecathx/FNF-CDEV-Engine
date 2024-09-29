@@ -1,4 +1,4 @@
-package cdev.objects.notes;
+package cdev.objects.play.notes;
 
 enum abstract NoteDirection(String) {
     var LEFT  = "LEFT";

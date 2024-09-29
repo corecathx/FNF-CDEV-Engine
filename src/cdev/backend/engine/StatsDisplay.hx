@@ -16,7 +16,7 @@ class StatsDisplay extends TextField
 	public static var current:StatsDisplay = null;
 
 	/** Current FPS value. **/
-	public var curFps:Int = 0;
+	public var curFps:Float = 0;
 
 	/** Current used GC Memory in Bytes. **/
 	public var curMemory:Float = 0;
@@ -26,6 +26,11 @@ class StatsDisplay extends TextField
 
 	/** Tracked frames in a second. **/
 	public var frames:Array<Float> = [];
+
+	public var lowFps(get,never):Bool;
+	function get_lowFps():Bool {
+		return (frames.length < FlxG.updateFramerate/2);
+	}
 
 	/**
 	 * Creates a new Stats Display object.
@@ -52,7 +57,7 @@ class StatsDisplay extends TextField
 		while (frames[0] < now - 1) frames.shift();
 
 		curMemory = System.totalMemory;
-		curFps = frames.length;
+		curFps = FlxMath.bound(FlxMath.lerp(frames.length, curFps, 1-(FlxG.elapsed*12)), 0, null);
 		
 		if (curMemory > highestMemory) highestMemory = curMemory;
 		Game._ACTIVE_TIME += FlxG.elapsed;
@@ -67,8 +72,9 @@ class StatsDisplay extends TextField
 		if (!visible) return;
 	
 		var ramStr:String = Utils.formatBytes(curMemory);
+		var rndFPS:String = '${FlxMath.roundDecimal(curFps,1)}';
 		var labels = {
-			fps: curFps + " FPS #(" + Std.int((1/curFps)*1000) + "ms)#",
+			fps: "!"+rndFPS + " FPS! #(" + Std.int((1/curFps)*1000) + "ms)#",
 			mem: ramStr
 		};
 		
@@ -81,15 +87,19 @@ class StatsDisplay extends TextField
 
 	}
 	
-	var _fps_format:TextFormat = new TextFormat(null, 17, 0xFFFFFF);
+	var _fps_format:TextFormat = new TextFormat(null, 17, null);
+	var _red_format:TextFormat = new TextFormat(null, null, null);
 	var _other_format:TextFormat = new TextFormat(null, 11, 0x707070);
 	function applyFormatting() {
 		// The gray text thing
+		_red_format.color = lowFps ? 0xFF0000 : 0xFFFFFF;
 		Utils.applyTextFieldMarkup(this,text,[
-			{format: _other_format, marker: "#" }
+			{format: _other_format, marker: "#"},
+			{format: _red_format, marker:"!"}
 		]);
 
 		// The FPS value thing
+		_fps_format.color = lowFps ? 0xFF0000 : 0xFFFFFF;
 		this.setTextFormat(_fps_format, 0, Std.string(frames.length).length);
 	}
 	
