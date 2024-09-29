@@ -6,6 +6,9 @@ import flixel.FlxBasic;
 class SoundGroup extends FlxBasic {
     public var playing:Bool = false;
 
+    public var speed:Float = 1;
+    public var resyncThreshold:Float = 40;
+
     public var inst:FlxSound;
     public var voices:Array<FlxSound> = [];
     public function new(instSnd:Sound, voiceSnds:Array<Sound>) {
@@ -22,16 +25,18 @@ class SoundGroup extends FlxBasic {
 
     override function update(elapsed:Float) {
         if (inst.playing) {
-            Conductor.current.time += elapsed * 1000;
+            Conductor.current.time += elapsed * (1000 * speed);
+            inst.pitch = speed;
     
-            if (Math.abs(Conductor.current.time - inst.time) > 20) {
+            if (Math.abs(Conductor.current.time - inst.time) > resyncThreshold) {
                 Conductor.current.time = inst.time;
             }
     
             forEachVoices((snd:FlxSound) -> {
-                if (Math.abs(snd.time - inst.time) > 20) {
+                if (Math.abs(snd.time - inst.time) > resyncThreshold) {
                     snd.time = inst.time;
                 }
+                snd.pitch = speed;
             });
         }
     

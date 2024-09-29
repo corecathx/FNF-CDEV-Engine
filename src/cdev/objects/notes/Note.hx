@@ -19,11 +19,15 @@ class Note extends Sprite {
     /** Default note width with scaling applied. **/
     public static var scaleWidth:Float = originWidth * noteScale;
 
+    public static var pixel_per_ms:Float = 0.45;
+
     public var time:Float = 0;
     public var data:Int = 0;
     public var length:Float = 0;
 
     public var receptor:ReceptorNote = null;
+
+    public var hit:Bool = false;
 
     public var hitable(get,never):Bool;
     function get_hitable() {
@@ -35,6 +39,8 @@ class Note extends Sprite {
     function get_invalid() {
         return time < (Conductor.current.time - 166);
     }
+
+    public var sustain:Sustain;
 
     public function new(receptor:ReceptorNote) {
         super();
@@ -53,12 +59,25 @@ class Note extends Sprite {
 
         setGraphicSize(scaleWidth);
         updateHitbox();
+
+        if (length > 0) {
+            sustain = new Sustain(this);
+            sustain.init();
+            
+            sustain.y = sustain.x = -1000; //offscreen pls
+        }
+
         
         y = -1000; //make sure it's completely offscreen.
     }
 
+    override function draw() {
+        if (sustain != null) sustain.draw();
+        if (!hit) super.draw();
+    }
+
     public function follow(receptor:ReceptorNote) {
         x = receptor.x;
-        y = receptor.y - ((Conductor.current.time - time) * (receptor.speed * receptor.scrollMult))*0.45;
+        y = receptor.y - ((Conductor.current.time - time) * (receptor.speed * receptor.scrollMult))*Note.pixel_per_ms;
     }
 }

@@ -62,21 +62,23 @@ class StrumLine extends FlxSpriteGroup {
      * Updates this strumline.
      */
     override function update(elapsed:Float):Void {
-        notes.forEachAlive((note:Note) -> {
+        notes.forEachAlive((note:Note) -> {   
             note.follow(getReceptor(note.data));
-            if (cpu) {
-                if (Conductor.current.time > note.time) {
-                    getReceptor(note.data).playAnim("confirm",true);
-                    note.destroy();
-                    notes.remove(note);
-                    note.kill();
-                }
+        
+            if (cpu && Conductor.current.time > note.time && !note.hit) {
+                getReceptor(note.data).playAnim("confirm", true);
+                note.hit = true;
             }
-
-            if (note.invalid) {
+        
+            if (!note.hit && note.invalid) {
                 _onNoteMiss(note);
             }
+        
+            if (note.hit && note.time + note.length < Conductor.current.time) {
+                killNote(note);
+            }
         });
+        
         if (!cpu) {
             controlsLogic();
         }
@@ -94,6 +96,7 @@ class StrumLine extends FlxSpriteGroup {
             var directions:Array<Bool> = [false, false, false, false];
     
             notes.forEachAlive((note:Note) -> {
+                if (note.hit) return;
                 if (!note.hitable || note.invalid) return;
                 if (directions[note.data]) {
                     for (pNote in possibleNotes) {
@@ -136,7 +139,7 @@ class StrumLine extends FlxSpriteGroup {
 
         getReceptor(note.data).playAnim("confirm",true);
         _spawnSplash(note);
-        killNote(note);
+        note.hit = true;
     }
 
     function _spawnSplash(note:Note) {

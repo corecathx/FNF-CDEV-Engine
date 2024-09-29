@@ -16,17 +16,19 @@ class DebugState extends State {
         var maxPlayField:Float = FlxG.width / strumCount;
         var strumWidth:Float = Note.scaleWidth*Note.directions.length;
         var centerX:Float = (maxPlayField-strumWidth)*0.5;
-        var scrollThing:Float = (FlxG.height-Note.scaleWidth)-70;
 
-        opponentStrums = new StrumLine(centerX,scrollThing,true);
+        var up:Float = 70;
+        var down:Float = (FlxG.height-Note.scaleWidth)-up;
+
+        opponentStrums = new StrumLine(centerX,down,true);
         opponentStrums.scrollMult = -1;
         add(opponentStrums);
 
-        playerStrums = new StrumLine((FlxG.width*0.5)+centerX,scrollThing,false);
+        playerStrums = new StrumLine((FlxG.width*0.5)+centerX,down,false);
         playerStrums.scrollMult = -1;
         add(playerStrums);
 
-        var song = Utils.loadSong("Twiddlefinger", "hard");
+        var song = Utils.loadSong("Test Chart", "hard");
 
         sounds = new SoundGroup(song.inst,song.voices);
         add(sounds);
@@ -38,15 +40,23 @@ class DebugState extends State {
         Conductor.current.updateBPM(song.chart.info.bpm);
         Conductor.current.onBeatTick.add(()->{
             if (Conductor.current.current_beats % 4 == 0) FlxG.camera.zoom += 0.05;
+            FlxG.camera.zoom += 0.025;
         });
         super.create();
     }
 
     override function update(elapsed:Float) {
         super.update(elapsed);
-        FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, 1-(elapsed*6));
+        FlxG.camera.zoom = FlxMath.lerp(0.7, FlxG.camera.zoom, 1-(elapsed*6));
         if (FlxG.keys.justPressed.B) {
             playerStrums.cpu = !playerStrums.cpu;
         }
+
+        if (FlxG.keys.pressed.Z)
+            sounds.speed *= 0.99;
+        if (FlxG.keys.pressed.X)
+            sounds.speed *= 1.01;
+
+        FlxG.watch.addQuick("Render Blit", FlxG.renderBlit);
     }
 }
