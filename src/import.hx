@@ -1,4 +1,5 @@
 // Soon
+#if !macro
 import cdev.Config;
 import cdev.EnginePrefs;
 import cdev.backend.Conductor;
@@ -17,3 +18,4 @@ import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 
 using StringTools;
+#end

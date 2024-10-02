@@ -46,7 +46,7 @@ class Note extends Sprite {
     public function new(receptor:ReceptorNote) {
         super();
         this.receptor = receptor;
-        frames = Assets.sparrowAtlas("notes/Gem_NOTE_assets");
+        frames = Assets.sparrowAtlas("notes/NOTE_assets");
     }
 
     public function init(time:Float, data:Int, length:Float) {

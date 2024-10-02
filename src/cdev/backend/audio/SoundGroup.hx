@@ -7,7 +7,7 @@ class SoundGroup extends FlxBasic {
     public var playing:Bool = false;
 
     public var speed:Float = 1;
-    public var resyncThreshold:Float = 40;
+    public var resyncThreshold:Float = 20;
 
     public var inst:FlxSound;
     public var voices:Array<FlxSound> = [];
@@ -21,6 +21,7 @@ class SoundGroup extends FlxBasic {
         }
 
         trace("Sound Group is ready.");
+        trace(inst);
     }
 
     override function update(elapsed:Float) {
@@ -45,6 +46,7 @@ class SoundGroup extends FlxBasic {
     
 
     public function play(?time:Float) {
+        trace("playing");
         playing = true;
         if (time != null) {
             inst.time = time;

@@ -55,13 +55,13 @@ class Assets {
 	 * @return FlxGraphic (Warning: might return null)
 	 */
 	public static function image(file:String, ?customPath:Bool = false):FlxGraphic {
-        var path:String = customPath ? '$file.png' : '$_IMAGE_PATH/$file.png';
+        if (loaded_images.exists(file))
+            return loaded_images.get(file);
+
+		var path:String = (customPath ? '$file' : '$_IMAGE_PATH/$file') + ".png";
 
         if (!FileSystem.exists(path))
             return null;
-
-        if (loaded_images.exists(file))
-            return loaded_images.get(file);
 
         var newBitmap:BitmapData = BitmapData.fromFile(path);
         var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, file);
@@ -118,9 +118,9 @@ class Assets {
 		if (!FileSystem.exists(path) || !FileSystem.isDirectory(path)) 
 			failed("Character path is non-existent.");
 
-		var atlas:FlxAtlasFrames = sparrowAtlas('$path/sprite', true);
+		var atlas:FlxAtlasFrames = sparrowAtlas('$path/sprites/normal', true);
 		if (atlas == null)
-			failed("Could not found sparrow atlas file.");
+			failed("Could not found sparrow atlas for character sprite.");
 
 		var icon:FlxGraphic = image('$path/icon.png', true);
 		if (icon == null)

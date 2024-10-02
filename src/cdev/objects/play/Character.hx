@@ -1,13 +1,31 @@
 package cdev.objects.play;
 
 class Character extends Sprite {
+    /**
+     * This character's configuration data.
+     */
+    public var data:CharacterData = null;
+    
+    /**
+     * Defines whether this character is currently singing.
+     */
+    public var singing(get,never):Bool;
+    function get_singing():Bool {
+        if (animation.curAnim == null) return false;
+        return animation.curAnim.name.startsWith("sing");
+    }
+
+    public var holdTimer:Float = 0;
+
     public function new(nX:Float, nY:Float, name:String, player:Bool) {
         super(nX,nY);
         var _data:CharacterAssets = Assets.character(name);
         if (_data.atlas != null)
             frames = _data.atlas;
         flipX = player;
-        loadAnimations(_data.data);
+        if (_data.data == null) return;
+        data = _data.data;
+        loadAnimations(data);
     }
 
     public function loadAnimations(data:CharacterData) {
@@ -23,9 +41,25 @@ class Character extends Sprite {
         playAnim("idle");
     }
 
-    public function dance() {
-        if (animation.curAnim != null && animation.curAnim.name.startsWith("sing")) return;
+    override function update(elapsed:Float) {
+        if (singing) {
+            holdTimer += elapsed;
+            if (holdTimer > (Conductor.current.beat_ms * data.hold_time)/1000) {
+                holdTimer = 0;
+                dance(true);
+            }
+        }
+        super.update(elapsed);
+    }
+
+    public function dance(?force:Bool = false) {
+        if (singing && !force) return;
         playAnim("idle");
+    }
+
+    override function playAnim(animName:String, force:Bool = false, reversed:Bool = false, frame:Int = 0) {
+        holdTimer = 0;
+        super.playAnim(animName, force, reversed, frame);
     }
 }
 
@@ -39,6 +73,7 @@ typedef CharacterData = {
     var bar_color:Array<Int>;
     var camera_offset:{x:Float,y:Float};
     var char_scale:Float;
+    var hold_time:Float;
 }
 
 typedef AnimationData = {

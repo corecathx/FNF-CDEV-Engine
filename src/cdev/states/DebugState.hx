@@ -1,5 +1,6 @@
 package cdev.states;
 
+import cdev.objects.play.hud.RatingSprite;
 import cdev.objects.play.Character;
 import cdev.backend.audio.SoundGroup;
 import cdev.objects.play.notes.NoteLoader;
@@ -14,6 +15,9 @@ class DebugState extends State {
     var noteLoader:NoteLoader;
 
     var playerChar:Character;
+
+    var ratingSprite:RatingSprite;
+
     override function create() {
         var strumCount:Float = 2;
         var maxPlayField:Float = FlxG.width / strumCount;
@@ -31,8 +35,8 @@ class DebugState extends State {
         opponentStrums.scrollMult = 1;
         add(opponentStrums);
 
-        playerStrums = new StrumLine((FlxG.width*0.5)+centerX,down,false);
-        playerStrums.scrollMult = -1;
+        playerStrums = new StrumLine((FlxG.width*0.5)+centerX,up,false);
+        playerStrums.scrollMult = 1;
         playerStrums.characters.push(playerChar);
         add(playerStrums);
 
@@ -44,6 +48,11 @@ class DebugState extends State {
 
         noteLoader = new NoteLoader([opponentStrums, playerStrums],song.chart);
         add(noteLoader);
+
+        ratingSprite = new RatingSprite(FlxG.width*0.5, FlxG.height*0.5);
+        add(ratingSprite);
+
+        playerStrums.onNoteHit.add(onNoteHit);
 
         Conductor.current.updateBPM(song.chart.info.bpm);
         Conductor.current.onBeatTick.add(()->{
@@ -66,5 +75,9 @@ class DebugState extends State {
             sounds.speed *= 1.01;
 
         FlxG.watch.addQuick("Render Blit", FlxG.renderBlit);
+    }
+
+    public function onNoteHit(note:Note) {
+        ratingSprite.show(SICK);
     }
 }

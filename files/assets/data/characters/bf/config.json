@@ -77,15 +77,7 @@
 			"offset": {"x": -3, "y": 5},
 			"name": "hey",
 			"fps": 24,
-			"prefix": "BF HEY",
-			"indices": []
-		},
-		{
-			"loop": false,
-			"offset": {"x": 15, "y": 18},
-			"name": "hurt",
-			"fps": 24,
-			"prefix": "BF hit",
+			"prefix": "BF HEY!!",
 			"indices": []
 		},
 		{
@@ -94,54 +86,6 @@
 			"name": "scared",
 			"fps": 24,
 			"prefix": "BF idle shaking",
-			"indices": []
-		},
-		{
-			"loop": false,
-			"offset": {"x": 37, "y": 11},
-			"name": "firstDeath",
-			"fps": 24,
-			"prefix": "BF dies",
-			"indices": []
-		},
-		{
-			"loop": true,
-			"offset": {"x": 37, "y": 5},
-			"name": "deathLoop",
-			"fps": 24,
-			"prefix": "BF Dead Loop",
-			"indices": []
-		},
-		{
-			"loop": false,
-			"offset": {"x": 37, "y": 69},
-			"name": "deathConfirm",
-			"fps": 24,
-			"prefix": "BF Dead confirm",
-			"indices": []
-		},
-		{
-			"loop": false,
-			"offset": {"x": -10, "y": -16},
-			"name": "dodge",
-			"fps": 24,
-			"prefix": "boyfriend dodge",
-			"indices": []
-		},
-		{
-			"loop": false,
-			"offset": {"x": 294, "y": 267},
-			"name": "attack",
-			"fps": 24,
-			"prefix": "boyfriend attack",
-			"indices": []
-		},
-		{
-			"loop": false,
-			"offset": {"x": -40, "y": -40},
-			"name": "pre-attack",
-			"fps": 24,
-			"prefix": "bf pre attack",
 			"indices": []
 		}
 	],
@@ -152,5 +96,6 @@
 	"flip_x": true,
 	"bar_color": [49, 176, 209],
 	"camera_offset": {"x": 0, "y": 0},
+	"hold_time": 1.2,
 	"char_scale": 1
 }

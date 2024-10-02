@@ -1,3 +1,5 @@
 .vscode
 export/
 files/assets/songs/*
+
+res/compiler/compile.time

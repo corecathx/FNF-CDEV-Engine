@@ -69,8 +69,7 @@ class StrumLine extends FlxSpriteGroup {
             note.follow(getReceptor(note.data));
         
             if (cpu && Conductor.current.time > note.time && !note.hit) {
-                getReceptor(note.data).playAnim("confirm", true);
-                note.hit = true;
+                _onNoteHit(note);
             }
         
             var _maxTime:Float = note.time + note.length + Conductor.current.step_ms;
@@ -150,7 +149,10 @@ class StrumLine extends FlxSpriteGroup {
 
         getReceptor(note.data).playAnim("confirm",true);
         _character_playAnim('sing${Note.directions[note.data]}', true);
-        _spawnSplash(note);
+        if (!cpu) {
+            _spawnSplash(note);
+        }
+            
         note.hit = true;
     }
 
