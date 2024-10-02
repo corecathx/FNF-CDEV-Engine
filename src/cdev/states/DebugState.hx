@@ -40,7 +40,7 @@ class DebugState extends State {
         playerStrums.characters.push(playerChar);
         add(playerStrums);
 
-        var song = Utils.loadSong("Twiddlefinger", "hard");
+        var song = Utils.loadSong("Test Chart", "hard");
 
         sounds = new SoundGroup(song.inst,song.voices);
         add(sounds);
@@ -64,7 +64,7 @@ class DebugState extends State {
 
     override function update(elapsed:Float) {
         super.update(elapsed);
-        FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, 1-(elapsed*6));
+        FlxG.camera.zoom = FlxMath.lerp(0.5, FlxG.camera.zoom, 1-(elapsed*6));
         if (FlxG.keys.justPressed.B) {
             playerStrums.cpu = !playerStrums.cpu;
         }

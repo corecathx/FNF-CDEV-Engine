@@ -69,7 +69,7 @@ class StrumLine extends FlxSpriteGroup {
             note.follow(getReceptor(note.data));
         
             if (cpu && Conductor.current.time > note.time && !note.hit) {
-                _onNoteHit(note);
+                _onNoteHit(note, note.length == 0);
             }
         
             var _maxTime:Float = note.time + note.length + Conductor.current.step_ms;
@@ -132,7 +132,7 @@ class StrumLine extends FlxSpriteGroup {
             if (possibleNotes.length > 0 && !blockNote) {
                 for (note in possibleNotes) {
                     if (pressedKeys[note.data]) {
-                        _onNoteHit(note);
+                        _onNoteHit(note, note.length == 0);
                     }
                 }
             }
@@ -144,7 +144,7 @@ class StrumLine extends FlxSpriteGroup {
     }
     
 
-    function _onNoteHit(note:Note) {
+    function _onNoteHit(note:Note, kill:Bool = false) {
         onNoteHit.dispatch(note);
 
         getReceptor(note.data).playAnim("confirm",true);
@@ -154,6 +154,10 @@ class StrumLine extends FlxSpriteGroup {
         }
             
         note.hit = true;
+
+        if (kill) {
+            killNote(note);
+        }
     }
 
     function _spawnSplash(note:Note) {
