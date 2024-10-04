@@ -76,6 +76,11 @@ class Note extends Sprite {
         if (sustain != null) sustain.draw();
         if (!hit) super.draw();
     }
+    
+    override function destroy() {
+        if (sustain != null) sustain.destroy();
+        super.destroy();
+    }
 
     public function follow(receptor:ReceptorNote) {
         x = receptor.x;

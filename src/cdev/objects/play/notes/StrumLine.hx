@@ -164,6 +164,7 @@ class StrumLine extends FlxSpriteGroup {
         var splash:Splash = splashes.recycle(Splash, ()->{return new Splash();});
         var receptor:ReceptorNote = getReceptor(note.data);
         splash.setPosition(receptor.x, receptor.y);
+        splash.cameras = cameras;
         splash.init(note);
     }
 

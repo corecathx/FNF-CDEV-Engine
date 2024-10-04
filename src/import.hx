@@ -14,6 +14,7 @@ import cdev.objects.Sprite;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.FlxCamera;
 import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 

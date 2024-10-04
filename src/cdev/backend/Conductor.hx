@@ -1,11 +1,12 @@
 package cdev.backend;
 
-import flixel.util.FlxSignal;
+typedef ConductorSignal = flixel.util.FlxSignal.FlxTypedSignal<Int->Void>;
 
 /**
  * A class that handles beat, step and measures in the game.
  */
 class Conductor {
+
     /** Currently active Conductor object **/
     public static var current:Conductor;
 
@@ -37,10 +38,10 @@ class Conductor {
     public var safe_zone_offset:Float = Math.floor((20 / 60) * 1000);
 
     /** Will be called on each beat tick changes. **/
-    public var onBeatTick:FlxSignal;
+    public var onBeatTick:ConductorSignal;
 
     /** Will be called on each step tick changes. **/
-    public var onStepTick:FlxSignal;
+    public var onStepTick:ConductorSignal;
 
     // Internals used by this class. //
     private var _last_beats:Int = 0;
@@ -53,8 +54,8 @@ class Conductor {
         if (assign) current = this;
         updateBPM(120); // By default, it'll set this to 120.
 
-        onBeatTick = new FlxSignal();
-        onStepTick = new FlxSignal();
+        onBeatTick = new ConductorSignal();
+        onStepTick = new ConductorSignal();
     }
 
     public function destroy() {
@@ -92,12 +93,12 @@ class Conductor {
 
     private function _checkTicks() {
         if (_last_beats != current_beats) {
-            onBeatTick.dispatch();
+            onBeatTick.dispatch(current_beats);
             _last_beats = current_beats;
         }
 
         if (_last_steps != current_steps) {
-            onStepTick.dispatch();
+            onStepTick.dispatch(current_beats);
             _last_steps = current_steps;
         }
     }

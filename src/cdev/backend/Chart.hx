@@ -134,9 +134,11 @@ class Chart {
             }
 
             if (Reflect.hasField(i,"sectionEvents")){ // bruh
-                for (k in i.sectionEvents) events.push({
-                    time: k[2], data: k[1], name: k[0], args: [k[3],k[4]]
-                });
+                for (k in i.sectionEvents) {
+                    events.push({
+                        time: k[2], data: k[1], name: k[0], args: [k[3],k[4]]
+                    });
+                }
             }
 
             totalPos += ((60 / curBPM) * 1000)*4;

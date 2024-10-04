@@ -5,6 +5,8 @@ class Character extends Sprite {
      * This character's configuration data.
      */
     public var data:CharacterData = null;
+
+    public var isPlayer:Bool = false;
     
     /**
      * Defines whether this character is currently singing.
@@ -22,9 +24,14 @@ class Character extends Sprite {
         var _data:CharacterAssets = Assets.character(name);
         if (_data.atlas != null)
             frames = _data.atlas;
-        flipX = player;
+        isPlayer = flipX = player;
         if (_data.data == null) return;
         data = _data.data;
+        if (data.flip_x) {
+            flipX = !flipX;
+        }
+        x += (isPlayer ? -data.position_offset.x : data.position_offset.x);
+        y += data.position_offset.y;
         loadAnimations(data);
     }
 

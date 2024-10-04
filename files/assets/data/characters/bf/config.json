@@ -90,12 +90,11 @@
 		}
 	],
 	"antialiasing": true,
-	"graphic_path": "characters/BOYFRIEND",
 	"position_offset": {"x": 0, "y": 350},
 	"icon": "bf",
 	"flip_x": true,
 	"bar_color": [49, 176, 209],
-	"camera_offset": {"x": 0, "y": 0},
+	"camera_offset": {"x": 150, "y": 0},
 	"hold_time": 1.2,
 	"char_scale": 1
 }

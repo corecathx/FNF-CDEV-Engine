@@ -36,6 +36,11 @@ class Sustain extends FlxTiledSprite {
         tailEnd.setGraphicSize(scaleWidth,tailScaleHeight);
         tailEnd.updateHitbox();
     }
+
+    override function destroy() {
+        if (tailEnd != null) tailEnd.destroy();
+        super.destroy();
+    }
     
     /**
      * hi so uhh this code is awful
@@ -83,7 +88,10 @@ class Sustain extends FlxTiledSprite {
             height = sustainHeight;
         }
     
-        if (visible) super.draw();
+        if (visible) {
+            cameras = parent.cameras;
+            super.draw();
+        }
     
         tailEnd.x = x;
         tailEnd.y = isDownscroll ? (clip > 0 ? y - tailEnd.height : y+height-tailEnd.height) : (clip > 0 ? y + height : y);
@@ -109,7 +117,11 @@ class Sustain extends FlxTiledSprite {
 			tailEnd.clipRect = swagRect;
         }
 
-        tailEnd.draw();
+        if (visible) {
+            tailEnd.cameras = parent.cameras;
+            tailEnd.draw();
+        }
+
     }    
     
     override function update(elapsed:Float):Void {
@@ -122,11 +134,11 @@ class Sustain extends FlxTiledSprite {
     
         graphicVisible = true;
     
-        vertices[0] = vertices[6] = 0.0;
-        vertices[2] = vertices[4] = width;
+        vertices[0] = vertices[6] = 0.0; //top left
+        vertices[2] = vertices[4] = width; //top right
     
-        vertices[1] = vertices[3] = 0.0;
-        vertices[5] = vertices[7] = height;
+        vertices[1] = vertices[3] = 0.0; //bottom left
+        vertices[5] = vertices[7] = height; //bottom right
 
         var frame:FlxFrame = graphic.imageFrame.frame;
         uvtData[0] = uvtData[6] = 0;
