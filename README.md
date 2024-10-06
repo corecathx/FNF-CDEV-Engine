@@ -1,2 +1,2 @@
 # FNF': CDEV Engine (Rewrite)
-Write something soon.
+This is just CDEV Engine but rewritten from scratch.
