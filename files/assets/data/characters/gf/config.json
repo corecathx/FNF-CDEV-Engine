@@ -1,0 +1,28 @@
+{
+	"animations": [
+		{
+			"loop": false,
+			"offset": {"x": 0, "y": -9},
+			"name": "danceLeft",
+			"fps": 24,
+			"prefix": "GF Dancing Beat",
+			"indices": [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+		},
+		{
+			"loop": false,
+			"offset": {"x": 0, "y": -9},
+			"name": "danceRight",
+			"fps": 24,
+			"prefix": "GF Dancing Beat",
+			"indices": [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+		}
+	],
+	"antialiasing": true,
+	"position_offset": {"x": 0, "y": 0},
+	"icon": "gf",
+	"flip_x": false,
+	"bar_color": [165, 0, 77],
+	"camera_offset": {"x": 0, "y": 0},
+	"hold_time": 4,
+	"char_scale": 1
+}

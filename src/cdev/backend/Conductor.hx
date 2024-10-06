@@ -14,7 +14,7 @@ class Conductor {
     public var time(default,set):Float = 0;
 
     /** Current song time / position offset **/
-    public var offset:Float = 0;
+    public var offset:Float = 120;
 
     /** Tracker for current beats **/
     public var current_beats:Int = 0;
@@ -88,7 +88,7 @@ class Conductor {
         current_beats = Std.int(current_steps / 4);
 
         _checkTicks();
-        return time = nTime + offset;
+        return time = nTime;
     }
 
     private function _checkTicks() {

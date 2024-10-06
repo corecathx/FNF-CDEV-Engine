@@ -1,7 +1,7 @@
 // Soon
 #if !macro
 import cdev.Config;
-import cdev.EnginePrefs;
+import cdev.Preferences;
 import cdev.backend.Conductor;
 import cdev.backend.Assets;
 import cdev.backend.Utils;
@@ -17,6 +17,7 @@ import flixel.FlxSprite;
 import flixel.FlxCamera;
 import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
+import flixel.graphics.FlxGraphic;
 
 using StringTools;
 #end

@@ -65,7 +65,7 @@ class NoteLoader extends FlxBasic {
             var parent:StrumLine = getStrum(songNote.strum);
     
             var note:Note = new Note(parent.getReceptor(songNote.data));
-            note.init(songNote.time, songNote.data, songNote.length);
+            note.init(songNote.time+Conductor.current.offset, songNote.data, songNote.length);
             parent.addNote(note);
     
             _currentNote++;

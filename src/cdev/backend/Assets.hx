@@ -3,7 +3,7 @@ package cdev.backend;
 import haxe.Json;
 import sys.FileSystem;
 import sys.io.File;
-import flixel.graphics.FlxGraphic;
+
 import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.display.BitmapData;
 import openfl.media.Sound;
@@ -54,7 +54,7 @@ class Assets {
 	 * @param file Image file name
 	 * @return FlxGraphic (Warning: might return null)
 	 */
-	public static function image(file:String, ?customPath:Bool = false):FlxGraphic {
+	public static function image(file:String, ?customPath:Bool = false, ?gpuTexture:Bool = true):FlxGraphic {
         if (loaded_images.exists(file))
             return loaded_images.get(file);
 
@@ -63,8 +63,21 @@ class Assets {
         if (!FileSystem.exists(path))
             return null;
 
-        var newBitmap:BitmapData = BitmapData.fromFile(path);
-        var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, file);
+        var bitmap:BitmapData = BitmapData.fromFile(path);
+		@:privateAccess if (gpuTexture)
+		{
+			/*if (bitmap.__texture == null)
+			{
+				bitmap.image.premultiplied = true;
+				bitmap.getTexture(FlxG.stage.context3D);
+			}
+			bitmap.getSurface();
+			bitmap.disposeImage();
+			bitmap.image.data = null;
+			bitmap.image = null;
+			bitmap.readable = true;*/
+		}
+        var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, false, file);
         newGraphic.persist = true;
 
         var n:FlxGraphic = FlxG.bitmap.addGraphic(newGraphic);
@@ -78,7 +91,7 @@ class Assets {
 	 * @param file Your sparrow atlas filename.
 	 * @return FlxAtlasFrames
 	 */
-	public static function sparrowAtlas(file:String, ?customPath:Bool = false):FlxAtlasFrames {
+	public static function sparrowAtlas(file:String, ?customPath:Bool = false, ?gpuTexture:Bool = true):FlxAtlasFrames {
 		inline function failed(message:String) {
 			trace(message);
 			return null;
@@ -87,7 +100,7 @@ class Assets {
 			return loaded_atlases.get(file);
 
 		trace("Loading new Atlas Frames for: " + file);
-		var graphic:FlxGraphic = image(file, customPath);
+		var graphic:FlxGraphic = image(file, customPath, gpuTexture);
 		if (graphic == null) 
 			failed("Graphic is null.");
 
@@ -114,7 +127,7 @@ class Assets {
 			return null;
 		}
 		var path:String = '${_CHARACTER_PATH}/$name';
-		trace(path);
+		trace("Character Path: " + path);
 		if (!FileSystem.exists(path) || !FileSystem.isDirectory(path)) 
 			failed("Character path is non-existent.");
 
@@ -122,7 +135,7 @@ class Assets {
 		if (atlas == null)
 			failed("Could not found sparrow atlas for character sprite.");
 
-		var icon:FlxGraphic = image('$path/icon.png', true);
+		var icon:FlxGraphic = image('$path/icon', true);
 		if (icon == null)
 			failed("Could not found icon.png file.");
 

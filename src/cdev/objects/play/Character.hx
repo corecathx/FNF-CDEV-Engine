@@ -1,10 +1,14 @@
 package cdev.objects.play;
 
+import flixel.util.FlxColor;
+
 class Character extends Sprite {
     /**
      * This character's configuration data.
      */
     public var data:CharacterData = null;
+
+    public var icon:FlxGraphic;
 
     public var isPlayer:Bool = false;
     
@@ -30,6 +34,7 @@ class Character extends Sprite {
         if (data.flip_x) {
             flipX = !flipX;
         }
+        icon = _data.icon;
         x += (isPlayer ? -data.position_offset.x : data.position_offset.x);
         y += data.position_offset.y;
         loadAnimations(data);
@@ -48,6 +53,10 @@ class Character extends Sprite {
         playAnim("idle");
     }
 
+    public function getBarColor():FlxColor {
+        return FlxColor.fromRGB(data.bar_color[0], data.bar_color[1], data.bar_color[2]);
+    }
+
     override function update(elapsed:Float) {
         if (singing) {
             holdTimer += elapsed;
@@ -59,9 +68,15 @@ class Character extends Sprite {
         super.update(elapsed);
     }
 
+    var _danceLeft:Bool = false;
     public function dance(?force:Bool = false) {
         if (singing && !force) return;
-        playAnim("idle");
+        if (animOffsets.exists("idle"))
+            playAnim("idle");
+        else if (animOffsets.exists("danceLeft") && animOffsets.exists("danceRight")) {
+            playAnim(_danceLeft ? "danceLeft" : "danceRight");
+            _danceLeft = !_danceLeft;
+        }
     }
 
     override function playAnim(animName:String, force:Bool = false, reversed:Bool = false, frame:Int = 0) {

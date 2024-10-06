@@ -4,7 +4,7 @@ import flixel.input.keyboard.FlxKey;
 import openfl.events.KeyboardEvent;
 
 class Controls {
-	// Pressed //
+	// Note - Pressed //
     public static var UP_P(get, never):Bool;
 	public static var DOWN_P(get, never):Bool;
 	public static var LEFT_P(get, never):Bool;
@@ -13,7 +13,7 @@ class Controls {
 	static function get_DOWN_P() return justPressed('down');
 	static function get_LEFT_P() return justPressed('left');
 	static function get_RIGHT_P() return justPressed('right');
-    //
+    // UI - Pressed //
 	public static var UI_UP_P(get, never):Bool;
 	public static var UI_DOWN_P(get, never):Bool;
 	public static var UI_LEFT_P(get, never):Bool;
@@ -24,7 +24,7 @@ class Controls {
 	static function get_UI_RIGHT_P() return justPressed('ui_right');
 
 
-	// Held //
+	// Note - Held //
 	public static var UI_UP(get, never):Bool;
 	public static var UI_DOWN(get, never):Bool;
 	public static var UI_LEFT(get, never):Bool;
@@ -33,7 +33,7 @@ class Controls {
 	static function get_DOWN() return pressed('down');
 	static function get_LEFT() return pressed('left');
 	static function get_RIGHT() return pressed('right');
-    //
+    // UI - Held //
 	public static var UP(get, never):Bool;
 	public static var DOWN(get, never):Bool;
 	public static var LEFT(get, never):Bool;
@@ -44,7 +44,7 @@ class Controls {
 	static function get_UI_RIGHT() return pressed('ui_right');
 
 
-	// Released //
+	// Note - Released //
     public static var UP_R(get, never):Bool;
 	public static var DOWN_R(get, never):Bool;
 	public static var LEFT_R(get, never):Bool;
@@ -53,7 +53,7 @@ class Controls {
 	static function get_DOWN_R() return justReleased('down');
 	static function get_LEFT_R() return justReleased('left');
 	static function get_RIGHT_R() return justReleased('right');
-    //
+    // UI - Released //
 	public static var UI_UP_R(get, never):Bool;
 	public static var UI_DOWN_R(get, never):Bool;
 	public static var UI_LEFT_R(get, never):Bool;
@@ -79,8 +79,8 @@ class Controls {
      * Initialize the controls.
      */
     public static function init() {
-        for (key in Reflect.fields(EnginePrefs.keybinds)){
-            var fieldVal:Array<String> = Reflect.getProperty(EnginePrefs.keybinds,key);
+        for (key in Reflect.fields(Preferences.keybinds)){
+            var fieldVal:Array<String> = Reflect.getProperty(Preferences.keybinds,key);
             var parsed:Array<FlxKey> = [FlxKey.fromString(fieldVal[0]), FlxKey.fromString(fieldVal[1])];
             keyboardBinds.set(key, parsed);
         }

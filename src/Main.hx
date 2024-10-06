@@ -1,5 +1,6 @@
 package;
 
+import cdev.backend.native.NativeUtils;
 import lime.app.Application;
 import openfl.Lib;
 import openfl.display.DisplayObject;
@@ -31,13 +32,22 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
-		new Conductor();
-		Controls.init();
+		preInit();
+
 		addChild(new Game());
 		addChild(new StatsDisplay(10,10,0xFFFFFF));
 		trace("CDEV Engine is ready :3");
 
 		postInit();
+	}
+
+
+	function preInit() {
+		new Conductor();
+		Controls.init();
+		#if DARK_MODE_WINDOW
+		NativeUtils.setWindowDarkMode(Application.current.window.title, true);
+		#end
 	}
 
 	function postInit() {

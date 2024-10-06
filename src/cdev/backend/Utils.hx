@@ -1,5 +1,8 @@
 package cdev.backend;
 
+import flixel.util.FlxColor;
+import cdev.objects.play.hud.RatingSprite.Rating;
+import cdev.objects.play.notes.Note;
 import sys.io.File;
 import haxe.Json;
 import sys.FileSystem;
@@ -185,5 +188,123 @@ class Utils {
             shit = hour+":"+mins + ":" + secs;
         }
         return shit;
+    }
+
+    /**
+     * Formats a number with dots and stuff, something like
+     * 500435111 => 500.435.111
+     * @param num the number you want to comment
+     * @return String
+     */
+    public static function formatNumber(num:Int):String {
+        var str:String = Std.string(num);
+        var result:String = "";
+        var count:Int = 0;
+    
+        for (i in 0...str.length) {
+            result = str.charAt(str.length - 1 - i) + result;
+            count++;
+            if (count % 3 == 0 && i != str.length - 1) 
+                result = "." + result;
+        }
+    
+        return result;
+    }    
+
+    public static function getGameplayStatus(sick:Int, good:Int, bad:Int, shit:Int, miss:Int):String 
+    {
+        var daRank:String = '';
+        if (miss == 0 && bad == 0 && shit == 0 && good == 0)
+            daRank = "MFC";
+        else if (miss == 0 && bad == 0 && shit == 0 && good >= 1)
+            daRank = "GFC";
+        else if (miss == 0)
+            daRank = "FC";
+        else if (miss < 10)
+            daRank = "SDCB";
+        else
+            daRank = "Clear";
+
+        return daRank;
+    }
+
+    public static function getAccuracyRank(acc:Float):{rating:String, color:FlxColor}
+    {
+        acc = Math.round(acc);
+        var ratingData:Array<{accuracy:Int, data:{rating:String, color:FlxColor}}> = [
+            {accuracy: 1,   data: {rating:"?", color: 0xFFFFFFFF}},
+            {accuracy: 70,   data: {rating:"F", color: 0xFFFF0000}},
+            {accuracy: 75,  data: {rating:"D", color: 0xFFFF8800}},
+            {accuracy: 80,  data: {rating:"C", color: 0xFFFFD900}},
+            {accuracy: 85,  data: {rating:"B", color: 0xFFB3FF00}},
+            {accuracy: 90,  data: {rating:"A", color: 0xFF1EFF00}},
+            {accuracy: 95,  data: {rating:"S", color: 0xFF00CCFF}},
+            {accuracy: 99,  data: {rating:"S+", color: 0xFF00CCFF}},
+            {accuracy: 100, data: {rating:"S++", color: 0xFF00CCFF}}
+        ];
+    
+        for (data in ratingData)
+            if (acc <= data.accuracy)
+                return data.data;
+        
+        return {rating:"S++", color: 0xFF00CCFF};
+    }
+
+    /**
+     * Returns Accuracy Rating based off your accuracy.
+     * @param acc Your accuracy.
+     * @return String
+     */
+    public static function getAccuracyRating(acc:Float):String {
+        acc = Math.round(acc); // Round the accuracy
+    
+        var ratingData:Array<{accuracy:Int, rating:String}> = [
+            {accuracy: 1,  rating: "N/A"},
+            {accuracy: 2,  rating: "Bro"},
+            {accuracy: 5,  rating: "Nahh"},
+            {accuracy: 10,  rating: "Lmao"},
+            {accuracy: 20, rating: "Wtf"},
+            {accuracy: 30, rating: "Shit"},
+            {accuracy: 40, rating: "Eh"},
+            {accuracy: 50, rating: "Bad"},
+            {accuracy: 60, rating: "Okay"},
+            {accuracy: 69, rating: "Decent"},
+            {accuracy: 70, rating: "Nice"},
+            {accuracy: 80, rating: "Good"},
+            {accuracy: 90, rating: "Great"},
+            {accuracy: 99, rating: "Sick!"},
+            {accuracy: 100, rating: "Perfect!"}
+        ];
+    
+        for (data in ratingData)
+            if (acc <= data.accuracy)
+                return data.rating;
+    
+        return "Amazing!"; // Just incase the accuracy went above 100.
+    }
+    
+    public static function getNoteRating(note:Note, currentTime:Float):Rating
+    {
+        var theTimingWindow:Array<Float> = [166,135,90,55];
+        var theDiff = Math.abs((note.time - currentTime));
+        for (i in 0...theTimingWindow.length){
+            var judgeTime = theTimingWindow[i];
+            var newTime = i + 1 > theTimingWindow.length - 1 ? 0 : theTimingWindow[i + 1];
+            if (theDiff < judgeTime && theDiff >= newTime)
+            {
+                switch(i)
+                {
+                    case 0:
+                        return SHIT;
+                    case 1:
+                        return BAD;
+                    case 2:
+                        return GOOD;
+                    case 3:
+                        return SICK;
+                }
+            }
+        }
+        return SHIT;
     }
 }

@@ -24,7 +24,8 @@ class ReceptorNote extends Sprite {
             ["pressed", "<a> press"],
             ["confirm", "<a> confirm"],
         ];
-        frames = Assets.sparrowAtlas("notes/NOTE_assets");
+
+        frames = Assets.sparrowAtlas("notes/NOTE_assets", false);
         
         var dirStr:String = cast direction;
         for (anim in animArray) {

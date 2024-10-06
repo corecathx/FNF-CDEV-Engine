@@ -1,6 +1,9 @@
 package cdev.objects.play.notes;
 
+import cdev.objects.play.hud.RatingSprite.Rating;
 import cdev.objects.play.notes.ReceptorNote.NoteDirection;
+
+typedef JudgementData = {rating:Rating, score:Int, health:Float, accuracy:Float};
 
 /**
  * Note object of Funkin.
@@ -25,6 +28,13 @@ class Note extends Sprite {
     public var data:Int = 0;
     public var length:Float = 0;
 
+    public var judgement:JudgementData = {
+        rating: SHIT,
+        score: 0,
+        health: 0.0,
+        accuracy: 0.0
+    }
+
     public var receptor:ReceptorNote = null;
 
     public var hit:Bool = false;
@@ -46,7 +56,7 @@ class Note extends Sprite {
     public function new(receptor:ReceptorNote) {
         super();
         this.receptor = receptor;
-        frames = Assets.sparrowAtlas("notes/NOTE_assets");
+        frames = Assets.sparrowAtlas("notes/NOTE_assets", false);
     }
 
     public function init(time:Float, data:Int, length:Float) {
@@ -67,7 +77,6 @@ class Note extends Sprite {
             
             sustain.y = sustain.x = -1000; //offscreen pls
         }
-
         
         x = y = -1000; //make sure it's completely offscreen.
     }

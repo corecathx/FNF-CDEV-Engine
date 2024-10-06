@@ -20,7 +20,7 @@ class Sprite extends FlxSprite {
         if (nGraphic != null) 
             loadGraphic(nGraphic);
 
-        antialiasing = EnginePrefs.antialiasing;
+        antialiasing = Preferences.antialiasing;
     }
 
     /**
@@ -62,7 +62,7 @@ class Sprite extends FlxSprite {
         return cast super.makeGraphic(Width, Height, Color, Unique, Key);
     }
 
-    override function loadGraphic(graphic:FlxGraphicAsset, animated:Bool = false, frameWidth:Int = 0, frameHeight:Int = 0, unique:Bool = false, ?key:String):FlxSprite {
+    override function loadGraphic(graphic:FlxGraphicAsset, animated:Bool = false, frameWidth:Int = 0, frameHeight:Int = 0, unique:Bool = false, ?key:String):Sprite {
         return cast super.loadGraphic(graphic, animated, frameWidth, frameHeight, unique, key);
     }
 }

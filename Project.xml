@@ -31,7 +31,7 @@
 	<!-- Comment this to disable: Crash Handler. -->
 	<define name="CRASH_HANDLER" if="windows"/>
 
-	<!-- Ignore this... -->
+	<!-- Prebuild and Postbuild scripts. -->
 	<prebuild haxe="res/compiler/Prebuild.hx"/>
 	<postbuild haxe="res/compiler/Postbuild.hx"/>
 

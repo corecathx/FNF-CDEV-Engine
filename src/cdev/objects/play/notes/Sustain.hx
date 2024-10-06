@@ -4,7 +4,7 @@ import flixel.math.FlxRect;
 import flixel.graphics.frames.FlxFrame;
 import flixel.addons.display.FlxTiledSprite;
 import flixel.addons.display.FlxBackdrop;
-import flixel.graphics.FlxGraphic;
+
 
 class Sustain extends FlxTiledSprite {
     public static var originWidth:Float = 50;
@@ -35,6 +35,8 @@ class Sustain extends FlxTiledSprite {
         tailEnd.playAnim("idle");
         tailEnd.setGraphicSize(scaleWidth,tailScaleHeight);
         tailEnd.updateHitbox();
+
+       // graphic.bitmap.disposeImage();
     }
 
     override function destroy() {
@@ -66,7 +68,7 @@ class Sustain extends FlxTiledSprite {
         if (parent.hit) {
             // Clipping Effect //
             var lenDiff = (parent.length - (Conductor.current.time - parent.time));
-            clip = FlxMath.bound(lenDiff * (receptor.speed * Math.abs(receptor.scrollMult) * Note.pixel_per_ms), - tailScaleHeight, sustainHeight);
+            clip = FlxMath.bound(lenDiff * (receptor.speed * Math.abs(receptor.scrollMult) * Note.pixel_per_ms), -tailScaleHeight, sustainHeight);
             height = Math.abs(clip);
     
             // Lock Position //
@@ -117,11 +119,8 @@ class Sustain extends FlxTiledSprite {
 			tailEnd.clipRect = swagRect;
         }
 
-        if (visible) {
-            tailEnd.cameras = parent.cameras;
-            tailEnd.draw();
-        }
-
+        tailEnd.cameras = parent.cameras;
+        tailEnd.draw();
     }    
     
     override function update(elapsed:Float):Void {

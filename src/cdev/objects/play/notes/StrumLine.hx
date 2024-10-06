@@ -1,5 +1,6 @@
 package cdev.objects.play.notes;
 
+import cdev.objects.play.notes.Note.JudgementData;
 import flixel.util.FlxSignal;
 import flixel.group.FlxSpriteGroup;
 
@@ -145,19 +146,25 @@ class StrumLine extends FlxSpriteGroup {
     
 
     function _onNoteHit(note:Note, kill:Bool = false) {
-        onNoteHit.dispatch(note);
-
         getReceptor(note.data).playAnim("confirm",true);
         _character_playAnim('sing${Note.directions[note.data]}', true);
-        if (!cpu) {
+
+        note.hit = true;
+        note.judgement.rating = Utils.getNoteRating(note, Conductor.current.time);
+        var newJudge:JudgementData = switch (note.judgement.rating) {
+            case SICK: {rating: note.judgement.rating, score: 400, health: 0.05, accuracy: 1};
+            case GOOD: {rating: note.judgement.rating, score: 350, health: 0.04, accuracy: 0.8};
+            case BAD: {rating: note.judgement.rating, score: 200, health: 0.02, accuracy: 0.6};
+            case SHIT: {rating: note.judgement.rating, score: 150, health: 0.015, accuracy: 0.4};
+            default: {rating: note.judgement.rating, score: 0, health: 0, accuracy: 0};
+        }
+        note.judgement = newJudge;
+        if (!cpu && note.judgement.rating == SICK) {
             _spawnSplash(note);
         }
-            
-        note.hit = true;
+        onNoteHit.dispatch(note);
 
-        if (kill) {
-            killNote(note);
-        }
+        if (kill) killNote(note);
     }
 
     function _spawnSplash(note:Note) {
@@ -169,8 +176,12 @@ class StrumLine extends FlxSpriteGroup {
     }
 
     function _onNoteMiss(note:Note) {
-        onNoteMiss.dispatch(note);
+        note.judgement.health = -0.06;
+        note.judgement.score = -150;
         note.missed = true;
+
+        _character_playAnim('sing${Note.directions[note.data]}miss',true);
+        onNoteMiss.dispatch(note);
         if (note.length == 0) 
             killNote(note);
     }
