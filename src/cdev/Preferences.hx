@@ -36,4 +36,9 @@ class Preferences {
      * Defines whether to use down / up scrolling notes on gameplay.
      */
     public static var downscroll:Bool = true;
+
+    /**
+     * Defines whether to cache graphics to GPU.
+     */
+    public static var gpuTexture:Bool = false;
 }

@@ -26,11 +26,11 @@ class SoundGroup extends FlxBasic {
 
     override function update(elapsed:Float) {
         if (inst.playing) {
-            Conductor.current.time += elapsed * (1000 * speed);
+            Conductor.instance.time += elapsed * (1000 * speed);
             inst.pitch = speed;
     
-            if (Math.abs(Conductor.current.time - inst.time) > resyncThreshold) {
-                Conductor.current.time = inst.time;
+            if (Math.abs(Conductor.instance.time - inst.time) > resyncThreshold) {
+                Conductor.instance.time = inst.time;
             }
     
             forEachVoices((snd:FlxSound) -> {

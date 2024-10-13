@@ -15,6 +15,7 @@ import cdev.backend.audio.SoundGroup;
 import cdev.objects.play.notes.NoteLoader;
 import cdev.objects.play.notes.StrumLine;
 import cdev.objects.play.notes.Note;
+import flixel.addons.display.FlxGridOverlay;
 
 /**
  * hi myself pls tidy up this state's code dang it
@@ -53,6 +54,7 @@ class DebugState extends State {
     var health(default,set):Float = 0.5;
 
     var scoreTxt:Text;
+    var timeTxt:Text;
     function set_health(val:Float) {
         return health = FlxMath.bound(val,0,1);
     }
@@ -97,15 +99,15 @@ class DebugState extends State {
         camGame.follow(camFollow);
         
         /// Load Song Data, and SoundGroup ///
-        var song = Utils.loadSong("Roses Erect", "hard");      
+        var song = Utils.loadSong("Test Chart", "hard");      
         chart = song.chart;  
                 
         sounds = new SoundGroup(song.inst,song.voices);
         add(sounds);
 
         /// Init Conductor ///
-        Conductor.current.updateBPM(chart.info.bpm);
-        Conductor.current.onBeatTick.add(onBeatHit);
+        Conductor.instance.updateBPM(chart.info.bpm);
+        Conductor.instance.onBeatTick.add(onBeatHit);
 
         /// Load Stage ///
         initStage();
@@ -113,25 +115,13 @@ class DebugState extends State {
     
     function initStage() {
         defaultCamZoom = 0.9;
-        var bg:FlxSprite = new FlxSprite(-600, -200).loadGraphic(Assets.image('stageback'));
-        bg.scrollFactor.set(0.9, 0.9);
+        var bg:Sprite = new Sprite(-600, -200).loadGraphic(FlxGridOverlay.createGrid(10,10,FlxG.width, FlxG.height, true, 0xFF202020, 0xFF303030));
+        bg.scrollFactor.set(0.1, 0.1);
+        bg.scale.set(1.5,1.5);
+        bg.screenCenter();
+        bg.alpha = 0.2;
         bg.active = false;
         add(bg);
-
-        var stageFront:FlxSprite = new FlxSprite(-650, 600).loadGraphic(Assets.image('stagefront'));
-        stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
-        stageFront.updateHitbox();
-        stageFront.scrollFactor.set(0.9, 0.9);
-        stageFront.active = false;
-        add(stageFront);
-
-        var stageCurtains:FlxSprite = new FlxSprite(-500, -300).loadGraphic(Assets.image('stagecurtains'));
-        stageCurtains.setGraphicSize(Std.int(stageCurtains.width * 0.9));
-        stageCurtains.updateHitbox();
-        stageCurtains.scrollFactor.set(1.3, 1.3);
-        stageCurtains.active = false;
-
-        add(stageCurtains);
 
         spectatorChar = new Character(400,130,"gf",false);
         add(spectatorChar);
@@ -139,7 +129,7 @@ class DebugState extends State {
         playerChar = new Character(770,100,"bf",true);
         add(playerChar);
 
-        opponentChar = new Character(100,100,"dad",false);
+        opponentChar = new Character(100,100,"core",false);
         add(opponentChar);
     }
 
@@ -161,6 +151,9 @@ class DebugState extends State {
             },
             healthBar: {
                 y: (Preferences.downscroll ? 70 : FlxG.height - 90)
+            },
+            timeText: {
+                y: (Preferences.downscroll ? FlxG.height - 50 : 40)
             }
         }
 
@@ -207,6 +200,12 @@ class DebugState extends State {
         scoreTxt.cameras = [camHUD];
         add(scoreTxt);
 
+        timeTxt = new Text(FlxG.width/2,_data.timeText.y,"",CENTER);
+        timeTxt.enableBG = true;
+        timeTxt.bgPadding = 5;
+        timeTxt.cameras = [camHUD];
+        add(timeTxt);
+
         /// Load Rating Sprite ///
         ratingSprite = new RatingSprite(FlxG.width*0.5, FlxG.height*0.5);
         ratingSprite.cameras = [camHUD];
@@ -235,7 +234,6 @@ class DebugState extends State {
 
     function _updateHUD(elapsed:Float) {
         // Update Score Text // 
-        scoreTxt.screenCenter(X);
         accuracy = FlxMath.roundDecimal((totalNotes.hit / totalNotes.all)*100, 2);
         if (Math.isNaN(accuracy)) 
             accuracy = 0;
@@ -245,6 +243,10 @@ class DebugState extends State {
         scoreTxt.applyMarkup(scoreText, [
             new FlxTextFormatMarkerPair(new FlxTextFormat(rank.color),"#")
         ]);
+        scoreTxt.screenCenter(X);
+
+        timeTxt.text = '${chart.info.name} // ${Utils.getTimeFormat(Conductor.instance.time)} - ${Utils.getTimeFormat(sounds.inst.length)}';
+        timeTxt.screenCenter(X);
 
         // Update Icons //
         _updateIcons(elapsed);
@@ -253,7 +255,7 @@ class DebugState extends State {
     var posVal:Float = 0;
     var moveTime:Float = 0;
     function _updateCameras(elapsed:Float) {
-        camGame.zoom = FlxMath.lerp(defaultCamZoom, camGame.zoom, 1-(elapsed*6));
+        camGame.zoom = FlxMath.lerp(defaultCamZoom-0.2, camGame.zoom, 1-(elapsed*6));
         camHUD.zoom = FlxMath.lerp(defaultHudZoom, camHUD.zoom, 1-(elapsed*6));
 
         if (followTarget != null) {
@@ -271,7 +273,7 @@ class DebugState extends State {
 		healthBarPercent = FlxMath.lerp(healthBar.percent, healthBarPercent, 1 - (elapsed * 15));
         
         var zoomAdd:Float = 0.34;
-        var beatEase:Float = (1 - FlxEase.quartOut((Conductor.current.time % Conductor.current.beat_ms) / Conductor.current.beat_ms)) * zoomAdd;
+        var beatEase:Float = (1 - FlxEase.quartOut((Conductor.instance.time % Conductor.instance.beat_ms) / Conductor.instance.beat_ms)) * zoomAdd;
         var scaleLerp:Float = 1 + beatEase;
 
         if (iconP1.allowBeat)
@@ -301,7 +303,8 @@ class DebugState extends State {
     public function onEvent(event:ChartEvent) {
         switch (event.name) {
             case "Change Camera Focus":
-                switch (event.args[0]){
+                var castValue:String = cast event.values[0];
+                switch (castValue){
                     case "dad": followTarget = cast opponentChar;
                     case "bf": followTarget = cast playerChar;
                 }

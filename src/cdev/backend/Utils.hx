@@ -1,5 +1,9 @@
 package cdev.backend;
 
+import flixel.graphics.frames.FlxImageFrame;
+import openfl.display.BitmapData;
+import flixel.graphics.frames.FlxFrame;
+import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxColor;
 import cdev.objects.play.hud.RatingSprite.Rating;
 import cdev.objects.play.notes.Note;
@@ -71,8 +75,7 @@ class Utils {
 	 * @param bytes		Bytes number that will be converted
 	 * @return String	Formatted size of the bytes
 	 */
-	public static function formatBytes(bytes:Float):String
-    {
+	public static function formatBytes(bytes:Float):String {
         if (bytes == 0)
             return "0 B";
 
@@ -168,8 +171,7 @@ class Utils {
 	 * @param ms Miliseconds to convert.
 	 * @return String - Formatted time.
 	 */
-	public static function getTimeFormat(ms:Float):String
-    {
+	public static function getTimeFormat(ms:Float):String {
         var inSeconds:Int = Math.floor(ms / 1000);
         var secs:String = '' + inSeconds % 60;
         var mins:String = "" + Math.floor(inSeconds / 60)%60;
@@ -211,8 +213,7 @@ class Utils {
         return result;
     }    
 
-    public static function getGameplayStatus(sick:Int, good:Int, bad:Int, shit:Int, miss:Int):String 
-    {
+    public static function getGameplayStatus(sick:Int, good:Int, bad:Int, shit:Int, miss:Int):String  {
         var daRank:String = '';
         if (miss == 0 && bad == 0 && shit == 0 && good == 0)
             daRank = "MFC";
@@ -228,8 +229,7 @@ class Utils {
         return daRank;
     }
 
-    public static function getAccuracyRank(acc:Float):{rating:String, color:FlxColor}
-    {
+    public static function getAccuracyRank(acc:Float):{rating:String, color:FlxColor} {
         acc = Math.round(acc);
         var ratingData:Array<{accuracy:Int, data:{rating:String, color:FlxColor}}> = [
             {accuracy: 1,   data: {rating:"?", color: 0xFFFFFFFF}},
@@ -283,8 +283,7 @@ class Utils {
         return "Amazing!"; // Just incase the accuracy went above 100.
     }
     
-    public static function getNoteRating(note:Note, currentTime:Float):Rating
-    {
+    public static function getNoteRating(note:Note, currentTime:Float):Rating {
         var theTimingWindow:Array<Float> = [166,135,90,55];
         var theDiff = Math.abs((note.time - currentTime));
         for (i in 0...theTimingWindow.length){
@@ -306,5 +305,35 @@ class Utils {
             }
         }
         return SHIT;
+    }
+
+    public static function getKeyFormat(key:FlxKey):String {
+        switch (key) {
+            case FlxKey.ZERO: return "0";
+            case FlxKey.ONE: return "1";
+            case FlxKey.TWO: return "2";
+            case FlxKey.THREE: return "3";
+            case FlxKey.FOUR: return "4";
+            case FlxKey.FIVE: return "5";
+            case FlxKey.SIX: return "6";
+            case FlxKey.SEVEN: return "7";
+            case FlxKey.EIGHT: return "8";
+            case FlxKey.NINE: return "9";
+            case FlxKey.COMMA: return ",";
+            case FlxKey.PERIOD: return ".";
+            case FlxKey.SEMICOLON: return ";";
+            case FlxKey.QUOTE: return "'";
+            case FlxKey.BACKSLASH: return "\\";
+            case FlxKey.SLASH: return "/";
+            case FlxKey.MINUS: return "-";
+            case FlxKey.PLUS: return "=";
+            case FlxKey.LBRACKET: return "[";
+            case FlxKey.RBRACKET: return "]";
+            case FlxKey.GRAVEACCENT: return "`";
+            case FlxKey.SPACE: return " ";
+            case FlxKey.TAB: return "\t";
+            case FlxKey.ENTER: return "\n";
+            default: return key.toString();
+        }
     }
 }

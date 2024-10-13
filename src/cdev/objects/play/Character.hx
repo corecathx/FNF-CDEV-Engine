@@ -60,7 +60,7 @@ class Character extends Sprite {
     override function update(elapsed:Float) {
         if (singing) {
             holdTimer += elapsed;
-            if (holdTimer > (Conductor.current.beat_ms * data.hold_time)/1000) {
+            if (holdTimer > (Conductor.instance.beat_ms * data.hold_time)/1000) {
                 holdTimer = 0;
                 dance(true);
             }
@@ -80,6 +80,7 @@ class Character extends Sprite {
     }
 
     override function playAnim(animName:String, force:Bool = false, reversed:Bool = false, frame:Int = 0) {
+        if (!animation.exists(animName)) return;
         holdTimer = 0;
         super.playAnim(animName, force, reversed, frame);
     }

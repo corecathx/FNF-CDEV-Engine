@@ -52,10 +52,13 @@ class Assets {
     /**
 	 * Returns an image file from `./assets/images/`, Returns null if the `path` does not exist.
 	 * @param file Image file name
+	 * @param customPath Whether to start the path from the game's root folder and not the images folder.
+	 * @param gpuTexture Whether to cache the graphic to GPU. (by default it'll use the user's preferences.)
+	 * @param updateCache If disabled, it'll update the cached graphic by reloading the image.
 	 * @return FlxGraphic (Warning: might return null)
 	 */
-	public static function image(file:String, ?customPath:Bool = false, ?gpuTexture:Bool = true):FlxGraphic {
-        if (loaded_images.exists(file))
+	public static function image(file:String, ?customPath:Bool = false, ?gpuTexture:Bool = true, ?updateCache:Bool = false):FlxGraphic {
+        if (!updateCache && loaded_images.exists(file))
             return loaded_images.get(file);
 
 		var path:String = (customPath ? '$file' : '$_IMAGE_PATH/$file') + ".png";
@@ -64,10 +67,8 @@ class Assets {
             return null;
 
         var bitmap:BitmapData = BitmapData.fromFile(path);
-		@:privateAccess if (gpuTexture)
-		{
-			/*if (bitmap.__texture == null)
-			{
+		@:privateAccess if (Preferences.gpuTexture && gpuTexture) {
+			if (bitmap.__texture == null) {
 				bitmap.image.premultiplied = true;
 				bitmap.getTexture(FlxG.stage.context3D);
 			}
@@ -75,7 +76,7 @@ class Assets {
 			bitmap.disposeImage();
 			bitmap.image.data = null;
 			bitmap.image = null;
-			bitmap.readable = true;*/
+			bitmap.readable = true;
 		}
         var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, false, file);
         newGraphic.persist = true;
@@ -91,12 +92,12 @@ class Assets {
 	 * @param file Your sparrow atlas filename.
 	 * @return FlxAtlasFrames
 	 */
-	public static function sparrowAtlas(file:String, ?customPath:Bool = false, ?gpuTexture:Bool = true):FlxAtlasFrames {
+	public static function sparrowAtlas(file:String, ?customPath:Bool = false, ?gpuTexture:Bool = true, ?updateCache:Bool = false):FlxAtlasFrames {
 		inline function failed(message:String) {
 			trace(message);
 			return null;
 		}
-		if (loaded_atlases.exists(file))
+		if (!updateCache && loaded_atlases.exists(file))
 			return loaded_atlases.get(file);
 
 		trace("Loading new Atlas Frames for: " + file);

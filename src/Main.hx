@@ -1,5 +1,6 @@
 package;
 
+import openfl.events.Event;
 import cdev.backend.native.NativeUtils;
 import lime.app.Application;
 import openfl.Lib;
@@ -70,41 +71,36 @@ class Main extends Sprite
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			FlxG.sound.music.stop();
 
-		var textStuff:String = "";
-		var filePath:String;
+		var finalOutput:String = "";
+		var dateNow:String = Date.now().toString().replace(" ", "_").replace(":", "'");
+		var filePath:String = "./crash/" + "CDEV-Engine_" + dateNow + ".txt";
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
-		var dateNow:String = Date.now().toString();
-
-		dateNow = dateNow.replace(" ", "_");
-		dateNow = dateNow.replace(":", "'");
-
-		filePath = "./crash/" + "CDEV-Engine_" + dateNow + ".txt";
 
 		for (stackItem in callStack)
 		{
 			switch (stackItem)
 			{
 				case FilePos(s, file, line, column):
-					textStuff += file + " (line " + line + ")\n";
+					finalOutput += file + " (line " + line + ")\n";
 				default:
 					Sys.println(stackItem);
 			}
 		}
 
-		textStuff += "\nEngine Version: "+Config.engine.version;
-		textStuff += "\nError: " + uncaught.error;
+		finalOutput += "\nEngine Version: "+Config.engine.version;
+		finalOutput += "\nError: " + uncaught.error;
 		#if desktop 
 		if (!FileSystem.exists("./crash/"))
 			FileSystem.createDirectory("./crash/");
 
-		File.saveContent(filePath, textStuff + "\n");
+		File.saveContent(filePath, finalOutput + "\n");
 
 		trace("Crash info file saved in " + Path.normalize(filePath));	
 		trace("Saving current save data, and closing the game...");
 		#end
 
 		var reportClassic:String = "CDEV Engine crashed during runtime.\n\nCall Stacks:\n"
-		+ textStuff
+		+ finalOutput
 		+ "Please report this error to CDEV Engine's GitHub page: \nhttps://github.com/Core5570RYT/FNF-CDEV-Engine";
 		
 		var cdev_ch_path:String = "./cdev-crash_handler.exe";

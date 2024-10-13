@@ -2,6 +2,14 @@ package cdev.backend;
 
 import haxe.Json;
 
+// Data types that are supported by the event.
+enum abstract EventDataType(String) from String to String {
+    var BOOLEAN = "boolean";
+    var NUMBER = "number";
+    var STRING = "string";
+}
+
+// Note data stored in the chart
 typedef ChartNote = {
     var time:Float;
     var data:Int;
@@ -10,11 +18,17 @@ typedef ChartNote = {
     var type:String;
     var args:Array<String>;
 }
-typedef ChartEvent = {
+
+// Event data stored in the chart
+typedef ChartEventGroup = {
     var time:Float;
-    var data:Int;
+    var events:Array<ChartEvent>;
+}
+
+typedef ChartEvent = {
     var name:String;
-    var args:Array<String>;
+    var type:EventDataType;
+    var values:Array<Any>;
 }
 
 @:structInit
@@ -43,7 +57,7 @@ class Chart {
     // Notes in the chart. 
     public var notes:Array<ChartNote>;
     // Events in the chart.
-    public var events:Array<ChartEvent>;
+    public var events:Array<ChartEventGroup>;
 
     public static function parse(rawJSON:String) {
         var data:Chart = null;
@@ -97,8 +111,23 @@ class Chart {
             trace("JSON is null?");
             return getTemplate();
         }
+        inline function __addEvent(array:Array<ChartEventGroup>, time:Float, event:ChartEvent) {
+            var __done:Bool = false;
+            for (eventGrp in array) {
+                if (eventGrp.time == time) {
+                    eventGrp.events.push(event);
+                    __done = true;
+                }
+            }
+            if (!__done) {
+                array.push({
+                    time: time,
+                    events: [event]
+                });
+            }
+        }
         var notes:Array<ChartNote> = [];
-        var events:Array<ChartEvent> = [];
+        var events:Array<ChartEventGroup> = [];
         var safeJSON:FNFLegacyChart = json;
         
         var lastHitSection:Bool = false;
@@ -110,33 +139,46 @@ class Chart {
 
         for (index => i in safeJSON.notes){ 
             if (i.changeBPM && i.bpm != curBPM) {
-                events.push({
-                    time: totalPos, data: 0, name: "Change BPM", args: [Std.string(i.bpm)]
+                __addEvent(events, totalPos, {
+                    name: "Change BPM", 
+                    type: NUMBER,
+                    values: [i.bpm]
                 });
                 curBPM = i.bpm;
             }
             if (lastHitSection != i.mustHitSection) {
-                events.push({
-                    time: totalPos, data: 0, name: "Change Camera Focus", args: [i.mustHitSection ? "bf" : "dad"]
+                __addEvent(events, totalPos, {
+                    name: "Change Camera Focus", 
+                    type: STRING,
+                    values: [i.mustHitSection ? "bf" : "dad"]
                 });
                 lastHitSection =  i.mustHitSection;
             }
 
             for (j in i.sectionNotes) {
-                if (i.mustHitSection) { //swap the section if it's a player section.
+                var noteType:String = '${Std.string(j[3])}'; // HashLink bugged "Uncaught exception: Can't cast i32 to String"
+                if (i.mustHitSection)  // Swap the section if it's a player section.
                     j[1] = (j[1] + 4) % 8;
-                }
+
                 if (i.p1AltAnim || i.altAnim) 
                     j[3] = "Alt Anim";
                 notes.push({
-                    time: j[0], data: Std.int(j[1]%4), length: j[2], strum: j[1] > 3 ? 1 : 0, type:(j[3]==null?"Default Note":j[3]),args:(j[4]==null?['','']:j[4])
+                    time: j[0], 
+                    data: Std.int(j[1]%4), 
+                    length: j[2], 
+                    strum: j[1] > 3 ? 1 : 0, 
+                    type: noteType,
+                    args: (j[4] == null ? ['',''] : j[4])
                 });
             }
 
-            if (Reflect.hasField(i,"sectionEvents")){ // bruh
+            if (Reflect.hasField(i,"sectionEvents")){
                 for (k in i.sectionEvents) {
-                    events.push({
-                        time: k[2], data: k[1], name: k[0], args: [k[3],k[4]]
+                    // Support for CDEV Engine Legacy ver.
+                    __addEvent(events, totalPos, {
+                        name: k[0], 
+                        type: STRING,
+                        values: [k[3],k[4]]
                     });
                 }
             }

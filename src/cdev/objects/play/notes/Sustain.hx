@@ -21,7 +21,7 @@ class Sustain extends FlxTiledSprite {
         this.frames = parent.frames;
 
         tailEnd = new Sprite();
-        tailEnd.frames = this.frames;
+        tailEnd.frames = parent.frames;
     }
 
     public function init() {
@@ -67,7 +67,7 @@ class Sustain extends FlxTiledSprite {
         var clip:Float = sustainHeight;
         if (parent.hit) {
             // Clipping Effect //
-            var lenDiff = (parent.length - (Conductor.current.time - parent.time));
+            var lenDiff = (parent.length - (Conductor.instance.time - parent.time));
             clip = FlxMath.bound(lenDiff * (receptor.speed * Math.abs(receptor.scrollMult) * Note.pixel_per_ms), -tailScaleHeight, sustainHeight);
             height = Math.abs(clip);
     

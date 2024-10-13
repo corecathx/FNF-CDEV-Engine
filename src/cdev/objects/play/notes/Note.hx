@@ -42,13 +42,13 @@ class Note extends Sprite {
 
     public var hitable(get,never):Bool;
     function get_hitable() {
-        return time > Conductor.current.time - (Conductor.current.safe_zone_offset * 1.5)
-            && time < Conductor.current.time + (Conductor.current.safe_zone_offset * 0.5);
+        return time > Conductor.instance.time - (Conductor.instance.safe_zone_offset * 1.5)
+            && time < Conductor.instance.time + (Conductor.instance.safe_zone_offset * 0.5);
     }
 
     public var invalid(get,never):Bool;
     function get_invalid() {
-        return time < (Conductor.current.time - 166);
+        return time < (Conductor.instance.time - 166);
     }
 
     public var sustain:Sustain;
@@ -93,6 +93,6 @@ class Note extends Sprite {
 
     public function follow(receptor:ReceptorNote) {
         x = receptor.x;
-        y = receptor.y - ((Conductor.current.time - time) * (receptor.speed * receptor.scrollMult))*Note.pixel_per_ms;
+        y = (receptor.getMidpoint().y - height * 0.5) - ((Conductor.instance.time - time) * (receptor.speed * receptor.scrollMult))*Note.pixel_per_ms;
     }
 }

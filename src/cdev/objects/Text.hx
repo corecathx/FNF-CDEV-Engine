@@ -31,4 +31,18 @@ class Text extends FlxText {
 		}
 		super.draw();
 	}
+
+	// Just to make sure the graphic doesn't regenerate when we update the text..
+	override function set_text(val:String):String
+	{
+		if (val == text) return text;
+		text = val;
+		if (textField != null)
+		{
+			var ot:String = textField.text;
+			textField.text = val;
+			_regen = (textField.text != ot) || _regen;
+		}
+		return text;
+	}
 }

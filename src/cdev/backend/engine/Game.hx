@@ -1,5 +1,6 @@
 package cdev.backend.engine;
 
+import openfl.events.Event;
 import flixel.FlxGame;
 
 /**
@@ -19,13 +20,17 @@ class Game extends FlxGame {
 		fps: 120,
 		initState: cdev.states.PlayState
 	}
-
+    
     /**
      * Creates a new CDEV Engine Game object.
      */
     public function new():Void {
         super(game.width, game.height, game.initState,game.fps,game.fps,true,false);
         current = this;
+    }
+
+    override function create(_:Event) {
+        super.create(_);
     }
 }
 

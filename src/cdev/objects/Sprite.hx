@@ -52,7 +52,7 @@ class Sprite extends FlxSprite {
 
         if (animOffsets.exists(animName)) {
             var savedOffset = animOffsets.get(animName);
-            offset.set(savedOffset[0], savedOffset[1]);
+            offset.set(flipX ? -savedOffset[0] : savedOffset[0], savedOffset[1]);
         } else {
             offset.set(0, 0);
         }

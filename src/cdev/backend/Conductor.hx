@@ -8,13 +8,13 @@ typedef ConductorSignal = flixel.util.FlxSignal.FlxTypedSignal<Int->Void>;
 class Conductor {
 
     /** Currently active Conductor object **/
-    public static var current:Conductor;
+    public static var instance:Conductor;
 
     /** Current song time / position **/
     public var time(default,set):Float = 0;
 
     /** Current song time / position offset **/
-    public var offset:Float = 120;
+    public var offset:Float = 0;
 
     /** Tracker for current beats **/
     public var current_beats:Int = 0;
@@ -51,7 +51,7 @@ class Conductor {
      * Initializes new Conductor object.
      */
     public function new(assign:Bool = true) {
-        if (assign) current = this;
+        if (assign) instance = this;
         updateBPM(120); // By default, it'll set this to 120.
 
         onBeatTick = new ConductorSignal();

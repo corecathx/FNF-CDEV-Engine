@@ -35,7 +35,7 @@ class Bar extends Sprite {
         loadGraphic(nGraphic);
         
 		leftBar = new Sprite().makeGraphic(Std.int(width), Std.int(height), FlxColor.WHITE);
-		rightBar = new Sprite().makeGraphic(Std.int(width), Std.int(height), FlxColor.WHITE);
+		rightBar = new Sprite().loadGraphic(leftBar.graphic);
     }
 
     override function draw() {

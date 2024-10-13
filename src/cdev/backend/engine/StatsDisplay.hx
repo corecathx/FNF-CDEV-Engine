@@ -1,5 +1,6 @@
 package cdev.backend.engine;
 
+import cdev.backend.native.NativeUtils;
 import flixel.FlxG;
 import haxe.Timer;
 import openfl.events.Event;
@@ -56,7 +57,7 @@ class StatsDisplay extends TextField
 	
 		while (frames[0] < now - 1) frames.shift();
 
-		curMemory = System.totalMemory;
+		curMemory = System.totalMemory;//NativeUtils.getUsedMemory();
 		curFps = FlxMath.bound(FlxMath.lerp(frames.length, curFps, 1-(FlxG.elapsed*12)), 0, null);
 		
 		if (curMemory > highestMemory) highestMemory = curMemory;

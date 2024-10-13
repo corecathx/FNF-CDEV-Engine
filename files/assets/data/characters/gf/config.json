@@ -19,7 +19,6 @@
 	],
 	"antialiasing": true,
 	"position_offset": {"x": 0, "y": 0},
-	"icon": "gf",
 	"flip_x": false,
 	"bar_color": [165, 0, 77],
 	"camera_offset": {"x": 0, "y": 0},

@@ -69,24 +69,32 @@ class StrumLine extends FlxSpriteGroup {
         notes.forEachAlive((note:Note) -> {   
             note.follow(getReceptor(note.data));
         
-            if (cpu && Conductor.current.time > note.time && !note.hit) {
+            // CPU Note Hit
+            if (cpu && Conductor.instance.time > note.time && !note.hit) {
                 _onNoteHit(note, note.length == 0);
             }
         
-            var _maxTime:Float = note.time + note.length + Conductor.current.step_ms;
+            // Note Miss
+            var _maxTime:Float = note.time + note.length + Conductor.instance.step_ms;
             if (!note.hit && note.invalid && !note.missed) {
                 _onNoteMiss(note);
             }
         
+            // Sustain Note Miss
             if (note.length > 0 && note.missed) {
                 note.alpha = 0.3;
-                if (_maxTime < Conductor.current.time) {
+                if (_maxTime < Conductor.instance.time) {
                     killNote(note);
                 }
             }
 
-            if (note.hit && _maxTime < Conductor.current.time) {
+            // Note has been hit, and passed the maximum time, kill it.
+            if (note.hit && _maxTime < Conductor.instance.time) {
                 killNote(note);
+            }
+
+            if (cpu && note.hit && note.length > 0 && Conductor.instance.time < _maxTime - Conductor.instance.step_ms*2) {
+                playDirectionAnim(note);
             }
         });
         
@@ -146,11 +154,10 @@ class StrumLine extends FlxSpriteGroup {
     
 
     function _onNoteHit(note:Note, kill:Bool = false) {
-        getReceptor(note.data).playAnim("confirm",true);
-        _character_playAnim('sing${Note.directions[note.data]}', true);
+        playDirectionAnim(note);
 
         note.hit = true;
-        note.judgement.rating = Utils.getNoteRating(note, Conductor.current.time);
+        note.judgement.rating = Utils.getNoteRating(note, Conductor.instance.time);
         var newJudge:JudgementData = switch (note.judgement.rating) {
             case SICK: {rating: note.judgement.rating, score: 400, health: 0.05, accuracy: 1};
             case GOOD: {rating: note.judgement.rating, score: 350, health: 0.04, accuracy: 0.8};
@@ -165,6 +172,11 @@ class StrumLine extends FlxSpriteGroup {
         onNoteHit.dispatch(note);
 
         if (kill) killNote(note);
+    }
+
+    function playDirectionAnim(note:Note) {
+        getReceptor(note.data).playAnim("confirm",true);
+        _character_playAnim('sing${Note.directions[note.data]}', true);
     }
 
     function _spawnSplash(note:Note) {

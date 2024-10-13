@@ -8,7 +8,7 @@ class NativeUtils {
      * Returns current used memory in bytes for current platform.
      * If the platform is unsupported, it will return Garbage Collector memory.
      */
-    public static function getUsedMemory() {
+    public static function getUsedMemory():Float {
         #if windows
         return Windows.getCurrentUsedMemory();
         #else

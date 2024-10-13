@@ -75,7 +75,6 @@
 	],
 	"antialiasing": true,
 	"position_offset": {"x": 0, "y": 0},
-	"icon": "dad",
 	"flip_x": false,
 	"bar_color": [175, 102, 206],
 	"camera_offset": {"x": 50, "y": 0},

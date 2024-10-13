@@ -43,7 +43,7 @@ class NoteLoader extends FlxBasic {
             var songNote:ChartNote = chart.notes[_currentNote];
             if (songNote == null) break;
     
-            var timeDiff:Float = songNote.time - Conductor.current.time;
+            var timeDiff:Float = songNote.time - Conductor.instance.time;
             if (songNote.data < 0) {
                 _skippedNotes[songNote.strum]++;
                 _currentNote++; break;
@@ -65,7 +65,7 @@ class NoteLoader extends FlxBasic {
             var parent:StrumLine = getStrum(songNote.strum);
     
             var note:Note = new Note(parent.getReceptor(songNote.data));
-            note.init(songNote.time+Conductor.current.offset, songNote.data, songNote.length);
+            note.init(songNote.time+Conductor.instance.offset, songNote.data, songNote.length);
             parent.addNote(note);
     
             _currentNote++;
@@ -73,9 +73,11 @@ class NoteLoader extends FlxBasic {
             _lastNote = songNote;
         }
         while (_currentEvent < chart.events.length) {
-            var event:ChartEvent = chart.events[_currentEvent];
-            if (Conductor.current.time < event.time) break;
-            onEvent(event);
+            var event:ChartEventGroup = chart.events[_currentEvent];
+            if (Conductor.instance.time < event.time) break;
+            for (_event in event.events)
+                onEvent(_event);
+
             _currentEvent++;
         }
         super.update(elapsed);

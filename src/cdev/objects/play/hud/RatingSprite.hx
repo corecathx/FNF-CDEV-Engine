@@ -42,7 +42,7 @@ class RatingSprite extends Sprite {
         if (!visible) return;
     
         _fadeTime += elapsed;
-        if (_fadeTime >= (Conductor.current.beat_ms * 2)/1000) {
+        if (_fadeTime >= (Conductor.instance.beat_ms * 2)/1000) {
             alpha -= (1/0.2) * elapsed;
             if (alpha <= 0) {
                 alpha = 0;
