@@ -3,6 +3,12 @@
     <h1 align="center">Friday Night Funkin': CDEV Engine</h1>
 </p>
 
+<p align="center">
+<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/corecathx/FNF-CDEV-Engine">
+<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/w/corecathx/FNF-CDEV-Engine">
+<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/corecathx/FNF-CDEV-Engine">
+</p>
+
 **CDEV Engine** is a Friday Night Funkin' Engine intended to fix issues with the base game while also adding lot of features, built off **Friday Night Funkin' v0.2.7.1**.
 
 ## DevNotes
