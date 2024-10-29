@@ -1,5 +1,8 @@
 package cdev.objects.play.notes;
 
+import openfl.geom.Rectangle;
+import openfl.geom.Matrix;
+import openfl.display.BitmapData;
 import flixel.math.FlxRect;
 import flixel.graphics.frames.FlxFrame;
 import flixel.addons.display.FlxTiledSprite;
@@ -29,7 +32,7 @@ class Sustain extends FlxTiledSprite {
         
         animation.addByPrefix("idle", _colorData + " hold piece", 24);
         animation.play("idle");
-        loadGraphic(FlxGraphic.fromFrame(frames.frames[animation.frameIndex]), false);
+        loadGraphic(FlxGraphic.fromFrame(frames.frames[animation.frameIndex]));
     
         tailEnd.addAnim("idle", (_colorData == "purple" ? "pruple end hold" : _colorData + " hold end"), 24);
         tailEnd.playAnim("idle");
@@ -133,11 +136,11 @@ class Sustain extends FlxTiledSprite {
     
         graphicVisible = true;
     
-        vertices[0] = vertices[6] = 0.0; //top left
-        vertices[2] = vertices[4] = width; //top right
-    
-        vertices[1] = vertices[3] = 0.0; //bottom left
-        vertices[5] = vertices[7] = height; //bottom right
+        vertices[0] = vertices[6] = 0.0; // top left
+        vertices[2] = vertices[4] = width; // top right
+          
+        vertices[1] = vertices[3] = 0.0; // bottom left
+        vertices[5] = vertices[7] = height; // bottom right
 
         var frame:FlxFrame = graphic.imageFrame.frame;
         uvtData[0] = uvtData[6] = 0;
@@ -145,7 +148,7 @@ class Sustain extends FlxTiledSprite {
 
         uvtData[1] = uvtData[3] = -scrollY / frame.sourceSize.y;
         uvtData[5] = uvtData[7] = uvtData[1] + height / frame.sourceSize.y;
-    
+
         if (height <= 0) 
             graphicVisible = false;
     }

@@ -1,5 +1,6 @@
 package cdev.backend;
 
+import cdev.backend.Chart.SongData;
 import flixel.graphics.frames.FlxImageFrame;
 import openfl.display.BitmapData;
 import flixel.graphics.frames.FlxFrame;
@@ -13,6 +14,7 @@ import sys.FileSystem;
 import openfl.media.Sound;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
+import cdev.backend.audio.SoundGroup.SoundTagStruct;
 
 using StringTools;
 
@@ -23,53 +25,107 @@ class Utils {
     public static var engineColor = {
         primary: 0xFF0060FF
     }
-    public static function loadSong(songName:String, diff:String):{inst:Sound, voices:Array<Sound>, chart:Chart} {
-        // Initial checking if the song folder exists.
+    public static function loadSong(songName:String, diff:String):{inst:Sound, voices:Array<SoundTagStruct>, chart:Chart, meta:SongData} {
+        // Check if the song path exists.
         var path:String = '${Assets._SONG_PATH}/$songName';
         if (!FileSystem.exists(path)) {
             trace("Song could not be found.");
             return null;
         }
-
-        // Checking Inst file.
-        trace("Loading Instrumental");
-        var inst:Sound = Assets._sound_file('$path/Inst.ogg');
-        if (inst == null) {
-            trace("Inst audio could not be loaded.");
+    
+        // Checking meta file.
+        var metaPath:String = '$path/meta.json';
+        if (!FileSystem.exists(metaPath)) {
+            trace("Meta file not found: " + metaPath);
             return null;
         }
-
-        // Checking Voice files.
-        trace("Loading Voice files");
-        var voices:Array<Sound> = [];
-        for (files in FileSystem.readDirectory(path)) {
-            if (FileSystem.isDirectory(path+"/"+files)) 
-                continue;
-            if (files.startsWith("Voices") && files.endsWith(".ogg")){
-                voices.push(Assets._sound_file('$path/${files.replace(".ogg","")}.ogg'));
+    
+        trace("Loading Meta: " + metaPath);
+        var meta:SongData = Json.parse(File.getContent(metaPath));
+    
+        // Inst and voices stuff.
+        var fileNames = {
+            inst: "Inst",
+            voices: {
+                player: "Voices-player",
+                opponent: "Voices"
             }
-
+        };
+        var diffInst:Bool = false;
+        var diffVoices:Bool = false;
+        for (data in meta.data.inst) {
+            if (data.diff == diff) {
+                fileNames.inst = '${data.folder}/Inst';
+                diffInst = true;
+                break;
+            }
+        }
+        for (data in meta.data.voices) {
+            if (data.diff == diff) {
+                fileNames.voices.player = '${data.folder}/Voices-player';
+                fileNames.voices.opponent = '${data.folder}/Voices';
+                diffVoices = true;
+                break;
+            }
+        }
+    
+        var trackPath:String = '$path/tracks';
+        if (!FileSystem.exists(trackPath)) {
+            trace("Tracks folder could not be found.");
+            return null;
+        }
+        // Load Instrumental
+        var instPath:String = '$trackPath/${fileNames.inst}.ogg';
+        if (!FileSystem.exists(instPath)) {
+            trace("Inst audio could not be found: " + instPath);
+            return null;
+        }
+        var inst:Sound = Assets._sound_file(instPath);
+    
+        // Load Voice files
+        var voices:Array<SoundTagStruct> = [];
+        var foundPlayer:Bool = false;
+        var foundOpponent:Bool = false;
+        var playerVoxPath:String = '$trackPath/${fileNames.voices.player}.ogg';
+        if (!foundPlayer && meta.multiVoice && FileSystem.exists(playerVoxPath)) {
+            voices.push({
+                sound: Assets._sound_file(playerVoxPath),
+                tag: "player"
+            });
+            trace("Found player vocals.");
+            foundPlayer = true;
         }
 
-        // Checking chart file.
-        trace("Loading Chart: " + diff + ".json");
+        var opponentVoxPath:String = '$trackPath/${fileNames.voices.opponent}.ogg';
+        if (!foundOpponent && FileSystem.exists(opponentVoxPath)) {
+            voices.push({
+                sound: Assets._sound_file(opponentVoxPath),
+                tag: !meta.multiVoice ? "player" : "others"
+            });
+            trace("Found opponent vocals, tag: " + (!meta.multiVoice ? "player" : "others"));
+            foundOpponent = true;
+        }
+    
+        // Load Chart
         var chartPath:String = '$path/charts/$diff.json';
         if (!FileSystem.exists(chartPath)) {
-            trace("Chart file not found: "+chartPath);
+            trace("Chart file not found: " + chartPath);
             return null;
         }
-
-        trace("Converting Chart...");
-        var chart:Chart = Chart.convertLegacy(Json.parse(File.getContent(chartPath)).song);
-
-        trace("Returning Data...");
-        // very smart.
+    
+        trace("Loading Chart: " + diff + ".json");
+        var chartData = Json.parse(File.getContent(chartPath));
+        var chart:Chart = Chart.convertLegacy(chartData.song);
+    
+        // Return loaded song data
         return {
             inst: inst,
             voices: voices,
-            chart: chart
-        }
+            chart: chart,
+            meta: meta
+        };
     }
+    
     /**
 	 * Converts bytes int to formatted sizes. (ex: 10 MB, 100 GB, 1000 TB, etc)
 	 * @param bytes		Bytes number that will be converted
@@ -165,6 +221,21 @@ class Utils {
             textField.setTextFormat(rulesToApply[i].format, startIdx, endIdx);
         }
     }
+
+    /**
+     * Call this function to play the game's background music.
+     */
+    public static function playBGM(?name:String, ?volume:Float) {
+        if (name == null) 
+            name = "funkinBeat";
+
+        // Just to make sure the audio doesn't go beyond player's music volume preferences.
+        volume = (volume != null ? FlxMath.bound(volume, 0, Preferences.musicVolume) : Preferences.musicVolume);
+
+        trace("Playing BGM... " + name + " // " + volume);
+        if (FlxG.sound.music == null) 
+            FlxG.sound.playMusic(Assets.music(name),volume);
+    }
     
 	/**
 	 * Returns HH:MM:SS time format from miliseconds.
@@ -172,6 +243,8 @@ class Utils {
 	 * @return String - Formatted time.
 	 */
 	public static function getTimeFormat(ms:Float):String {
+        if (ms < 0) 
+            ms = 0;
         var inSeconds:Int = Math.floor(ms / 1000);
         var secs:String = '' + inSeconds % 60;
         var mins:String = "" + Math.floor(inSeconds / 60)%60;
@@ -335,5 +408,18 @@ class Utils {
             case FlxKey.ENTER: return "\n";
             default: return key.toString();
         }
+    }
+
+    public static function destroyObject(obj:FlxBasic) {
+        if (obj == null) {
+            trace("Could not destroy object.");
+            return;
+        }
+
+        obj.kill();
+        if (FlxG.state != null && FlxG.state.members.contains(obj))
+            FlxG.state.remove(obj);
+
+        obj.destroy();
     }
 }

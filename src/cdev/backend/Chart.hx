@@ -2,14 +2,48 @@ package cdev.backend;
 
 import haxe.Json;
 
-// Data types that are supported by the event.
+////////////////////////////
+////// SONG  METADATA //////
+////////////////////////////
+/**
+ * Song's Metadata, also used by the freeplay.
+ */
+typedef SongData = {
+    var name:String;
+    var artist:String;
+    var color:String;
+    var icon:String;
+    var bpm:Int;
+    var data:{
+        var inst:Array<{
+            var diff:String;
+            var folder:String;
+        }>;
+        var voices:Array<{
+            var diff:String;
+            var folder:String;
+        }>;
+    };
+    var difficulties:Array<String>;
+    var multiVoice:Bool;
+}
+
+////////////////////////////
+//////   CHART DATA   //////
+////////////////////////////
+
+/**
+ * Data types that are supported by the event.
+ */
 enum abstract EventDataType(String) from String to String {
     var BOOLEAN = "boolean";
     var NUMBER = "number";
     var STRING = "string";
 }
 
-// Note data stored in the chart
+/**
+ * Note data stored in the chart.
+ */
 typedef ChartNote = {
     var time:Float;
     var data:Int;
@@ -19,12 +53,17 @@ typedef ChartNote = {
     var args:Array<String>;
 }
 
-// Event data stored in the chart
+/**
+ * Event data stored in the chart
+ */
 typedef ChartEventGroup = {
     var time:Float;
     var events:Array<ChartEvent>;
 }
 
+/**
+ * Event object inside the Event group.
+ */
 typedef ChartEvent = {
     var name:String;
     var type:EventDataType;
@@ -91,7 +130,7 @@ class Chart {
                 bpm: 100,
                 speed: 1,
                 time_signature: [4,4],
-                version: Config.engine.version
+                version: Engine.version
             },
             notes: [],
             events: []
@@ -226,7 +265,7 @@ class Chart {
                 bpm: safeJSON.bpm,
                 speed: safeJSON.speed,
                 time_signature: [4,4], // since most of fnf songs are charted in 4/4 time signature, set this by default.
-                version: Config.engine.version
+                version: Engine.version
             },
             notes: notes,
             events: events
@@ -235,8 +274,14 @@ class Chart {
         trace("Chart convert finished.");
         return cdev;
     }
-}
 
+    public static function convertLegacyCDEV() {
+        
+    }
+}
+////////////////////////////////////////////
+//////////////// LEGACY FNF ////////////////
+////////////////////////////////////////////
 typedef FNFLegacyChart = {
 	var song:String;
 	var notes:Array<FNFLegacySection>;

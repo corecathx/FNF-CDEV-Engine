@@ -1,5 +1,7 @@
 package flixel.system.ui;
 
+import openfl.media.SoundTransform;
+import openfl.media.Sound;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 #if FLX_SOUND_SYSTEM
@@ -63,10 +65,8 @@ class FlxSoundTray extends Sprite
 	/**Text object of the Sound Tray.**/
 	public var text:TextField;
 
-	/**Tweening handler since it's better imo**/
-	public var tween:FlxTween;
-
-	public var calledTween:Bool = false;
+	var barBg:Bitmap;
+	var bar:Bitmap;
 
 	/**
 	 * Sets up the "sound tray", the little volume meter that pops down sometimes.
@@ -105,10 +105,18 @@ class FlxSoundTray extends Sprite
 		text.y = 16;
 
 		var bx:Int = 10;
-		var by:Int = 14;
-		_bars = new Array();
+		var by:Int = 4;
+		var bmp:BitmapData = new BitmapData(_width - (bx*2), 10, false, FlxColor.WHITE);
+		barBg = new Bitmap(bmp);
+		bar = new Bitmap(bmp);
+		barBg.alpha = 0.3;
+		barBg.x = bar.x = bx;
+		barBg.y = bar.y = by;
+		addChild(barBg);
+		addChild(bar);
+		//_bars = new Array();
 
-		for (i in 0...10)
+		/*for (i in 0...10)
 		{
 			tmp = new Bitmap(new BitmapData(4, i + 1, false, FlxColor.WHITE));
 			tmp.x = bx;
@@ -117,67 +125,44 @@ class FlxSoundTray extends Sprite
 			_bars.push(tmp);
 			bx += 6;
 			by--;
-		}
+		}*/
 
 		y = -height;
 		visible = false;
 	}
-
+	var intendedScaleX:Float = 1;
+	var intendedY:Float = 1;
 	/**
 	 * This function updates the soundtray object.
 	 */
 	public function update(MS:Float):Void
 	{
 		// Animate sound tray thing
+		bar.scaleX = FlxMath.lerp(intendedScaleX, bar.scaleX, 1-((MS/1000)*18));
+		y = FlxMath.lerp(intendedY, y, 1-((MS/1000)*8));
 		if (_timer > 0)
 		{
 			_timer -= MS / 1000;
-			calledTween = false;
 		}
 		else
 		{
-			if (!calledTween)
-			{
-				calledTween = true;
+			if (y+height < 0) {
+				visible = false;
+				active = false;
 
-				if (tween != null)
-					tween.cancel();
-				tween = FlxTween.tween(this, {y: -height, alpha: 0}, 1, {
-					ease: FlxEase.backInOut,
-					onComplete: function(elwawa)
-					{
-						visible = false;
-						active = false;
-
-						#if FLX_SAVE
-						// Save sound preferences
-						if (FlxG.save.isBound)
-						{
-							FlxG.save.data.mute = FlxG.sound.muted;
-							FlxG.save.data.volume = FlxG.sound.volume;
-							FlxG.save.flush();
-						}
-						#end
-						tween = null;
-					}
-				});
+				#if FLX_SAVE
+				// Save sound preferences
+				if (FlxG.save.isBound)
+				{
+					FlxG.save.data.mute = FlxG.sound.muted;
+					FlxG.save.data.volume = FlxG.sound.volume;
+					FlxG.save.flush();
+				}
+				#end
+			} else {
+				intendedY = -(height+5);
 			}
 		}
-
-		/* backup
-			if (_timer > 0)
-			{
-				_timer -= (MS / 1000);
-			}
-			else if (y > -height)
-			{
-				y -= (MS / 1000) * height * 0.5;
-
-				if (y <= -height)
-				{
-
-				}
-		}*/
 	}
 
 	/**The sound used by CDEV Engine when increasing the volume.**/
@@ -190,6 +175,7 @@ class FlxSoundTray extends Sprite
 
 	public var downSFX:FlxSound;
 
+	var soundTransform:SoundTransform;
 	/**
 	 * Makes the little volume tray slide out.
 	 *
@@ -197,46 +183,20 @@ class FlxSoundTray extends Sprite
 	 */
 	public function show(up:Bool = false):Void
 	{
-		if (!silent)
-		{
-			// var sound = FlxAssets.getSound(up ? volumeUpSound : volumeDownSound);
-			if (up)
-			{
-				if (upSFX == null)
-					upSFX = prepareAudio(volumeUpSFX);
-				playAudio(upSFX);
-			}
-			else
-			{
-				if (downSFX == null)
-					downSFX = prepareAudio(volumeDownSFX);
-				playAudio(downSFX);
-			}
+		if (soundTransform == null) {
+			soundTransform = new SoundTransform(FlxG.sound.volume);
 		}
-
 		_timer = 1.5;
-		calledTween = false;
-		if (tween != null)
-			tween.cancel();
-		tween = FlxTween.tween(this, {y: 0, alpha: 1}, 0.5, {
-			ease: FlxEase.cubeOut,
-			onComplete: function(elwawa)
-			{
-				tween = null;
-			}
-		});
+		intendedY = 0;
+		visible = active = true;
 
-		visible = true;
-		active = true;
+		text.text = FlxG.sound.muted || FlxG.sound.volume == 0 ? "MUTED" : "MASTER " + Std.int(FlxG.sound.volume * 100) + "%";
 
-		var globalVolume:Int = Math.round(FlxG.sound.volume * 10);
-		if (FlxG.sound.muted)
-			globalVolume = 0;
-
-		text.text = FlxG.sound.muted ? "MUTED" : "MASTER " + Std.int(FlxG.sound.volume * 100) + "%";
-
-		for (i in 0..._bars.length)
-			_bars[i].alpha = i < globalVolume ? 1 : 0.5;
+		intendedScaleX = FlxG.sound.volume;
+		if (!silent) {
+			soundTransform.volume = FlxG.sound.volume;
+			Assets.sound(up ? volumeUpSFX : volumeDownSFX).play(0,0,soundTransform);
+		}
 	}
 
 	public function screenCenter():Void
@@ -245,19 +205,6 @@ class FlxSoundTray extends Sprite
 		scaleY = _defaultScale;
 
 		x = (0.5 * (Lib.current.stage.stageWidth - _width * _defaultScale) - FlxG.game.x);
-	}
-
-	function prepareAudio(sound:String):FlxSound
-	{
-		var obj:FlxSound = FlxG.sound.load(Assets.sound(sound));
-		return obj;
-	}
-
-	function playAudio(snd:FlxSound)
-	{
-		snd.pause();
-		snd.time = 0;
-		snd.play();
 	}
 }
 #end

@@ -31,6 +31,17 @@ class Sprite extends FlxSprite {
     }
 
     /**
+     * Sets XY scaling properties of this sprite equally.
+     * @param value The scaling value.
+     * @param noHitbox Whether to not update this sprite's hitbox
+     */
+    public function setScale(value:Float, noHitbox:Bool = false) {
+        scale.set(value,value);
+        if (!noHitbox)
+            updateHitbox();
+    }
+
+    /**
      * Add a custom offset for specific animation.
      * @param anim Your animation's name.
      * @param offsetX The X offset.
@@ -53,9 +64,9 @@ class Sprite extends FlxSprite {
         if (animOffsets.exists(animName)) {
             var savedOffset = animOffsets.get(animName);
             offset.set(flipX ? -savedOffset[0] : savedOffset[0], savedOffset[1]);
-        } else {
+        } /*else {
             offset.set(0, 0);
-        }
+        }*/
     }
 
     override function makeGraphic(Width:Int, Height:Int, Color:FlxColor = FlxColor.WHITE, Unique:Bool = false, ?Key:String):Sprite {

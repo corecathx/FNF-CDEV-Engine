@@ -24,6 +24,11 @@ class StrumLine extends FlxSpriteGroup {
     /** Whether to automatically hit the notes. **/
     public var cpu(default,set):Bool = false;
 
+    public var pressedKeys:Array<Bool> = [false,false,false,false];
+    public var heldKeys:Array<Bool> = [false,false,false,false];
+    public var releasedKeys:Array<Bool> = [false,false,false,false];
+
+
     public var scrollMult(default, set):Float = 1;
     function set_scrollMult(val:Float):Float {
         for (i in receptors.members) {
@@ -68,6 +73,9 @@ class StrumLine extends FlxSpriteGroup {
     override function update(elapsed:Float):Void {
         notes.forEachAlive((note:Note) -> {   
             note.follow(getReceptor(note.data));
+
+            var _maxTime:Float = note.time + note.length + Conductor.instance.step_ms;
+            var _inHoldRange:Bool = note.length > 0 && Conductor.instance.time < _maxTime - Conductor.instance.step_ms*2;
         
             // CPU Note Hit
             if (cpu && Conductor.instance.time > note.time && !note.hit) {
@@ -75,7 +83,6 @@ class StrumLine extends FlxSpriteGroup {
             }
         
             // Note Miss
-            var _maxTime:Float = note.time + note.length + Conductor.instance.step_ms;
             if (!note.hit && note.invalid && !note.missed) {
                 _onNoteMiss(note);
             }
@@ -93,8 +100,15 @@ class StrumLine extends FlxSpriteGroup {
                 killNote(note);
             }
 
-            if (cpu && note.hit && note.length > 0 && Conductor.instance.time < _maxTime - Conductor.instance.step_ms*2) {
+            // If the player is inside the note's hold range, play strum and character animation.
+            if ((cpu || heldKeys[note.data]) && note.hit && !note.missed && _inHoldRange) {
                 playDirectionAnim(note);
+            }
+
+            // If the player released the corresponding key while still inside the note's hold range
+            // Count that as a miss.
+            if (note.hit && !note.missed && (!cpu && !heldKeys[note.data]) && _inHoldRange) {
+                _onNoteMiss(note, true);
             }
         });
         
@@ -105,9 +119,9 @@ class StrumLine extends FlxSpriteGroup {
     }
 
     function controlsLogic() {
-        var pressedKeys:Array<Bool> = [Controls.LEFT_P, Controls.DOWN_P, Controls.UP_P, Controls.RIGHT_P];
-        var heldKeys:Array<Bool> = [Controls.LEFT, Controls.DOWN, Controls.UP, Controls.RIGHT];
-        var releasedKeys:Array<Bool> = [Controls.LEFT_R, Controls.DOWN_R, Controls.UP_R, Controls.RIGHT_R];
+        pressedKeys = [Controls.LEFT_P, Controls.DOWN_P, Controls.UP_P, Controls.RIGHT_P];
+        heldKeys = [Controls.LEFT, Controls.DOWN, Controls.UP, Controls.RIGHT];
+        releasedKeys = [Controls.LEFT_R, Controls.DOWN_R, Controls.UP_R, Controls.RIGHT_R];
     
         if (pressedKeys.contains(true)) {
             for (index => key in pressedKeys) if (key) getReceptor(index).playAnim("pressed", true);
@@ -187,10 +201,11 @@ class StrumLine extends FlxSpriteGroup {
         splash.init(note);
     }
 
-    function _onNoteMiss(note:Note) {
+    function _onNoteMiss(note:Note, midHold:Bool = false) {
         note.judgement.health = -0.06;
         note.judgement.score = -150;
         note.missed = true;
+        if (midHold) note.judgement.accuracy = 0; // this is dumb
 
         _character_playAnim('sing${Note.directions[note.data]}miss',true);
         onNoteMiss.dispatch(note);

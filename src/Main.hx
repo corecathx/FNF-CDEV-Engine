@@ -7,8 +7,8 @@ import openfl.Lib;
 import openfl.display.DisplayObject;
 import openfl.display.Sprite;
 
-import cdev.backend.engine.Game;
-import cdev.backend.engine.StatsDisplay;
+import cdev.backend.Game;
+import cdev.backend.objects.StatsDisplay;
 
 #if CRASH_HANDLER
 import sys.FileSystem;
@@ -87,7 +87,7 @@ class Main extends Sprite
 			}
 		}
 
-		finalOutput += "\nEngine Version: "+Config.engine.version;
+		finalOutput += "\nEngine Version: "+Engine.version;
 		finalOutput += "\nError: " + uncaught.error;
 		#if desktop 
 		if (!FileSystem.exists("./crash/"))

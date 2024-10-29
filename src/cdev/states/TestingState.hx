@@ -1,5 +1,7 @@
 package cdev.states;
 
+import openfl.media.Sound;
+import cdev.objects.Visualizer;
 import flixel.input.FlxInput;
 import flixel.input.keyboard.FlxKey;
 import cdev.objects.menus.Alphabet;
@@ -9,21 +11,29 @@ import flixel.addons.display.FlxGridOverlay;
 
 class TestingState extends State
 {
-	var alphatest:Alphabet;
+	//var alphatest:Alphabet;
+	var vistest:Visualizer;
+	var status:String = "";
 	override public function create()
 	{
 		super.create();
         createBackground();
-		add(new FlxText(10,50,"Testing State! Use this for whatever testing stuff you want.\nEach grid here is 10px in size."));
+		status = "Playing : CDEV Engine Theme";
+		add(new FlxText(10,50,"Testing State! Use this for whatever testing stuff you want.\nEach grid here is 10px in size.\n\n== State ==\n"+status));
 	
-		alphatest = new Alphabet(100,100,"abcdefghijklmnopqrstuvwxyz\n
+		/*alphatest = new Alphabet(100,100,"abcdefghijklmnopqrstuvwxyz\n
 		ABCDEFGHIJKLMNOPQRSTUVWXYZ\n
 		1234567890\n
 		!@#$%^&*()_+\n
 		[]\\;',./\n
 		{}|:\"<>?\n
 		-=", true);
-		add(alphatest);
+		add(alphatest);*/
+		var snd:FlxSound = FlxG.sound.load(Sound.fromFile("./assets/music/funkinBeat.ogg"));
+		snd.play();
+		vistest = new Visualizer(0,0,200,2, FlxG.width,FlxG.height * 0.7,snd);
+		vistest.y = (FlxG.height - vistest.height) * 0.5;
+		add(vistest);
 	}
 
     function createBackground() {
@@ -37,14 +47,10 @@ class TestingState extends State
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if (FlxG.keys.justPressed.BACKSLASH) {
-			trace("i hope the crash handler works");
-			throw "i hope the crash handler works";
-		}
 		if (FlxG.keys.justPressed.ESCAPE) {
 			FlxG.switchState(new PlayState());
 		}
-		if (FlxG.keys.justPressed.TAB) {
+		/*if (FlxG.keys.justPressed.TAB) {
 			alphatest.bold = !alphatest.bold;
 		}
 		if (FlxG.keys.pressed.ANY) {
@@ -70,6 +76,6 @@ class TestingState extends State
 		} else {
 			time = 0;
 		}
-		FlxG.watch.addQuick("time",time);
+		FlxG.watch.addQuick("time",time);*/
 	}
 }

@@ -7,7 +7,7 @@ import flixel.graphics.frames.FlxAtlasFrames;
 
 class MainMenuState extends State {
     var options:Array<{name:String,callback:Void->Void}> = [
-        {name: "storymode", callback:() -> FlxG.switchState(new DebugState())},
+        {name: "storymode", callback:() -> FlxG.switchState(new PlayState())},
         {name: "freeplay", callback:() -> trace("free")},
         {name: "options", callback:() -> trace("options")},
         {name: "credits", callback:() -> trace("credits")},
@@ -17,20 +17,20 @@ class MainMenuState extends State {
     var bg:Sprite;
     var optionGrp:SpriteGroup;
     var infoText:Text;
+    var versionText:Text;
 
     var _camFollow:FlxObject;
     var _followPoint:{x:Float,y:Float,xAdd:Float, yAdd:Float} = {x:0.0,y:0.0,xAdd:0.0,yAdd:0.0};
 
     var _barHeight:Int = 80;
     override function create() {
-        FlxG.sound.playMusic(Assets.music("funkinBeat"),0.7);
+        Utils.playBGM();
 
         // Background //
         bg = new Sprite(0,0,Assets.image("menus/menuBG"));
         bg.scrollFactor.set(0.1,0.1);
-        bg.scale.set(1.2,1.2);
+        bg.scale.set(1.15,1.15);
         bg.screenCenter();
-        bg.color = Utils.engineColor.primary;
         add(bg);
 
         // Options //
@@ -54,17 +54,22 @@ class MainMenuState extends State {
         }
 
         // Top and Bottom Bars //
-        var topBar:Sprite = new Sprite().makeGraphic(FlxG.width, _barHeight, 0xFF000000);
+        /*var topBar:Sprite = new Sprite().makeGraphic(FlxG.width, _barHeight, 0xFF000000);
         topBar.scrollFactor.set();
         add(topBar);
         var bottomBar:Sprite = cast new Sprite(0,FlxG.height-_barHeight).loadGraphic(topBar.graphic);
         bottomBar.scrollFactor.set();
-        add(bottomBar);
+        add(bottomBar);*/
 
         // Texts //
         infoText = new Text(0,25,"[Info should be here.]",RIGHT);
         infoText.scrollFactor.set();
         add(infoText);
+
+        versionText = new Text(20,25,Engine.label,LEFT);
+        versionText.y = FlxG.height - (versionText.height + 20);
+        versionText.scrollFactor.set();
+        add(versionText);
         
         // Camera Related Stuffs //
         _followPoint.x = FlxG.width*0.5; _followPoint.y = 20;

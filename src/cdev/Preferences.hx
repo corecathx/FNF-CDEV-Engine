@@ -1,5 +1,6 @@
 package cdev;
 
+// Hell!
 typedef KeybindsList = {
     left:Array<String>, down:Array<String>, up:Array<String>, right:Array<String>, // notes
     ui_left:Array<String>, ui_down:Array<String>, ui_up:Array<String>, ui_right:Array<String>, // ui
@@ -8,7 +9,7 @@ typedef KeybindsList = {
 
 class Preferences {
     /**
-     * Your saved Keybinds.
+     * These are your saved Keybinds.
      */
     public static var keybinds:KeybindsList = {
         left: ["LEFT", "S"],
@@ -28,17 +29,27 @@ class Preferences {
     };
 
     /**
-     * Defines whether to use antialiasing for sprites.
+     * Should we use antialiasing for sprites? (smoother visuals)
      */
     public static var antialiasing:Bool = true;
 
     /**
-     * Defines whether to use down / up scrolling notes on gameplay.
+     * Toggle downscroll or upscroll for notes in gameplay.
      */
     public static var downscroll:Bool = true;
 
     /**
-     * Defines whether to cache graphics to GPU.
+     * Cache graphics to GPU for better performance.
      */
     public static var gpuTexture:Bool = false;
+
+    /**
+     * Set your preferred music volume.
+     */
+    public static var musicVolume:Float = 0.7;
+
+    /**
+     * Set your preferred sound effects volume.
+     */
+    public static var sfxVolume:Float = 1;
 }
