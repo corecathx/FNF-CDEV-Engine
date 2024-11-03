@@ -8,13 +8,19 @@ import flixel.graphics.frames.FlxFrame;
 import flixel.addons.display.FlxTiledSprite;
 import flixel.addons.display.FlxBackdrop;
 
-
 class Sustain extends FlxTiledSprite {
     public static var originWidth:Float = 50;
     public static var scaleWidth:Float = originWidth * Note.noteScale;
 
     public static var tailOriginHeight:Float = 71;
     public static var tailScaleHeight:Float = tailOriginHeight * Note.noteScale;
+
+    private var sustainUVData:Array<Array<Float>> = [
+        [0,     0.125], // Left
+        [0.25,  0.375], // Down
+        [0.5,   0.625], // Up
+        [0.75,  0.875], // Right
+    ];
 
     public var parent:Note = null;
     public var tailEnd:Sprite = null;
@@ -24,17 +30,19 @@ class Sustain extends FlxTiledSprite {
         this.frames = parent.frames;
 
         tailEnd = new Sprite();
-        tailEnd.frames = parent.frames;
     }
 
     public function init() {
-        var _colorData:String = Note.animColor[parent.data];
-        
-        animation.addByPrefix("idle", _colorData + " hold piece", 24);
-        animation.play("idle");
-        loadGraphic(FlxGraphic.fromFrame(frames.frames[animation.frameIndex]));
-    
-        tailEnd.addAnim("idle", (_colorData == "purple" ? "pruple end hold" : _colorData + " hold end"), 24);
+        var graph:FlxGraphic = Assets.image("notes/NOTE_sustains");
+        loadGraphic(graph);
+        tailEnd.loadGraphic(graph,true,Std.int(graph.width/8),graph.height);
+        tailEnd.animation.add("idle", [switch(parent.data){
+            case 0: 1;
+            case 1: 3;
+            case 2: 5;
+            case 3: 7;
+            default: parent.data;
+        }], 24);
         tailEnd.playAnim("idle");
         tailEnd.setGraphicSize(scaleWidth,tailScaleHeight);
         tailEnd.updateHitbox();
@@ -143,8 +151,8 @@ class Sustain extends FlxTiledSprite {
         vertices[5] = vertices[7] = height; // bottom right
 
         var frame:FlxFrame = graphic.imageFrame.frame;
-        uvtData[0] = uvtData[6] = 0;
-        uvtData[2] = uvtData[4] = 1;
+        uvtData[0] = uvtData[6] = sustainUVData[parent.data][0];
+        uvtData[2] = uvtData[4] = sustainUVData[parent.data][1];
 
         uvtData[1] = uvtData[3] = -scrollY / frame.sourceSize.y;
         uvtData[5] = uvtData[7] = uvtData[1] + height / frame.sourceSize.y;

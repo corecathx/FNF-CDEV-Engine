@@ -25,6 +25,7 @@ class Assets {
 
 	@:noCompletion inline public static var _DATA_PATH:String  = '$_ASSET_PATH/data';
 	@:noCompletion inline public static var _CHARACTER_PATH:String  = '$_DATA_PATH/characters';
+	@:noCompletion inline public static var _SHADER_PATH:String  = '$_DATA_PATH/shaders';
 
     @:noCompletion inline public static var _FONT_PATH:String  = '$_ASSET_PATH/fonts';
     @:noCompletion inline public static var _IMAGE_PATH:String = '$_ASSET_PATH/images';
@@ -165,6 +166,18 @@ class Assets {
 	 */
 	inline public static function music(name:String):Sound return _sound_file('$_MUSIC_PATH/$name.ogg');
 
+	/**
+	 * Returns .frag shader file.
+	 * @param name Shader filename.
+	 */
+	public static function frag(name:String) {
+		var path:String = '$_SHADER_PATH/$name.frag';
+		if (!FileSystem.exists(path)) {
+			trace("Could not found .frag file: " + path);
+			return "";
+		} 
+		return File.getContent(path);
+	}
 	/**
 	 * [INTERNAL] Loads a sound file
 	 * @param path Path to the sound file

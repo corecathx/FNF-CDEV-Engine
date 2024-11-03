@@ -1,4 +1,4 @@
-package cdev;
+package cdev.backend;
 
 // Hell!
 typedef KeybindsList = {
@@ -41,7 +41,7 @@ class Preferences {
     /**
      * Cache graphics to GPU for better performance.
      */
-    public static var gpuTexture:Bool = false;
+    public static var gpuTexture:Bool = true;
 
     /**
      * Set your preferred music volume.

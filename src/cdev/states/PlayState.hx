@@ -1,5 +1,8 @@
 package cdev.states;
 
+import openfl.filters.ShaderFilter;
+import openfl.filters.BitmapFilter;
+import cdev.graphics.shaders.AdjustColorShader;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import haxe.Json;
@@ -77,6 +80,8 @@ class PlayState extends State {
         shit:0, 
     }
 
+    var shoot:AdjustColorShader;
+
     public function new(?songName:String = "Core", ?difficulty:String = "hard") {
         super();
         currentSong = songName;
@@ -88,6 +93,13 @@ class PlayState extends State {
         initHUD();
 
         startSong();
+        shoot = new AdjustColorShader();
+        camGame.filters = [new ShaderFilter(shoot)];
+        
+        shoot.hue = -5;
+		shoot.saturation = -40;
+		shoot.contrast = -25;
+		shoot.brightness = -20;
         super.create();
     }
 
@@ -123,14 +135,14 @@ class PlayState extends State {
     }
     
     function initStage() {
-        defaultCamZoom = 0.9;
-        /*var bg:Sprite = new Sprite(-600, -200).loadGraphic(FlxGridOverlay.createGrid(10,10,FlxG.width, FlxG.height, true, 0xFF202020, 0xFF303030));
+        defaultCamZoom = 0.7;
+        var bg:Sprite = new Sprite(-600, -200).loadGraphic(FlxGridOverlay.createGrid(10,10,FlxG.width, FlxG.height, true, 0xFF202020, 0xFF303030));
         bg.scrollFactor.set(0.1, 0.1);
         bg.scale.set(1.5,1.5);
         bg.screenCenter();
-        bg.alpha = 0.2;
+        bg.alpha = 0.3;
         bg.active = false;
-        add(bg);*/
+        add(bg);
 
         var bg:Sprite = new Sprite(-600, -200).loadGraphic(Assets.image('stageback'));
         bg.scrollFactor.set(0.9, 0.9);
@@ -158,7 +170,7 @@ class PlayState extends State {
         playerChar = new Character(770,100,"bf",true);
         add(playerChar);
 
-        opponentChar = new Character(100,100,"dad",false);
+        opponentChar = new Character(100,100,"core",false);
         add(opponentChar);
 
         followTarget = opponentChar;
@@ -310,8 +322,15 @@ class PlayState extends State {
 
     override function update(elapsed:Float) {
         super.update(elapsed);
+        if (FlxG.keys.pressed.Q || FlxG.keys.pressed.W)
+            shoot.hue += FlxG.keys.pressed.Q ? -1 : 1;
+        if (FlxG.keys.pressed.E || FlxG.keys.pressed.R)
+            shoot.saturation += FlxG.keys.pressed.E ? -1 : 1;
+        if (FlxG.keys.pressed.T || FlxG.keys.pressed.Y)
+            shoot.contrast += FlxG.keys.pressed.T ? -1 : 1;
+        if (FlxG.keys.pressed.U || FlxG.keys.pressed.I)
+            shoot.brightness += FlxG.keys.pressed.U ? -1 : 1;
         _updateCameras(elapsed);
-
         _updateHUD(elapsed);
 
         if (FlxG.keys.justPressed.B) {

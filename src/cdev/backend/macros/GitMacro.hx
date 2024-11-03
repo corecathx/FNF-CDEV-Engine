@@ -36,23 +36,25 @@ class GitMacro {
         #end
     }
     public static macro function getGitBranch() {
+        var branchName:String = "unknown";
         #if macro
-        var pos = haxe.macro.Context.currentPos();
-        var branchProcess = new sys.io.Process('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
-    
-        if (branchProcess.exitCode() != 0)
-        {
-            var message = branchProcess.stderr.readAll().toString();
-            haxe.macro.Context.info('[WARN] Could not determine current git commit; is this a proper Git repository?', pos);
+        try {
+            var pos = haxe.macro.Context.currentPos();
+            var branchProcess = new sys.io.Process('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
+        
+            if (branchProcess.exitCode() != 0)
+            {
+                var message = branchProcess.stderr.readAll().toString();
+                haxe.macro.Context.info('[WARN] Could not determine current git commit; is this a proper Git repository?', pos);
+            }
+        
+            branchName = branchProcess.stdout.readLine();
+            branchProcess.close();
+        } catch (e) {
+            Sys.println("Couldn't get Git Branch.");
         }
-    
-        var branchName:String = branchProcess.stdout.readLine();
-        branchProcess.close();
-    
-        return macro $v{branchName};
-        #else
-        return macro $v{"unknown"};
         #end
+        return macro $v{branchName};
     }
       
 }

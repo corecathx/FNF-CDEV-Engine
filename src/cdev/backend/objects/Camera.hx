@@ -1,5 +1,8 @@
 package cdev.backend.objects;
 
+import openfl.filters.ShaderFilter;
+import openfl.display.Shader;
+
 /**
  * Cool rotate fix and stuff woooh
  * Known issue: - Insane performance drops when camera fix is enabled
@@ -18,5 +21,23 @@ class Camera extends FlxCamera {
         zoom = (nZoom == 0) ? FlxCamera.defaultZoom : nZoom;
         setScale(zoom * fixZoom, zoom * fixZoom);
         return zoom;
+    }
+
+    /**
+     * Adds a new shader to this camera.
+     * @param shaders 
+     */
+    public function addShader(shaders:Array<Shader>) {
+        if (!filtersEnabled) {
+            trace("Could not add shader to camera, filters are disabled.");
+            return;
+        }
+
+        for (shader in shaders) {
+            if (shader == null)
+                continue;
+
+            filters.push(new ShaderFilter(shader));
+        }
     }
 }

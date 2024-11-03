@@ -1,9 +1,7 @@
 package cdev.backend.objects;
 
-import cdev.backend.native.NativeUtils;
 import flixel.FlxG;
 import haxe.Timer;
-import openfl.events.Event;
 import openfl.system.System;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
@@ -103,5 +101,4 @@ class StatsDisplay extends TextField
 		_fps_format.color = lowFps ? 0xFF0000 : 0xFFFFFF;
 		this.setTextFormat(_fps_format, 0, Std.string(frames.length).length);
 	}
-	
 }

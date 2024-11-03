@@ -28,7 +28,9 @@ class EngineInfoState extends State {
     }
 
     override function update(elapsed:Float) {
-        if (FlxG.keys.justPressed.ANY) {
+        if (FlxG.keys.justPressed.TAB) {
+            FlxG.switchState(new DebugState());
+        } else if (FlxG.keys.justPressed.ANY) {
             FlxG.camera.flash();
             FlxG.sound.play(Assets.sound("confirmMenu"));
             FlxTimer.wait(2, ()->{

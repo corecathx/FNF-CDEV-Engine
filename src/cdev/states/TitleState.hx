@@ -1,13 +1,6 @@
 package cdev.states;
 
-import cdev.objects.Visualizer;
 import flixel.util.FlxTimer;
-import flixel.addons.display.FlxGridOverlay;
-import openfl.display.BitmapData;
-import flixel.addons.display.FlxBackdrop;
-import flixel.util.FlxGradient;
-import flixel.util.FlxColor;
-import flixel.tweens.FlxEase;
 
 class TitleState extends State
 {
