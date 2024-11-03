@@ -42,6 +42,11 @@ class Engine {
         
     }
 
+    public static function resetGame():Void {
+        FlxG.resetGame();
+        Assets.resetLoaded();
+    }
+
     /////////////////////
     /// GET & SETTERS ///
     /////////////////////

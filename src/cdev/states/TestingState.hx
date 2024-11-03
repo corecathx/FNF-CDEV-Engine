@@ -53,24 +53,24 @@ class TestingState extends State
 			if (FlxG.keys.justPressed.TAB) {
 				alphatest.bold = !alphatest.bold;
 			}
-			var allowList:String = "abcdefghijklmnopqrstuvwxyz";
 			if (FlxG.keys.pressed.ANY) {
 				if (time == 0 || time > 0.5) {
 					if (time > 0.5) time = 0.48;
 					var keys:Array<FlxInput<FlxKey>> = FlxG.keys.getIsDown();
 					for (key in keys) {
-						var id:FlxKey = key.ID;
-						if (!allowList.contains(id.toString().toLowerCase())) continue;
-						switch (id) {
-							case FlxKey.BACKSPACE:
-								alphatest.text = alphatest.text.substring(0, alphatest.text.length-1);
-							case FlxKey.ENTER:
-								alphatest.text += "\n";
-							case FlxKey.SPACE:
-								alphatest.text += " ";
-							default:
-								var keyID:String = Utils.getKeyFormat(key.ID);
-								alphatest.text += FlxG.keys.pressed.SHIFT ? keyID.toUpperCase() : keyID.toLowerCase();
+						if (key.justPressed) {
+							var id:FlxKey = key.ID;
+							switch (id) {
+								case FlxKey.BACKSPACE:
+									alphatest.text = alphatest.text.substring(0, alphatest.text.length-1);
+								case FlxKey.ENTER:
+									alphatest.text += "\n";
+								case FlxKey.SPACE:
+									alphatest.text += " ";
+								default:
+									var keyID:String = Utils.getKeyFormat(key.ID);
+									alphatest.text += FlxG.keys.pressed.SHIFT ? keyID.toUpperCase() : keyID.toLowerCase();
+							}
 						}
 					}
 				}

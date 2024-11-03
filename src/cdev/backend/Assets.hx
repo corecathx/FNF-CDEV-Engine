@@ -44,6 +44,29 @@ class Assets {
     public static var fonts(default, null):Fonts = new Fonts();
 
 	/**
+	 * Resets all loaded / cached assets, mainly used for Engine.resetGame().
+	 */
+	public static function resetLoaded():Void {
+		for (key in loaded_images.keys()) {
+			var graphic = FlxG.bitmap.get(key);
+			graphic?.bitmap?.dispose();
+			graphic?.destroy();
+			FlxG.bitmap.removeByKey(key);
+		}
+	
+		for (key in loaded_sounds.keys())
+			loaded_sounds.get(key)?.close();
+	
+		for (key in loaded_atlases.keys())
+			loaded_atlases.get(key)?.destroy();
+
+		loaded_images.clear();
+		loaded_sounds.clear();
+		loaded_atlases.clear();
+		openfl.utils.Assets.cache.clear();
+	}	
+
+	/**
 	 * Loads a font file.
 	 * @param name Your font's file name (without .ttf extension)
 	 * @return String Your font's path.

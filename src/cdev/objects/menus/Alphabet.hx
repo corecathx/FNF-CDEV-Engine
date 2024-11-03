@@ -5,10 +5,19 @@ import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.math.FlxPoint;
 
 class Alphabet extends FlxTypedSpriteGroup<AlphabetCharacter> {
-    public var distance:FlxPoint = FlxPoint.get(20, 140);
+    /**
+     * Used for spaces and new lines.
+     */
     public var spacing:FlxPoint = FlxPoint.get(28, 60);
 
+    /**
+     * Defines whether this alphabet uses bold text or not.
+     */
     public var bold(default, set):Bool;
+
+    /**
+     * Current text content of this alphabet.
+     */
     public var text(default,set):String = "";
     public function new(nX:Float, nY:Float, text:String, bold:Bool) {
         super(nX,nY);
@@ -43,12 +52,11 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetCharacter> {
                         char.scale.set(scale.x, scale.y);
                         char.updateProp(character, bold, this);
             
-                        xPos += char.width + 3;
+                        xPos += char.width;
                         add(char);
                 }
             }
         }
-
         return text = val;
     }
 
@@ -75,6 +83,7 @@ class AlphabetCharacter extends Sprite {
     public function updateProp(character:String, bold:Bool, parent:Alphabet){
         this.parent = parent;
         setChar(character == null ? char : character, bold);
+        updateHitbox();
     }
 
     public function setChar(character:String, bold:Bool) {
@@ -93,7 +102,7 @@ class AlphabetCharacter extends Sprite {
     override function updateHitbox() {
         super.updateHitbox();
         if (parent == null) return;
-        offset.y = -(parent.height - height);
+        offset.y -= (parent.spacing.y+10 - frameHeight) * scale.y;//(70 - frameHeight) * scale.y;
     }
 
     public function parseChar(char:String):String {
