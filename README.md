@@ -3,10 +3,15 @@
     <h1 align="center">FNF': CDEV Engine - Rewrite</h1>
 </p>
 
-**CDEV Engine: Rewrite** is a rewritten version of the [Legacy CDEV Engine](https://github.com/corecathx/FNF-CDEV-Engine/).
+<center>
+<b><span style="color: #0060FF;">CDEV Engine</span>: <span style="color: #0090FF">Rewrite</span></b>
+ is a rewritten version of the <a href="https://github.com/corecathx/FNF-CDEV-Engine/">Legacy CDEV Engine</a>.
+</center>
 
-## DevNotes
+## 📝 DevNotes
 - **Compiling**: CDEV Engine was meant only for **Desktop**, and **Mobile** targets.
+
+<hr style="height: 1px">
 
 <details>
     <summary><h2>Compiling Guide</h2></summary>
@@ -23,8 +28,8 @@ Simply run `lime test <target>`.
     <summary>
         <h2>Credits</h2>
     </summary>
-
-### CDEV Engine
+TBA
+<!--### CDEV Engine
 - [CoreCat](https://corecathx.github.io/) - Main Developer.
 
 ### Special Thanks
@@ -32,6 +37,6 @@ Simply run `lime test <target>`.
 
 ### Friday Night Funkin'
 
-- [Funkin Crew](https://github.com/FunkinCrew/) - Peak game crew.
+- [Funkin Crew](https://github.com/FunkinCrew/) - Peak game crew.-->
 </details>
 
