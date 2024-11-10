@@ -1,7 +1,7 @@
 package cdev.backend;
 
 import haxe.Json;
-import sys.FileSystem;
+
 import sys.io.File;
 
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -26,6 +26,7 @@ class Assets {
 	@:noCompletion inline public static var _DATA_PATH:String  = '$_ASSET_PATH/data';
 	@:noCompletion inline public static var _CHARACTER_PATH:String  = '$_DATA_PATH/characters';
 	@:noCompletion inline public static var _SHADER_PATH:String  = '$_DATA_PATH/shaders';
+	@:noCompletion inline public static var _TEXTS_PATH:String  = '$_DATA_PATH/texts';
 
     @:noCompletion inline public static var _FONT_PATH:String  = '$_ASSET_PATH/fonts';
     @:noCompletion inline public static var _IMAGE_PATH:String = '$_ASSET_PATH/images';
@@ -72,6 +73,19 @@ class Assets {
 	 * @return String Your font's path.
 	 */
     public inline static function font(name:String) return '$_FONT_PATH/$name.ttf';
+
+	/**
+	 * Returns a content of a txt file inside assets/data/texts folder.
+	 * @param name Filename
+	 */
+	public static function text(name:String) {
+		var path:String = '$_TEXTS_PATH/$name.txt';
+		if (!FileSystem.exists(path)) {
+			trace("Could not get text file: " + path);
+			return "";
+		}
+		return File.getContent(path);
+	}
 
     /**
 	 * Returns an image file from `./assets/images/`, Returns null if the `path` does not exist.

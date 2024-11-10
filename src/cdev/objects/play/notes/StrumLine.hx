@@ -1,16 +1,43 @@
 package cdev.objects.play.notes;
 
+import cdev.objects.play.notes.ReceptorNote.NoteDirection;
+import flixel.input.keyboard.FlxKey;
+import lime.ui.KeyModifier;
+import lime.ui.KeyCode;
+import lime.app.Application;
+import cdev.states.PlayState;
 import cdev.objects.play.notes.Note.JudgementData;
 import flixel.util.FlxSignal;
 import flixel.group.FlxSpriteGroup;
 
 typedef NoteSignal = FlxTypedSignal<Note->Void>;
+
+class NoteGroup extends FlxTypedSpriteGroup<Note> {
+    public inline function getFirstHitable(direction:Int):Note {
+        var note:Note = null;
+        forEachAlive((n:Note) -> {
+            if (n.hit) return;
+            if (!n.hitable || n.invalid) return;
+            if (n.data != direction) return;
+            if (note != null) {
+                if (n.time < note.time) {
+                    note = n;
+                    return;
+                }
+            } else {
+                note = n;
+            }
+        });
+        return note;
+    }
+}
+
 /**
- * A sprite group contains
+ * A sprite group contains receptors, splashes, and notes.
  */
 class StrumLine extends FlxSpriteGroup {
     /** Notes that are assigned to this Strum Line. **/
-    public var notes:FlxTypedSpriteGroup<Note>;
+    public var notes:NoteGroup;
 
     /** Receptors of this Strum Line. **/
     public var receptors:FlxTypedSpriteGroup<ReceptorNote>;
@@ -24,10 +51,9 @@ class StrumLine extends FlxSpriteGroup {
     /** Whether to automatically hit the notes. **/
     public var cpu(default,set):Bool = false;
 
-    public var pressedKeys:Array<Bool> = [false,false,false,false];
-    public var heldKeys:Array<Bool> = [false,false,false,false];
-    public var releasedKeys:Array<Bool> = [false,false,false,false];
+    public var keys:Map<FlxKey, Int>;
 
+    public var heldKeys:Array<Bool> = [false,false,false,false];
 
     public var scrollMult(default, set):Float = 1;
     function set_scrollMult(val:Float):Float {
@@ -45,7 +71,7 @@ class StrumLine extends FlxSpriteGroup {
         receptors = new FlxTypedSpriteGroup<ReceptorNote>();
         add(receptors);
 
-        notes = new FlxTypedSpriteGroup<Note>();
+        notes = new NoteGroup();
         notes.active = false;
         add(notes);
 
@@ -67,6 +93,20 @@ class StrumLine extends FlxSpriteGroup {
         this.cpu = cpu;
     }
 
+    public function addNote(n:Note) {
+        notes.add(n);
+    }
+
+    public function getReceptor(index:Int) return receptors.members[index];
+
+    override function destroy():Void {
+        notes?.destroy();
+        splashes?.destroy();
+        receptors?.destroy();
+        // Make sure to unregister the inputs after this strumline is no longer being used.
+        unregisterInputs(); 
+        super.destroy();
+    }
     /**
      * Updates this strumline.
      */
@@ -103,6 +143,10 @@ class StrumLine extends FlxSpriteGroup {
             // If the player is inside the note's hold range, play strum and character animation.
             if ((cpu || heldKeys[note.data]) && note.hit && !note.missed && _inHoldRange) {
                 playDirectionAnim(note);
+                if (!cpu) { // You won't get scores on botplay.
+                    PlayState.current.score += Std.int(200 * elapsed);
+                    PlayState.current.health += 0.075 * elapsed;
+                }
             }
 
             // If the player released the corresponding key while still inside the note's hold range
@@ -111,59 +155,61 @@ class StrumLine extends FlxSpriteGroup {
                 _onNoteMiss(note, true);
             }
         });
-        
-        if (!cpu) {
-            controlsLogic();
-        }
+
         super.update(elapsed);
     }
 
-    function controlsLogic() {
-        pressedKeys = [Controls.LEFT_P, Controls.DOWN_P, Controls.UP_P, Controls.RIGHT_P];
-        heldKeys = [Controls.LEFT, Controls.DOWN, Controls.UP, Controls.RIGHT];
-        releasedKeys = [Controls.LEFT_R, Controls.DOWN_R, Controls.UP_R, Controls.RIGHT_R];
-    
-        if (pressedKeys.contains(true)) {
-            for (index => key in pressedKeys) if (key) getReceptor(index).playAnim("pressed", true);
-            var possibleNotes:Array<Note> = [];
-            var directions:Array<Bool> = [false, false, false, false];
-    
-            notes.forEachAlive((note:Note) -> {
-                if (note.hit) return;
-                if (!note.hitable || note.invalid) return;
-                if (directions[note.data]) {
-                    for (pNote in possibleNotes) {
-                        if (pNote.data != note.data) continue;
-                        if (note.time < pNote.time) {
-                            possibleNotes.remove(pNote);
-                            possibleNotes.push(note);
-                            return;
-                        }
-                    }
-                } else {
-                    possibleNotes.push(note);
-                    directions[note.data] = true;
-                }
-            });
+    public function registerInputs() {
+        if (keys != null) return;
+        keys = [];
+        // We need to assign the key map first.
+        var bindList:Array<Array<String>> = [
+            Preferences.keybinds.left,
+            Preferences.keybinds.down,
+            Preferences.keybinds.up,
+            Preferences.keybinds.right
+        ];
+        for (index=>dir in Note.directions) {
+            var conv:Array<FlxKey> = [];
+            for (_key in bindList[index]) 
+                keys.set(FlxKey.fromString(_key), index);
+        }
 
-            possibleNotes.sort((a, b) -> Std.int(a.time - b.time));
+        Application.current.window.onKeyDown.add(_onKeyDown);
+        Application.current.window.onKeyUp.add(_onKeyUp);
+        trace("Input registered");
+    }
+
+    public function unregisterInputs() {
+        if (keys == null) return;
+        Application.current.window.onKeyDown.remove(_onKeyDown);
+        Application.current.window.onKeyUp.remove(_onKeyUp);
+        keys = null;
+        trace("Input unregistered");
+    }
+
+    function _onKeyDown(limeKey:KeyCode, mod:KeyModifier) {
+        var key:FlxKey = @:privateAccess openfl.ui.Keyboard.__convertKeyCode(limeKey);
+        var dir:Int = keys[key] ?? -1;
+        if (dir == -1 || heldKeys[dir]) 
+            return;
+        heldKeys[dir] = true;
+
+        getReceptor(dir).playAnim("pressed", true);
+        var note:Note = notes.getFirstHitable(dir);
+
+        if (note != null)
+            _onNoteHit(note, note.length == 0);
+    }
     
-            var blockNote:Bool = false;
-    
-            for (index => press in pressedKeys) if (press && !directions[index]) blockNote = true;
-    
-            if (possibleNotes.length > 0 && !blockNote) {
-                for (note in possibleNotes) {
-                    if (pressedKeys[note.data]) {
-                        _onNoteHit(note, note.length == 0);
-                    }
-                }
-            }
-        }
-    
-        if (releasedKeys.contains(true)) {
-            for (index => key in releasedKeys) if (key) getReceptor(index).playAnim("static", true);
-        }
+    function _onKeyUp(limeKey:KeyCode, mod:KeyModifier) {
+        var key:FlxKey = @:privateAccess openfl.ui.Keyboard.__convertKeyCode(limeKey);
+        var dir:Int = keys[key] ?? -1;
+
+        if (dir == -1) 
+            return;
+        heldKeys[dir] = false;
+        getReceptor(dir).playAnim("static", true);
     }
     
 
@@ -227,12 +273,6 @@ class StrumLine extends FlxSpriteGroup {
         }
     } 
 
-    public function addNote(n:Note) {
-        notes.add(n);
-    }
-
-    public function getReceptor(index:Int) return receptors.members[index];
-
     function set_cpu(newCPU:Bool):Bool {
         if (newCPU) {
             for (rec in receptors.members) {
@@ -240,10 +280,12 @@ class StrumLine extends FlxSpriteGroup {
                     if (name == "confirm") rec.playAnim("static", true);
                 }
             }
+            unregisterInputs();
         } else {
             for (rec in receptors.members) {
                 rec.animation.finishCallback = (name:String) -> {}
             }
+            registerInputs();
         }
         return cpu = newCPU;
     }

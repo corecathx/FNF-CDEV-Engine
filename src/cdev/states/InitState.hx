@@ -1,15 +1,31 @@
 package cdev.states;
 
+import cdev.backend.utils.MemoryUtils;
 import flixel.math.FlxRect;
 import flixel.math.FlxPoint;
 import flixel.addons.transition.TransitionData;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
 
+/**
+ * Initialization State of CDEV Engine.
+ */
 class InitState extends State {
     public static var nextState:Class<State> = EngineInfoState;
-    override function create() {
+    override function create():Void {
         super.create();
+        ///////////////////////
+        /////    DEBUG    /////
+        ///////////////////////
+        #if debug
+        FlxG.console.registerClass(Engine);
+        #end
+
+        ///////////////////////
+        /////   SIGNALS   /////
+        ///////////////////////
+        FlxG.signals.preStateSwitch.add(onStateSwitch);
+		FlxG.signals.postStateSwitch.add(onPostStateSwitch);
         
         ///////////////////////
         ///// TRANSITIONS /////
@@ -28,5 +44,15 @@ class InitState extends State {
         
         ///// To next state /////
         FlxG.switchState(Type.createInstance(nextState, []));
+    }
+
+    private static function onStateSwitch():Void {
+        // script stuff later  
+        Assets.resetLoaded();
+    }
+
+    private static function onPostStateSwitch():Void {
+        // script stuff later  
+        MemoryUtils.clear(true);
     }
 }

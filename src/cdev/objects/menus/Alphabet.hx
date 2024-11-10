@@ -8,6 +8,11 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetCharacter> {
     /**
      * Used for spaces and new lines.
      */
+    public var distance:FlxPoint = FlxPoint.get(30, 160);
+
+    /**
+     * Used for spaces and new lines.
+     */
     public var spacing:FlxPoint = FlxPoint.get(28, 60);
 
     /**
@@ -19,10 +24,29 @@ class Alphabet extends FlxTypedSpriteGroup<AlphabetCharacter> {
      * Current text content of this alphabet.
      */
     public var text(default,set):String = "";
+
+    /**
+     * Whether to use this as a menu item.
+     */
+    public var menuItem:Bool = false;
+
+    /**
+     * Defines this alphabet's item target.
+     * When it's 0, it'll be centered and selected.
+     */
+    public var target:Int = 0;
     public function new(nX:Float, nY:Float, text:String, bold:Bool) {
         super(nX,nY);
         this.text = text;
         this.bold = bold;
+    }
+
+    override function update(elapsed:Float) {
+        super.update(elapsed);
+        if (menuItem) {
+            x = FlxMath.lerp(120 + (distance.x * target), x, 1-(elapsed*8));
+            y = FlxMath.lerp((FlxG.height * 0.45) + (target * distance.y), y, 1-(elapsed*8));
+        }
     }
 
     function set_text(val:String):String {

@@ -1,5 +1,6 @@
 package cdev.states;
 
+import cdev.substates.PauseSubstate;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 import cdev.graphics.shaders.AdjustColorShader;
@@ -23,50 +24,52 @@ import cdev.objects.play.notes.Note;
 import flixel.addons.display.FlxGridOverlay;
 
 /**
- * hi myself pls tidy up this state's code dang it
+ * The state where rhythm gaming happens.
  */
-
 class PlayState extends State {
-    var currentSong:String = "";
-    var currentDifficulty:String = "";
-    var playerStrums:StrumLine;
-    var opponentStrums:StrumLine;
-    var sounds:SoundGroup;
+    public static var current:PlayState = null;
+    public var currentSong:String = "";
+    public var currentDifficulty:String = "";
+    public var playerStrums:StrumLine;
+    public var opponentStrums:StrumLine;
+    public var sounds:SoundGroup;
 
-    var noteLoader:NoteLoader;
+    public var noteLoader:NoteLoader;
 
-    var playerChar:Character;
-    var opponentChar:Character;
-    var spectatorChar:Character;
+    public var playerChar:Character;
+    public var opponentChar:Character;
+    public var spectatorChar:Character;
 
-    var iconP1:HealthIcon;
-    var iconP2:HealthIcon;
+    public var iconP1:HealthIcon;
+    public var iconP2:HealthIcon;
 
-    var ratingSprite:RatingSprite;
+    public var ratingSprite:RatingSprite;
 
-    var camGame:Camera;
-    var camHUD:Camera;
+    public var camGame:Camera;
+    public var camHUD:Camera;
 
-    var chart:Chart;
+    public var chart:Chart;
 
-    var defaultCamZoom:Float = 1;
-    var defaultHudZoom:Float = 1;
+    public var defaultCamZoom:Float = 1;
+    public var defaultHudZoom:Float = 1;
 
-    var camFollow:FlxObject;
-    var followTarget:Character;
+    public var camFollow:FlxObject;
+    public var followTarget:Character;
     
-    var combo:Int = 0;
+    public var combo:Int = 0;
 
-    var healthBar:Bar;
-    var health(default,set):Float = 0.5;
+    public var healthBar:Bar;
+    public var health(default,set):Float = 0.5;
 
-    var scoreTxt:Text;
-    var timeTxt:Text;
-    var healthLerp:Float = 0.5;
+    public var scoreTxt:Text;
+    public var timeTxt:Text;
+    public var healthLerp:Float = 0.5;
 
-    var score:Int = 0;
-    var accuracy:Float = 0;
-    var misses:Int = 0;
+    public var score:Int = 0;
+    public var accuracy:Float = 0;
+    public var misses:Int = 0;
+
+    public var paused:Bool = false;
 
     var totalNotes:{hit:Float,all:Float} = {
         hit: 0.0,
@@ -80,26 +83,19 @@ class PlayState extends State {
         shit:0, 
     }
 
-    var shoot:AdjustColorShader;
-
-    public function new(?songName:String = "Core", ?difficulty:String = "hard") {
+    public function new(?songName:String = "Satin Panties", ?difficulty:String = "erect") {
         super();
         currentSong = songName;
         currentDifficulty = difficulty;
     }
 
     override function create() {    
+        current = this; // Make sure current active PlayState class is this one.
+
         initGame();
         initHUD();
 
         startSong();
-        shoot = new AdjustColorShader();
-        camGame.filters = [new ShaderFilter(shoot)];
-        
-        shoot.hue = -5;
-		shoot.saturation = -40;
-		shoot.contrast = -25;
-		shoot.brightness = -20;
         super.create();
     }
 
@@ -135,14 +131,14 @@ class PlayState extends State {
     }
     
     function initStage() {
-        defaultCamZoom = 0.7;
-        var bg:Sprite = new Sprite(-600, -200).loadGraphic(FlxGridOverlay.createGrid(10,10,FlxG.width, FlxG.height, true, 0xFF202020, 0xFF303030));
+        defaultCamZoom = 0.9;
+        /*var bg:Sprite = new Sprite(-600, -200).loadGraphic(FlxGridOverlay.createGrid(10,10,FlxG.width, FlxG.height, true, 0xFF202020, 0xFF303030));
         bg.scrollFactor.set(0.1, 0.1);
         bg.scale.set(1.5,1.5);
         bg.screenCenter();
         bg.alpha = 0.3;
         bg.active = false;
-        add(bg);
+        add(bg);*/
 
         var bg:Sprite = new Sprite(-600, -200).loadGraphic(Assets.image('stageback'));
         bg.scrollFactor.set(0.9, 0.9);
@@ -170,7 +166,7 @@ class PlayState extends State {
         playerChar = new Character(770,100,"bf",true);
         add(playerChar);
 
-        opponentChar = new Character(100,100,"core",false);
+        opponentChar = new Character(100,100,"dad",false);
         add(opponentChar);
 
         followTarget = opponentChar;
@@ -314,6 +310,11 @@ class PlayState extends State {
         }, 5);
     }
 
+    override function closeSubState() {
+        super.closeSubState();
+        unpauseGame();
+    }
+
     override function destroy() {
         for (object in [playerChar, opponentChar, spectatorChar, sounds])
             Utils.destroyObject(object);
@@ -322,28 +323,13 @@ class PlayState extends State {
 
     override function update(elapsed:Float) {
         super.update(elapsed);
-        if (FlxG.keys.pressed.Q || FlxG.keys.pressed.W)
-            shoot.hue += FlxG.keys.pressed.Q ? -1 : 1;
-        if (FlxG.keys.pressed.E || FlxG.keys.pressed.R)
-            shoot.saturation += FlxG.keys.pressed.E ? -1 : 1;
-        if (FlxG.keys.pressed.T || FlxG.keys.pressed.Y)
-            shoot.contrast += FlxG.keys.pressed.T ? -1 : 1;
-        if (FlxG.keys.pressed.U || FlxG.keys.pressed.I)
-            shoot.brightness += FlxG.keys.pressed.U ? -1 : 1;
+
         _updateCameras(elapsed);
         _updateHUD(elapsed);
+        _updateControls(elapsed);
 
         if (FlxG.keys.justPressed.B) {
             playerStrums.cpu = !playerStrums.cpu;
-        }
-
-        if (FlxG.keys.justPressed.Q) {
-            banger = !banger;
-        }
-
-        if (FlxG.keys.justPressed.SIX) {
-            trace("Saving...");
-            sys.io.File.saveContent("./chart-test.json", Json.stringify(chart));
         }
 
         if (FlxG.keys.pressed.Z)
@@ -352,6 +338,36 @@ class PlayState extends State {
             sounds.speed *= 1.01;
     }
 
+    function _updateControls(elapsed:Float) {
+        if (Controls.PAUSE)
+            pauseGame();
+    }
+
+    /**
+     * Pauses the game, also brings you to the pause screen.
+     */
+    public function pauseGame() {
+        if (paused) return;
+        persistentUpdate = false;
+		paused = true;
+        sounds.pause();
+        openSubState(new PauseSubstate(this));
+    }
+
+    /**
+     * Unpauses the game,
+     */
+    public function unpauseGame() {
+        if (!paused) return;
+        persistentUpdate = true;
+        paused = false;
+        sounds.play();
+    }
+
+    /**
+     * Called when a note gets hit.
+     * @param note Hitted note.
+     */
     public function onNoteHit(note:Note) {
         combo++;
         switch (note.judgement.rating) {
@@ -366,6 +382,10 @@ class PlayState extends State {
         sounds.setTagVolume("player", 1);
     }
 
+    /**
+     * Called when player missed a note.
+     * @param note Missed note.
+     */
     public function onNoteMiss(note:Note) {
         combo = 0;
         appendNoteStatus(note);
@@ -375,12 +395,19 @@ class PlayState extends State {
         sounds.setTagVolume("player", 0);
     }
 
+    /**
+     * Adds the note judgement status to current gameplay stats.
+     * @param note Note
+     */
     public function appendNoteStatus(note:Note) {
         health += note.judgement.health;
         score += note.judgement.score;
         totalNotes.hit += note.judgement.accuracy;
     }
 
+    /**
+     * Called when the song is ended.
+     */
     public function onSongEnded() {
         FlxG.switchState(new TitleState());
     }

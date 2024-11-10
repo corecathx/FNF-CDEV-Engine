@@ -6,7 +6,7 @@
 **CDEV Engine: Rewrite** is a rewritten version of the [Legacy CDEV Engine](https://github.com/corecathx/FNF-CDEV-Engine/).
 
 ## DevNotes
-- **TBA**: To be added.
+- **Compiling**: CDEV Engine was meant only for **Desktop**, and **Mobile** targets.
 
 <details>
     <summary><h2>Compiling Guide</h2></summary>

@@ -46,7 +46,7 @@ class SoundGroup extends FlxBasic {
     }
 
     override function update(elapsed:Float) {
-        if (inst.playing) {
+        if (playing) {
             Conductor.instance.time += elapsed * (1000 * speed);
             inst.pitch = speed;
     
@@ -82,6 +82,23 @@ class SoundGroup extends FlxBasic {
         }
         inst.play();
         forEachVoices((sound:SoundTag)->{if (sound.snd != null) sound.snd.play();});
+    }
+
+    public function pause() {
+        playing = false;
+        resync();
+        inst.pause();
+        forEachVoices((sound:SoundTag)->{if (sound.snd != null) sound.snd.pause();});
+    }
+
+    /**
+     * Resyncs instrumental and voices to the conductor time.
+     */
+    public function resync() {
+        inst.time = Conductor.instance.time;
+        forEachVoices((sound:SoundTag)->{
+            sound.snd.time=Conductor.instance.time;
+        });
     }
 
     public function forEachVoices(callback:SoundTag->Void) {

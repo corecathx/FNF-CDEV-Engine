@@ -31,12 +31,12 @@ class Preferences {
     /**
      * Should we use antialiasing for sprites? (smoother visuals)
      */
-    public static var antialiasing:Bool = true;
+    public static var antialiasing:Bool = false;
 
     /**
      * Toggle downscroll or upscroll for notes in gameplay.
      */
-    public static var downscroll:Bool = true;
+    public static var downscroll:Bool = false;
 
     /**
      * Cache graphics to GPU for better performance.

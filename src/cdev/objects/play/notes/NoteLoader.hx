@@ -19,6 +19,8 @@ class NoteLoader extends FlxBasic {
         super();
         this.strums = strums;
         this.chart = chart;
+        
+        chart.notes.sort((a, b) -> Std.int(a.time - b.time));
         onEventSignal = new FlxTypedSignal<ChartEvent -> Void>(); 
 
         for (strum in strums) {
@@ -64,9 +66,12 @@ class NoteLoader extends FlxBasic {
     
             var parent:StrumLine = getStrum(songNote.strum);
     
-            var note:Note = new Note(parent.getReceptor(songNote.data));
-            note.init(songNote.time+Conductor.instance.offset, songNote.data, songNote.length);
-            parent.addNote(note);
+            if (parent != null) {
+                var note:Note = new Note(parent.getReceptor(songNote.data));
+                note.init(songNote.time+Conductor.instance.offset, songNote.data, songNote.length);
+                parent.addNote(note);
+            }
+
     
             _currentNote++;
     

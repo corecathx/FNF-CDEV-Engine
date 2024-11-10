@@ -1,10 +1,13 @@
 package cdev.states;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import flixel.text.FlxText.FlxTextFormat;
 import flixel.text.FlxText.FlxTextFormatMarkerPair;
 
 class EngineInfoState extends State {
+    var tween:FlxTween;
     override function create() {
         super.create();
         var bigTxt:Text = new Text(0,280,"Hey there!",CENTER,29);
@@ -23,20 +26,35 @@ class EngineInfoState extends State {
             new FlxTextFormatMarkerPair(new FlxTextFormat(0xFFFF2600),"-"),
         ]);
         txt.screenCenter(X);
-
         add(txt);
+
+        camTween(0.6, 1, 6, FlxEase.expoOut);
     }
 
+    var pressed:Bool = false;
     override function update(elapsed:Float) {
         if (FlxG.keys.justPressed.TAB) {
             FlxG.switchState(new DebugState());
-        } else if (FlxG.keys.justPressed.ANY) {
+        } else if (FlxG.keys.justPressed.ANY && !pressed) {
+            pressed = true;
             FlxG.camera.flash();
             FlxG.sound.play(Assets.sound("confirmMenu"));
+            
             FlxTimer.wait(2, ()->{
+                camTween(null, 0, 4, FlxEase.backInOut);
                 FlxG.switchState(new TitleState());
             });
         }
         super.update(elapsed);
+    }
+
+    function camTween(?from:Float, zoom:Float, time:Float, ease:EaseFunction) {
+        if (tween != null)
+            tween.cancel();
+        if (from != null)
+            FlxG.camera.zoom = from;
+        tween = FlxTween.tween(FlxG.camera, {zoom: zoom}, time, {ease: ease, onComplete:(_)->{
+            tween = null;
+        }});
     }
 }

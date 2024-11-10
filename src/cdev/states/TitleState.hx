@@ -16,10 +16,14 @@ class TitleState extends State
     var screenOverlay:Sprite;
     var alphaGroup:FlxTypedSpriteGroup<Alphabet>;
 
+    var currentRandomLine:Array<String> = [];
+
     var introFinished:Bool = false;
 	override public function create()
 	{
 		super.create();
+        currentRandomLine = getRandomText();
+
         gfDance = new Sprite(FlxG.width * 0.4, FlxG.height * 0.07);
 		gfDance.frames = Assets.sparrowAtlas('menus/title/gfDanceTitle');
 		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
@@ -44,13 +48,23 @@ class TitleState extends State
         screenOverlay.updateHitbox();
         add(screenOverlay);
 
-        alphaGroup = new FlxTypedSpriteGroup<Alphabet>();
+        alphaGroup = new FlxTypedSpriteGroup<Alphabet>(0, FlxG.width * 0.2);
         add(alphaGroup);
 
         Utils.playBGM("freakyMenu");
         Conductor.instance.updateBPM(102);
         FlxG.sound.music.fadeIn((Conductor.instance.beat_ms*4)/1000, 0, 0.7);
 	}
+
+    /**
+     * Returns random text lines from introText.txt.
+     */
+    function getRandomText():Array<String> {
+        var file:Array<String> = Utils.lineSplit(Assets.text("introText"));
+        var eachLine:Array<Array<String>> = [ for (_text in file) _text.split("--") ];
+
+        return FlxG.random.getObject(eachLine);
+    }
 
     /**
      * Adds alphabet text to AlphaGroup.
@@ -60,41 +74,40 @@ class TitleState extends State
         var alphaMembers:Array<Alphabet> = alphaGroup.members;
         var addY:Float = 60;
         if (texts != null && texts.length > 0) {
-            var lastY:Float = alphaMembers.length > 0 ? alphaMembers[alphaMembers.length-1].y : 0;
             for (text in texts) {
-                var obj:Alphabet = new Alphabet(0,lastY + addY,text,true);
+                var obj:Alphabet = alphaGroup.recycle(Alphabet);
+                obj.y = addY*(alphaMembers.length-1);
+                obj.text = text;
+                obj.bold = true;
                 obj.screenCenter(X);
                 alphaGroup.add(obj);
-
-                lastY += addY;
             }
-
         } else {
-            while (alphaMembers.length > 0) {
-                var thisThing:Alphabet = alphaMembers[0];
-                if (thisThing != null) 
-                    thisThing.destroy();
-                alphaMembers.remove(thisThing);
-            }
+            while (alphaGroup.members.length > 0)
+                alphaGroup.remove(alphaGroup.members[0], true);
+
         }
     }
 
+    var pressedEnter:Bool = false;
 	override function update(elapsed:Float)
 	{
         if (FlxG.sound.music != null)
             Conductor.instance.time = FlxG.sound.music.time;
 
-        if (!introFinished) {
-            alphaGroup.y = FlxMath.lerp(FlxG.height - alphaGroup.height, alphaGroup.y, 1 - (elapsed * 12));
-        }
-
 		if (FlxG.keys.justPressed.ENTER) {
-            titleText.playAnim('press');
-            FlxG.camera.flash();
-            FlxG.sound.play(Assets.sound("confirmMenu"));
-            FlxTimer.wait(2, ()->{
-                FlxG.switchState(new MainMenuState());
-            });
+            if (!introFinished){
+                finishIntro();
+            } else if (!pressedEnter) {
+                pressedEnter = true;
+                titleText.playAnim('press');
+                FlxG.camera.flash();
+                FlxG.sound.play(Assets.sound("confirmMenu"));
+                FlxTimer.wait(2, ()->{
+                    FlxG.switchState(new MainMenuState());
+                });
+            }
+
         }
 
         if (FlxG.keys.justPressed.C) {
@@ -121,7 +134,7 @@ class TitleState extends State
         switch (beats)
 		{
 			case 1:
-				appendAlphaText(['ninjamuffin99', 'phantomArcade', 'kawaisprite', 'evilsk8er']);
+				appendAlphaText(['The', 'FunkinCrew Inc']);
 			case 3:
 				appendAlphaText(['present']);
 			case 4:
@@ -130,16 +143,12 @@ class TitleState extends State
 				appendAlphaText(['In association', 'with']);
 			case 7:
 				appendAlphaText(['newgrounds']);
-				//ngSpr.visible = true;
 			case 8:
 				appendAlphaText();
-				//ngSpr.visible = false;
 			case 9:
-				//appendAlphaText([curWacky[0]]);
-                appendAlphaText(["Imagine youre seeing"]);
+                appendAlphaText([currentRandomLine[0]]);
 			case 11:
-				//appendAlphaText(curWacky[1]);
-                appendAlphaText(["Some random texts here"]);
+                appendAlphaText([currentRandomLine[1]]);
 			case 12:
 				appendAlphaText();
 			case 13:

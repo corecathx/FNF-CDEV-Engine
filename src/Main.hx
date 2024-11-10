@@ -11,7 +11,7 @@ import cdev.backend.Game;
 import cdev.backend.objects.StatsDisplay;
 
 #if CRASH_HANDLER
-import sys.FileSystem;
+
 import sys.io.File;
 import sys.io.Process;
 

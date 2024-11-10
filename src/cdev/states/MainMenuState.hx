@@ -8,7 +8,7 @@ import flixel.graphics.frames.FlxAtlasFrames;
 class MainMenuState extends State {
     var options:Array<{name:String,callback:Void->Void}> = [
         {name: "storymode", callback:() -> FlxG.switchState(new PlayState())},
-        {name: "freeplay", callback:() -> trace("free")},
+        {name: "freeplay", callback:() -> FlxG.switchState(new FreeplayState())},
         {name: "options", callback:() -> trace("options")},
         {name: "credits", callback:() -> trace("credits")},
     ];
@@ -20,7 +20,7 @@ class MainMenuState extends State {
     var versionText:Text;
 
     var _camFollow:FlxObject;
-    var _followPoint:{x:Float,y:Float,xAdd:Float, yAdd:Float} = {x:0.0,y:0.0,xAdd:0.0,yAdd:0.0};
+    var _followPoint:{x:Float,y:Float} = {x:0.0,y:0.0};
 
     var _barHeight:Int = 80;
     override function create() {
@@ -46,8 +46,7 @@ class MainMenuState extends State {
             for (anim in ["idle","selected"])
                 spr.addAnim(anim, '${option.name} $anim',24);
             spr.playAnim("idle",true);
-            spr.scale.set(0.8,0.8);
-            spr.updateHitbox();
+            spr.setScale(0.9);
             spr.screenCenter(X);
             optionGrp.add(spr);
             lastY += spr.height + 50;
@@ -62,12 +61,12 @@ class MainMenuState extends State {
         add(bottomBar);*/
 
         // Texts //
-        infoText = new Text(0,25,"[Info should be here.]",RIGHT);
+        infoText = new Text(0,10,"[Info should be here.]",RIGHT);
         infoText.scrollFactor.set();
         add(infoText);
 
-        versionText = new Text(20,25,Engine.label,LEFT);
-        versionText.y = FlxG.height - (versionText.height + 20);
+        versionText = new Text(10,25,Engine.label,LEFT);
+        versionText.y = FlxG.height - (versionText.height + 10);
         versionText.scrollFactor.set();
         add(versionText);
         
@@ -92,10 +91,8 @@ class MainMenuState extends State {
     }
 
     function _updateCamera(elapsed:Float) {
-        _followPoint.xAdd = Math.sin(Game._ACTIVE_TIME)*25;
-        _followPoint.yAdd = Math.sin(Game._ACTIVE_TIME/2)*40;
-        _camFollow.x = FlxMath.lerp(_followPoint.x + _followPoint.xAdd, _camFollow.x, 1-(elapsed*6));
-        _camFollow.y = FlxMath.lerp(_followPoint.y + _followPoint.yAdd, _camFollow.y, 1-(elapsed*6));
+        _camFollow.x = FlxMath.lerp(_followPoint.x, _camFollow.x, 1-(elapsed*6));
+        _camFollow.y = FlxMath.lerp(_followPoint.y, _camFollow.y, 1-(elapsed*6));
     }
 
     function _updateControls() {
@@ -109,6 +106,7 @@ class MainMenuState extends State {
 
     // don't mind this.
     var __inf_text_large_format:FlxTextFormat = new FlxTextFormat(Utils.engineColor.primary);
+    var __inf_last_text:String = "";
     function _updateObjects() {
         // Info text // 
         var _now:Date = Date.now();
@@ -118,10 +116,13 @@ class MainMenuState extends State {
         + 'CDEV Engine has been running for #${Utils.getTimeFormat(Game._ACTIVE_TIME*1000)}#\n'
         + 'It is currently #${_localTime}#';
 
-        infoText.applyMarkup(__infTxt,[
-            new FlxTextFormatMarkerPair(__inf_text_large_format, "#")
-        ]);
-        infoText.x = (FlxG.width - infoText.width) - 20;
+        if (__infTxt != __inf_last_text) { // Don't call applyMarkup too often.
+            __inf_last_text = __infTxt;
+            infoText.applyMarkup(__infTxt,[
+                new FlxTextFormatMarkerPair(__inf_text_large_format, "#")
+            ]);
+            infoText.x = (FlxG.width - infoText.width) - 10;
+        }
     }
 
     function set_currentSelection(val:Int):Int {
@@ -129,7 +130,6 @@ class MainMenuState extends State {
         FlxG.sound.play(Assets.sound("scrollMenu"),0.7);
         
         optionGrp.forEachAlive((opt:Sprite)->{
-            opt.alpha = opt.ID == val ? 1 : 0.7;
             opt.playAnim(opt.ID == val ? "selected" : "idle", true);
             opt.updateHitbox();
             opt.screenCenter(X);

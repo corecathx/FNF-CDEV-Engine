@@ -1,6 +1,7 @@
-package cdev.backend;
+package cdev.backend.utils;
 
-import cdev.backend.Chart.SongData;
+import lime.ui.KeyCode;
+import cdev.backend.Chart.SongMeta;
 import flixel.graphics.frames.FlxImageFrame;
 import openfl.display.BitmapData;
 import flixel.graphics.frames.FlxFrame;
@@ -10,7 +11,7 @@ import cdev.objects.play.hud.RatingSprite.Rating;
 import cdev.objects.play.notes.Note;
 import sys.io.File;
 import haxe.Json;
-import sys.FileSystem;
+
 import openfl.media.Sound;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
@@ -25,7 +26,7 @@ class Utils {
     public static var engineColor = {
         primary: 0xFF0060FF
     }
-    public static function loadSong(songName:String, diff:String):{inst:Sound, voices:Array<SoundTagStruct>, chart:Chart, meta:SongData} {
+    public static function loadSong(songName:String, diff:String):{inst:Sound, voices:Array<SoundTagStruct>, chart:Chart, meta:SongMeta} {
         // Check if the song path exists.
         var path:String = '${Assets._SONG_PATH}/$songName';
         if (!FileSystem.exists(path)) {
@@ -41,7 +42,7 @@ class Utils {
         }
     
         trace("Loading Meta: " + metaPath);
-        var meta:SongData = Json.parse(File.getContent(metaPath));
+        var meta:SongMeta = Json.parse(File.getContent(metaPath));
     
         // Inst and voices stuff.
         var fileNames = {
@@ -138,6 +139,18 @@ class Utils {
         var size_name:Array<String> = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
         var digit:Int = Std.int(Math.log(bytes) / Math.log(1024));
         return FlxMath.roundDecimal(bytes / Math.pow(1024, digit), 2) + " " + size_name[digit];
+    }
+
+    /**
+     * Splits `text` using \n.
+     * @param text Your text.
+     * @return Array<String>
+     */
+    public static function lineSplit(text:String):Array<String> {
+        var list:Array<String> = text.trim().split('\n');
+        for (i in 0...list.length)
+            list[i] = list[i].trim();
+        return list;
     }
 
     /**
@@ -422,4 +435,96 @@ class Utils {
 
         obj.destroy();
     }
+
+    public static function getFlxKey(key:KeyCode):FlxKey {
+        var keyMap:Map<KeyCode, FlxKey> = [
+            KeyCode.A => FlxKey.A,
+            KeyCode.B => FlxKey.B,
+            KeyCode.C => FlxKey.C,
+            KeyCode.D => FlxKey.D,
+            KeyCode.E => FlxKey.E,
+            KeyCode.F => FlxKey.F,
+            KeyCode.G => FlxKey.G,
+            KeyCode.H => FlxKey.H,
+            KeyCode.I => FlxKey.I,
+            KeyCode.J => FlxKey.J,
+            KeyCode.K => FlxKey.K,
+            KeyCode.L => FlxKey.L,
+            KeyCode.M => FlxKey.M,
+            KeyCode.N => FlxKey.N,
+            KeyCode.O => FlxKey.O,
+            KeyCode.P => FlxKey.P,
+            KeyCode.Q => FlxKey.Q,
+            KeyCode.R => FlxKey.R,
+            KeyCode.S => FlxKey.S,
+            KeyCode.T => FlxKey.T,
+            KeyCode.U => FlxKey.U,
+            KeyCode.V => FlxKey.V,
+            KeyCode.W => FlxKey.W,
+            KeyCode.X => FlxKey.X,
+            KeyCode.Y => FlxKey.Y,
+            KeyCode.Z => FlxKey.Z,
+            KeyCode.NUMBER_0 => FlxKey.ZERO,
+            KeyCode.NUMBER_1 => FlxKey.ONE,
+            KeyCode.NUMBER_2 => FlxKey.TWO,
+            KeyCode.NUMBER_3 => FlxKey.THREE,
+            KeyCode.NUMBER_4 => FlxKey.FOUR,
+            KeyCode.NUMBER_5 => FlxKey.FIVE,
+            KeyCode.NUMBER_6 => FlxKey.SIX,
+            KeyCode.NUMBER_7 => FlxKey.SEVEN,
+            KeyCode.NUMBER_8 => FlxKey.EIGHT,
+            KeyCode.NUMBER_9 => FlxKey.NINE,
+            KeyCode.RETURN => FlxKey.ENTER,
+            KeyCode.ESCAPE => FlxKey.ESCAPE,
+            KeyCode.BACKSPACE => FlxKey.BACKSPACE,
+            KeyCode.TAB => FlxKey.TAB,
+            KeyCode.SPACE => FlxKey.SPACE,
+            KeyCode.LEFT => FlxKey.LEFT,
+            KeyCode.RIGHT => FlxKey.RIGHT,
+            KeyCode.UP => FlxKey.UP,
+            KeyCode.DOWN => FlxKey.DOWN,
+            KeyCode.F1 => FlxKey.F1,
+            KeyCode.F2 => FlxKey.F2,
+            KeyCode.F3 => FlxKey.F3,
+            KeyCode.F4 => FlxKey.F4,
+            KeyCode.F5 => FlxKey.F5,
+            KeyCode.F6 => FlxKey.F6,
+            KeyCode.F7 => FlxKey.F7,
+            KeyCode.F8 => FlxKey.F8,
+            KeyCode.F9 => FlxKey.F9,
+            KeyCode.F10 => FlxKey.F10,
+            KeyCode.F11 => FlxKey.F11,
+            KeyCode.F12 => FlxKey.F12,
+            KeyCode.GRAVE => FlxKey.GRAVEACCENT,
+            KeyCode.MINUS => FlxKey.MINUS,
+            KeyCode.EQUALS => FlxKey.PLUS,
+            KeyCode.LEFT_BRACKET => FlxKey.LBRACKET,
+            KeyCode.RIGHT_BRACKET => FlxKey.RBRACKET,
+            KeyCode.BACKSLASH => FlxKey.BACKSLASH,
+            KeyCode.SEMICOLON => FlxKey.SEMICOLON,
+            KeyCode.QUOTE => FlxKey.QUOTE,
+            KeyCode.COMMA => FlxKey.COMMA,
+            KeyCode.PERIOD => FlxKey.PERIOD,
+            KeyCode.SLASH => FlxKey.SLASH,
+            KeyCode.NUMPAD_PLUS => FlxKey.NUMPADPLUS,
+            KeyCode.NUMPAD_MINUS => FlxKey.NUMPADMINUS,
+            KeyCode.NUMPAD_MULTIPLY => FlxKey.NUMPADMULTIPLY,
+            KeyCode.NUMPAD_DIVIDE => FlxKey.NUMPADSLASH,
+            KeyCode.NUMPAD_0 => FlxKey.NUMPADZERO,
+            KeyCode.NUMPAD_1 => FlxKey.NUMPADONE,
+            KeyCode.NUMPAD_2 => FlxKey.NUMPADTWO,
+            KeyCode.NUMPAD_3 => FlxKey.NUMPADTHREE,
+            KeyCode.NUMPAD_4 => FlxKey.NUMPADFOUR,
+            KeyCode.NUMPAD_5 => FlxKey.NUMPADFIVE,
+            KeyCode.NUMPAD_6 => FlxKey.NUMPADSIX,
+            KeyCode.NUMPAD_7 => FlxKey.NUMPADSEVEN,
+            KeyCode.NUMPAD_8 => FlxKey.NUMPADEIGHT,
+            KeyCode.NUMPAD_9 => FlxKey.NUMPADNINE
+        ];
+
+        if (keyMap.exists(key))
+            return keyMap.get(key);
+
+        return FlxKey.NONE;
+    }    
 }

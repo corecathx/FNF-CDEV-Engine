@@ -55,7 +55,7 @@ class StatsDisplay extends TextField
 	
 		while (frames[0] < now - 1) frames.shift();
 
-		curMemory = System.totalMemory;//NativeUtils.getUsedMemory();
+		curMemory = MemoryUtils.usedMemory();//NativeUtils.getUsedMemory();
 		curFps = FlxMath.bound(FlxMath.lerp(frames.length, curFps, 1-(FlxG.elapsed*12)), 0, null);
 		
 		if (curMemory > highestMemory) highestMemory = curMemory;
@@ -81,7 +81,7 @@ class StatsDisplay extends TextField
 		var memoryPeak = " #// " + Utils.formatBytes(Std.int(highestMemory)) + "#";
 		
 		text = wholeText + memoryPeak + "\n#"+Engine.version+"cdev@" + Engine.gitBranch + " " + Engine.gitCommit + "#";
-	
+		
 		applyFormatting();
 
 	}

@@ -1,12 +1,8 @@
 package cdev.objects.play.notes;
 
-import openfl.geom.Rectangle;
-import openfl.geom.Matrix;
-import openfl.display.BitmapData;
 import flixel.math.FlxRect;
 import flixel.graphics.frames.FlxFrame;
 import flixel.addons.display.FlxTiledSprite;
-import flixel.addons.display.FlxBackdrop;
 
 class Sustain extends FlxTiledSprite {
     public static var originWidth:Float = 50;

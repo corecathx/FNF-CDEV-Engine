@@ -8,7 +8,7 @@ import haxe.Json;
 /**
  * Song's Metadata, also used by the freeplay.
  */
-typedef SongData = {
+typedef SongMeta = {
     var name:String;
     var artist:String;
     var color:String;
@@ -275,8 +275,18 @@ class Chart {
         return cdev;
     }
 
-    public static function convertLegacyCDEV() {
-        
+    /**
+     * Returns value from the chart's meta property list.
+     * @param chart The chart
+     * @param key The key
+     * @return String
+     */
+    public static function getMeta(chart:Chart, key:String):String {
+        for (info in chart.info.meta) {
+            if (info.key == key) 
+                return info.value;
+        }
+        return "";
     }
 }
 ////////////////////////////////////////////

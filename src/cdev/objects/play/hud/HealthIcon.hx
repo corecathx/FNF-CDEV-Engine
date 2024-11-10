@@ -9,6 +9,10 @@ class HealthIcon extends Sprite {
         super();
         this.isPlayer = isPlayer;
         if (nGraphic == null) return;
+        changeIcon(nGraphic);
+    }
+
+    public function changeIcon(nGraphic:FlxGraphic) {
         loadGraphic(nGraphic, true, 150, 150);
         hasWinningIcon = (nGraphic.width > 300 && nGraphic.height <= 450);
 		animation.add("idle", (hasWinningIcon ? [0,1,2] : [0,1]), 0, false, isPlayer);
@@ -29,4 +33,12 @@ class HealthIcon extends Sprite {
 		if (animation.curAnim == null) return;
 		animation.curAnim.curFrame = frameNum;
 	}
+
+    public static function getIcon(char:String):FlxGraphic {
+        var path:String = '${Assets._CHARACTER_PATH}/$char/icon';
+        if (!FileSystem.exists('$path.png'))
+            return null;
+
+        return Assets.image(path, true);
+    }
 }
