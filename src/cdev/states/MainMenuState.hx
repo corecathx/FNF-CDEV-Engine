@@ -24,7 +24,7 @@ class MainMenuState extends State {
 
     var _barHeight:Int = 80;
     override function create() {
-        Utils.playBGM();
+        Utils.playBGM("freakyMenu");
 
         // Background //
         bg = new Sprite(0,0,Assets.image("menus/menuBG"));

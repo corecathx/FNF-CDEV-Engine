@@ -29,7 +29,7 @@
 	<define name="DARK_MODE_WINDOW"/>
 
 	<!-- Comment this to disable: Crash Handler. -->
-	<define name="CRASH_HANDLER" if="windows"/>
+	<define name="CRASH_HANDLER" if="desktop"/>
 
 	<!-- Prebuild and Postbuild scripts. -->
 	<prebuild haxe="res/compiler/Prebuild.hx"/>
@@ -41,7 +41,11 @@
 	<source path="src" />
 	<assets path="files/assets" rename="assets"/> <!-- "Simple" files managing. -->
 
-	<assets path='files/cdev-crash_handler.exe' rename='cdev-crash_handler.exe' embed='false' if="windows"/>
+	<section if="CRASH_HANDLER">
+		<assets path='res/crash/cdev-crash_handler-windows.exe' rename='cdev-crash_handler.exe' embed='false' if="windows"/>
+		<assets path='res/crash/cdev-crash_handler-linux' rename='cdev-crash_handler' embed='false' if="linux"/>
+	</section>
+	
 
 	<!-- _______________________________ Libraries ______________________________ -->
 

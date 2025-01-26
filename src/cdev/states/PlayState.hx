@@ -336,6 +336,10 @@ class PlayState extends State {
             sounds.speed *= 0.99;
         if (FlxG.keys.pressed.X)
             sounds.speed *= 1.01;
+
+        if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.SPACE) {
+            throw "crash test, wawa :3";
+        }
     }
 
     function _updateControls(elapsed:Float) {

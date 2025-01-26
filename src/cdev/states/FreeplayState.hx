@@ -98,7 +98,7 @@ class FreeplayState extends State
             sng.target = sng.ID - val;
             sng.alpha = icon.alpha = (sng.target == 0) ? 1 : 0.7;
         }
-		bg.intendedColor = FlxColor.fromString(songs[val].meta.color);
+		bg.intendedColor = FlxColor.fromString("#" + songs[val].meta.color);
 		difficultyList = songs[val].meta.difficulties;
 
 		// When the difficulty list isn't the same as DiffText, update.
