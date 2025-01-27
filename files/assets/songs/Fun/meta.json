@@ -1,0 +1,13 @@
+{
+    "name": "Fun",
+    "artist": "Core5570R",
+    "color": "202020",
+    "icon": "core",
+    "bpm": 150,
+    "data": {
+        "inst": [],
+        "voices": []
+    },
+    "difficulties": ["hard"],
+    "multiVoice": false
+}

@@ -20,7 +20,7 @@ class MainMenuState extends State {
     var versionText:Text;
 
     var _camFollow:FlxObject;
-    var _followPoint:{x:Float,y:Float} = {x:0.0,y:0.0};
+    var _followPoint:Axis2D = {x:0.0,y:0.0};
 
     var _barHeight:Int = 80;
     override function create() {

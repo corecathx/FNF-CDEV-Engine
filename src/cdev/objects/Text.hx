@@ -14,6 +14,7 @@ class Text extends FlxText {
 		super(nX, nY, -1, nText, nSize);
 		setFormat(Assets.fonts.VCR, nSize, FlxColor.WHITE, align, OUTLINE, FlxColor.BLACK);
         active = false;
+        antialiasing = Preferences.antialiasing;
 
 		panelBG = new Sprite().makeGraphic(1,1,FlxColor.WHITE);
 		panelBG.color = FlxColor.BLACK;

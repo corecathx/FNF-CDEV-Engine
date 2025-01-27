@@ -6,6 +6,7 @@ import flixel.addons.transition.FlxTransitionableState;
 class State extends FlxTransitionableState {
     override function create():Void {
         super.create();
+        persistentUpdate = true;
         __assign_conductor(true);
     }
 

@@ -15,7 +15,8 @@ import cdev.backend.Engine;
 import cdev.backend.Game;
 import cdev.backend.utils.Utils;
 import cdev.backend.utils.MemoryUtils;
-
+import cdev.backend.utils.Typedefs.Axis2D;
+import cdev.backend.utils.Typedefs.Animation;
 import cdev.objects.menus.Alphabet;
 import cdev.objects.Text;
 import cdev.objects.Sprite;

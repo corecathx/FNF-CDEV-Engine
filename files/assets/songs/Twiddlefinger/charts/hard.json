@@ -6055,7 +6055,7 @@
 				"mustHitSection": false
 			}
 		],
-		"player2": "max",
+		"player2": "core",
 		"gfVersion": "invisible",
 		"events": [],
 		"player3": null,

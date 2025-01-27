@@ -1,5 +1,6 @@
 package cdev.states;
 
+import cdev.objects.play.Stage;
 import cdev.substates.PauseSubstate;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
@@ -28,17 +29,15 @@ import flixel.addons.display.FlxGridOverlay;
  */
 class PlayState extends State {
     public static var current:PlayState = null;
-    public var currentSong:String = "";
-    public var currentDifficulty:String = "";
+    public static var currentSong:String = "";
+    public static var currentDifficulty:String = "";
     public var playerStrums:StrumLine;
     public var opponentStrums:StrumLine;
     public var sounds:SoundGroup;
 
     public var noteLoader:NoteLoader;
 
-    public var playerChar:Character;
-    public var opponentChar:Character;
-    public var spectatorChar:Character;
+    public var stage:Stage;
 
     public var iconP1:HealthIcon;
     public var iconP2:HealthIcon;
@@ -83,10 +82,10 @@ class PlayState extends State {
         shit:0, 
     }
 
-    public function new(?songName:String = "Satin Panties", ?difficulty:String = "erect") {
+    public function new(?songName:String, ?difficulty:String) {
         super();
-        currentSong = songName;
-        currentDifficulty = difficulty;
+        currentSong = songName ?? currentSong;
+        currentDifficulty = difficulty ?? currentDifficulty;
     }
 
     override function create() {    
@@ -138,7 +137,7 @@ class PlayState extends State {
         bg.screenCenter();
         bg.alpha = 0.3;
         bg.active = false;
-        add(bg);*/
+        add(bg);
 
         var bg:Sprite = new Sprite(-600, -200).loadGraphic(Assets.image('stageback'));
         bg.scrollFactor.set(0.9, 0.9);
@@ -158,18 +157,17 @@ class PlayState extends State {
         stageCurtains.scrollFactor.set(1.3, 1.3);
         stageCurtains.active = false;
 
-        add(stageCurtains);
+        add(stageCurtains);*/
 
-        spectatorChar = new Character(400,130,"gf",false);
-        add(spectatorChar);
+        stage = new Stage("Stage", {
+            spectator: chart.data.spectator,
+            player: chart.data.player,
+            opponent: chart.data.opponent
+        });
+        defaultCamZoom = stage?.data.zoom;
+        add(stage);
 
-        playerChar = new Character(770,100,"bf",true);
-        add(playerChar);
-
-        opponentChar = new Character(100,100,"dad",false);
-        add(opponentChar);
-
-        followTarget = opponentChar;
+        followTarget = stage.opponent;
     }
 
     function initHUD() {
@@ -200,13 +198,13 @@ class PlayState extends State {
         opponentStrums = new StrumLine(_centerX,_data.strum.yPos,true);
         opponentStrums.scrollMult = _data.strum.scrollMult;
         opponentStrums.cameras = [camHUD];
-        opponentStrums.characters.push(opponentChar);
+        opponentStrums.characters.push(stage.opponent);
         add(opponentStrums);
         
         playerStrums = new StrumLine((FlxG.width*0.5)+_centerX,_data.strum.yPos,false);
         playerStrums.scrollMult = _data.strum.scrollMult;
         playerStrums.cameras = [camHUD];
-        playerStrums.characters.push(playerChar);
+        playerStrums.characters.push(stage.player);
         playerStrums.onNoteHit.add(onNoteHit);
         playerStrums.onNoteMiss.add(onNoteMiss);
         add(playerStrums);
@@ -218,17 +216,17 @@ class PlayState extends State {
 
         /// Load Health bar and icons ///
         healthBar = new Bar(0,_data.healthBar.y,Assets.image("hud/healthBar"),()->{return healthLerp;});
-        healthBar.setColors(opponentChar.getBarColor(), playerChar.getBarColor());
+        healthBar.setColors(stage.opponent.getBarColor(), stage.player.getBarColor());
         healthBar.cameras = [camHUD];
         healthBar.screenCenter(X);
         healthBar.leftToRight = false;
         add(healthBar);
         
-        iconP1 = new HealthIcon(playerChar.icon, true);
+        iconP1 = new HealthIcon(stage.player.icon, true);
         iconP1.cameras = [camHUD];
         add(iconP1);
 
-        iconP2 = new HealthIcon(opponentChar.icon, false);
+        iconP2 = new HealthIcon(stage.opponent.icon, false);
         iconP2.cameras = [camHUD];
         add(iconP2);
 
@@ -273,9 +271,7 @@ class PlayState extends State {
 
 
         new FlxTimer().start(Conductor.instance.beat_ms/1000, (_)->{
-            playerChar.dance();
-            opponentChar.dance();
-            spectatorChar.dance();
+            stage.dance();
 
             if (_currentTick != 0) {
                 var sprite:Sprite = preloadedSprites[_currentTick - 1];
@@ -316,7 +312,7 @@ class PlayState extends State {
     }
 
     override function destroy() {
-        for (object in [playerChar, opponentChar, spectatorChar, sounds])
+        for (object in [sounds])
             Utils.destroyObject(object);
         super.destroy();
     }
@@ -494,8 +490,8 @@ class PlayState extends State {
             case "Change Camera Focus":
                 var castValue:String = cast event.values[0];
                 switch (castValue){
-                    case "dad": followTarget = cast opponentChar;
-                    case "bf": followTarget = cast playerChar;
+                    case "dad": followTarget = cast stage.opponent;
+                    case "bf": followTarget = cast stage.player;
                 }
         }
     }
@@ -510,9 +506,6 @@ class PlayState extends State {
         if (beats % (banger ? 1 : 4) == 0) {
             _addZoom(0.05);
         }
-        playerChar.dance();
-        opponentChar.dance();
-        spectatorChar.dance();
     }
 
     //// GET & SETTERS ////

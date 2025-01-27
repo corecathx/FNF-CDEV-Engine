@@ -66,6 +66,7 @@ class PauseSubstate extends SubState {
         bg.alpha = 0;
         bg.setScale(1/parent.camHUD.zoom);
         bg.angle = -parent.camHUD.angle;
+        bg.scrollFactor.set();
         add(bg);
         FlxTween.tween(bg, {alpha: 0.6}, 0.4, {ease: FlxEase.quartInOut});
 
@@ -83,7 +84,7 @@ class PauseSubstate extends SubState {
         /// Info texts that appears on top right of the game's window. ///
         var composer:String = Chart.getMeta(parent.chart, "Composer");
         var textList:Array<String> = ['
-            ${parent.currentSong} // ${parent.currentDifficulty}', // Song Name + Difficulty
+            ${PlayState.currentSong} // ${PlayState.currentDifficulty}', // Song Name + Difficulty
             '${composer == "" ? "" : "By " + composer}' // Composer name.
         ];
         for (index=>data in textList) {

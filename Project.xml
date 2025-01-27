@@ -31,6 +31,9 @@
 	<!-- Comment this to disable: Crash Handler. -->
 	<define name="CRASH_HANDLER" if="desktop"/>
 
+	<!-- Comment this to disable: Scripting. -->
+	<define name="SCRIPTING"/>
+
 	<!-- Prebuild and Postbuild scripts. -->
 	<prebuild haxe="res/compiler/Prebuild.hx"/>
 	<postbuild haxe="res/compiler/Postbuild.hx"/>
@@ -51,6 +54,8 @@
 
 	<haxelib name="flixel" />
 	<haxelib name="flixel-addons" />
+	<haxelib name="hscript-improved" if="SCRIPTING"/>
+
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
 	<haxedef name="HXCPP_CHECK_POINTER" if="CRASH_HANDLER" />
