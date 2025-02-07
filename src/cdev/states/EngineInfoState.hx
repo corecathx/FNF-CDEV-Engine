@@ -28,6 +28,7 @@ class EngineInfoState extends State {
         txt.screenCenter(X);
         add(txt);
 
+        bigTxt.antialiasing = txt.antialiasing = Preferences.antialiasing;
         camTween(0.6, 1, 6, FlxEase.expoOut);
     }
 

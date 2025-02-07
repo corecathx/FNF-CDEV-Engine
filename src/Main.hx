@@ -1,10 +1,8 @@
 package;
 
-import openfl.events.Event;
 import cdev.backend.native.NativeUtils;
 import lime.app.Application;
 import openfl.Lib;
-import openfl.display.DisplayObject;
 import openfl.display.Sprite;
 
 import cdev.backend.Game;
@@ -37,13 +35,14 @@ class Main extends Sprite
 
 		addChild(new Game());
 		addChild(new StatsDisplay(10,10,0xFFFFFF));
-		trace("CDEV Engine is ready :3");
+		Log.info("CDEV Engine is ready :3");
 
 		postInit();
 	}
 
 
 	function preInit() {
+		Log.init();
 		new Conductor();
 		Controls.init();
 		#if DARK_MODE_WINDOW
@@ -66,7 +65,7 @@ class Main extends Sprite
 	#if CRASH_HANDLER
 	function onCrash(uncaught:UncaughtErrorEvent):Void
 	{
-		trace("CDEV Engine just crashed.");
+		Log.error("CDEV Engine just crashed.");
 		// somehow, the music crashed the crash handler
 		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 			FlxG.sound.music.stop();
@@ -95,8 +94,10 @@ class Main extends Sprite
 
 		File.saveContent(filePath, finalOutput + "\n");
 
-		trace("Crash info file saved in " + Path.normalize(filePath));	
-		trace("Saving current save data, and closing the game...");
+		if (Preferences.verboseLog) {
+			Log.error("Crash info file saved in " + Path.normalize(filePath));	
+			Log.error("Saving current save data, and closing the game...");
+		}
 		#end
 
 		var reportClassic:String = "CDEV Engine crashed during runtime.\n\nCall Stacks:\n"

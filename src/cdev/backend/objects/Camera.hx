@@ -29,7 +29,8 @@ class Camera extends FlxCamera {
      */
     public function addShader(shaders:Array<Shader>) {
         if (!filtersEnabled) {
-            trace("Could not add shader to camera, filters are disabled.");
+            if (Preferences.verboseLog)
+                trace("Could not add shader to camera, filters are disabled.");
             return;
         }
 

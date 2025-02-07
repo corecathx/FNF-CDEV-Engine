@@ -7,7 +7,7 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
 typedef SpriteGroup = FlxTypedSpriteGroup<Sprite>;
 
 /**
- * Sprite is just FlxSprite but with additional helper functions.
+ * Sprite is just Sprite but with additional helper functions.
  */
 class Sprite extends FlxSprite {
     /**
@@ -27,7 +27,19 @@ class Sprite extends FlxSprite {
      * A shortcut to `animation.addByPrefix`.
      */
     public function addAnim(name:String, prefix:String, frameRate:Float = 30.0, looped:Bool = true, flipX:Bool = false, flipY:Bool = false) {
-        animation.addByPrefix(name,prefix,frameRate,looped,flipX,flipY);
+        // check if any exists
+        var exists:Bool = false;
+        for (frame in frames.frames) {
+            if (frame.name != null && frame.name.startsWith(prefix)){
+                exists = true;
+                break;
+            }
+        }
+        if (exists)
+            animation.addByPrefix(name,prefix,frameRate,looped,flipX,flipY);
+        else 
+            if (Preferences.verboseLog)
+                Log.warn('Could not find animation prefix $prefix for $name.');
     }
 
     /**

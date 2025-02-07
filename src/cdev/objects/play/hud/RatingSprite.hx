@@ -109,7 +109,8 @@ class RatingSprite extends Sprite {
     public function forEachCombo(callback:(Sprite, Int)->Void) {
         for (index => spr in combos) {
             if (spr == null) {
-                trace("Combo at "+index+" is null.");
+                if (Preferences.verboseLog)
+                    trace("Combo at "+index+" is null.");
                 continue;
             }
             callback(spr,index);

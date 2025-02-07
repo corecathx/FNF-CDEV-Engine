@@ -42,8 +42,6 @@ class Sustain extends FlxTiledSprite {
         tailEnd.playAnim("idle");
         tailEnd.setGraphicSize(scaleWidth,tailScaleHeight);
         tailEnd.updateHitbox();
-
-       // graphic.bitmap.disposeImage();
     }
 
     override function destroy() {
@@ -146,12 +144,11 @@ class Sustain extends FlxTiledSprite {
         vertices[1] = vertices[3] = 0.0; // bottom left
         vertices[5] = vertices[7] = height; // bottom right
 
-        var frame:FlxFrame = graphic.imageFrame.frame;
         uvtData[0] = uvtData[6] = sustainUVData[parent.data][0];
         uvtData[2] = uvtData[4] = sustainUVData[parent.data][1];
 
-        uvtData[1] = uvtData[3] = -scrollY / frame.sourceSize.y;
-        uvtData[5] = uvtData[7] = uvtData[1] + height / frame.sourceSize.y;
+        uvtData[1] = uvtData[3] = -scrollY / graphic.height;
+        uvtData[5] = uvtData[7] = uvtData[1] + height / graphic.height;
 
         if (height <= 0) 
             graphicVisible = false;

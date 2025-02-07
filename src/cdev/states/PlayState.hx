@@ -1,6 +1,8 @@
 package cdev.states;
 
-import cdev.substates.PauseSubstate;
+import cdev.substates.GameOverSubState;
+import cdev.objects.play.Stage;
+import cdev.substates.PauseSubState;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 import cdev.graphics.shaders.AdjustColorShader;
@@ -36,9 +38,9 @@ class PlayState extends State {
 
     public var noteLoader:NoteLoader;
 
-    public var playerChar:Character;
-    public var opponentChar:Character;
-    public var spectatorChar:Character;
+    public var player:Character;
+    public var opponent:Character;
+    public var spectator:Character;
 
     public var iconP1:HealthIcon;
     public var iconP2:HealthIcon;
@@ -70,6 +72,8 @@ class PlayState extends State {
     public var misses:Int = 0;
 
     public var paused:Bool = false;
+    
+    public var stage:Stage;
 
     var totalNotes:{hit:Float,all:Float} = {
         hit: 0.0,
@@ -132,44 +136,16 @@ class PlayState extends State {
     
     function initStage() {
         defaultCamZoom = 0.9;
-        /*var bg:Sprite = new Sprite(-600, -200).loadGraphic(FlxGridOverlay.createGrid(10,10,FlxG.width, FlxG.height, true, 0xFF202020, 0xFF303030));
-        bg.scrollFactor.set(0.1, 0.1);
-        bg.scale.set(1.5,1.5);
-        bg.screenCenter();
-        bg.alpha = 0.3;
-        bg.active = false;
-        add(bg);*/
 
-        var bg:Sprite = new Sprite(-600, -200).loadGraphic(Assets.image('stageback'));
-        bg.scrollFactor.set(0.9, 0.9);
-        bg.active = false;
-        add(bg);
+        // Characters are also handled in this class!
+        stage = new Stage(this, chart.data.stage, chart.data.player, chart.data.opponent, chart.data.spectator);
+        add(stage);
 
-        var stageFront:Sprite = new Sprite(-650, 600).loadGraphic(Assets.image('stagefront'));
-        stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
-        stageFront.updateHitbox();
-        stageFront.scrollFactor.set(0.9, 0.9);
-        stageFront.active = false;
-        add(stageFront);
+        player = stage.player;
+        opponent = stage.opponent;
+        spectator = stage.spectator;
 
-        var stageCurtains:Sprite = new Sprite(-500, -300).loadGraphic(Assets.image('stagecurtains'));
-        stageCurtains.setGraphicSize(Std.int(stageCurtains.width * 0.9));
-        stageCurtains.updateHitbox();
-        stageCurtains.scrollFactor.set(1.3, 1.3);
-        stageCurtains.active = false;
-
-        add(stageCurtains);
-
-        spectatorChar = new Character(400,130,"gf",false);
-        add(spectatorChar);
-
-        playerChar = new Character(770,100,"bf",true);
-        add(playerChar);
-
-        opponentChar = new Character(100,100,"dad",false);
-        add(opponentChar);
-
-        followTarget = opponentChar;
+        followTarget = opponent;
     }
 
     function initHUD() {
@@ -197,16 +173,16 @@ class PlayState extends State {
         }
 
         /// Load Strums and NoteLoader ///
-        opponentStrums = new StrumLine(_centerX,_data.strum.yPos,true);
+        opponentStrums = new StrumLine(_centerX, _data.strum.yPos, true);
         opponentStrums.scrollMult = _data.strum.scrollMult;
         opponentStrums.cameras = [camHUD];
-        opponentStrums.characters.push(opponentChar);
+        opponentStrums.addCharacter(opponent);
         add(opponentStrums);
         
-        playerStrums = new StrumLine((FlxG.width*0.5)+_centerX,_data.strum.yPos,false);
+        playerStrums = new StrumLine((FlxG.width*0.5)+_centerX, _data.strum.yPos, false, PLAYER);
         playerStrums.scrollMult = _data.strum.scrollMult;
         playerStrums.cameras = [camHUD];
-        playerStrums.characters.push(playerChar);
+        playerStrums.addCharacter(player);
         playerStrums.onNoteHit.add(onNoteHit);
         playerStrums.onNoteMiss.add(onNoteMiss);
         add(playerStrums);
@@ -218,17 +194,17 @@ class PlayState extends State {
 
         /// Load Health bar and icons ///
         healthBar = new Bar(0,_data.healthBar.y,Assets.image("hud/healthBar"),()->{return healthLerp;});
-        healthBar.setColors(opponentChar.getBarColor(), playerChar.getBarColor());
+        healthBar.setColors(opponent.getBarColor(), player.getBarColor());
         healthBar.cameras = [camHUD];
         healthBar.screenCenter(X);
         healthBar.leftToRight = false;
         add(healthBar);
         
-        iconP1 = new HealthIcon(playerChar.icon, true);
+        iconP1 = new HealthIcon(player.icon, true);
         iconP1.cameras = [camHUD];
         add(iconP1);
 
-        iconP2 = new HealthIcon(opponentChar.icon, false);
+        iconP2 = new HealthIcon(opponent.icon, false);
         iconP2.cameras = [camHUD];
         add(iconP2);
 
@@ -256,7 +232,9 @@ class PlayState extends State {
         startCountdown();
     }
 
+    var countdownStarted:Bool = false;
     function startCountdown() {
+        countdownStarted = true;
         var _currentTick:Int = 0;
         
         // Preloading the sprite so that when countdown occurs we dont get lagspikes.
@@ -273,9 +251,9 @@ class PlayState extends State {
 
 
         new FlxTimer().start(Conductor.instance.beat_ms/1000, (_)->{
-            playerChar.dance();
-            opponentChar.dance();
-            spectatorChar.dance();
+            player.dance();
+            opponent.dance();
+            spectator.dance();
 
             if (_currentTick != 0) {
                 var sprite:Sprite = preloadedSprites[_currentTick - 1];
@@ -316,7 +294,7 @@ class PlayState extends State {
     }
 
     override function destroy() {
-        for (object in [playerChar, opponentChar, spectatorChar, sounds])
+        for (object in [stage, sounds])
             Utils.destroyObject(object);
         super.destroy();
     }
@@ -324,6 +302,9 @@ class PlayState extends State {
     override function update(elapsed:Float) {
         super.update(elapsed);
 
+        if (countdownStarted && Conductor.instance.time < 0) {
+            Conductor.instance.time += elapsed*1000;
+        }
         _updateCameras(elapsed);
         _updateHUD(elapsed);
         _updateControls(elapsed);
@@ -331,6 +312,16 @@ class PlayState extends State {
         if (FlxG.keys.justPressed.B) {
             playerStrums.cpu = !playerStrums.cpu;
         }
+
+        if (FlxG.keys.justPressed.Q) {
+            banger = !banger;
+        }
+
+        if (Controls.RESET) {
+            health = 0;
+        }
+        
+        FlxG.timeScale = sounds.speed;
 
         if (FlxG.keys.pressed.Z)
             sounds.speed *= 0.99;
@@ -351,7 +342,7 @@ class PlayState extends State {
         persistentUpdate = false;
 		paused = true;
         sounds.pause();
-        openSubState(new PauseSubstate(this));
+        openSubState(new PauseSubState(this));
     }
 
     /**
@@ -422,11 +413,15 @@ class PlayState extends State {
         var rankText:String = '#${rank.rating}#, ${Utils.getGameplayStatus(hitCount.sick,hitCount.good,hitCount.bad,hitCount.shit,misses)}';
         var scoreText:String = 'Misses: ${misses} // Score: ${Utils.formatNumber(score)} // Accuracy: ${accuracy}% [${Utils.getAccuracyRating(accuracy)} - $rankText]';
         if (_last_scoreText != scoreText) { // just update the score text when a change is detected.
+            if (_last_scoreText.length != scoreText.length) {
+                scoreTxt.applyMarkup(scoreText, [
+                    new FlxTextFormatMarkerPair(new FlxTextFormat(rank.color),"#")
+                ]);
+                scoreTxt.screenCenter(X);
+            } else {
+                scoreTxt.text = scoreText.replace("#", '');
+            }
             _last_scoreText = scoreText;
-            scoreTxt.applyMarkup(scoreText, [
-                new FlxTextFormatMarkerPair(new FlxTextFormat(rank.color),"#")
-            ]);
-            scoreTxt.screenCenter(X);
         }
 
 
@@ -484,16 +479,22 @@ class PlayState extends State {
 		iconP2.changeFrame(curP2Icon);
     }
 
-
     public function onEvent(event:ChartEvent) {
         switch (event.name) {
             case "Change Camera Focus":
                 var castValue:String = cast event.values[0];
                 switch (castValue){
-                    case "dad": followTarget = cast opponentChar;
-                    case "bf": followTarget = cast playerChar;
+                    case "dad": followTarget = cast opponent;
+                    case "bf": followTarget = cast player;
                 }
         }
+    }
+
+    function onDeath() {
+        sounds.stop();
+        persistentDraw = false;
+        persistentUpdate = false;
+        openSubState(new GameOverSubState(this, player));
     }
 
     var banger:Bool = false;
@@ -506,13 +507,13 @@ class PlayState extends State {
         if (beats % (banger ? 1 : 4) == 0) {
             _addZoom(0.05);
         }
-        playerChar.dance();
-        opponentChar.dance();
-        spectatorChar.dance();
     }
 
-    //// GET & SETTERS ////
+    ///// GET & SETTERS /////
     function set_health(val:Float) {
+        if (val <= 0) {
+            onDeath();
+        }
         return health = FlxMath.bound(val,0,1);
     }
 }

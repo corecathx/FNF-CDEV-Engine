@@ -48,10 +48,10 @@ class FreeplayState extends State
 				continue;
 
 			var meta:SongMeta = Json.parse(File.getContent(metaPath));
-			trace("Found meta: " + meta.name + " by " + meta.artist);
 			songs.push({name: _song, meta:meta});
         }
-		trace("Generating UI...");
+		if (Preferences.verboseLog)
+            trace("Generating UI...");
 		for (index => _song in songs) {
 			var sng:Alphabet = new Alphabet(120, (FlxG.height * 0.48) + (120 * index), _song.meta.name, true);
 			sng.menuItem = true;

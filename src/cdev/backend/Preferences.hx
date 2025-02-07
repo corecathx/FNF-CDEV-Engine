@@ -7,6 +7,7 @@ typedef KeybindsList = {
     accept:Array<String>, back:Array<String>, pause:Array<String>, reset:Array<String> // basic stuff
 };
 
+@:structInit
 class Preferences {
     /**
      * These are your saved Keybinds.
@@ -31,12 +32,12 @@ class Preferences {
     /**
      * Should we use antialiasing for sprites? (smoother visuals)
      */
-    public static var antialiasing:Bool = false;
+    public static var antialiasing:Bool = true;
 
     /**
      * Toggle downscroll or upscroll for notes in gameplay.
      */
-    public static var downscroll:Bool = false;
+    public static var downscroll:Bool = true;
 
     /**
      * Cache graphics to GPU for better performance.
@@ -52,4 +53,9 @@ class Preferences {
      * Set your preferred sound effects volume.
      */
     public static var sfxVolume:Float = 1;
+
+    /**
+     * Whether to show every log messages, no exceptions.
+     */
+    public static var verboseLog:Bool = false;
 }

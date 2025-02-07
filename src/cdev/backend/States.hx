@@ -4,6 +4,10 @@ import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
 
 class State extends FlxTransitionableState {
+    public function new() {
+        super();
+        persistentUpdate = true;
+    }
     override function create():Void {
         super.create();
         __assign_conductor(true);

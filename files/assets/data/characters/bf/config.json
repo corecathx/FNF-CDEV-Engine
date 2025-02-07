@@ -87,6 +87,36 @@
 			"fps": 24,
 			"prefix": "BF idle shaking",
 			"indices": []
+		},
+		{
+			"loop": false,
+			"offset": {
+				"x": 37, "y": 11
+			},
+			"name": "firstDeath",
+			"fps": 24,
+			"prefix": "BF dies",
+			"indices": []
+		},
+		{
+			"loop": true,
+			"offset": {
+				"x": 37, "y": 5
+			},
+			"name": "deathLoop",
+			"fps": 24,
+			"prefix": "BF Dead Loop",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offset": {
+				"x": 37, "y": 69
+			},
+			"name": "deathConfirm",
+			"fps": 24,
+			"prefix": "BF Dead confirm",
+			"indices": []
 		}
 	],
 	"antialiasing": true,

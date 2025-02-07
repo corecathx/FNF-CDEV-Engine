@@ -43,6 +43,5 @@ TBA
 - [Sword352](https://github.com/Sword352) - Tiled Sprite implementation.
 
 ### Friday Night Funkin'
-
 - [Funkin Crew](https://github.com/FunkinCrew/) - Peak game crew.-->
 </details>

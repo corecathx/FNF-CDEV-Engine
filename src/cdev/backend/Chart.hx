@@ -103,7 +103,7 @@ class Chart {
         try{
             data = cast Json.parse(rawJSON);
         }catch(e) {
-            trace("Failed parsing chart: " + e.toString());
+            Log.error("Failed parsing chart: " + e.toString());
         }
         return data;
     }
@@ -145,9 +145,8 @@ class Chart {
 	 */
 	public static function convertLegacy(json:FNFLegacyChart):Chart
     {
-        trace("Preparing to convert...");
         if (json == null) {
-            trace("JSON is null?");
+            Log.warn("Could not convert, given JSON is null.");
             return getTemplate();
         }
         inline function __addEvent(array:Array<ChartEventGroup>, time:Float, event:ChartEvent) {
@@ -173,8 +172,6 @@ class Chart {
 
         var curBPM:Float = safeJSON.bpm;
         var totalPos:Float = 0;
-
-        trace("Converting...");
 
         for (index => i in safeJSON.notes){ 
             if (i.changeBPM && i.bpm != curBPM) {
@@ -225,7 +222,6 @@ class Chart {
             totalPos += ((60 / curBPM) * 1000)*4;
         }
 
-        trace("Converted all notes & events. Sorting...");
         events.sort((a:Dynamic, b:Dynamic)->{
             var result:Int = 0;
     
@@ -271,7 +267,8 @@ class Chart {
             events: events
         }
 
-        trace("Chart convert finished.");
+        if (Preferences.verboseLog)
+            Log.info("Chart converted.");
         return cdev;
     }
 

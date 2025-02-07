@@ -27,6 +27,7 @@ class Assets {
 	@:noCompletion inline public static var _CHARACTER_PATH:String  = '$_DATA_PATH/characters';
 	@:noCompletion inline public static var _SHADER_PATH:String  = '$_DATA_PATH/shaders';
 	@:noCompletion inline public static var _TEXTS_PATH:String  = '$_DATA_PATH/texts';
+	@:noCompletion inline public static var _STAGE_PATH:String  = '$_DATA_PATH/stages';
 
     @:noCompletion inline public static var _FONT_PATH:String  = '$_ASSET_PATH/fonts';
     @:noCompletion inline public static var _IMAGE_PATH:String = '$_ASSET_PATH/images';
@@ -81,7 +82,7 @@ class Assets {
 	public static function text(name:String) {
 		var path:String = '$_TEXTS_PATH/$name.txt';
 		if (!FileSystem.exists(path)) {
-			trace("Could not get text file: " + path);
+			Log.warn("Could not get text file: " + path);
 			return "";
 		}
 		return File.getContent(path);
@@ -132,13 +133,13 @@ class Assets {
 	 */
 	public static function sparrowAtlas(file:String, ?customPath:Bool = false, ?gpuTexture:Bool = true, ?updateCache:Bool = false):FlxAtlasFrames {
 		inline function failed(message:String) {
-			trace(message);
+			if (Preferences.verboseLog)
+				Log.warn(message);
 			return null;
 		}
 		if (!updateCache && loaded_atlases.exists(file))
 			return loaded_atlases.get(file);
 
-		trace("Loading new Atlas Frames for: " + file);
 		var graphic:FlxGraphic = image(file, customPath, gpuTexture);
 		if (graphic == null) 
 			failed("Graphic is null.");
@@ -158,19 +159,22 @@ class Assets {
 	/**
 	 * Returns character asset files.
 	 * @param name Character's name.
+	 * @param death Whether to use the death sprite instead of the normal one.
 	 * @return CharacterAssets
 	 */
-	public static function character(name:String):CharacterAssets {
+	public static function character(name:String, death:Bool = false):CharacterAssets {
 		inline function failed(message:String) {
-			trace(message);
+			if (Preferences.verboseLog)
+				Log.warn(message);
 			return null;
 		}
+
+		var sprite:String = !death ? "normal" : "death";
 		var path:String = '${_CHARACTER_PATH}/$name';
-		trace("Character Path: " + path);
 		if (!FileSystem.exists(path) || !FileSystem.isDirectory(path)) 
 			failed("Character path is non-existent.");
 
-		var atlas:FlxAtlasFrames = sparrowAtlas('$path/sprites/normal', true);
+		var atlas:FlxAtlasFrames = sparrowAtlas('$path/sprites/$sprite', true);
 		if (atlas == null)
 			failed("Could not found sparrow atlas for character sprite.");
 
@@ -210,7 +214,7 @@ class Assets {
 	public static function frag(name:String) {
 		var path:String = '$_SHADER_PATH/$name.frag';
 		if (!FileSystem.exists(path)) {
-			trace("Could not found .frag file: " + path);
+			Log.warn("Could not found .frag file: " + path);
 			return "";
 		} 
 		return File.getContent(path);

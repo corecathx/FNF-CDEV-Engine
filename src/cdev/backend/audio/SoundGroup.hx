@@ -38,7 +38,8 @@ class SoundGroup extends FlxBasic {
             voices.push(sound);
         }
 
-        trace("Sound Group is ready.");
+        if (Preferences.verboseLog)
+            Log.info("Sound Group is ready.");
     }
 
     inline function createSoundTag(snd:Sound, ?tag:String = "") {
@@ -47,26 +48,23 @@ class SoundGroup extends FlxBasic {
 
     override function update(elapsed:Float) {
         if (playing) {
-            Conductor.instance.time += elapsed * (1000 * speed);
+            if (FlxG.timeScale < 1)
+                Conductor.instance.time = inst.time;
+            else
+                Conductor.instance.time += elapsed * (1000 * speed);
+            
             inst.pitch = speed;
     
             if (Math.abs(Conductor.instance.time - inst.time) > resyncThreshold) {
                 Conductor.instance.time = inst.time;
             }
     
-            FlxG.watch.addQuick("CondTime", Conductor.instance.time);
-            FlxG.watch.addQuick("InstTime", inst.time);
-
-            var l:Int = 0;
             forEachVoices((sound:SoundTag) -> {
                 if (Math.abs(sound.snd.time - inst.time) > resyncThreshold) {
                     sound.snd.time = inst.time;
                 }
                 sound.snd.pitch = speed;
-                FlxG.watch.addQuick("Snd"+l+"Time", sound.snd.time);
-                l++;
             });
-
         }
     
         super.update(elapsed);
@@ -74,7 +72,6 @@ class SoundGroup extends FlxBasic {
     
 
     public function play(?time:Float) {
-        trace("playing");
         playing = true;
         if (time != null) {
             inst.time = time;
@@ -89,6 +86,12 @@ class SoundGroup extends FlxBasic {
         resync();
         inst.pause();
         forEachVoices((sound:SoundTag)->{if (sound.snd != null) sound.snd.pause();});
+    }
+
+    public function stop() {
+        playing = false;
+        inst.stop();
+        forEachVoices((sound:SoundTag)->{if (sound.snd != null) sound.snd.stop();});
     }
 
     /**

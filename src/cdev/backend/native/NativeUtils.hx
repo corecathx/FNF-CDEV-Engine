@@ -20,7 +20,8 @@ class NativeUtils {
         #if windows
         Windows.setDPIAware();
         #else
-        trace("This target is currently unsupported for DPI Aware Mode.");
+        if (Preferences.verboseLog)
+            trace("This target is currently unsupported for DPI Aware Mode.");
         #end
     }
 
@@ -28,7 +29,8 @@ class NativeUtils {
         #if windows
         Windows.setWindowDarkMode(title, enable);
         #else
-        trace("Unsupported platform, Dark mode property remains unchanged.");
+        if (Preferences.verboseLog)
+            trace("Unsupported platform, Dark mode property remains unchanged.");
         #end
     }
 }

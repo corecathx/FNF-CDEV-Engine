@@ -10,7 +10,7 @@ import cdev.states.PlayState;
 /**
  * Pause screen on gameplay.
  */
-class PauseSubstate extends SubState {
+class PauseSubState extends SubState {
     var allowControls:Bool = true;
     var pauseOptions(get,default):Array<{name:String, callback:Void->Void}>;
     function get_pauseOptions():Array<{name:String, callback:Void->Void}> {
@@ -66,6 +66,7 @@ class PauseSubstate extends SubState {
         bg.alpha = 0;
         bg.setScale(1/parent.camHUD.zoom);
         bg.angle = -parent.camHUD.angle;
+        bg.scrollFactor.set();
         add(bg);
         FlxTween.tween(bg, {alpha: 0.6}, 0.4, {ease: FlxEase.quartInOut});
 
@@ -77,6 +78,7 @@ class PauseSubstate extends SubState {
 			opt.menuItem = true;
 			opt.target = index;
 			opt.ID = index;
+            opt.scrollFactor.set();
 			grpOptions.add(opt);
 		}
 
@@ -93,6 +95,7 @@ class PauseSubstate extends SubState {
             var text:Text = new Text(0, 15 + (32 * index), _curText, 32);
             text.x = FlxG.width - (text.width + 20);
             text.alpha = 0;
+            text.scrollFactor.set();
             add(text);
             textGroup.push(text);
             

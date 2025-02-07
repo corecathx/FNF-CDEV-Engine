@@ -31,6 +31,12 @@
 	<!-- Comment this to disable: Crash Handler. -->
 	<define name="CRASH_HANDLER" if="windows"/>
 
+	<!-- Comment this to disable: Scripting Support. -->
+	<define name="SCRIPTING_API"/>
+	
+	<!-- Comment this to disable: HScript Improved - Custom Classes. -->
+	<define name="CUSTOM_CLASSES" if="SCRIPTING_API"/>
+
 	<!-- Prebuild and Postbuild scripts. -->
 	<prebuild haxe="res/compiler/Prebuild.hx"/>
 	<postbuild haxe="res/compiler/Postbuild.hx"/>
@@ -45,13 +51,16 @@
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
-	<haxelib name="flixel" />
-	<haxelib name="flixel-addons" />
+	<haxelib name="flixel" /> <!-- The Game Engine itself, duh. -->
+	<haxelib name="flixel-addons" /> <!-- Flixel's addons. -->
+	<haxelib name="hscript-improved" if="SCRIPTING_API"/> <!-- HScript, check SCRIPTING_API to disable. -->
+
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
 	<haxedef name="HXCPP_CHECK_POINTER" if="CRASH_HANDLER" />
 	<haxedef name="HXCPP_STACK_LINE" if="CRASH_HANDLER" />
 	<haxedef name="HXCPP_GC_BIG_BLOCKS"/>
+	<haxedef name="hscriptPos" if="SCRIPTING_API"/>
 
 	<haxedef name="FLX_NO_HEALTH" />
 
@@ -70,7 +79,6 @@
 	<!-- Haxe 4.3.0+: Enable pretty syntax errors and stuff. -->
 	<!-- pretty (haxeflixel default), indent, classic (haxe compiler default) -->
 	<haxedef name="message.reporting" value="pretty" />
-
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here-->

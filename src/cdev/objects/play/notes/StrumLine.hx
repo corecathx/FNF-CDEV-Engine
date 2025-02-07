@@ -10,6 +10,11 @@ import cdev.objects.play.notes.Note.JudgementData;
 import flixel.util.FlxSignal;
 import flixel.group.FlxSpriteGroup;
 
+enum abstract StrumOwner(Int) from Int to Int {
+    var OPPONENT = 0;
+    var PLAYER = 1;
+}
+
 typedef NoteSignal = FlxTypedSignal<Note->Void>;
 
 class NoteGroup extends FlxTypedSpriteGroup<Note> {
@@ -51,6 +56,13 @@ class StrumLine extends FlxSpriteGroup {
     /** Whether to automatically hit the notes. **/
     public var cpu(default,set):Bool = false;
 
+    public var owner:StrumOwner = OPPONENT;
+
+    public var isPlayer(get, never):Bool;
+    private function get_isPlayer():Bool {
+        return owner == PLAYER;
+    }
+
     public var keys:Map<FlxKey, Int>;
 
     public var heldKeys:Array<Bool> = [false,false,false,false];
@@ -66,7 +78,7 @@ class StrumLine extends FlxSpriteGroup {
     public var onNoteHit:NoteSignal;
     public var onNoteMiss:NoteSignal;
 
-    public function new(x:Float = 0, y:Float = 0, cpu:Bool = false):Void {
+    public function new(x:Float = 0, y:Float = 0, cpu:Bool, ?owner:StrumOwner = OPPONENT):Void {
         super(x, y);
         receptors = new FlxTypedSpriteGroup<ReceptorNote>();
         add(receptors);
@@ -90,11 +102,21 @@ class StrumLine extends FlxSpriteGroup {
         onNoteHit = new NoteSignal();
         onNoteMiss = new NoteSignal();
 
+        this.owner = owner;
         this.cpu = cpu;
     }
 
     public function addNote(n:Note) {
         notes.add(n);
+    }
+
+    /**
+     * Assign a character to this strumline.
+     * @param char Character object.
+     */
+    public function addCharacter(char:Character) {
+        if (char == null) return;
+        characters.push(char);
     }
 
     public function getReceptor(index:Int) return receptors.members[index];
@@ -143,7 +165,7 @@ class StrumLine extends FlxSpriteGroup {
             // If the player is inside the note's hold range, play strum and character animation.
             if ((cpu || heldKeys[note.data]) && note.hit && !note.missed && _inHoldRange) {
                 playDirectionAnim(note);
-                if (!cpu) { // You won't get scores on botplay.
+                if (isPlayer && !cpu) { // You won't get scores on botplay.
                     PlayState.current.score += Std.int(200 * elapsed);
                     PlayState.current.health += 0.075 * elapsed;
                 }
@@ -177,7 +199,8 @@ class StrumLine extends FlxSpriteGroup {
 
         Application.current.window.onKeyDown.add(_onKeyDown);
         Application.current.window.onKeyUp.add(_onKeyUp);
-        trace("Input registered");
+        if (Preferences.verboseLog)
+            trace("Input registered");
     }
 
     public function unregisterInputs() {
@@ -185,7 +208,8 @@ class StrumLine extends FlxSpriteGroup {
         Application.current.window.onKeyDown.remove(_onKeyDown);
         Application.current.window.onKeyUp.remove(_onKeyUp);
         keys = null;
-        trace("Input unregistered");
+        if (Preferences.verboseLog)
+            trace("Input unregistered");
     }
 
     function _onKeyDown(limeKey:KeyCode, mod:KeyModifier) {

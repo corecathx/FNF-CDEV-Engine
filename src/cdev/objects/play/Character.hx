@@ -4,12 +4,14 @@ import flixel.util.FlxColor;
 
 class Character extends Sprite {
     /**
+     * If a character is failed to load, we'll use this character.
+     */
+    public static var fallback_character:String = "bf";
+    /**
      * This character's configuration data.
      */
     public var data:CharacterData = null;
-
     public var icon:FlxGraphic;
-
     public var isPlayer:Bool = false;
     
     /**
@@ -17,27 +19,40 @@ class Character extends Sprite {
      */
     public var singing(get,never):Bool;
     function get_singing():Bool {
-        if (animation.curAnim == null) return false;
+        if (animation == null || animation.curAnim == null) return false;
         return animation.curAnim.name.startsWith("sing");
     }
-
+    public var name:String = "";
     public var holdTimer:Float = 0;
 
-    public function new(nX:Float, nY:Float, name:String, player:Bool) {
+    public function new(nX:Float, nY:Float, name:String, player:Bool, ?death:Bool = false) {
         super(nX,nY);
-        var _data:CharacterAssets = Assets.character(name);
+        this.name = name;
+
+        var _data:CharacterAssets = getCharacterAssets(name, death);
         if (_data.atlas != null)
             frames = _data.atlas;
         isPlayer = flipX = player;
-        if (_data.data == null) return;
+        if (_data.data == null) 
+            return;
         data = _data.data;
-        if (data.flip_x) {
+        if (data.flip_x)
             flipX = !flipX;
-        }
         icon = _data.icon;
         x += (isPlayer ? -data.position_offset.x : data.position_offset.x);
         y += data.position_offset.y;
         loadAnimations(data);
+    }
+
+    public function getCharacterAssets(name:String,death:Bool) {
+        var _data:CharacterAssets = null;
+        try {
+            _data = Assets.character(name, death);
+        } catch (e) {
+            Log.warn("Could not load character file: " + name + ", " + e.toString());
+            _data = Assets.character(fallback_character, death);
+        }
+        return _data;
     }
 
     public function loadAnimations(data:CharacterData) {
@@ -60,7 +75,7 @@ class Character extends Sprite {
     override function update(elapsed:Float) {
         if (singing) {
             holdTimer += elapsed;
-            if (holdTimer > (Conductor.instance.beat_ms * data.hold_time)/1000) {
+            if (holdTimer > (Conductor.instance.beat_ms * data.hold_time) / 1000) {
                 holdTimer = 0;
                 dance(true);
             }
@@ -80,8 +95,11 @@ class Character extends Sprite {
     }
 
     override function playAnim(animName:String, force:Bool = false, reversed:Bool = false, frame:Int = 0) {
-        if (!animation.exists(animName)) return;
+        if (animation == null ||!animation.exists(animName)) return;
         holdTimer = 0;
+        // If flipX is true, we need to flip the animation names as well.
+        if (flipX && (animName == "singLEFT" || animName == "singRIGHT")) 
+            animName = (animName == "singLEFT" ? "singRIGHT" : "singLEFT");
         super.playAnim(animName, force, reversed, frame);
     }
 }

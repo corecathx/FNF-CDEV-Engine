@@ -30,18 +30,21 @@ class Utils {
         // Check if the song path exists.
         var path:String = '${Assets._SONG_PATH}/$songName';
         if (!FileSystem.exists(path)) {
-            trace("Song could not be found.");
+            if (Preferences.verboseLog)
+                Log.warn("Song could not be found.");
             return null;
         }
     
         // Checking meta file.
         var metaPath:String = '$path/meta.json';
         if (!FileSystem.exists(metaPath)) {
-            trace("Meta file not found: " + metaPath);
+            if (Preferences.verboseLog)
+                Log.warn("Meta file not found: " + metaPath);
             return null;
         }
     
-        trace("Loading Meta: " + metaPath);
+        if (Preferences.verboseLog)
+            Log.info("Loading Meta: " + metaPath);
         var meta:SongMeta = Json.parse(File.getContent(metaPath));
     
         // Inst and voices stuff.
@@ -72,13 +75,15 @@ class Utils {
     
         var trackPath:String = '$path/tracks';
         if (!FileSystem.exists(trackPath)) {
-            trace("Tracks folder could not be found.");
+            if (Preferences.verboseLog)
+                Log.warn("Tracks folder could not be found.");
             return null;
         }
         // Load Instrumental
         var instPath:String = '$trackPath/${fileNames.inst}.ogg';
         if (!FileSystem.exists(instPath)) {
-            trace("Inst audio could not be found: " + instPath);
+            if (Preferences.verboseLog)
+                Log.warn("Inst audio could not be found: " + instPath);
             return null;
         }
         var inst:Sound = Assets._sound_file(instPath);
@@ -93,7 +98,8 @@ class Utils {
                 sound: Assets._sound_file(playerVoxPath),
                 tag: "player"
             });
-            trace("Found player vocals.");
+            if (Preferences.verboseLog)
+                Log.info("Found player vocals.");
             foundPlayer = true;
         }
 
@@ -103,18 +109,21 @@ class Utils {
                 sound: Assets._sound_file(opponentVoxPath),
                 tag: !meta.multiVoice ? "player" : "others"
             });
-            trace("Found opponent vocals, tag: " + (!meta.multiVoice ? "player" : "others"));
+            if (Preferences.verboseLog)
+                Log.info("Found opponent vocals, tag: " + (!meta.multiVoice ? "player" : "others"));
             foundOpponent = true;
         }
     
         // Load Chart
         var chartPath:String = '$path/charts/$diff.json';
         if (!FileSystem.exists(chartPath)) {
-            trace("Chart file not found: " + chartPath);
+            if (Preferences.verboseLog)
+                Log.warn("Chart file not found: " + chartPath);
             return null;
         }
     
-        trace("Loading Chart: " + diff + ".json");
+        if (Preferences.verboseLog)
+            Log.info("Loading Chart: " + diff + ".json");
         var chartData = Json.parse(File.getContent(chartPath));
         var chart:Chart = Chart.convertLegacy(chartData.song);
     
@@ -245,7 +254,6 @@ class Utils {
         // Just to make sure the audio doesn't go beyond player's music volume preferences.
         volume = (volume != null ? FlxMath.bound(volume, 0, Preferences.musicVolume) : Preferences.musicVolume);
 
-        trace("Playing BGM... " + name + " // " + volume);
         if (FlxG.sound.music == null) 
             FlxG.sound.playMusic(Assets.music(name),volume);
     }
@@ -425,7 +433,8 @@ class Utils {
 
     public static function destroyObject(obj:FlxBasic) {
         if (obj == null) {
-            trace("Could not destroy object.");
+            if (Preferences.verboseLog)
+                Log.warn("Could not destroy object.");
             return;
         }
 
