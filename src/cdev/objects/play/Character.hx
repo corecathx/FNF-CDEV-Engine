@@ -39,6 +39,11 @@ class Character extends Sprite {
         if (data.flip_x)
             flipX = !flipX;
         icon = _data.icon;
+
+        loadAnimations(data);
+    }
+
+    public function applyOffset() {
         x += (isPlayer ? -data.position_offset.x : data.position_offset.x);
         y += data.position_offset.y;
         loadAnimations(data);
@@ -105,23 +110,14 @@ class Character extends Sprite {
 }
 
 typedef CharacterData = {
-    var animations:Array<AnimationData>;
+    var animations:Array<Animation>;
     var antialiasing:Bool;
     var graphic_path:String;
-    var position_offset:{x:Float,y:Float};
+    var position_offset:Axis2D;
     var icon:String;
     var flip_x:Bool;
     var bar_color:Array<Int>;
-    var camera_offset:{x:Float,y:Float};
+    var camera_offset:Axis2D;
     var char_scale:Float;
     var hold_time:Float;
-}
-
-typedef AnimationData = {
-    var loop:Bool;
-    var offset:{x:Float,y:Float};
-    var name:String;
-    var fps:Int;
-    var prefix:String;
-    var indices:Array<Int>;
 }

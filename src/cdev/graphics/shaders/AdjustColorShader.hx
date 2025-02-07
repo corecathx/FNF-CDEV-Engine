@@ -36,7 +36,7 @@ class AdjustColorShader extends FlxRuntimeShader {
         return contrast;
     }
 
-    public function toString():String {
+    override public function toString():String {
         return 'AdjustColorShader(${this.hue}, ${this.saturation}, ${this.brightness}, ${this.contrast})';
     }
 }

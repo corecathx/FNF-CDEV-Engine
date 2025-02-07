@@ -85,7 +85,7 @@ class PauseSubState extends SubState {
         /// Info texts that appears on top right of the game's window. ///
         var composer:String = Chart.getMeta(parent.chart, "Composer");
         var textList:Array<String> = ['
-            ${parent.currentSong} // ${parent.currentDifficulty}', // Song Name + Difficulty
+            ${PlayState.currentSong} // ${PlayState.currentDifficulty}', // Song Name + Difficulty
             '${composer == "" ? "" : "By " + composer}' // Composer name.
         ];
         for (index=>data in textList) {

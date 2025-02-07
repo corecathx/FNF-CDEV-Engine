@@ -18,7 +18,6 @@ class Postbuild {
         Sys.println("[CDEV] >> CDEV Engine successfully compiled!");
         Sys.println("[CDEV] >> Time elapsed: " + secondsToTime(now-data) + "s");
         Sys.println("=+=+=+=+=+=+=+=+=+ CDEV Engine Log +=+=+=+=+=+=+=+=+=");
-
     }
     static function secondsToTime(seconds:Float):String {
         var hours = Math.floor(seconds / 3600);

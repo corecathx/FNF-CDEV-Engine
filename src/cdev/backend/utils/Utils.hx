@@ -249,7 +249,7 @@ class Utils {
      */
     public static function playBGM(?name:String, ?volume:Float) {
         if (name == null) 
-            name = "funkinBeat";
+            name = "freakyMenu";
 
         // Just to make sure the audio doesn't go beyond player's music volume preferences.
         volume = (volume != null ? FlxMath.bound(volume, 0, Preferences.musicVolume) : Preferences.musicVolume);

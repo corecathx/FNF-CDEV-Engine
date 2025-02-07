@@ -10,6 +10,8 @@ typedef SpriteGroup = FlxTypedSpriteGroup<Sprite>;
  * Sprite is just Sprite but with additional helper functions.
  */
 class Sprite extends FlxSprite {
+    public var name:String = "";
+    public var zIndex:Int = 0; // used on gameplay, that's it.
     /**
      * Contains an animation specific offsets.
      */
@@ -62,7 +64,6 @@ class Sprite extends FlxSprite {
     public function addOffset(anim:String,offsetX:Float,offsetY:Float) {
         animOffsets[anim] = [offsetX, offsetY];
     }
-
     /**
      * A shortcut to `animation.play`, also applies custom offsets.
      * @param animName Animation's name that will be played.
@@ -75,10 +76,17 @@ class Sprite extends FlxSprite {
 
         if (animOffsets.exists(animName)) {
             var savedOffset = animOffsets.get(animName);
-            offset.set(flipX ? -savedOffset[0] : savedOffset[0], savedOffset[1]);
-        } /*else {
-            offset.set(0, 0);
-        }*/
+            var offsets:Axis2D = {
+                x: flipX ? -savedOffset[0] : savedOffset[0],
+                y: savedOffset[1]
+            }
+
+            var radians = angle * Math.PI / 180;
+            offset.set(
+                offsets.x * Math.cos(radians) - offsets.y * Math.sin(radians),
+                offsets.x * Math.sin(radians) + offsets.y * Math.cos(radians)
+            );
+        }
     }
 
     override function makeGraphic(Width:Int, Height:Int, Color:FlxColor = FlxColor.WHITE, Unique:Bool = false, ?Key:String):Sprite {

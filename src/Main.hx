@@ -60,6 +60,15 @@ class Main extends Sprite
 		#if CRASH_HANDLER
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 		#end
+
+		// Linux Stuff.
+		#if linux
+		inline function runCmd(cmd, args) {
+			var cmd = Sys.command(cmd, args);
+			trace("runCmd: " + cmd + " " + (cmd != 127 ? "finished" : "failed"));
+		}
+		runCmd("chmod", ["+x", "./cdev-crash_handler"]);
+		#end
 	}
 
 	#if CRASH_HANDLER
@@ -104,7 +113,8 @@ class Main extends Sprite
 		+ finalOutput
 		+ "Please report this error to CDEV Engine's GitHub page: \nhttps://github.com/Core5570RYT/FNF-CDEV-Engine";
 		
-		var cdev_ch_path:String = "./cdev-crash_handler.exe";
+		var cdev_ch_path:String = "./cdev-crash_handler"#if windows + ".exe"; #elseif linux ; #end
+		trace(cdev_ch_path);
 		if (FileSystem.exists(cdev_ch_path))
 			new Process(cdev_ch_path, ["crash", filePath]);
 		else

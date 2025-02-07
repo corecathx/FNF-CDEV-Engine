@@ -30,8 +30,8 @@ import flixel.addons.display.FlxGridOverlay;
  */
 class PlayState extends State {
     public static var current:PlayState = null;
-    public var currentSong:String = "";
-    public var currentDifficulty:String = "";
+    public static var currentSong:String = "";
+    public static var currentDifficulty:String = "";
     public var playerStrums:StrumLine;
     public var opponentStrums:StrumLine;
     public var sounds:SoundGroup;
@@ -87,10 +87,10 @@ class PlayState extends State {
         shit:0, 
     }
 
-    public function new(?songName:String = "Satin Panties", ?difficulty:String = "erect") {
+    public function new(?songName:String, ?difficulty:String) {
         super();
-        currentSong = songName;
-        currentDifficulty = difficulty;
+        currentSong = songName ?? currentSong;
+        currentDifficulty = difficulty ?? currentDifficulty;
     }
 
     override function create() {    
@@ -138,7 +138,12 @@ class PlayState extends State {
         defaultCamZoom = 0.9;
 
         // Characters are also handled in this class!
-        stage = new Stage(this, chart.data.stage, chart.data.player, chart.data.opponent, chart.data.spectator);
+        stage = new Stage("Stage", {
+            spectator: chart.data.spectator,
+            player: chart.data.player,
+            opponent: chart.data.opponent
+        });
+        defaultCamZoom = stage?.data.zoom;
         add(stage);
 
         player = stage.player;
@@ -327,6 +332,10 @@ class PlayState extends State {
             sounds.speed *= 0.99;
         if (FlxG.keys.pressed.X)
             sounds.speed *= 1.01;
+
+        if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.SPACE) {
+            throw "crash test, wawa :3";
+        }
     }
 
     function _updateControls(elapsed:Float) {
@@ -488,6 +497,13 @@ class PlayState extends State {
                     case "bf": followTarget = cast player;
                 }
         }
+    }
+
+    function onDeath() {
+        sounds.stop();
+        persistentDraw = false;
+        persistentUpdate = false;
+        openSubState(new GameOverSubState(this, player));
     }
 
     function onDeath() {

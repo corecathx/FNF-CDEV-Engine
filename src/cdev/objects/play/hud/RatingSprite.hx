@@ -14,7 +14,7 @@ enum abstract Rating(String) from String to String {
  */
 class RatingSprite extends Sprite {
     public var scaling:Float = 0.5;
-    public var startPos:{x:Float,y:Float} = {x:0,y:0};
+    public var startPos:Axis2D = {x:0,y:0};
     public var combos:Array<Sprite> = [];
 
     /**
