@@ -1,0 +1,17 @@
+{
+    "name": "Core",
+    "artist": "CoreCat / Core5570R",
+    "color": "#101010",
+    "icon": "core",
+    "bpm": 130,
+    "data": {
+        "inst": [
+            { "diff": "erect", "folder": "erect" }
+        ],
+        "voices": [
+            { "diff": "erect", "folder": "erect" }
+        ]
+    },
+    "difficulties": ["hard"],
+    "multiVoice": true
+}

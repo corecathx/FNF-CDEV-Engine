@@ -22,7 +22,7 @@ class BorderShader extends FlxRuntimeShader {
         return borderVisible;
     }
 
-    override public function toString():String {
+    public function toString():String {
         return 'BorderShader(${this.borderWidth}, ${this.borderVisible})';
     }
 }

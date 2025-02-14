@@ -10,7 +10,7 @@ import cdev.states.PlayState;
 /**
  * Pause screen on gameplay.
  */
-class PauseSubState extends SubState {
+class PauseSubstate extends SubState {
     var allowControls:Bool = true;
     var pauseOptions(get,default):Array<{name:String, callback:Void->Void}>;
     function get_pauseOptions():Array<{name:String, callback:Void->Void}> {

@@ -1,8 +1,8 @@
 package cdev.states;
 
-import cdev.substates.GameOverSubState;
+import cdev.substates.GameOverSubstate;
 import cdev.objects.play.Stage;
-import cdev.substates.PauseSubState;
+import cdev.substates.PauseSubstate;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 import cdev.graphics.shaders.AdjustColorShader;
@@ -351,7 +351,7 @@ class PlayState extends State {
         persistentUpdate = false;
 		paused = true;
         sounds.pause();
-        openSubState(new PauseSubState(this));
+        openSubState(new PauseSubstate(this));
     }
 
     /**
@@ -448,11 +448,21 @@ class PlayState extends State {
         camHUD.zoom = FlxMath.lerp(defaultHudZoom, camHUD.zoom, 1-(elapsed*6));
 
         if (followTarget != null) {
-            var followX:Float = (followTarget.getMidpoint().x + 100) + (followTarget.isPlayer ? -followTarget.data.camera_offset.x : followTarget.data.camera_offset.x);
-            var followY:Float = (followTarget.getMidpoint().y - 100) + followTarget.data.camera_offset.y;
-            camFollow.x = FlxMath.lerp(followX, camFollow.x, 1-(elapsed*6));
-            camFollow.y = FlxMath.lerp(followY, camFollow.y, 1-(elapsed*6));    
+            var mid:FlxPoint = followTarget.getMidpoint();
+            var off:Axis2D = {
+                x: followTarget.data.camera_offset.x,
+                y: followTarget.data.camera_offset.y
+            }
+            var follow:Axis2D = {
+                x: mid.x + (100 + off.x) * (followTarget.isPlayer ? -1 : 1),
+                y: mid.y - 100 + off.y
+            }
+            var lerp:Float = 1 - (elapsed * 6);
+            
+            camFollow.x = FlxMath.lerp(follow.x, camFollow.x, lerp);
+            camFollow.y = FlxMath.lerp(follow.y, camFollow.y, lerp);
         }
+        
     }
 
     var healthBarPercent:Float = 50;
@@ -503,14 +513,7 @@ class PlayState extends State {
         sounds.stop();
         persistentDraw = false;
         persistentUpdate = false;
-        openSubState(new GameOverSubState(this, player));
-    }
-
-    function onDeath() {
-        sounds.stop();
-        persistentDraw = false;
-        persistentUpdate = false;
-        openSubState(new GameOverSubState(this, player));
+        openSubState(new GameOverSubstate(this, player));
     }
 
     var banger:Bool = false;

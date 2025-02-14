@@ -15,7 +15,7 @@ class Sprite extends FlxSprite {
     /**
      * Contains an animation specific offsets.
      */
-    public var animOffsets:Map<String,Array<Float>> = [];
+    public var animOffsets:Map<String,Axis2D> = [];
 
     public function new(nX:Float = 0, nY:Float = 0, ?nGraphic:FlxGraphicAsset) {
         super(nX,nY);
@@ -62,7 +62,10 @@ class Sprite extends FlxSprite {
      * @param offsetY The Y offset.
      */
     public function addOffset(anim:String,offsetX:Float,offsetY:Float) {
-        animOffsets[anim] = [offsetX, offsetY];
+        animOffsets[anim] = {
+            x: offsetX, 
+            y: offsetY
+        }
     }
     /**
      * A shortcut to `animation.play`, also applies custom offsets.
@@ -77,8 +80,8 @@ class Sprite extends FlxSprite {
         if (animOffsets.exists(animName)) {
             var savedOffset = animOffsets.get(animName);
             var offsets:Axis2D = {
-                x: flipX ? -savedOffset[0] : savedOffset[0],
-                y: savedOffset[1]
+                x: (savedOffset.x * (flipX ? -1 : 1)) + (flipX ? frameWidth - width : 0),
+                y: savedOffset.y
             }
 
             var radians = angle * Math.PI / 180;
@@ -88,6 +91,8 @@ class Sprite extends FlxSprite {
             );
         }
     }
+    
+    
 
     override function makeGraphic(Width:Int, Height:Int, Color:FlxColor = FlxColor.WHITE, Unique:Bool = false, ?Key:String):Sprite {
         return cast super.makeGraphic(Width, Height, Color, Unique, Key);

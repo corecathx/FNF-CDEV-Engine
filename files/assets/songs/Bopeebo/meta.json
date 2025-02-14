@@ -1,0 +1,17 @@
+{
+    "name": "Bopeebo",
+    "artist": "Kawai Sprite",
+    "color": "#505050",
+    "icon": "dad",
+    "bpm": 130,
+    "data": {
+        "inst": [
+            { "diff": "erect", "folder": "erect" }
+        ],
+        "voices": [
+            { "diff": "erect", "folder": "erect" }
+        ]
+    },
+    "difficulties": ["hard", "erect"],
+    "multiVoice": true
+}

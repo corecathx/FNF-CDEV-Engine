@@ -28,7 +28,6 @@ class Assets {
 	@:noCompletion inline public static var _SHADER_PATH:String  = '$_DATA_PATH/shaders';
 	@:noCompletion inline public static var _STAGE_PATH:String  = '$_DATA_PATH/stages';
 	@:noCompletion inline public static var _TEXTS_PATH:String  = '$_DATA_PATH/texts';
-	@:noCompletion inline public static var _STAGE_PATH:String  = '$_DATA_PATH/stages';
 
     @:noCompletion inline public static var _FONT_PATH:String  = '$_ASSET_PATH/fonts';
     @:noCompletion inline public static var _IMAGE_PATH:String = '$_ASSET_PATH/images';

@@ -1,0 +1,13 @@
+{
+    "name": "Accelerant",
+    "artist": "Kawai Sprite",
+    "color": "#0060FF",
+    "icon": "bf",
+    "bpm": 130,
+    "data": {
+        "inst": [],
+        "voices": []
+    },
+    "difficulties": ["hard"],
+    "multiVoice": false
+}

@@ -98,21 +98,6 @@ class Stage extends SpriteGroup {
     }
 
     public function initStage() {
-        inline function applyProp(char:Sprite, obj:StageSprite) {
-            if (obj.name != null) 
-                char.name = obj.name;
-            if (obj.position != null)
-                char.setPosition(obj.position.x, obj.position.y);
-            if (obj.scroll != null)
-                char.scrollFactor.set(obj.scroll.x, obj.scroll.y);
-            if (obj.scale != null) {
-                char.scale.set(obj.scale.x, obj.scale.y);
-                char.updateHitbox();
-            }
-            char.alpha = obj.alpha ?? 1;
-            char.angle = obj.angle ?? 0;
-            char.zIndex = obj.zIndex ?? 0;
-        }
         spectator = addCharacter(400, 130, charData.spectator, false);
         player = addCharacter(770, 100, charData.player, true);
         opponent = addCharacter(100, 100, charData.opponent, false);
@@ -139,9 +124,7 @@ class Stage extends SpriteGroup {
                     if (data.useCharacterOffsets) 
                         opponent.applyOffset();
                 case STATIC:
-                    var spr:Sprite = new Sprite().loadGraphic(Assets.image(obj.path));
-                    applyProp(spr, obj);
-                    addSprite(spr);
+                    createSprite(obj);
                 default:
                     // hi
             }
@@ -155,6 +138,28 @@ class Stage extends SpriteGroup {
             _highlightSprite.alpha = 0.2;
             add(_highlightSprite);
         }
+    }
+
+    public function createSprite(data:StageSprite) {
+        var spr:Sprite = new Sprite().loadGraphic(Assets.image(data.path));
+        applyProp(spr, data);
+        addSprite(spr);
+    }
+
+    public inline function applyProp(char:Sprite, obj:StageSprite) {
+        if (obj.name != null) 
+            char.name = obj.name;
+        if (obj.position != null)
+            char.setPosition(obj.position.x, obj.position.y);
+        if (obj.scroll != null)
+            char.scrollFactor.set(obj.scroll.x, obj.scroll.y);
+        if (obj.scale != null) {
+            char.scale.set(obj.scale.x, obj.scale.y);
+            char.updateHitbox();
+        }
+        char.alpha = obj.alpha ?? 1;
+        char.angle = obj.angle ?? 0;
+        char.zIndex = obj.zIndex ?? 0;
     }
 
     var _lastObj:Sprite;
@@ -206,8 +211,7 @@ class Stage extends SpriteGroup {
         return char;
     }
 
-    override function preAdd(sprite:Sprite):Void
-    {
+    override function preAdd(sprite:Sprite):Void {
         sprite.x += x;
         sprite.y += y;
         sprite.alpha *= alpha;

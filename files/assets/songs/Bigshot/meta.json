@@ -1,0 +1,15 @@
+{
+    "name": "Bigshot",
+    "artist": "Kawai Sprite",
+    "color": "#0060FF",
+    "icon": "bf",
+    "bpm": 130,
+    "data": {
+        "inst": [
+        ],
+        "voices": [
+        ]
+    },
+    "difficulties": ["easy", "normal", "hard"],
+    "multiVoice": false
+}

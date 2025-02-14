@@ -1,0 +1,15 @@
+{
+    "name": "Satin Panties",
+    "artist": "Kawai Sprite",
+    "color": "#505050",
+    "icon": "core",
+    "bpm": 130,
+    "data": {
+        "inst": [
+        ],
+        "voices": [
+        ]
+    },
+    "difficulties": ["easy", "normal", "hard"],
+    "multiVoice": true
+}

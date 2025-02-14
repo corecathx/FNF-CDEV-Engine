@@ -22,7 +22,6 @@ class Character extends Sprite {
         if (animation == null || animation.curAnim == null) return false;
         return animation.curAnim.name.startsWith("sing");
     }
-    public var name:String = "";
     public var holdTimer:Float = 0;
 
     public function new(nX:Float, nY:Float, name:String, player:Bool, ?death:Bool = false) {

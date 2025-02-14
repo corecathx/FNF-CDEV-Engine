@@ -1,0 +1,17 @@
+{
+    "name": "High",
+    "artist": "Kawai Sprite",
+    "color": "#505050",
+    "icon": "core",
+    "bpm": 130,
+    "data": {
+        "inst": [
+            { "diff": "erect", "folder": "erect" }
+        ],
+        "voices": [
+            { "diff": "erect", "folder": "erect" }
+        ]
+    },
+    "difficulties": ["hard", "erect"],
+    "multiVoice": true
+}

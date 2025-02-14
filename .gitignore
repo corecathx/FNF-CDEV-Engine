@@ -1,3 +1,7 @@
 .vscode
 export/
 res/compiler/compile.time
+
+files/assets/songs/Funeral
+files/assets/songs/TestChart
+src/cdev/substates/GameOverSubState.hx
