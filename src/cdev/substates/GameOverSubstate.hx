@@ -76,12 +76,12 @@ class GameOverSubstate extends SubState {
                 FlxG.sound.play(Assets.music(DEATH_BGM_END));
                 FlxTimer.wait(0.7, () -> {
                     FlxG.camera.fade(FlxColor.BLACK, 2, false, () -> {
-                        FlxG.switchState(new PlayState(parent?.currentSong));
+                        FlxG.switchState(new PlayState(PlayState.currentSong));
                     });
                 });
             } else {
                 FlxG.camera.visible = false;
-                FlxG.switchState(new PlayState(parent?.currentSong));
+                FlxG.switchState(new PlayState(PlayState.currentSong));
             }
         }
     }
