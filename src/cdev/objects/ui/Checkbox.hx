@@ -4,11 +4,13 @@ import cdev.graphics.MaterialIcon;
 
 class Checkbox extends Sprite {
     var check:Sprite;
+    public var nWidth:Float = -1;
     public var checked:Bool = false;
     public var label:Text;
     public var onCheckChanged:Bool->Void = (_)->{}
-    public function new(nX:Float, nY:Float, text:String, ?onCheckChanged:Bool->Void):Void {
+    public function new(nX:Float, nY:Float, nWidth:Float = -1, text:String, ?onCheckChanged:Bool->Void):Void {
         super(nX,nY);
+        this.nWidth = nWidth;
         if (onCheckChanged != null)
             this.onCheckChanged = onCheckChanged;
 
@@ -20,7 +22,9 @@ class Checkbox extends Sprite {
         check.setGraphicSize(width,height);
         check.updateHitbox();
 
-        label = new Text(0,0,text,LEFT,14);
+        label = new Text(0,0,text,LEFT,13);
+        if (nWidth > 0)
+            label.fieldWidth = nWidth-(width + 5);
         label.font = Constants.UI_FONT;
     }
 
@@ -45,7 +49,7 @@ class Checkbox extends Sprite {
             check.draw();
 
         label.setPosition(
-            x + width + 10,
+            x + width + 5,
             y + (height - label.height) * 0.5
         );
         label.draw();

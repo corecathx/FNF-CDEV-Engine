@@ -5,7 +5,7 @@ import flixel.text.FlxInputText;
 class InputBox extends FlxInputText {
     public var label:Text;
     public var placeholder:Text;
-    public function new(nX:Float, nY:Float, nWidth:Float, nText:String = "", nSize:Int = 14) {
+    public function new(nX:Float, nY:Float, nWidth:Float, nText:String = "", nSize:Int = 13) {
         super(nX, nY, Std.int(nWidth),nText, nSize, 0xFFFFFFFF, 0xFF101010);
         fieldBorderColor = 0xFF7E7E7E;
         selectionColor = 0xFF757575;

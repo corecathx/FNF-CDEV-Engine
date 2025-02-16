@@ -9,7 +9,7 @@ class Constants {
     /**
      * Used for CDEV Engine UI stuffs, such as editors, fps / memory counter.
      */
-    static final UI_FONT:String = Assets.fonts.MUSTICAPRO;
+    static final UI_FONT:String = Assets.fonts.JETBRAINS;
 
     /**
      * Used for Gameplay UI stuffs, such as HUD.

@@ -45,7 +45,7 @@ class StatsDisplay extends TextField
 		current = this;
 
 		selectable = false;
-		defaultTextFormat = new TextFormat(Constants.UI_FONT, 14, nColor, false);
+		defaultTextFormat = new TextFormat(Constants.UI_FONT, 12, nColor, false);
 		autoSize = LEFT;
 	}
 
@@ -86,9 +86,9 @@ class StatsDisplay extends TextField
 
 	}
 	
-	var _fps_format:TextFormat = new TextFormat(null, 18, null);
+	var _fps_format:TextFormat = new TextFormat(null, 17, null);
 	var _red_format:TextFormat = new TextFormat(null, null, null);
-	var _other_format:TextFormat = new TextFormat(null, 12, 0x707070);
+	var _other_format:TextFormat = new TextFormat(null, 10, 0x707070);
 	function applyFormatting() {
 		// The gray text thing
 		_red_format.color = lowFps ? 0xFF0000 : 0xFFFFFF;

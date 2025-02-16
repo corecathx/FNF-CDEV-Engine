@@ -1,13 +1,8 @@
 package cdev.states;
 
+import flixel.group.FlxSpriteGroup;
 import cdev.objects.ui.*;
-import openfl.media.Sound;
-import cdev.objects.Visualizer;
-import flixel.input.FlxInput;
-import flixel.input.keyboard.FlxKey;
-import cdev.objects.menus.Alphabet;
 import openfl.display.BitmapData;
-import flixel.text.FlxText;
 import flixel.addons.display.FlxGridOverlay;
 
 class TestUIState extends State
@@ -18,13 +13,13 @@ class TestUIState extends State
     var buttonTog:Button;
     var inputBox:InputBox;
     var check:Checkbox;
+
+    var tabGroup:TabGroup;
+
 	override public function create()
 	{
 		super.create();
         createBackground();
-
-        panel = new Panel(300,300, 100, 100);
-        add(panel);
 
         panel2 = new SelectionBox();
         add(panel2);
@@ -50,6 +45,25 @@ class TestUIState extends State
         check = new Checkbox(20, 210, "This is a checkbox");
         add(check);
 
+        tabGroup = new TabGroup(200, 200, 600, 200);
+        tabGroup.add("General", (p:FlxSpriteGroup)->{
+            p.add(new Text(0,0, "General", LEFT, 20));
+            p.add(new Text(0,24, "Lorem ipsum wawawawaw dsads vvczxc", LEFT, 14));
+        });
+        tabGroup.add("View", (p:FlxSpriteGroup)->{
+            p.add(new Text(0,0, "View", LEFT, 20));
+            p.add(new Text(0,24, "super.view()", LEFT, 14));
+        });
+        tabGroup.add("Options", (p:FlxSpriteGroup)->{
+            p.add(new Text(0,0, "Options", LEFT, 20));
+            p.add(new Text(0,24, "WHAT", LEFT, 14));
+        });
+        tabGroup.add("Help", (p:FlxSpriteGroup)->{
+            p.add(new Text(0,0, "Help", LEFT, 20));
+            p.add(new Text(0,24, "HELP I'M DEAD :sob:", LEFT, 14));
+        });
+        add(tabGroup);
+
         FlxG.mouse.visible = true;
 	}
 
@@ -65,14 +79,24 @@ class TestUIState extends State
 	{
 		super.update(elapsed);
         if (FlxG.keys.pressed.L)
-            panel.width += 1;
+            tabGroup.width += 2;
         if (FlxG.keys.pressed.J)
-            panel.width -= 1;
+            tabGroup.width -= 2;
         if (FlxG.keys.pressed.I)
-            panel.height -= 1;
+            tabGroup.height -= 2;
         if (FlxG.keys.pressed.K)
-            panel.height += 1;      
+            tabGroup.height += 2;      
          
+        if (FlxG.keys.pressed.D)
+            tabGroup.x += 2;
+        if (FlxG.keys.pressed.A)
+            tabGroup.x -= 2;
+        if (FlxG.keys.pressed.W)
+            tabGroup.y -= 2;
+        if (FlxG.keys.pressed.S)
+            tabGroup.y += 2;  
+
+
 		if (FlxG.keys.justPressed.ESCAPE) 
 			FlxG.switchState(new EngineInfoState());
 	}
