@@ -28,6 +28,9 @@ class DebugState extends State
 		if (FlxG.keys.justPressed.SHIFT) {
 			FlxG.switchState(new TestingState());
 		}
+		if (FlxG.keys.justPressed.U) {
+			FlxG.switchState(new TestUIState());
+		}
 		if (FlxG.keys.justPressed.B) {
 			FlxG.switchState(new cdev.states.editors.StageEditor());
 		}

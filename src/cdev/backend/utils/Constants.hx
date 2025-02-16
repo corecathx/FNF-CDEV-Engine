@@ -6,5 +6,14 @@ package cdev.backend.utils;
  */
 @:publicFields
 class Constants {
-    static final hi:String = "hi";
+    /**
+     * Used for CDEV Engine UI stuffs, such as editors, fps / memory counter.
+     */
+    static final UI_FONT:String = Assets.fonts.MUSTICAPRO;
+
+    /**
+     * Used for Gameplay UI stuffs, such as HUD.
+     * By default, all texts in the engine will be displayed with this font.
+     */
+    static final GAME_FONT:String = Assets.fonts.VCR;
 }

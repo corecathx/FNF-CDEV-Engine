@@ -65,6 +65,7 @@ class PauseSubstate extends SubState {
         bg = new Sprite().makeGraphic(FlxG.width,FlxG.height,FlxColor.BLACK);
         bg.alpha = 0;
         bg.setScale(1/parent.camHUD.zoom);
+        bg.screenCenter();
         bg.angle = -parent.camHUD.angle;
         bg.scrollFactor.set();
         add(bg);

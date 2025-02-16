@@ -70,10 +70,11 @@ class Assets {
 
 	/**
 	 * Loads a font file.
-	 * @param name Your font's file name (without .ttf extension)
+	 * @param name Your font's file name
+	 * @param ext Your font's extension (default: ttf)
 	 * @return String Your font's path.
 	 */
-    public inline static function font(name:String) return '$_FONT_PATH/$name.ttf';
+    public inline static function font(name:String, ext:String = 'ttf') return '$_FONT_PATH/$name.$ext';
 
 	/**
 	 * Returns a content of a txt file inside assets/data/texts folder.
@@ -252,6 +253,7 @@ class Assets {
  * Contains fonts used in the game.
  */
 class Fonts {
+    public var MUSTICAPRO(default, null):String = Assets.font("musticapro", 'otf');
     public var JETBRAINS(default, null):String = Assets.font("jbm");
     public var VCR(default, null):String = Assets.font("vcr");
     public function new() {}

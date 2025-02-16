@@ -1,6 +1,6 @@
 package cdev.objects;
 
-import flixel.math.FlxRect;
+
 import flixel.util.FlxColor;
 
 /**

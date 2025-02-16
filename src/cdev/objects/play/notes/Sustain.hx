@@ -1,6 +1,6 @@
 package cdev.objects.play.notes;
 
-import flixel.math.FlxRect;
+
 import flixel.graphics.frames.FlxFrame;
 import flixel.addons.display.FlxTiledSprite;
 

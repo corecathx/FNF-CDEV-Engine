@@ -40,7 +40,7 @@ TBA
 - [CoreCat](https://corecathx.github.io/) - Main Developer.
 
 ### Special Thanks
-- [Sword352](https://github.com/Sword352) - Tiled Sprite implementation.
+- [Cobalt](https://github.com/CCobaltDev) - Stylized terminal log.
 
 ### Friday Night Funkin'
 - [Funkin Crew](https://github.com/FunkinCrew/) - Peak game crew.-->

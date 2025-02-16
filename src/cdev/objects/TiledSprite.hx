@@ -2,7 +2,7 @@ package cdev.objects;
 
 import flixel.util.FlxDestroyUtil;
 import flixel.FlxCamera;
-import flixel.math.FlxRect;
+
 import flixel.math.FlxMatrix;
 import flixel.animation.FlxAnimation;
 import flixel.graphics.frames.FlxFrame;

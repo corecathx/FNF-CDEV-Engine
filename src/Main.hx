@@ -1,5 +1,6 @@
 package;
 
+import openfl.display.DisplayObject;
 import cdev.backend.native.NativeUtils;
 import lime.app.Application;
 import openfl.Lib;

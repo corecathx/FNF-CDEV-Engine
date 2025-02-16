@@ -1,7 +1,8 @@
 package cdev.states;
 
+import cdev.graphics.MaterialIcon;
 import cdev.backend.utils.MemoryUtils;
-import flixel.math.FlxRect;
+
 import flixel.math.FlxPoint;
 import flixel.addons.transition.TransitionData;
 import flixel.addons.transition.FlxTransitionableState;
@@ -14,6 +15,11 @@ class InitState extends State {
     public static var nextState:Class<State> = EngineInfoState;
     override function create():Void {
         super.create();
+        ///////////////////////
+        /////    DEBUG    /////
+        ///////////////////////
+        MaterialIcon.init();
+
         ///////////////////////
         /////    DEBUG    /////
         ///////////////////////
