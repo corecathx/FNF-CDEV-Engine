@@ -1,3 +1,10 @@
+> [!WARNING] 
+> As of 03/31/2025, CDEV Engine will be discontinued, and I’ll be changing my focus to other projects unrelated to FNF.
+> I’ve lost interest in working on this engine, as I’m more into experimenting with Haxe and general game development now.
+> CDEV Engine has been around for four years, and I truly appreciate everyone who has used and supported it, it means a lot to me.
+> Regarding the rewritten version of CDEV Engine, that will also be discontinued. Sorry to those who were looking forward to it.
+> **Thank you for everything, and sorry for the disappointment.**
+
 <p align="center">
     <img src="art/CDEV-Engine-Logo.png" width="500px" />
     <h1 align="center">Friday Night Funkin': CDEV Engine</h1>
